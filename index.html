@@ -97,7 +97,7 @@
             transform: translateY(-1px);
         }
 
-        #message {
+        #message, #adminMessage, #loginMessage {
             margin: 15px 0;
             padding: 12px;
             border-radius: 8px;
@@ -162,6 +162,26 @@
             margin-right: 5px;
         }
 
+        .approve-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .reject-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
         .export-btn {
             background: #3498db;
             color: white;
@@ -171,29 +191,75 @@
             cursor: pointer;
             margin-bottom: 20px;
         }
+
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
+        }
+
+        .login-section {
+            display: block;
+        }
+
+        .request-section {
+            display: none;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .logged-in .login-section {
+            display: none;
+        }
+
+        .logged-in .request-section {
+            display: block;
+        }
+
+        .logged-in .admin-section {
+            display: block;
+        }
     </style>
 </head>
-<body>
+<body class="not-logged-in">
 
 <header class="main-header">
     <h1>رئاسة مركز و مدينة كفر صقر</h1>
     <p>منظومة الإدارة الذكية لحصر المركبات</p>
 </header>
 
-<div class="container">
-    <div id="message"></div>
+<div class="container login-section">
+    <h2 style="text-align: center; color: var(--primary-color);">تسجيل الدخول للمدير</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label>اسم المستخدم:</label>
+            <input type="text" id="username" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+            <label>كلمة المرور:</label>
+            <input type="password" id="password" placeholder="admin" required>
+        </div>
+        <button type="submit">دخول</button>
+    </form>
+    <div id="loginMessage"></div>
+</div>
 
-    <form id="vehicleForm">
+<div class="container request-section">
+    <div id="message"></div>
+    <h2 style="text-align: center; color: var(--primary-color);">تقديم طلب تسجيل مركبة</h2>
+    <form id="requestForm">
         <div class="form-group">
             <label>👤 اسم صاحب المركبة:</label>
-            <input type="text" id="ownerName" placeholder="الاسم الكامل كما في البطاقة" required>
+            <input type="text" id="reqOwnerName" placeholder="الاسم الكامل كما في البطاقة" required>
         </div>
 
         <div class="form-group">
-            <label>🚜 نوع المركبة:</label>
-            <select id="vehicleType" required>
+            <label>🚘 نوع المركبة:</label>
+            <select id="reqVehicleType" required>
                 <option value="" disabled selected>-- اختر النوع من القائمة --</option>
-                <option value="تكتوك">تكتوك</option>
+                <option value="توكتوك">توكتوك</option>
                 <option value="موتوسيكل">موتوسيكل</option>
                 <option value="تروسيكل">تروسيكل</option>
             </select>
@@ -201,21 +267,44 @@
 
         <div class="form-group">
             <label>🔢 رقم المركبة الكودي:</label>
-            <input type="number" id="vehicleNumber" placeholder="رقم فريد إيجابي غير مكرر" min="1" required>
+            <input type="number" id="reqVehicleNumber" placeholder="رقم فريد إيجابي غير مكرر" min="1" required>
         </div>
 
-        <button type="submit">إضافة البيانات للأرشيف</button>
+        <div class="form-group">
+            <label>📞 رقم الهاتف:</label>
+            <input type="tel" id="reqPhoneNumber" placeholder="مثال: 01012345678" required>
+        </div>
+
+        <div class="form-group">
+            <label>🆔 الرقم القومي:</label>
+            <input type="text" id="reqNationalId" placeholder="14 رقم" maxlength="14" required>
+        </div>
+
+        <div class="form-group">
+            <label>🏠 العنوان:</label>
+            <input type="text" id="reqAddress" placeholder="العنوان الكامل" required>
+        </div>
+
+        <div class="form-group">
+            <label>📷 رفع صورة البطاقة والمستندات:</label>
+            <input type="file" id="reqImageFile" accept="image/*" required>
+        </div>
+
+        <button type="submit">تقديم الطلب</button>
     </form>
+</div>
 
-    <button class="export-btn" id="exportBtn">تصدير البيانات إلى CSV</button>
+<div class="container admin-section">
+    <button id="logoutBtn" style="background: #c0392b; margin-bottom: 20px;">تسجيل الخروج</button>
+    <div id="adminMessage"></div>
 
-    <div class="table-section" style="overflow-x:auto;">
-        <h3 style="text-align: right; color: var(--primary-color);">السجلات المسجلة:</h3>
+    <div class="table-section">
+        <h3 style="text-align: right; color: var(--primary-color);">الطلبات المقدمة:</h3>
         <div class="table-controls">
-            <input type="text" id="searchInput" placeholder="ابحث في الأسماء أو الأرقام...">
-            <select id="filterType">
+            <input type="text" id="reqSearchInput" placeholder="ابحث في الطلبات...">
+            <select id="reqFilterType">
                 <option value="">جميع الأنواع</option>
-                <option value="تكتوك">تكتوك</option>
+                <option value="توكتوك">توكتوك</option>
                 <option value="موتوسيكل">موتوسيكل</option>
                 <option value="تروسيكل">تروسيكل</option>
             </select>
@@ -226,127 +315,172 @@
                     <th>صاحب المركبة</th>
                     <th>نوع المركبة</th>
                     <th>الرقم</th>
+                    <th>رقم الهاتف</th>
+                    <th>الرقم القومي</th>
+                    <th>العنوان</th>
+                    <th>الصورة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="requestsTableBody"></tbody>
+        </table>
+    </div>
+
+    <div class="table-section">
+        <h3 style="text-align: right; color: var(--primary-color);">السجلات المسجلة:</h3>
+        <div class="table-controls">
+            <input type="text" id="searchInput" placeholder="ابحث في الأسماء أو الأرقام...">
+            <select id="filterType">
+                <option value="">جميع الأنواع</option>
+                <option value="توكتوك">توكتوك</option>
+                <option value="موتوسيكل">موتوسيكل</option>
+                <option value="تروسيكل">تروسيكل</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>صاحب المركبة</th>
+                    <th>نوع المركبة</th>
+                    <th>الرقم</th>
+                    <th>رقم الهاتف</th>
+                    <th>الرقم القومي</th>
+                    <th>العنوان</th>
+                    <th>الصورة</th>
                     <th>إجراءات</th>
                 </tr>
             </thead>
             <tbody id="dataTableBody"></tbody>
         </table>
     </div>
+
+    <button class="export-btn" id="exportBtn">تصدير البيانات إلى CSV</button>
 </div>
 
 <script>
-    const vehicleForm = document.getElementById('vehicleForm');
+    const loginForm = document.getElementById('loginForm');
+    const requestForm = document.getElementById('requestForm');
+    const logoutBtn = document.getElementById('logoutBtn');
     const messageDiv = document.getElementById('message');
-    const tableBody = document.getElementById('dataTableBody');
+    const adminMessageDiv = document.getElementById('adminMessage');
+    const loginMessageDiv = document.getElementById('loginMessage');
+    const requestsTableBody = document.getElementById('requestsTableBody');
+    const dataTableBody = document.getElementById('dataTableBody');
+    const reqSearchInput = document.getElementById('reqSearchInput');
+    const reqFilterType = document.getElementById('reqFilterType');
     const searchInput = document.getElementById('searchInput');
     const filterType = document.getElementById('filterType');
     const exportBtn = document.getElementById('exportBtn');
+    const body = document.body;
 
     // جلب البيانات من ذاكرة المتصفح
+    let requests = JSON.parse(localStorage.getItem('kafrSaqrRequests')) || [];
     let vehicles = JSON.parse(localStorage.getItem('kafrSaqrDB')) || [];
+    let isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
 
-    function updateTable(filteredVehicles = vehicles) {
-        tableBody.innerHTML = '';
+    function updateLoginState() {
+        if (isLoggedIn) {
+            body.classList.add('logged-in');
+            body.classList.remove('not-logged-in');
+        } else {
+            body.classList.add('not-logged-in');
+            body.classList.remove('logged-in');
+        }
+    }
+
+    function updateRequestsTable(filteredRequests = requests) {
+        requestsTableBody.innerHTML = '';
+        filteredRequests.forEach((r, index) => {
+            const imageHtml = r.image ? `<img src="${r.image}" alt="صورة" class="image-preview">` : 'لا توجد صورة';
+            const row = `<tr>
+                <td>${r.name}</td>
+                <td>${r.type}</td>
+                <td><b style="color:var(--primary-color)">${r.number}</b></td>
+                <td>${r.phone}</td>
+                <td>${r.nationalId}</td>
+                <td>${r.address}</td>
+                <td>${imageHtml}</td>
+                <td>
+                    <button class="approve-btn" onclick="approveRequest(${index})">موافقة</button>
+                    <button class="reject-btn" onclick="rejectRequest(${index})">رفض</button>
+                    <button class="edit-btn" onclick="editRequest(${index})">تحرير</button>
+                </td>
+            </tr>`;
+            requestsTableBody.innerHTML += row;
+        });
+    }
+
+    function updateVehiclesTable(filteredVehicles = vehicles) {
+        dataTableBody.innerHTML = '';
         filteredVehicles.forEach((v, index) => {
+            const imageHtml = v.image ? `<img src="${v.image}" alt="صورة" class="image-preview">` : 'لا توجد صورة';
             const row = `<tr>
                 <td>${v.name}</td>
                 <td>${v.type}</td>
                 <td><b style="color:var(--primary-color)">${v.number}</b></td>
+                <td>${v.phone}</td>
+                <td>${v.nationalId}</td>
+                <td>${v.address}</td>
+                <td>${imageHtml}</td>
                 <td>
                     <button class="edit-btn" onclick="editEntry(${index})">تحرير</button>
                     <button class="delete-btn" onclick="removeEntry(${index})">حذف</button>
                 </td>
             </tr>`;
-            tableBody.innerHTML += row;
+            dataTableBody.innerHTML += row;
         });
     }
 
-    function notify(msg, isError) {
-        messageDiv.textContent = msg;
-        messageDiv.style.display = 'block';
-        messageDiv.style.backgroundColor = isError ? '#fcd1cf' : '#d4edda';
-        messageDiv.style.color = isError ? '#a94442' : '#155724';
-        setTimeout(() => messageDiv.style.display = 'none', 4000);
+    function notify(msg, isError, targetDiv = messageDiv) {
+        targetDiv.textContent = msg;
+        targetDiv.style.display = 'block';
+        targetDiv.style.backgroundColor = isError ? '#fcd1cf' : '#d4edda';
+        targetDiv.style.color = isError ? '#a94442' : '#155724';
+        setTimeout(() => targetDiv.style.display = 'none', 4000);
     }
 
-    function filterAndSearch() {
+    function filterRequests() {
+        const searchTerm = reqSearchInput.value.toLowerCase();
+        const selectedType = reqFilterType.value;
+        const filtered = requests.filter(r => 
+            (r.name.toLowerCase().includes(searchTerm) || r.number.toString().includes(searchTerm) || r.phone.includes(searchTerm) || r.nationalId.includes(searchTerm) || r.address.toLowerCase().includes(searchTerm)) &&
+            (selectedType === '' || r.type === selectedType)
+        );
+        updateRequestsTable(filtered);
+    }
+
+    function filterVehicles() {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedType = filterType.value;
         const filtered = vehicles.filter(v => 
-            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm)) &&
+            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm) || v.phone.includes(searchTerm) || v.nationalId.includes(searchTerm) || v.address.toLowerCase().includes(searchTerm)) &&
             (selectedType === '' || v.type === selectedType)
         );
-        updateTable(filtered);
+        updateVehiclesTable(filtered);
     }
 
-    vehicleForm.addEventListener('submit', (e) => {
+    // دالة للتحقق من رقم الهاتف المصري
+    function isValidEgyptianPhone(phone) {
+        const regex = /^01[0-2,5]\d{8}$/; // يبدأ بـ 010, 011, 012, 015 و11 رقم
+        return regex.test(phone);
+    }
+
+    // دالة للتحقق من الرقم القومي (14 رقم)
+    function isValidNationalId(id) {
+        return /^\d{14}$/.test(id);
+    }
+
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const name = document.getElementById('ownerName').value.trim();
-        const type = document.getElementById('vehicleType').value;
-        const number = parseInt(document.getElementById('vehicleNumber').value);
-
-        // تحقق أفضل
-        if (!name) {
-            notify('⚠️ يرجى إدخال اسم صاحب المركبة!', true);
-            return;
-        }
-        if (number <= 0 || isNaN(number)) {
-            notify('⚠️ يرجى إدخال رقم إيجابي صحيح!', true);
-            return;
-        }
-        if (vehicles.find(v => v.number === number)) {
-            notify('⚠️ تنبيه: رقم هذه المركبة مسجل بالفعل في المنظومة!', true);
-            return;
-        }
-
-        vehicles.push({ name, type, number });
-        localStorage.setItem('kafrSaqrDB', JSON.stringify(vehicles));
-        notify('✅ تم حفظ البيانات بنجاح في سجلات رئاسة المركز', false);
-        vehicleForm.reset();
-        filterAndSearch();
-    });
-
-    function removeEntry(index) {
-        if(confirm('هل تريد حذف هذا السجل نهائياً؟')) {
-            vehicles.splice(index, 1);
-            localStorage.setItem('kafrSaqrDB', JSON.stringify(vehicles));
-            filterAndSearch();
-        }
-    }
-
-    function editEntry(index) {
-        const vehicle = vehicles[index];
-        document.getElementById('ownerName').value = vehicle.name;
-        document.getElementById('vehicleType').value = vehicle.type;
-        document.getElementById('vehicleNumber').value = vehicle.number;
-        // إزالة السجل القديم وإضافة الجديد عند الحفظ
-        removeEntry(index);
-        notify('📝 يمكنك تعديل البيانات ثم الضغط على "إضافة" لحفظ التغييرات', false);
-    }
-
-    exportBtn.addEventListener('click', () => {
-        if (vehicles.length === 0) {
-            notify('⚠️ لا توجد بيانات للتصدير!', true);
-            return;
-        }
-        const csv = 'صاحب المركبة,نوع المركبة,الرقم\n' + vehicles.map(v => `${v.name},${v.type},${v.number}`).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'kafr_saqr_vehicles.csv';
-        a.click();
-        URL.revokeObjectURL(url);
-        notify('✅ تم تصدير البيانات بنجاح!', false);
-    });
-
-    searchInput.addEventListener('input', filterAndSearch);
-    filterType.addEventListener('change', filterAndSearch);
-
-    // عرض البيانات عند التحميل
-    filterAndSearch();
-</script>
-
-</body>
-</html>
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        if (username === 'admin' && password === 'admin') {
+            isLoggedIn = true;
+            sessionStorage.setItem('isLoggedIn', 'true');
+            updateLoginState();
+            filterRequests();
+            filterVehicles();
+            notify('✅ تم تسجيل الدخول بنجاح!', false, adminMessageDiv);
+        } else {
+            notify('⚠️ اسم المستخدم أو كلمة المرور غير صحيحة!', true, loginMessageDiv);
+       
