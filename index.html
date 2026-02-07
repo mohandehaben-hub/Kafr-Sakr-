@@ -20,13 +20,14 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 14px; }
         input, select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
-        .file-box { background: #f8f9fa; padding: 10px; border: 1px dashed #aaa; border-radius: 8px; }
-        button { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        #submitBtn { background: var(--primary); color: white; }
+        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid var(--primary); border-radius: 8px; outline: none; }
+        button { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #submitBtn { background: var(--primary); color: white; padding: 15px; font-size: 17px; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th { background: #eee; color: #333; padding: 12px; font-size: 13px; border: 1px solid #ddd; }
         td { padding: 10px; border: 1px solid #eee; text-align: center; font-size: 13px; }
-        .v-code { background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
+        .v-code { background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
+        .pending { color: var(--danger); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -80,39 +81,39 @@
     </div>
 
     <div id="adminArea" class="content">
-        <h2 id="roleTitle" style="text-align:center;">لوحة التحكم</h2>
+        <h2 style="text-align:center;">لوحة التحكم والبحث</h2>
+        <input type="text" id="searchInput" class="search-box" onkeyup="filterData()" placeholder="ابحث بالاسم، الرقم القومي، أو الكود...">
+        
         <div style="overflow-x: auto;">
             <table>
                 <thead>
                     <tr>
                         <th>المالك</th>
-                        <th>التواصل</th>
+                        <th>القومي/الموبايل</th>
                         <th>المركبة</th>
                         <th>الكود</th>
                         <th>المستندات</th>
-                        <th id="controlCol">الإجراءات</th>
+                        <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="dataTable"></tbody>
             </table>
         </div>
-        <button onclick="location.reload()" style="background:#95a5a6; margin-top:20px;">تسجيل الخروج</button>
+        <button onclick="location.reload()" style="background:#95a5a6; margin-top:20px; color:white">تسجيل الخروج</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // بيانات مشروع مهند الجديد (system-storage-bd0ed)
     const firebaseConfig = {
         apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
         authDomain: "system-storage-bd0ed.firebaseapp.com",
         projectId: "system-storage-bd0ed",
         storageBucket: "system-storage-bd0ed.firebasestorage.app",
         messagingSenderId: "501351821676",
-        appId: "1:501351821676:web:2926c58dedfc536cea8349",
-        measurementId: "G-80FBHRBB3Q"
+        appId: "1:501351821676:web:2926c58dedfc536cea8349"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -120,23 +121,21 @@
     const dbRef = collection(db, "orders");
     let userRole = "";
 
-    // ضغط الصور لتقليل حجم الداتا المخزنة مجاناً
     const compressImg = (file) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = (event) => {
+            reader.onload = (e) => {
                 const img = new Image();
-                img.src = event.target.result;
+                img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const maxWidth = 500; 
+                    const maxWidth = 500;
                     const scale = maxWidth / img.width;
-                    canvas.width = maxWidth;
-                    canvas.height = img.height * scale;
+                    canvas.width = maxWidth; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.5)); // جودة 50% كافية جداً للبطاقة
+                    resolve(canvas.toDataURL('image/jpeg', 0.5));
                 };
             };
         });
@@ -146,15 +145,11 @@
         const btn = document.getElementById('submitBtn');
         const f1 = document.getElementById('file1').files[0];
         const f2 = document.getElementById('file2').files[0];
-        
         if(!f1 || !f2 || !document.getElementById('ownerName').value) { alert("أكمل البيانات!"); return; }
         
-        btn.disabled = true; btn.innerText = "جاري الحفظ في سحابة كفر صقر...";
-
+        btn.disabled = true; btn.innerText = "جاري الحفظ في السحابة...";
         try {
-            const img1Base64 = await compressImg(f1);
-            const img2Base64 = await compressImg(f2);
-
+            const i1 = await compressImg(f1); const i2 = await compressImg(f2);
             await addDoc(dbRef, {
                 owner: document.getElementById('ownerName').value,
                 phone: document.getElementById('phone').value,
@@ -162,17 +157,13 @@
                 address: document.getElementById('address').value,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
-                img1: img1Base64, 
-                img2: img2Base64,
+                img1: i1, img2: i2,
                 timestamp: Date.now(),
                 approved: false, vCode: ""
             });
-            alert("تم الحفظ بنجاح يا بشمهندس مهند ✅");
+            alert("تم الحفظ بنجاح يا بشمهندس ✅");
             location.reload();
-        } catch (e) {
-            alert("خطأ: " + e.message);
-            btn.disabled = false;
-        }
+        } catch (e) { alert("خطأ: " + e.message); btn.disabled = false; }
     };
 
     window.loginProcess = () => {
@@ -192,27 +183,46 @@
                 const item = s.data(); const id = s.id;
                 tableBody.innerHTML += `<tr>
                     <td>${item.owner}</td>
-                    <td>${item.phone}</td>
+                    <td>${item.nationalId}<br>${item.phone}</td>
                     <td>${item.vType} - ${item.vDesc}</td>
-                    <td>${item.vCode ? `<span class="v-code">${item.vCode}</span>` : 'قيد الانتظار'}</td>
-                    <td><button onclick="viewImg('${item.img1}')">البطاقة</button> <button onclick="viewImg('${item.img2}')">الملكية</button></td>
-                    <td>${userRole==='SUPER'?`<button style="background:red;color:white" onclick="deleteRecord('${id}')">حذف</button>`:''}
-                        <button style="background:green;color:white" onclick="assignCode('${id}')">تكويد</button></td>
+                    <td>${item.vCode ? `<span class="v-code">${item.vCode}</span>` : '<span class="pending">قيد الانتظار</span>'}</td>
+                    <td><button onclick="viewImg('${item.img1}')">البطاقة</button><button onclick="viewImg('${item.img2}')">الملكية</button></td>
+                    <td>
+                        <button style="background:green;color:white" onclick="assignCode('${id}')">تكويد</button>
+                        ${userRole==='SUPER'?`<button style="background:red;color:white" onclick="deleteRecord('${id}')">حذف</button>`:''}
+                    </td>
                 </tr>`;
             });
         });
     }
 
     window.assignCode = async (id) => {
-        const c = prompt("أدخل الكود الجديد:");
-        if(c) await updateDoc(doc(db, "orders", id), { vCode: c });
+        const c = prompt("أدخل كود المركبة الجديد:");
+        if(!c) return;
+
+        // فحص التكرار
+        const q = query(dbRef, where("vCode", "==", c));
+        const checkSnap = await getDocs(q);
+        if(!checkSnap.empty) { alert("هذا الكود مستخدم بالفعل لمركبة أخرى! ❌"); return; }
+
+        try {
+            await updateDoc(doc(db, "orders", id), { vCode: c, approved: true });
+            alert("تم اعتماد الكود وحفظ الطلب بنجاح ✅");
+        } catch (e) { alert("خطأ: " + e.message); }
     };
 
-    window.deleteRecord = async (id) => { if(confirm("هل أنت متأكد من حذف السجل؟")) await deleteDoc(doc(db, "orders", id)); };
-    window.viewImg = (src) => { 
-        const w = window.open(); 
-        w.document.write(`<title>معاينة المستند</title><img src="${src}" style="width:100%">`); 
+    // دالة البحث
+    window.filterData = () => {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.getElementById("dataTable").getElementsByTagName("tr");
+        for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].innerText.toLowerCase();
+            rows[i].style.display = text.includes(input) ? "" : "none";
+        }
     };
+
+    window.deleteRecord = async (id) => { if(confirm("حذف الطلب نهائياً؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.viewImg = (src) => { const w = window.open(); w.document.write(`<img src="${src}" style="width:100%">`); };
     window.showTab = (id) => {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.getElementById(id).classList.add('active');
