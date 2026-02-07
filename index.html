@@ -15,7 +15,7 @@
         }
 
         body { 
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
             background: var(--bg); 
             margin: 0; 
             direction: rtl; 
@@ -36,44 +36,37 @@
         }
 
         .header-title h1 { margin: 0; font-size: 1.6rem; font-weight: 800; }
-        .header-title p { margin: 2px 0 0; font-size: 0.9rem; color: #f1c40f; font-weight: 600; }
+        .header-title p { margin: 2px 0 0; font-size: 0.95rem; color: #f1c40f; }
 
         .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-        .page-title { text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.5rem; position: relative; padding-bottom: 10px; font-weight: 800; }
-        .page-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 4px; background: var(--secondary); border-radius: 2px; }
-
-        /* تنسيق شبكة البيانات */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        /* تنسيق الشبكة للمواطن */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .full-row { grid-column: 1 / -1; }
 
         .input-group { display: flex; flex-direction: column; }
-        .input-group label { margin-bottom: 8px; font-weight: 700; color: #333; font-size: 0.95rem; }
-        .input-group input, .input-group select { padding: 12px 15px; border: 2px solid #e0e6ed; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(26,82,118,0.1); }
+        .input-group label { margin-bottom: 8px; font-weight: 700; color: #444; font-size: 0.9rem; }
+        .input-group input, .input-group select { padding: 12px 15px; border: 2px solid #e0e6ed; border-radius: 12px; font-size: 1rem; }
 
-        #submitBtn { width: 100%; background: var(--secondary); color: white; padding: 18px; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 800; margin-top: 25px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3); }
-        #submitBtn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4); }
+        #submitBtn { width: 100%; background: var(--secondary); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 800; margin-top: 25px; cursor: pointer; transition: 0.3s; }
+        #submitBtn:hover { background: #219150; transform: translateY(-2px); }
 
-        /* صفحة المسؤول المحدثة */
-        .admin-content { display: none; background: white; padding: 25px; border-radius: 20px; width: 98%; margin: 20px auto; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        
-        .table-res { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; }
+        /* لوحة التحكم المنسقة */
+        .admin-content { display: none; background: white; padding: 25px; border-radius: 20px; width: 98%; margin: 20px auto; }
+        .table-res { overflow-x: auto; margin-top: 20px; border-radius: 15px; }
         .data-table { width: 100%; border-collapse: collapse; min-width: 1200px; }
-        .data-table th { background: var(--primary); color: white; padding: 15px; text-align: right; font-size: 0.9rem; position: sticky; top: 0; }
-        .data-table td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; vertical-align: middle; white-space: nowrap; }
-        .data-table tr:hover { background: #f8fbff; }
+        .data-table th { background: var(--primary); color: white; padding: 15px; text-align: right; font-size: 0.85rem; }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.85rem; vertical-align: middle; white-space: nowrap; }
 
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; display: inline-block; }
-        .badge-wait { background: #fff4e5; color: #b7791f; border: 1px solid #fbd38d; }
-        .badge-done { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.75rem; }
+        .badge-wait { background: #fff3cd; color: #856404; }
+        .badge-done { background: #d4edda; color: #155724; }
 
-        .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.85rem; border-top: 3px solid var(--accent); z-index: 1000; }
-        .engineer-footer b { color: #f1c40f; }
+        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); text-align: center; }
+        .modal-main-img { max-width: 90%; max-height: 75vh; margin-top: 30px; border-radius: 15px; border: 4px solid #fff; }
 
-        .modal { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); text-align: center; }
-        .modal-main-img { max-width: 85%; max-height: 70vh; margin-top: 40px; border-radius: 15px; border: 5px solid #fff; }
+        .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 12px; position: fixed; bottom: 0; width: 100%; font-size: 0.85rem; border-top: 3px solid var(--accent); }
     </style>
 </head>
 <body>
@@ -81,22 +74,22 @@
 <header>
     <div class="header-title">
         <h1>رئاسة مركز ومدينة كفر صقر</h1>
-        <p>تحت إشراف السيد الدكتور/ أحمد المقدم</p>
+        <p>مع تحياتي رئيس مجلس المدينة د/ أحمد المقدم</p>
     </div>
-    <button id="loginBtn" style="background:rgba(255,255,255,0.2); color:white; padding:10px 20px; border:1px solid white; border-radius:10px; cursor:pointer; font-weight:bold;">🔐 لوحة التحكم</button>
+    <button id="loginBtn" style="background:rgba(255,255,255,0.15); color:white; padding:8px 16px; border:1px solid white; border-radius:8px; cursor:pointer;">🔐 لوحة التحكم</button>
 </header>
 
 <div class="container" id="citizenPage">
     <div class="card">
-        <h2 class="page-title">منظومة تكويد وتراخيص المركبات</h2>
+        <h2 style="text-align:center; color:var(--primary); margin-bottom:30px;">تسجيل بيانات المركبة</h2>
         <div class="form-grid">
             <div class="input-group full-row">
-                <label>الاسم الرباعي للمالك (من واقع البطاقة)</label>
-                <input type="text" id="ownerName" placeholder="أدخل اسمك كاملاً">
+                <label>الاسم الرباعي للمالك</label>
+                <input type="text" id="ownerName" placeholder="أدخل اسمك كاملاً كما بالبطاقة">
             </div>
             <div class="input-group">
                 <label>الرقم القومي (14 رقم)</label>
-                <input type="number" id="nationalId" placeholder="29xxxxxxxxxxxx">
+                <input type="number" id="nationalId">
             </div>
             <div class="input-group">
                 <label>رقم الهاتف المحمول</label>
@@ -112,46 +105,36 @@
             </div>
             <div class="input-group">
                 <label>الموديل / اللون</label>
-                <input type="text" id="vDesc" placeholder="مثال: دايون 2025 - أسود">
+                <input type="text" id="vDesc" placeholder="مثال: دايون 2024 - أحمر">
             </div>
             <div class="input-group full-row">
                 <label>العنوان السكني التفصيلي</label>
-                <input type="text" id="address" placeholder="القرية / الحي / الشارع">
+                <input type="text" id="address" placeholder="القرية / الشارع / المنزل">
             </div>
             <div class="input-group full-row">
-                <label>صور المركبة والمستندات (يمكن اختيار أكثر من صورة)</label>
-                <input type="file" id="multiFiles" accept="image/*" multiple style="border: 2px dashed #3498db; padding: 25px; background: #f0f7ff; border-radius: 15px; text-align: center; cursor: pointer;">
+                <label>صور المركبة والمستندات</label>
+                <input type="file" id="multiFiles" accept="image/*" multiple style="border: 2px dashed #ccc; padding: 20px; background: #f9f9f9; text-align: center; border-radius: 12px;">
             </div>
         </div>
-        <button id="submitBtn">تأكيد البيانات وإرسال الطلب ✅</button>
+        <button id="submitBtn">إرسال الطلب وحفظ البيانات ✅</button>
     </div>
 </div>
 
 <div id="adminPage" class="admin-content">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h2 style="margin:0; color:var(--primary);">لوحة مراجعة البيانات</h2>
-        <div style="display:flex; gap:12px;">
-            <button id="exportExcelBtn" style="background:#27ae60; color:white; border:none; padding:10px 25px; border-radius:10px; cursor:pointer; font-weight:bold;">📥 تصدير Excel</button>
-            <button onclick="location.reload()" style="background:#e74c3c; color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">خروج</button>
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin:0; color:var(--primary);">مراجعة طلبات التكويد</h2>
+        <div style="display:flex; gap:10px;">
+            <button id="exportExcelBtn" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">تصدير Excel</button>
+            <button onclick="location.reload()" style="background:#c0392b; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer;">خروج</button>
         </div>
     </div>
-    <div class="input-group full-row">
-        <input type="text" id="searchInput" style="padding:15px; border:2px solid var(--primary); border-radius:15px; margin-bottom:20px; font-size:1.1rem;" placeholder="🔍 ابحث بالاسم، الرقم القومي، أو رقم الهاتف...">
-    </div>
+    <input type="text" id="searchInput" style="width:100%; padding:15px; border:2px solid var(--primary); border-radius:12px; margin-bottom:20px; font-size:1rem;" placeholder="ابحث باسم المالك أو الرقم القومي أو الهاتف...">
     <div class="table-res">
         <table class="data-table" id="excelTable">
             <thead>
                 <tr>
-                    <th>توقيت الطلب</th>
-                    <th>اسم المالك</th>
-                    <th>الرقم القومي</th>
-                    <th>الهاتف</th>
-                    <th>النوع</th>
-                    <th>الموديل/اللون</th>
-                    <th>العنوان</th>
-                    <th>الحالة/الكود</th>
-                    <th>الصور</th>
-                    <th>التحكم</th>
+                    <th>توقيت الطلب</th><th>المالك</th><th>القومي</th><th>الهاتف</th>
+                    <th>النوع</th><th>الموديل</th><th>العنوان</th><th>الكود</th><th>الصور</th><th>الإجراء</th>
                 </tr>
             </thead>
             <tbody id="dataTable"></tbody>
@@ -160,13 +143,13 @@
 </div>
 
 <div id="imgModal" class="modal">
-    <span style="position: absolute; top: 20px; right: 40px; color: white; font-size: 50px; cursor: pointer; font-weight: bold;" onclick="document.getElementById('imgModal').style.display='none'">&times;</span>
+    <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer;" onclick="document.getElementById('imgModal').style.display='none'">&times;</span>
     <img id="mainViewImg" class="modal-main-img">
-    <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 12px; padding: 20px; overflow-x: auto;"></div>
+    <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 10px; padding: 15px; overflow-x: auto;"></div>
 </div>
 
 <footer class="engineer-footer">
-    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير تطوير الأنظمة الأمنية والمتقدمة 🛡️
+    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير تطوير الأنظمة الأمنية
 </footer>
 
 <script type="module">
@@ -188,74 +171,58 @@
     let allData = [];
     let userRole = "";
 
-    const formatDT = (ts) => {
-        const d = new Date(ts);
-        return d.toLocaleDateString('ar-EG') + ' ' + d.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    };
-
-    const compressImg = (file) => {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const scale = 600 / img.width;
-                    canvas.width = 600; canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6));
-                };
-            };
-        });
-    };
-
+    // منطق حفظ البيانات والصور (الأصلي)
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
         const files = document.getElementById('multiFiles').files;
         const owner = document.getElementById('ownerName').value.trim();
         const nid = document.getElementById('nationalId').value.trim();
-        const tel = document.getElementById('phone').value.trim();
 
-        if (nid.length !== 14 || !owner || files.length === 0) { alert("يرجى إكمال جميع البيانات ورفع الصور"); return; }
+        if (nid.length !== 14 || !owner || files.length === 0) { alert("أكمل البيانات وارفاع الصور"); return; }
 
-        btn.disabled = true; btn.innerText = "جاري الحفظ والرفع...";
-        const imgs = [];
-        for(let f of files) imgs.push(await compressImg(f));
+        btn.disabled = true; btn.innerText = "جاري الحفظ...";
+
+        const imgArray = [];
+        for (let i = 0; i < files.length; i++) {
+            const reader = new FileReader();
+            const promise = new Promise(resolve => {
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(files[i]);
+            });
+            imgArray.push(await promise);
+        }
 
         try {
             await addDoc(dbRef, {
-                owner, nationalId: nid, phone: tel,
-                address: document.getElementById('address').value,
+                owner, nationalId: nid,
+                phone: document.getElementById('phone').value,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
-                images: imgs, timestamp: Date.now(), vCode: ""
+                address: document.getElementById('address').value,
+                images: imgArray,
+                timestamp: Date.now(),
+                vCode: ""
             });
-            alert("تم تسجيل طلبك بنجاح ✅");
-            window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالرقم القومي: ${nid}`, '_blank');
+            alert("تم تسجيل الطلب بنجاح ✅");
+            window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}`, '_blank');
             location.reload();
-        } catch (e) { alert("حدث خطأ في الاتصال!"); btn.disabled = false; }
+        } catch (e) { alert("حدث خطأ!"); btn.disabled = false; }
     };
 
     document.getElementById('loginBtn').onclick = () => {
-        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة السر:");
+        const u = prompt("User:"); const p = prompt("Pass:");
         if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
         else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
-        else return alert("بيانات الدخول خاطئة!");
+        else return alert("خطأ!");
         
         document.getElementById('citizenPage').style.display = 'none';
         document.getElementById('adminPage').style.display = 'block';
-        startListening();
-    };
-
-    function startListening() {
+        
         onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
             allData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderTable(allData);
         });
-    }
+    };
 
     function renderTable(data) {
         const body = document.getElementById('dataTable');
@@ -263,18 +230,18 @@
         data.forEach(item => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="color:#666; font-size:0.8rem">${formatDT(item.timestamp)}</td>
+                <td style="font-size:11px; color:#666">${new Date(item.timestamp).toLocaleString('ar-EG')}</td>
                 <td style="font-weight:bold">${item.owner}</td>
-                <td style="font-family:monospace">${item.nationalId}</td>
-                <td><a href="tel:${item.phone}" style="text-decoration:none; color:var(--primary); font-weight:bold;">${item.phone}</a></td>
+                <td>${item.nationalId}</td>
+                <td><a href="tel:${item.phone}" style="text-decoration:none; color:var(--primary)">${item.phone}</a></td>
                 <td>${item.vType}</td>
                 <td>${item.vDesc}</td>
                 <td>${item.address}</td>
-                <td><span class="status-badge ${item.vCode?'badge-done':'badge-wait'}">${item.vCode || '⏳ في الانتظار'}</span></td>
-                <td><button style="background:#3498db; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer" onclick="viewImgs('${item.id}')">🖼️ عرض</button></td>
+                <td><span class="status-badge ${item.vCode?'badge-done':'badge-wait'}">${item.vCode || '⏳'}</span></td>
+                <td><button style="cursor:pointer" onclick="viewImgs('${item.id}')">🖼️</button></td>
                 <td>
-                    <button style="background:#f39c12; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold" onclick="setCode('${item.id}')">تكويد</button>
-                    ${userRole==='SUPER'?'<button style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; margin-right:5px" onclick="delItem(\''+item.id+'\')">حذف</button>':''}
+                    <button style="cursor:pointer" onclick="setCode('${item.id}')">كود</button>
+                    ${userRole==='SUPER'?'<button style="cursor:pointer; background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px" onclick="delItem(\''+item.id+'\')">حذف</button>':''}
                 </td>`;
             body.appendChild(tr);
         });
@@ -287,37 +254,30 @@
         const thumbs = document.getElementById("modalThumbnails");
         thumbs.innerHTML = ''; main.src = item.images[0];
         item.images.forEach(src => {
-            const i = document.createElement('img'); i.src = src; i.style.width="70px"; i.style.height="70px"; i.style.cursor="pointer"; i.style.borderRadius="10px"; i.style.border="2px solid #ddd";
+            const i = document.createElement('img'); i.src = src; i.style.width="60px"; i.style.height="60px"; i.style.cursor="pointer"; i.style.borderRadius="8px";
             i.onclick = () => main.src = src; thumbs.appendChild(i);
         });
         modal.style.display = "block";
     };
 
     window.setCode = async (id) => {
-        const c = prompt("أدخل كود المركبة المعتمد:");
-        if(c) {
-            await updateDoc(doc(db, "orders", id), { vCode: c });
-            alert("تم تحديث الكود بنجاح ✅");
-        }
+        const c = prompt("أدخل الكود:");
+        if(c) await updateDoc(doc(db, "orders", id), { vCode: c });
     };
 
     window.delItem = async (id) => {
-        if(confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) await deleteDoc(doc(db, "orders", id));
+        if(confirm("حذف الطلب؟")) await deleteDoc(doc(db, "orders", id));
     };
 
     document.getElementById('searchInput').oninput = (e) => {
         const val = e.target.value.toLowerCase();
-        const filtered = allData.filter(i => 
-            i.owner.toLowerCase().includes(val) || 
-            i.nationalId.includes(val) || 
-            i.phone.includes(val)
-        );
+        const filtered = allData.filter(i => i.owner.toLowerCase().includes(val) || i.nationalId.includes(val) || i.phone.includes(val));
         renderTable(filtered);
     };
 
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "منظومة_كفر_صقر_الرقمية.xlsx");
+        XLSX.writeFile(wb, "بيانات_تكويد_كفر_صقر.xlsx");
     };
 </script>
 </body>
