@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رئاسة مركز و مدينة كفر صقر</title>
+    <style>
+        :root {
+            --primary-color: #1a5276; /* أزرق رسمي */
+            --secondary-color: #27ae60;
+            --accent-color: #f39c12;
+            --bg-color: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* تنسيق الهيدر الجديد */
+        .main-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 5px solid var(--accent-color);
+            margin-bottom: 30px;
+        }
+
+        .main-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .main-header p {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto 50px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d5dbdb;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #1e8449;
+            transform: translateY(-1px);
+        }
+
+        #message {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .table-section {
+            margin-top: 40px;
+        }
+
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .table-controls input, .table-controls select {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        .delete-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .export-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <h1>رئاسة مركز و مدينة كفر صقر</h1>
+    <p>منظومة الإدارة الذكية لحصر المركبات</p>
+</header>
+
+<div class="container">
+    <div id="message"></div>
+
+    <form id="vehicleForm">
+        <div class="form-group">
+            <label>👤 اسم صاحب المركبة:</label>
+            <input type="text" id="ownerName" placeholder="الاسم الكامل كما في البطاقة" required>
+        </div>
+
+        <div class="form-group">
+            <label>🚜 نوع المركبة:</label>
+            <select id="vehicleType" required>
+                <option value="" disabled selected>-- اختر النوع من القائمة --</option>
+                <option value="تكتوك">تكتوك</option>
+                <option value="موتوسيكل">موتوسيكل</option>
+                <option value="تروسيكل">تروسيكل</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>🔢 رقم المركبة الكودي:</label>
+            <input type="number" id="vehicleNumber" placeholder="رقم فريد إيجابي غير مكرر" min="1" required>
+        </div>
+
+        <button type="submit">إضافة البيانات للأرشيف</button>
+    </form>
+
+    <button class="export-btn" id="exportBtn">تصدير البيانات إلى CSV</button>
+
+    <div class="table-section" style="overflow-x:auto;">
+        <h3 style="text-align: right; color: var(--primary-color);">السجلات المسجلة:</h3>
+        <div class="table-controls">
+            <input type="text" id="searchInput" placeholder="ابحث في الأسماء أو الأرقام...">
+            <select id="filterType">
+                <option value="">جميع الأنواع</option>
+                <option value="تكتوك">تكتوك</option>
+                <option value="موتوسيكل">موتوسيكل</option>
+                <option value="تروسيكل">تروسيكل</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>صاحب المركبة</th>
+                    <th>نوع المركبة</th>
+                    <th>الرقم</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const vehicleForm = document.getElementById('vehicleForm');
+    const messageDiv = document.getElementById('message');
+    const tableBody = document.getElementById('dataTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const filterType = document.getElementById('filterType');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // جلب البيانات من ذاكرة المتصفح
+    let vehicles = JSON.parse(localStorage.getItem('kafrSaqrDB')) || [];
+
+    function updateTable(filteredVehicles = vehicles) {
+        tableBody.innerHTML = '';
+        filteredVehicles.forEach((v, index) => {
+            const row = `<tr>
+                <td>${v.name}</td>
+                <td>${v.type}</td>
+                <td><b style="color:var(--primary-color)">${v.number}</b></td>
+                <td>
+                    <button class="edit-btn" onclick="editEntry(${index})">تحرير</button>
+                    <button class="delete-btn" onclick="removeEntry(${index})">حذف</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function notify(msg, isError) {
+        messageDiv.textContent = msg;
+        messageDiv.style.display = 'block';
+        messageDiv.style.backgroundColor = isError ? '#fcd1cf' : '#d4edda';
+        messageDiv.style.color = isError ? '#a94442' : '#155724';
+        setTimeout(() => messageDiv.style.display = 'none', 4000);
+    }
+
+    function filterAndSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedType = filterType.value;
+        const filtered = vehicles.filter(v => 
+            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm)) &&
+            (selectedType === '' || v.type === selectedType)
+        );
+        updateTable(filtered);
+    }
+
+    vehicleForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('ownerName').value.trim();
+        const type = document.getElementById('vehicleType').value;
+        const number = parseInt(document.getElementById('vehicleNumber').value);
+
+        // تحقق أفضل
+        if (!name) {
+            notify('⚠️ يرجى إدخال اسم صاحب المركبة!', true);
+            return;
+        }
+        if (number <= 0 || isNaN(number)) {
+            notify('⚠️ يرجى إدخال رقم إيجابي صحيح!', true);
+            return;
+        }
+        if (vehicles.find(v => v.number === number)) {
+            notify('⚠️ تنبيه: رقم هذه المركبة مسجل بالفعل في المنظومة!', true);
+            return;
+        }
+
+        vehicles.push({ name, type, number });
+        localStorage.setItem('kafrSaqrDB', JSON.stringify(vehicles));
+        notify('✅ تم حفظ البيانات بنجاح في سجلات رئاسة المركز', false);
+        vehicleForm.reset();
+        filterAndSearch();
+    });
+
+    function removeEntry(index) {
+        if(confirm('هل تريد حذف هذا السجل نهائياً؟')) {
+            vehicles.splice(index, 1);
+            localStorage.setItem('kafrSaqrDB', JSON.stringify(vehicles));
+            filterAndSearch();
+        }
+    }
+
+    function editEntry(index) {
+        const vehicle = vehicles[index];
+        document.getElementById('ownerName').value = vehicle.name;
+        document.getElementById('vehicleType').value = vehicle.type;
+        document.getElementById('vehicleNumber').value = vehicle.number;
+        // إزالة السجل القديم وإضافة الجديد عند الحفظ
+        removeEntry(index);
+        notify('📝 يمكنك تعديل البيانات ثم الضغط على "إضافة" لحفظ التغييرات', false);
+    }
+
+    exportBtn.addEventListener('click', () => {
+        if (vehicles.length === 0) {
+            notify('⚠️ لا توجد بيانات للتصدير!', true);
+            return;
+        }
+        const csv = 'صاحب المركبة,نوع المركبة,الرقم\n' + vehicles.map(v => `${v.name},${v.type},${v.number}`).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'kafr_saqr_vehicles.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+        notify('✅ تم تصدير البيانات بنجاح!', false);
+    });
+
+    searchInput.addEventListener('input', filterAndSearch);
+    filterType.addEventListener('change', filterAndSearch);
+
+    // عرض البيانات عند التحميل
+    filterAndSearch();
+</script>
+
+</body>
+</html>
