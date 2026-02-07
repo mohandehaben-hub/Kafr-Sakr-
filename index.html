@@ -3,91 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة كفر صقر الذكية | مهند التهامي</title>
+    <title>منظومة كفر صقر الذكية | م. مهند التهامي</title>
     <style>
-        :root { --primary: #1a5276; --secondary: #27ae60; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; direction: rtl; }
-        header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .tabs { display: flex; background: white; cursor: pointer; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; color: #555; transition: 0.3s; }
-        .tab.active { color: var(--primary); border-bottom: 4px solid var(--primary); background: #f9f9f9; }
-        .container { max-width: 900px; margin: 20px auto; padding: 15px; }
-        .content { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: none; }
+        :root { --primary: #1a5276; --secondary: #27ae60; --danger: #c0392b; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; direction: rtl; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--secondary); }
+        .tabs { display: flex; background: #fff; cursor: pointer; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; color: #555; transition: 0.3s; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #fdfdfd; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 15px; }
+        .content { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: none; }
         .content.active { display: block; }
-        label { display: block; margin-top: 15px; font-weight: bold; color: #333; }
-        input, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { background: var(--secondary); color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
-        th { background: var(--primary); color: white; font-size: 14px; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; color: white; font-weight: bold; }
-        .img-view { color: #2980b9; cursor: pointer; font-weight: bold; text-decoration: underline; }
-        .btn-action { width: auto; padding: 5px 10px; font-size: 12px; margin: 2px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        input[type="text"], input[type="number"], input[type="tel"] { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; background: #f9fbff; }
+        .file-input { background: #f8f9fa; padding: 10px; border: 2px dashed #ccc; border-radius: 10px; width: 100%; }
+        button { width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #submitBtn { background: var(--secondary); color: white; }
+        #submitBtn:hover { background: #219150; }
+        #submitBtn:disabled { background: #bdc3c7; }
+        
+        /* تنسيق الجدول الاحترافي */
+        .table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 10px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: var(--primary); color: white; padding: 15px; font-size: 14px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px; }
+        tr:hover { background: #fcfcfc; }
+        .data-cell { text-align: right; line-height: 1.6; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white; }
+        .view-link { color: #3498db; cursor: pointer; font-weight: bold; text-decoration: underline; }
+        .btn-del { background: var(--danger); color: white; padding: 6px 12px; border-radius: 5px; font-size: 12px; }
+        .btn-app { background: var(--secondary); color: white; padding: 6px 12px; border-radius: 5px; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>منظومة حصر المركبات - كفر صقر</h1>
-    <p>تطوير وإشراف: م. مهند إيهاب التهامي</p>
+    <h1>نظام الحصر والتوثيق الرقمي - كفر صقر</h1>
+    <p>بإشراف تقني من: المهندس مهند إيهاب التهامي</p>
 </header>
 
 <div class="tabs">
-    <div class="tab active" onclick="showTab('citizen')">تسجيل بيانات مواطن</div>
-    <div class="tab" onclick="loginProcess()">لوحة المسؤولين 🔐</div>
+    <div id="t1" class="tab active" onclick="showTab('citizen')">بوابة المواطن</div>
+    <div id="t2" class="tab" onclick="loginProcess()">منطقة المسؤولين (صلاحيات)</div>
 </div>
 
 <div class="container">
     <div id="citizen" class="content active">
-        <h3>📝 إدخال بيانات المركبة</h3>
-        <label>الاسم الرباعي للمالك:</label>
-        <input type="text" id="ownerName" placeholder="اكتب الاسم كما هو بالبطاقة">
-        
-        <label>الرقم القومي (14 رقم):</label>
-        <input type="number" id="nationalId" placeholder="الرقم القومي">
-        
-        <label>بيانات المركبة (النوع والكود):</label>
-        <input type="text" id="vDetails" placeholder="مثلاً: توكتوك - كود 123">
-        
-        <label>تصوير بطاقة الرقم القومي:</label>
-        <input type="file" id="file1" accept="image/*">
-        
-        <label>تصوير أوراق الملكية:</label>
-        <input type="file" id="file2" accept="image/*">
-        
-        <button id="submitBtn">إرسال البيانات الآن ✅</button>
+        <h2 style="color:var(--primary); text-align:center;">تسجيل مركبة جديدة</h2>
+        <div class="form-group">
+            <label>الاسم الرباعي للمالك:</label>
+            <input type="text" id="ownerName" placeholder="أدخل الاسم بالكامل">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+                <label>رقم الهاتف:</label>
+                <input type="tel" id="phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>الرقم القومي:</label>
+                <input type="number" id="nationalId" placeholder="14 رقم">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>العنوان السكني بالتفصيل:</label>
+            <input type="text" id="address" placeholder="المدينة - الحي - الشارع">
+        </div>
+        <div class="form-group">
+            <label>نوع المركبة والكود:</label>
+            <input type="text" id="vDetails" placeholder="مثال: توكتوك بجاج - كود 5050">
+        </div>
+        <div class="form-group">
+            <label>صورة أصل البطاقة (وجه):</label>
+            <input type="file" id="file1" class="file-input" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>صورة مستند الملكية:</label>
+            <input type="file" id="file2" class="file-input" accept="image/*">
+        </div>
+        <button id="submitBtn">تأكيد وإرسال البيانات للسيرفر</button>
     </div>
 
     <div id="adminArea" class="content">
-        <h3 id="roleTitle">لوحة التحكم</h3>
-        <div style="overflow-x: auto;">
+        <h2 id="roleTitle" style="text-align:center;">لوحة التحكم</h2>
+        <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>المالك</th>
+                        <th>بيانات المالك</th>
+                        <th>الاتصال والعنوان</th>
                         <th>المركبة</th>
                         <th>الحالة</th>
                         <th>المرفقات</th>
-                        <th id="controlCol">إجراءات</th>
+                        <th id="controlCol">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="dataTable">
-                    </tbody>
+                <tbody id="dataTable"></tbody>
             </table>
         </div>
-        <button onclick="location.reload()" style="background:#7f8c8d; margin-top:20px;">تسجيل الخروج</button>
+        <button onclick="location.reload()" style="background:#95a5a6;">خروج آمن</button>
     </div>
 </div>
 
 <script type="module">
-    // استيراد أدوات جوجل السحابية
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } 
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // إعدادات مشروعك الحقيقية (من الصور التي أرسلتها)
     const firebaseConfig = {
         apiKey: "AIzaSyDLYhF33Z5ZZgwAcDpF7buWeQ3Gd7C4_4I",
         authDomain: "system-kafr-sakr.firebaseapp.com",
@@ -98,137 +121,94 @@
         measurementId: "G-X5K5FMS6PX"
     };
 
-    // تشغيل الاتصال
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const dbRef = collection(db, "orders");
-    let currentUserRole = ""; 
+    let userRole = "";
 
-    // --- وظيفة تسجيل الدخول حسب الصلاحيات ---
     window.loginProcess = () => {
         const u = prompt("اسم المستخدم:");
         const p = prompt("كلمة المرور:");
-
-        if (u === "Eltohamy" && p === "551855125500") {
-            currentUserRole = "SUPER"; // مدير النظام (كل شيء)
-        } else if (u === "Bahe" && p === "55185512") {
-            currentUserRole = "EDITOR"; // مراجع (رؤية وموافقة)
-        } else if (u === "Bahe1" && p === "55185512") {
-            currentUserRole = "VIEWER"; // مشاهد (رؤية فقط)
-        } else {
-            alert("خطأ في بيانات الدخول!");
-            return;
-        }
+        if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
+        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
+        else if (u === "Bahe1" && p === "55185512") userRole = "VIEWER";
+        else { alert("الدخول مرفوض!"); return; }
         
-        document.getElementById('roleTitle').innerText = "لوحة تحكم: " + u;
-        showTab('adminArea');
-        renderAdminData();
+        document.getElementById('roleTitle').innerText = "مرحباً: " + u;
+        window.showTab('adminArea');
+        renderAdmin();
     };
 
-    // --- وظيفة جلب البيانات وعرضها حسب الصلاحية ---
-    function renderAdminData() {
+    function renderAdmin() {
         onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
             const tableBody = document.getElementById('dataTable');
-            const controlHeader = document.getElementById('controlCol');
+            const controlCol = document.getElementById('controlCol');
             tableBody.innerHTML = '';
-            
-            // إخفاء عمود التحكم للمشاهد فقط
-            controlHeader.style.display = (currentUserRole === "VIEWER") ? "none" : "table-cell";
+            controlCol.style.display = (userRole === "VIEWER") ? "none" : "table-cell";
 
-            snap.forEach(documentSnapshot => {
-                const item = documentSnapshot.data();
-                const id = documentSnapshot.id;
-                
-                let statusBadge = item.approved ? 
-                    '<span class="badge" style="background:green">مقبول</span>' : 
-                    '<span class="badge" style="background:orange">انتظار</span>';
-                
-                let actionButtons = "";
-                if (currentUserRole === "SUPER") {
-                    actionButtons = `<button class="btn-action" style="background:green" onclick="approveRecord('${id}')">موافقة</button>
-                                     <button class="btn-action" style="background:red" onclick="deleteRecord('${id}')">حذف</button>`;
-                } else if (currentUserRole === "EDITOR") {
-                    actionButtons = `<button class="btn-action" style="background:green" onclick="approveRecord('${id}')">موافقة</button>`;
+            snap.forEach(s => {
+                const item = s.data();
+                const id = s.id;
+                let status = item.approved ? '<span class="badge" style="background:green">معتمد</span>' : '<span class="badge" style="background:orange">جديد</span>';
+                let btns = "";
+                if (userRole === "SUPER") {
+                    btns = `<button class="btn-app" onclick="approveRecord('${id}')">اعتماد</button>
+                            <button class="btn-del" onclick="deleteRecord('${id}')">حذف</button>`;
+                } else if (userRole === "EDITOR") {
+                    btns = `<button class="btn-app" onclick="approveRecord('${id}')">اعتماد</button>`;
                 }
 
                 tableBody.innerHTML += `<tr>
-                    <td>${item.owner}</td>
+                    <td class="data-cell"><b>${item.owner}</b><br><small>ID: ${item.nationalId}</small></td>
+                    <td class="data-cell">${item.address}<br><b>${item.phone}</b></td>
                     <td>${item.vehicle}</td>
-                    <td>${statusBadge}</td>
+                    <td>${status}</td>
                     <td>
-                        <span class="img-view" onclick="openMedia('${item.img1}')">بطاقة</span> | 
-                        <span class="img-view" onclick="openMedia('${item.img2}')">ملكية</span>
+                        <span class="view-link" onclick="viewImg('${item.img1}')">البطاقة</span><br>
+                        <span class="view-link" onclick="viewImg('${item.img2}')">الملكية</span>
                     </td>
-                    ${currentUserRole !== "VIEWER" ? `<td>${actionButtons}</td>` : ""}
+                    ${userRole !== "VIEWER" ? `<td>${btns}</td>` : ""}
                 </tr>`;
             });
         });
     }
 
-    // --- أوامر المسؤولين ---
-    window.approveRecord = async (id) => { 
-        await updateDoc(doc(db, "orders", id), { approved: true }); 
-        alert("تم اعتماد الطلب بنجاح");
-    };
-    
-    window.deleteRecord = async (id) => { 
-        if(confirm("هل أنت متأكد من حذف هذا السجل نهائياً؟")) {
-            await deleteDoc(doc(db, "orders", id)); 
-        }
-    };
+    window.approveRecord = async (id) => { await updateDoc(doc(db, "orders", id), { approved: true }); };
+    window.deleteRecord = async (id) => { if(confirm("حذف الطلب؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.viewImg = (src) => { const w = window.open(""); w.document.write(`<img src="${src}" style="width:100%; max-width:700px; display:block; margin:auto;">`); };
 
-    window.openMedia = (data) => {
-        const win = window.open("");
-        win.document.write(`<img src="${data}" style="width:100%; max-width:600px; display:block; margin:auto;">`);
-    };
-
-    // --- وظيفة المواطن: إرسال الطلب ---
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
-        const name = document.getElementById('ownerName').value;
-        const nid = document.getElementById('nationalId').value;
-        const v = document.getElementById('vDetails').value;
         const f1 = document.getElementById('file1').files[0];
         const f2 = document.getElementById('file2').files[0];
-
-        if(!name || !f1 || !f2) { alert("من فضلك أكمل كافة البيانات والصور"); return; }
-
-        btn.disabled = true; btn.innerText = "جاري الحفظ في السحابة...";
-
-        const toBase64 = file => new Promise(resolve => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-        });
+        
+        if(!f1 || !f2 || !document.getElementById('ownerName').value) { alert("برجاء إدخال البيانات والصور"); return; }
+        
+        btn.disabled = true; btn.innerText = "جاري الرفع للسحابة...";
+        const toB64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
 
         try {
             await addDoc(dbRef, {
-                owner: name,
-                nationalId: nid,
-                vehicle: v,
-                img1: await toBase64(f1),
-                img2: await toBase64(f2),
+                owner: document.getElementById('ownerName').value,
+                phone: document.getElementById('phone').value,
+                nationalId: document.getElementById('nationalId').value,
+                address: document.getElementById('address').value,
+                vehicle: document.getElementById('vDetails').value,
+                img1: await toB64(f1),
+                img2: await toB64(f2),
                 timestamp: Date.now(),
                 approved: false
             });
-            alert("تم إرسال طلبك بنجاح للمراجعة.");
-            location.reload();
-        } catch (err) {
-            alert("حدث خطأ! تأكد من إعدادات Firestore (Rules)");
-            btn.disabled = false;
-        }
+            alert("تم الحفظ! شكراً لك."); location.reload();
+        } catch (e) { alert("خطأ!"); btn.disabled = false; }
     };
-</script>
 
-<script>
-    // وظيفة التنقل البسيط بين التبويبات
-    function showTab(tabId) {
+    window.showTab = (id) => {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if(tabId === 'citizen') document.querySelector('.tab').classList.add('active');
-    }
+        document.getElementById(id).classList.add('active');
+        id === 'citizen' ? document.getElementById('t1').classList.add('active') : document.getElementById('t2').classList.add('active');
+    };
 </script>
-
 </body>
 </html>
