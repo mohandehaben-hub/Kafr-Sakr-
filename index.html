@@ -235,11 +235,11 @@
     <form id="loginForm">
         <div class="form-group">
             <label>اسم المستخدم:</label>
-            <input type="text" id="username" placeholder="admin" required>
+            <input type="text" id="username" placeholder="admin أو Bahe" required>
         </div>
         <div class="form-group">
             <label>كلمة المرور:</label>
-            <input type="password" id="password" placeholder="admin" required>
+            <input type="password" id="password" placeholder="admin أو 55185512" required>
         </div>
         <button type="submit">دخول</button>
     </form>
@@ -286,6 +286,11 @@
         </div>
 
         <div class="form-group">
+            <label>👨‍💼 اسم المسؤول عن الطلب:</label>
+            <input type="text" id="reqResponsibleName" placeholder="اسم المسؤول (مثل: Bahe)" required>
+        </div>
+
+        <div class="form-group">
             <label>📷 رفع صورة البطاقة والمستندات:</label>
             <input type="file" id="reqImageFile" accept="image/*" required>
         </div>
@@ -318,6 +323,7 @@
                     <th>رقم الهاتف</th>
                     <th>الرقم القومي</th>
                     <th>العنوان</th>
+                    <th>المسؤول</th>
                     <th>الصورة</th>
                     <th>إجراءات</th>
                 </tr>
@@ -346,6 +352,7 @@
                     <th>رقم الهاتف</th>
                     <th>الرقم القومي</th>
                     <th>العنوان</th>
+                    <th>المسؤول</th>
                     <th>الصورة</th>
                     <th>إجراءات</th>
                 </tr>
@@ -373,6 +380,12 @@
     const exportBtn = document.getElementById('exportBtn');
     const body = document.body;
 
+    // قائمة المستخدمين (يمكن إضافتها إلى localStorage لاحقاً)
+    const users = [
+        { username: 'admin', password: 'admin' },
+        { username: 'Bahe', password: '55185512' }
+    ];
+
     // جلب البيانات من ذاكرة المتصفح
     let requests = JSON.parse(localStorage.getItem('kafrSaqrRequests')) || [];
     let vehicles = JSON.parse(localStorage.getItem('kafrSaqrDB')) || [];
@@ -399,6 +412,7 @@
                 <td>${r.phone}</td>
                 <td>${r.nationalId}</td>
                 <td>${r.address}</td>
+                <td>${r.responsible}</td>
                 <td>${imageHtml}</td>
                 <td>
                     <button class="approve-btn" onclick="approveRequest(${index})">موافقة</button>
@@ -421,6 +435,7 @@
                 <td>${v.phone}</td>
                 <td>${v.nationalId}</td>
                 <td>${v.address}</td>
+                <td>${v.responsible}</td>
                 <td>${imageHtml}</td>
                 <td>
                     <button class="edit-btn" onclick="editEntry(${index})">تحرير</button>
@@ -443,7 +458,7 @@
         const searchTerm = reqSearchInput.value.toLowerCase();
         const selectedType = reqFilterType.value;
         const filtered = requests.filter(r => 
-            (r.name.toLowerCase().includes(searchTerm) || r.number.toString().includes(searchTerm) || r.phone.includes(searchTerm) || r.nationalId.includes(searchTerm) || r.address.toLowerCase().includes(searchTerm)) &&
+            (r.name.toLowerCase().includes(searchTerm) || r.number.toString().includes(searchTerm) || r.phone.includes(searchTerm) || r.nationalId.includes(searchTerm) || r.address.toLowerCase().includes(searchTerm) || r.responsible.toLowerCase().includes(searchTerm)) &&
             (selectedType === '' || r.type === selectedType)
         );
         updateRequestsTable(filtered);
@@ -453,7 +468,7 @@
         const searchTerm = searchInput.value.toLowerCase();
         const selectedType = filterType.value;
         const filtered = vehicles.filter(v => 
-            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm) || v.phone.includes(searchTerm) || v.nationalId.includes(searchTerm) || v.address.toLowerCase().includes(searchTerm)) &&
+            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm) || v.phone.includes(searchTerm) || v.nationalId.includes(searchTerm) || v.address.toLowerCase().includes(searchTerm) || v.responsible.toLowerCase().includes(searchTerm)) &&
             (selectedType === '' || v.type === selectedType)
         );
         updateVehiclesTable(filtered);
@@ -462,25 +477,3 @@
     // دالة للتحقق من رقم الهاتف المصري
     function isValidEgyptianPhone(phone) {
         const regex = /^01[0-2,5]\d{8}$/; // يبدأ بـ 010, 011, 012, 015 و11 رقم
-        return regex.test(phone);
-    }
-
-    // دالة للتحقق من الرقم القومي (14 رقم)
-    function isValidNationalId(id) {
-        return /^\d{14}$/.test(id);
-    }
-
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        if (username === 'admin' && password === 'admin') {
-            isLoggedIn = true;
-            sessionStorage.setItem('isLoggedIn', 'true');
-            updateLoginState();
-            filterRequests();
-            filterVehicles();
-            notify('✅ تم تسجيل الدخول بنجاح!', false, adminMessageDiv);
-        } else {
-            notify('⚠️ اسم المستخدم أو كلمة المرور غير صحيحة!', true, loginMessageDiv);
-       
