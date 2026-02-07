@@ -221,6 +221,40 @@
         .logged-in .admin-section {
             display: block;
         }
+
+        .user-management {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .user-management h3 {
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .user-management ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-management li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-management .delete-user-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="not-logged-in">
@@ -303,6 +337,20 @@
     <button id="logoutBtn" style="background: #c0392b; margin-bottom: 20px;">تسجيل الخروج</button>
     <div id="adminMessage"></div>
 
+    <div class="user-management">
+        <h3>إدارة المستخدمين</h3>
+        <div class="form-group">
+            <label>اسم المستخدم الجديد:</label>
+            <input type="text" id="newUsername" placeholder="أدخل اسم المستخدم">
+        </div>
+        <div class="form-group">
+            <label>كلمة المرور:</label>
+            <input type="password" id="newPassword" placeholder="أدخل كلمة المرور">
+        </div>
+        <button id="addUserBtn">إضافة مستخدم</button>
+        <ul id="usersList"></ul>
+    </div>
+
     <div class="table-section">
         <h3 style="text-align: right; color: var(--primary-color);">الطلبات المقدمة:</h3>
         <div class="table-controls">
@@ -378,10 +426,14 @@
     const searchInput = document.getElementById('searchInput');
     const filterType = document.getElementById('filterType');
     const exportBtn = document.getElementById('exportBtn');
+    const addUserBtn = document.getElementById('addUserBtn');
+    const newUsername = document.getElementById('newUsername');
+    const newPassword = document.getElementById('newPassword');
+    const usersList = document.getElementById('usersList');
     const body = document.body;
 
-    // قائمة المستخدمين (يمكن إضافتها إلى localStorage لاحقاً)
-    const users = [
+    // جلب المستخدمين من localStorage، أو الافتراضيين
+    let users = JSON.parse(localStorage.getItem('kafrSaqrUsers')) || [
         { username: 'admin', password: 'admin' },
         { username: 'Bahe', password: '55185512' }
     ];
@@ -442,38 +494,4 @@
                     <button class="delete-btn" onclick="removeEntry(${index})">حذف</button>
                 </td>
             </tr>`;
-            dataTableBody.innerHTML += row;
-        });
-    }
-
-    function notify(msg, isError, targetDiv = messageDiv) {
-        targetDiv.textContent = msg;
-        targetDiv.style.display = 'block';
-        targetDiv.style.backgroundColor = isError ? '#fcd1cf' : '#d4edda';
-        targetDiv.style.color = isError ? '#a94442' : '#155724';
-        setTimeout(() => targetDiv.style.display = 'none', 4000);
-    }
-
-    function filterRequests() {
-        const searchTerm = reqSearchInput.value.toLowerCase();
-        const selectedType = reqFilterType.value;
-        const filtered = requests.filter(r => 
-            (r.name.toLowerCase().includes(searchTerm) || r.number.toString().includes(searchTerm) || r.phone.includes(searchTerm) || r.nationalId.includes(searchTerm) || r.address.toLowerCase().includes(searchTerm) || r.responsible.toLowerCase().includes(searchTerm)) &&
-            (selectedType === '' || r.type === selectedType)
-        );
-        updateRequestsTable(filtered);
-    }
-
-    function filterVehicles() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedType = filterType.value;
-        const filtered = vehicles.filter(v => 
-            (v.name.toLowerCase().includes(searchTerm) || v.number.toString().includes(searchTerm) || v.phone.includes(searchTerm) || v.nationalId.includes(searchTerm) || v.address.toLowerCase().includes(searchTerm) || v.responsible.toLowerCase().includes(searchTerm)) &&
-            (selectedType === '' || v.type === selectedType)
-        );
-        updateVehiclesTable(filtered);
-    }
-
-    // دالة للتحقق من رقم الهاتف المصري
-    function isValidEgyptianPhone(phone) {
-        const regex = /^01[0-2,5]\d{8}$/; // يبدأ بـ 010, 011, 012, 015 و11 رقم
+            dataTableBody.innerHTML
