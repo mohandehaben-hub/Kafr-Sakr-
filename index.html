@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة كفر صقر الذكية | م. مهند التهامي</title>
+    <title>منظومة كفر صقر | م. مهند التهامي</title>
     <style>
         :root { --primary: #1a5276; --secondary: #27ae60; --danger: #c0392b; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; direction: rtl; }
@@ -14,33 +14,26 @@
         .container { max-width: 1100px; margin: 20px auto; padding: 15px; }
         .content { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: none; }
         .content.active { display: block; }
-        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .full-width { grid-column: span 2; }
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
-
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 14px; }
         input, select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
-        input:focus, select:focus { border-color: var(--primary); outline: none; background: #f9fbff; }
         .file-box { background: #f8f9fa; padding: 10px; border: 1px dashed #aaa; border-radius: 8px; }
-        
         button { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         #submitBtn { background: var(--primary); color: white; }
-        #submitBtn:disabled { background: #ccc; cursor: not-allowed; }
-        
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th { background: #eee; color: #333; padding: 12px; font-size: 13px; border: 1px solid #ddd; }
-        td { padding: 10px; border: 1px solid #eee; text-align: center; font-size: 13px; vertical-align: middle; }
-        .v-code { background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 5px; font-weight: bold; font-size: 14px; }
-        .img-link { color: #2980b9; cursor: pointer; text-decoration: underline; font-weight: bold; }
+        td { padding: 10px; border: 1px solid #eee; text-align: center; font-size: 13px; }
+        .v-code { background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>نظام حصر وتكويد المركبات - كفر صقر</h1>
-    <p>إشراف: م. مهند إيهاب التهامي</p>
+    <p>تطوير: م. مهند إيهاب التهامي</p>
 </header>
 
 <div class="tabs">
@@ -54,58 +47,48 @@
         <div class="form-grid">
             <div class="form-group full-width">
                 <label>الاسم الرباعي:</label>
-                <input type="text" id="ownerName" placeholder="أدخل الاسم كما في البطاقة">
+                <input type="text" id="ownerName" placeholder="الاسم كما في البطاقة">
             </div>
             <div class="form-group">
                 <label>رقم الموبايل:</label>
                 <input type="tel" id="phone" placeholder="01xxxxxxxxx">
             </div>
             <div class="form-group">
-                <label>الرقم القومي (14 رقم):</label>
-                <input type="number" id="nationalId" placeholder="الرقم القومي">
+                <label>الرقم القومي:</label>
+                <input type="number" id="nationalId" placeholder="14 رقم">
             </div>
             <div class="form-group">
                 <label>نوع المركبة:</label>
                 <select id="vType">
-                    <option value="">-- اختر النوع --</option>
                     <option value="توكتوك">توكتوك</option>
                     <option value="موتوسيكل">موتوسيكل</option>
                     <option value="تروسيكل">تروسيكل</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>موديل المركبة / اللون:</label>
-                <input type="text" id="vDesc" placeholder="مثال: بجاج 2022 أسود">
+                <label>الموديل / اللون:</label>
+                <input type="text" id="vDesc" placeholder="مثال: أسود 2021">
             </div>
             <div class="form-group full-width">
-                <label>العنوان بالتفصيل:</label>
+                <label>العنوان:</label>
                 <input type="text" id="address" placeholder="القرية - الشارع">
             </div>
-            <div class="form-group">
-                <label>صورة البطاقة:</label>
-                <input type="file" id="file1" class="file-box" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label>صورة مستند الملكية:</label>
-                <input type="file" id="file2" class="file-box" accept="image/*">
-            </div>
+            <div class="form-group"><label>صورة البطاقة:</label><input type="file" id="file1" accept="image/*" class="file-box"></div>
+            <div class="form-group"><label>صورة الملكية:</label><input type="file" id="file2" accept="image/*" class="file-box"></div>
         </div>
-        <button id="submitBtn" onclick="submitOrder()">إرسال الطلب للمراجعة ✅</button>
+        <button id="submitBtn" onclick="submitOrder()">إرسال الطلب للحفظ ✅</button>
     </div>
 
     <div id="adminArea" class="content">
         <h2 id="roleTitle" style="text-align:center;">لوحة التحكم</h2>
-        <div style="margin-bottom: 10px;">
-            <input type="text" id="searchInput" placeholder="بحث بالاسم أو الكود..." onkeyup="searchTable()" style="width: 250px;">
-        </div>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
                     <tr>
                         <th>المالك</th>
                         <th>التواصل</th>
-                        <th>نوع المركبة</th>
-                        <th>الكود الرقمي</th>
+                        <th>المركبة</th>
+                        <th>الكود</th>
                         <th>المستندات</th>
                         <th id="controlCol">الإجراءات</th>
                     </tr>
@@ -113,16 +96,13 @@
                 <tbody id="dataTable"></tbody>
             </table>
         </div>
-        <button onclick="location.reload()" style="background:#95a5a6; margin-top:30px;">تسجيل الخروج</button>
+        <button onclick="location.reload()" style="background:#95a5a6; margin-top:20px;">تسجيل الخروج</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDLYhF33Z5ZZgwAcDpF7buWeQ3Gd7C4_4I",
@@ -130,23 +110,74 @@
         projectId: "system-kafr-sakr",
         storageBucket: "system-kafr-sakr.firebasestorage.app",
         messagingSenderId: "498541563994",
-        appId: "1:498541563994:web:a26dacf288ba0ba4c14863",
-        measurementId: "G-X5K5FMS6PX"
+        appId: "1:498541563994:web:a26dacf288ba0ba4c14863"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const dbRef = collection(db, "orders");
     let userRole = "";
 
+    // دالة ضغط الصور لتحويلها لـ Base64 صغير الحجم
+    const compressImg = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxWidth = 600; // تصغير العرض لتقليل الحجم
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // جودة 60% لتقليل المساحة
+                };
+            };
+        });
+    };
+
+    window.submitOrder = async () => {
+        const btn = document.getElementById('submitBtn');
+        const f1 = document.getElementById('file1').files[0];
+        const f2 = document.getElementById('file2').files[0];
+        
+        if(!f1 || !f2 || !document.getElementById('ownerName').value) { alert("أكمل البيانات!"); return; }
+        
+        btn.disabled = true; btn.innerText = "جاري معالجة الصور وحفظ البيانات...";
+
+        try {
+            const img1Base64 = await compressImg(f1);
+            const img2Base64 = await compressImg(f2);
+
+            await addDoc(dbRef, {
+                owner: document.getElementById('ownerName').value,
+                phone: document.getElementById('phone').value,
+                nationalId: document.getElementById('nationalId').value,
+                address: document.getElementById('address').value,
+                vType: document.getElementById('vType').value,
+                vDesc: document.getElementById('vDesc').value,
+                img1: img1Base64, 
+                img2: img2Base64,
+                timestamp: Date.now(),
+                approved: false, vCode: ""
+            });
+            alert("تم الحفظ بنجاح يا بشمهندس ✅");
+            location.reload();
+        } catch (e) {
+            alert("خطأ: " + e.message);
+            btn.disabled = false;
+        }
+    };
+
     window.loginProcess = () => {
-        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة المرور:");
+        const u = prompt("المستخدم:"); const p = prompt("الرمز:");
         if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
         else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
-        else if (u === "Bahe1" && p === "55185512") userRole = "VIEWER";
-        else { alert("خطأ في بيانات الدخول!"); return; }
-        document.getElementById('roleTitle').innerText = "المسؤول: " + u;
+        else { alert("خطأ!"); return; }
         window.showTab('adminArea');
         renderAdmin();
     };
@@ -155,95 +186,31 @@
         onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
             const tableBody = document.getElementById('dataTable');
             tableBody.innerHTML = '';
-            document.getElementById('controlCol').style.display = (userRole === "VIEWER") ? "none" : "table-cell";
-
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
-                const vCodeDisplay = item.vCode ? `<span class="v-code">${item.vCode}</span>` : `<span style="color:red">لم يكود</span>`;
-                
-                let btns = "";
-                if (userRole === "SUPER" || userRole === "EDITOR") {
-                    btns = `<button style="background:var(--secondary); font-size:11px; padding:5px;" onclick="assignCode('${id}')">تكويد</button>`;
-                    if(userRole === "SUPER") btns += `<button style="background:var(--danger); font-size:11px; padding:5px; margin-top:5px;" onclick="deleteRecord('${id}')">حذف</button>`;
-                }
-
                 tableBody.innerHTML += `<tr>
-                    <td><b>${item.owner}</b><br><small>${item.nationalId}</small></td>
-                    <td>${item.phone}<br><small>${item.address}</small></td>
-                    <td>${item.vType}<br><small>${item.vDesc || ''}</small></td>
-                    <td>${vCodeDisplay}</td>
-                    <td>
-                        <span class="img-link" onclick="window.open('${item.img1}')">البطاقة</span> | 
-                        <span class="img-link" onclick="window.open('${item.img2}')">الملكية</span>
-                    </td>
-                    ${userRole !== "VIEWER" ? `<td>${btns}</td>` : ""}
+                    <td>${item.owner}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.vType} - ${item.vDesc}</td>
+                    <td>${item.vCode ? `<span class="v-code">${item.vCode}</span>` : 'قيد الانتظار'}</td>
+                    <td><button onclick="viewImg('${item.img1}')">البطاقة</button> <button onclick="viewImg('${item.img2}')">الملكية</button></td>
+                    <td>${userRole==='SUPER'?`<button style="background:red;color:white" onclick="deleteRecord('${id}')">حذف</button>`:''}
+                        <button style="background:green;color:white" onclick="assignCode('${id}')">تكويد</button></td>
                 </tr>`;
             });
         });
     }
 
     window.assignCode = async (id) => {
-        const newCode = prompt("أدخل كود المركبة الجديد:");
-        if (!newCode) return;
-        const q = query(dbRef, where("vCode", "==", newCode));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) { alert("⚠️ هذا الكود مسجل مسبقاً!"); return; }
-        await updateDoc(doc(db, "orders", id), { vCode: newCode, approved: true });
-        alert("تم التكويد بنجاح.");
+        const c = prompt("أدخل الكود:");
+        if(c) await updateDoc(doc(db, "orders", id), { vCode: c });
     };
 
-    window.submitOrder = async () => {
-        const btn = document.getElementById('submitBtn');
-        const f1 = document.getElementById('file1').files[0];
-        const f2 = document.getElementById('file2').files[0];
-        const vType = document.getElementById('vType').value;
-        const name = document.getElementById('ownerName').value;
-
-        if(!f1 || !f2 || !name || !vType) { alert("برجاء ملء كافة الخانات واختيار نوع المركبة وصور المستندات"); return; }
-        
-        btn.disabled = true; btn.innerText = "جاري رفع البيانات والصور...";
-
-        try {
-            const uploadFile = async (file, nameTag) => {
-                const sRef = ref(storage, `docs/${Date.now()}_${nameTag}`);
-                await uploadBytes(sRef, file);
-                return await getDownloadURL(sRef);
-            };
-
-            const url1 = await uploadFile(f1, "ID");
-            const url2 = await uploadFile(f2, "PROP");
-
-            await addDoc(dbRef, {
-                owner: name,
-                phone: document.getElementById('phone').value,
-                nationalId: document.getElementById('nationalId').value,
-                address: document.getElementById('address').value,
-                vType: vType,
-                vDesc: document.getElementById('vDesc').value,
-                img1: url1, img2: url2,
-                timestamp: Date.now(),
-                approved: false, vCode: ""
-            });
-            alert("تم إرسال الطلب بنجاح. شكراً لك.");
-            location.reload();
-        } catch (e) {
-            alert("خطأ في الإرسال، تأكد من اتصالك بالإنترنت");
-            btn.disabled = false; btn.innerText = "إرسال الطلب للمراجعة ✅";
-        }
-    };
-
-    window.searchTable = () => {
-        let input = document.getElementById("searchInput").value.toLowerCase();
-        let rows = document.querySelectorAll("#dataTable tr");
-        rows.forEach(row => { row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none"; });
-    };
-
-    window.deleteRecord = async (id) => { if(confirm("حذف الطلب نهائياً؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.viewImg = (src) => { const w = window.open(); w.document.write(`<img src="${src}" style="width:100%">`); };
     window.showTab = (id) => {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        id === 'citizen' ? document.getElementById('t1').classList.add('active') : document.getElementById('t2').classList.add('active');
     };
 </script>
 </body>
