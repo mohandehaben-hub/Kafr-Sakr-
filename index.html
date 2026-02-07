@@ -35,12 +35,11 @@
 
         /* أزرار التواصل */
         .contact-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-        .btn-float { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 20px; transition: 0.3s; }
+        .btn-float { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 20px; }
         .btn-whatsapp { background: #25d366; }
         .btn-call { background: #3498db; }
-        .btn-float:hover { transform: scale(1.1); }
 
-        /* لوحة المسؤول المحدثة */
+        /* لوحة المسؤول */
         .admin-content { display: none; background: white; padding: 20px; border-radius: 15px; width: 98%; margin: 20px auto; }
         .search-bar { flex: 1; padding: 12px; border: 2px solid var(--primary); border-radius: 10px; }
         .export-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
@@ -51,10 +50,13 @@
         .data-table td { padding: 10px; border: 1px solid #eee; text-align: center; }
         .v-code-badge { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
 
-        /* Modal الصور */
-        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); text-align: center; }
-        .modal-content { max-width: 80%; max-height: 80%; margin-top: 5%; border-radius: 10px; }
-        .close-modal { position: absolute; top: 20px; right: 35px; color: white; font-size: 40px; cursor: pointer; }
+        /* Modal الصور الجديد */
+        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); text-align: center; }
+        .modal-main-img { max-width: 90%; max-height: 70vh; margin-top: 20px; border-radius: 10px; border: 2px solid white; }
+        .thumbnails-nav { display: flex; justify-content: center; gap: 10px; padding: 15px; overflow-x: auto; margin-top: 10px; }
+        .img-thumbnail { width: 60px; height: 60px; object-fit: cover; border-radius: 5px; cursor: pointer; border: 2px solid transparent; }
+        .img-thumbnail:hover { border-color: #3498db; }
+        .close-modal { position: absolute; top: 20px; right: 35px; color: white; font-size: 40px; cursor: pointer; z-index: 10001; }
 
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .full-row { grid-column: span 1; } }
     </style>
@@ -67,29 +69,29 @@
         <p>رئاسة مركز ومدينة كفر صقر - م. مهند التهامي</p>
     </div>
     <div id="adminBtnArea">
-        <button class="admin-login-btn" style="background:#34495e; color:white; padding:10px 15px; border-radius:8px; border:none; cursor:pointer;" onclick="loginProcess()">🔐 دخول المسؤول</button>
+        <button onclick="loginProcess()" style="background:#34495e; color:white; padding:10px 15px; border:none; border-radius:8px; cursor:pointer;">🔐 دخول المسؤول</button>
     </div>
 </header>
 
 <div class="contact-buttons">
-    <a href="https://wa.me/201021102607" class="btn-float btn-whatsapp" title="واتساب">💬</a>
-    <a href="tel:01021102607" class="btn-float btn-call" title="اتصال">📞</a>
+    <a href="https://wa.me/201021102607" class="btn-float btn-whatsapp">💬</a>
+    <a href="tel:01021102607" class="btn-float btn-call">📞</a>
 </div>
 
 <div class="container" id="citizenPage">
     <div class="card">
-        <h2 class="page-title">تسجيل بيانات المركبة</h2>
+        <h2 class="page-title">خدمة المواطنين - تسجيل مركبة</h2>
         <div class="form-grid">
             <div class="input-group full-row">
                 <label>الاسم الرباعي للمالك:</label>
-                <input type="text" id="ownerName" placeholder="اكتب الاسم كما في البطاقة">
+                <input type="text" id="ownerName" placeholder="الاسم كما في البطاقة">
             </div>
             <div class="input-group">
-                <label>الرقم القومي (14 رقم):</label>
+                <label>الرقم القومي:</label>
                 <input type="number" id="nationalId">
             </div>
             <div class="input-group">
-                <label>رقم الهاتف المحمول:</label>
+                <label>رقم الهاتف:</label>
                 <input type="tel" id="phone" placeholder="01xxxxxxxxx">
             </div>
             <div class="input-group">
@@ -102,14 +104,14 @@
             </div>
             <div class="input-group">
                 <label>الموديل / اللون:</label>
-                <input type="text" id="vDesc" placeholder="مثال: دايون - أحمر 2024">
+                <input type="text" id="vDesc">
             </div>
             <div class="input-group full-row">
                 <label>العنوان بالتفصيل:</label>
                 <input type="text" id="address">
             </div>
             <div class="input-group full-row">
-                <label>ارفع صور المستندات والمركبة (يمكنك اختيار أكثر من صورة):</label>
+                <label>ارفع صور المستندات والمركبة (يمكنك اختيار عدة صور):</label>
                 <input type="file" id="multiFiles" accept="image/*" multiple>
             </div>
         </div>
@@ -120,11 +122,11 @@
 <div id="adminPage" class="admin-content">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="color: var(--primary);">لوحة المراجعة والتكويد</h2>
-        <button onclick="location.reload()" style="background:#c0392b; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">تسجيل خروج</button>
+        <button onclick="location.reload()" style="background:#c0392b; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">خروج</button>
     </div>
     
     <div style="display:flex; gap:10px;">
-        <input type="text" id="searchInput" class="search-bar" onkeyup="filterData()" placeholder="ابحث بالاسم، الكود، أو الهاتف...">
+        <input type="text" id="searchInput" class="search-bar" onkeyup="filterData()" placeholder="بحث...">
         <button class="export-btn" onclick="exportToExcel()">📊 تصدير Excel</button>
     </div>
     
@@ -132,8 +134,8 @@
         <table class="data-table" id="excelTable">
             <thead>
                 <tr>
-                    <th>المالك</th><th>الرقم القومي</th><th>رقم الهاتف</th><th>العنوان</th>
-                    <th>المركبة</th><th>الكود</th><th>الصور</th><th>الإجراءات</th>
+                    <th>المالك</th><th>الرقم القومي</th><th>الهاتف</th><th>العنوان</th>
+                    <th>المركبة</th><th>الكود</th><th>المستندات</th><th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody id="dataTable"></tbody>
@@ -143,7 +145,8 @@
 
 <div id="imgModal" class="modal">
     <span class="close-modal" onclick="closeModal()">&times;</span>
-    <div id="modalImagesContainer" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:20px;"></div>
+    <img id="mainViewImg" class="modal-main-img">
+    <div id="modalThumbnails" class="thumbnails-nav"></div>
 </div>
 
 <script type="module">
@@ -164,7 +167,6 @@
     const dbRef = collection(db, "orders");
     let userRole = "";
 
-    // دالة ضغط الصور المحسنة
     const compressImg = (file) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -179,7 +181,7 @@
                     canvas.width = maxWidth; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // ضغط بنسبة 60% لتقليل المساحة
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
                 };
             };
         });
@@ -188,32 +190,25 @@
     window.submitOrder = async () => {
         const btn = document.getElementById('submitBtn');
         const files = document.getElementById('multiFiles').files;
-        const name = document.getElementById('ownerName').value;
-        if(files.length === 0 || !name) { alert("من فضلك أدخل الاسم وارفع الصور!"); return; }
-        
-        btn.disabled = true; btn.innerText = "جاري معالجة الصور...";
-        
+        if(files.length === 0 || !document.getElementById('ownerName').value) { alert("أكمل البيانات وارفع الصور!"); return; }
+        btn.disabled = true; btn.innerText = "جاري الحفظ...";
         try {
             const imgArray = [];
-            for(let file of files) {
-                const compressed = await compressImg(file);
-                imgArray.push(compressed);
-            }
-
+            for(let f of files) { imgArray.push(await compressImg(f)); }
             await addDoc(dbRef, {
-                owner: name,
+                owner: document.getElementById('ownerName').value,
                 phone: document.getElementById('phone').value,
                 nationalId: document.getElementById('nationalId').value,
                 address: document.getElementById('address').value,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
-                images: imgArray, // مصفوفة الصور
+                images: imgArray,
                 timestamp: Date.now(),
                 approved: false, vCode: ""
             });
             alert("تم التسجيل بنجاح ✅");
             location.reload();
-        } catch (e) { alert("خطأ: " + e.message); btn.disabled = false; }
+        } catch (e) { alert("خطأ!"); btn.disabled = false; }
     };
 
     window.loginProcess = () => {
@@ -233,56 +228,75 @@
             tableBody.innerHTML = '';
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
+                const itemJSON = JSON.stringify(item).replace(/'/g, "&apos;");
                 tableBody.innerHTML += `<tr>
                     <td style="font-weight:bold;">${item.owner}</td>
                     <td>${item.nationalId}</td><td>${item.phone}</td><td>${item.address}</td>
-                    <td>${item.vType} - ${item.vDesc}</td>
+                    <td>${item.vType}</td>
                     <td>${item.vCode ? `<span class="v-code-badge">${item.vCode}</span>` : '<span style="color:red">انتظار</span>'}</td>
+                    <td><button onclick='viewImages(${itemJSON})'>عرض الصور</button></td>
                     <td>
-                        <button onclick='viewImages(${JSON.stringify(item.images)})'>عرض (${item.images ? item.images.length : 0})</button>
-                    </td>
-                    <td>
-                        <button style="background:green;color:white;border:none;padding:5px;border-radius:4px" onclick="assignCode('${id}')">تكويد</button>
-                        ${userRole==='SUPER'?`<button style="background:red;color:white;border:none;padding:5px;border-radius:4px" onclick="deleteRecord('${id}')">حذف</button>`:''}
+                        <button style="background:green;color:white;border:none;padding:5px;border-radius:4px;cursor:pointer;" onclick="assignCode('${id}')">تكويد</button>
+                        ${userRole==='SUPER'?`<button style="background:red;color:white;border:none;padding:5px;border-radius:4px;cursor:pointer;" onclick="deleteRecord('${id}')">حذف</button>`:''}
                     </td>
                 </tr>`;
             });
         });
     }
 
-    window.viewImages = (imgs) => {
+    window.viewImages = (item) => {
         const modal = document.getElementById("imgModal");
-        const container = document.getElementById("modalImagesContainer");
-        container.innerHTML = '';
-        imgs.forEach(src => {
-            container.innerHTML += `<img src="${src}" class="modal-content" style="width:45%; margin:5px;">`;
+        const mainImg = document.getElementById("mainViewImg");
+        const thumbContainer = document.getElementById("modalThumbnails");
+        thumbContainer.innerHTML = '';
+        let allImgs = item.images || [];
+        if(item.img1) allImgs.push(item.img1); if(item.img2) allImgs.push(item.img2);
+        if(allImgs.length === 0) { alert("لا توجد صور!"); return; }
+        mainImg.src = allImgs[0];
+        allImgs.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src; img.className = 'img-thumbnail';
+            img.onclick = () => mainImg.src = src;
+            thumbContainer.appendChild(img);
         });
         modal.style.display = "block";
     };
 
-    window.closeModal = () => { document.getElementById("imgModal").style.display = "none"; };
-
-    window.exportToExcel = () => {
-        const table = document.getElementById("excelTable");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "المركبات" });
-        XLSX.writeFile(wb, "حصر_مركبات_كفر_صقر.xlsx");
-    };
+    window.closeModal = () => document.getElementById("imgModal").style.display = "none";
 
     window.assignCode = async (id) => {
-        const c = prompt("أدخل كود المركبة:");
-        if(!c) return;
-        await updateDoc(doc(db, "orders", id), { vCode: c, approved: true });
+        const allDocs = await getDocs(dbRef);
+        let maxCode = 0;
+        allDocs.forEach(d => {
+            const c = parseInt(d.data().vCode);
+            if(!isNaN(c) && c > maxCode) maxCode = c;
+        });
+        const nextCode = maxCode + 1;
+        const userCode = prompt(`آخر كود مسجل هو (${maxCode})\nأدخل الكود الجديد:`, nextCode);
+        if(!userCode) return;
+
+        const q = query(dbRef, where("vCode", "==", userCode));
+        const check = await getDocs(q);
+        if(!check.empty) { alert("⚠️ الكود مكرر!"); return; }
+
+        if(confirm(`اعتماد الكود (${userCode})؟`)) {
+            await updateDoc(doc(db, "orders", id), { vCode: userCode, approved: true });
+            alert("تم التكويد بنجاح ✅");
+        }
+    };
+
+    window.exportToExcel = () => {
+        const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
+        XLSX.writeFile(wb, "منظومة_كفر_صقر.xlsx");
+    };
+
+    window.filterData = () => {
+        const val = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.getElementById("dataTable").getElementsByTagName("tr");
+        for(let r of rows) { r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none"; }
     };
 
     window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "orders", id)); };
-
-    window.filterData = () => {
-        const input = document.getElementById("searchInput").value.toLowerCase();
-        const rows = document.getElementById("dataTable").getElementsByTagName("tr");
-        for (let row of rows) {
-            row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
-        }
-    };
 </script>
 </body>
 </html>
