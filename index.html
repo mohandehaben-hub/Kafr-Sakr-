@@ -8,7 +8,6 @@
         :root { --primary: #1a5276; --secondary: #27ae60; --admin-btn: #34495e; --bg: #f0f2f5; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; direction: rtl; }
         
-        /* الهيدر وتوزيع العناصر */
         header { 
             background: var(--primary); 
             color: white; 
@@ -32,11 +31,8 @@
             border: 1px solid rgba(255,255,255,0.2);
             transition: 0.3s;
         }
-        .admin-login-btn:hover { background: #2c3e50; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
-        
-        /* تنسيق كروت البيانات */
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 15px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page-title { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
         
@@ -50,42 +46,32 @@
             border: 1px solid #ddd; 
             border-radius: 8px; 
             background: #fafafa;
-            transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--secondary); outline: none; background: white; box-shadow: 0 0 5px rgba(39,174,96,0.2); }
 
-        /* أزرار المواطن */
         #submitBtn { 
-            width: 100%; 
-            background: var(--secondary); 
-            color: white; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            margin-top: 25px; 
-            cursor: pointer;
+            width: 100%; background: var(--secondary); color: white; padding: 15px; 
+            border: none; border-radius: 10px; font-size: 18px; font-weight: bold; 
+            margin-top: 25px; cursor: pointer;
         }
 
-        /* تنسيق واجهة المسؤول */
-        .admin-content { display: none; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 95%; margin: 20px auto; }
+        /* واجهة المسؤول المحدثة */
+        .admin-content { display: none; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 98%; margin: 20px auto; }
         .search-bar { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid var(--primary); border-radius: 10px; font-size: 16px; }
         
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        .data-table th { background: #f8f9fa; color: var(--primary); padding: 12px; border: 1px solid #eee; text-align: center; }
-        .data-table td { padding: 12px; border: 1px solid #eee; text-align: center; vertical-align: middle; }
-        .v-code-badge { background: #d4edda; color: #155724; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table th { background: #f8f9fa; color: var(--primary); padding: 12px; border: 1px solid #eee; }
+        .data-table td { padding: 10px; border: 1px solid #eee; text-align: center; }
+        .v-code-badge { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #c3e6cb; }
 
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .full-row { grid-column: span 1; } }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .full-row { grid-column: span 1; } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-title">
-        <h1>منظومة حصر وتكويد المركبات</h1>
-        <p>بإشراف المهندس/ مهند إيهاب التهامي</p>
+        <h1>منظومة حصر وتكويد المركبات - كفر صقر</h1>
+        <p>تطوير المهندس/ مهند إيهاب التهامي</p>
     </div>
     <div id="adminBtnArea">
         <button class="admin-login-btn" onclick="loginProcess()">🔐 دخول المسؤول</button>
@@ -98,14 +84,14 @@
         <div class="form-grid">
             <div class="input-group full-row">
                 <label>الاسم الرباعي للمالك:</label>
-                <input type="text" id="ownerName" placeholder="اكتب الاسم كما هو مدون بالبطاقة">
+                <input type="text" id="ownerName" placeholder="اكتب الاسم كما في البطاقة">
             </div>
             <div class="input-group">
                 <label>الرقم القومي (14 رقم):</label>
-                <input type="number" id="nationalId" placeholder="الرقم القومي">
+                <input type="number" id="nationalId" placeholder="29xxxxxxxxxxxx">
             </div>
             <div class="input-group">
-                <label>رقم الموبايل:</label>
+                <label>رقم الهاتف المحمول:</label>
                 <input type="tel" id="phone" placeholder="01xxxxxxxxx">
             </div>
             <div class="input-group">
@@ -122,7 +108,7 @@
             </div>
             <div class="input-group full-row">
                 <label>العنوان بالتفصيل:</label>
-                <input type="text" id="address" placeholder="القرية / الشارع / علامة مميزة">
+                <input type="text" id="address" placeholder="القرية / الشارع">
             </div>
             <div class="input-group">
                 <label>صورة البطاقة:</label>
@@ -139,22 +125,23 @@
 
 <div id="adminPage" class="admin-content">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="color: var(--primary);">لوحة المراجعة والتكويد</h2>
-        <button onclick="location.reload()" style="background:#c0392b; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">خروج</button>
+        <h2 style="color: var(--primary);">لوحة المراجعة والتكويد الأمنية</h2>
+        <button onclick="location.reload()" style="background:#c0392b; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">تسجيل خروج</button>
     </div>
     
-    <input type="text" id="searchInput" class="search-bar" onkeyup="filterData()" placeholder="ابحث بالاسم، الرقم القومي، الهاتف، أو العنوان...">
+    <input type="text" id="searchInput" class="search-bar" onkeyup="filterData()" placeholder="ابحث بأي بيان (اسم، بطاقة، هاتف، عنوان، كود)...">
     
     <div style="overflow-x: auto;">
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>اسم المالك</th>
-                    <th>الهوية والهاتف</th>
+                    <th>المالك</th>
+                    <th>الرقم القومي</th>
+                    <th>رقم الهاتف</th>
                     <th>العنوان</th>
                     <th>المركبة</th>
                     <th>الكود</th>
-                    <th>الصور</th>
+                    <th>المستندات</th>
                     <th>الإجراءات</th>
                 </tr>
             </thead>
@@ -164,7 +151,6 @@
 </div>
 
 <script type="module">
-    // --- سيتم وضع نفس كود Firebase الخاص بك هنا بدون تغيير في المنطق ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -182,7 +168,6 @@
     const dbRef = collection(db, "orders");
     let userRole = "";
 
-    // دالة ضغط الصور
     const compressImg = (file) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -203,14 +188,12 @@
         });
     };
 
-    // إرسال الطلب
     window.submitOrder = async () => {
         const btn = document.getElementById('submitBtn');
         const f1 = document.getElementById('file1').files[0];
         const f2 = document.getElementById('file2').files[0];
         if(!f1 || !f2 || !document.getElementById('ownerName').value) { alert("من فضلك أكمل البيانات!"); return; }
-        
-        btn.disabled = true; btn.innerText = "جاري الحفظ بالسحابة...";
+        btn.disabled = true; btn.innerText = "جاري الإرسال...";
         try {
             const i1 = await compressImg(f1); const i2 = await compressImg(f2);
             await addDoc(dbRef, {
@@ -224,18 +207,16 @@
                 timestamp: Date.now(),
                 approved: false, vCode: ""
             });
-            alert("تم إرسال بياناتك بنجاح يا بشمهندس ✅");
+            alert("تم إرسال البيانات بنجاح ✅");
             location.reload();
         } catch (e) { alert("خطأ: " + e.message); btn.disabled = false; }
     };
 
-    // عملية تسجيل دخول المسؤول
     window.loginProcess = () => {
-        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة المرور:");
+        const u = prompt("المستخدم:"); const p = prompt("الرمز:");
         if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
         else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
-        else { alert("بيانات غير صحيحة!"); return; }
-        
+        else { alert("خطأ!"); return; }
         document.getElementById('citizenPage').style.display = 'none';
         document.getElementById('adminPage').style.display = 'block';
         document.getElementById('adminBtnArea').style.display = 'none';
@@ -249,14 +230,15 @@
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
                 tableBody.innerHTML += `<tr>
-                    <td style="font-weight:bold;">${item.owner}</td>
-                    <td>${item.nationalId}<br><small>${item.phone}</small></td>
+                    <td style="font-weight:bold; color:#2c3e50;">${item.owner}</td>
+                    <td>${item.nationalId}</td>
+                    <td>${item.phone}</td>
                     <td>${item.address}</td>
-                    <td>${item.vType}<br><small>${item.vDesc}</small></td>
-                    <td>${item.vCode ? `<span class="v-code-badge">${item.vCode}</span>` : '<span style="color:red">قيد الانتظار</span>'}</td>
+                    <td>${item.vType} - ${item.vDesc}</td>
+                    <td>${item.vCode ? `<span class="v-code-badge">${item.vCode}</span>` : '<span style="color:#e74c3c">قيد الانتظار</span>'}</td>
                     <td>
-                        <button onclick="viewImg('${item.img1}')" style="font-size:10px">البطاقة</button>
-                        <button onclick="viewImg('${item.img2}')" style="font-size:10px">الملكية</button>
+                        <button onclick="viewImg('${item.img1}')" style="padding:4px">البطاقة</button>
+                        <button onclick="viewImg('${item.img2}')" style="padding:4px">الملكية</button>
                     </td>
                     <td>
                         <button style="background:green;color:white;border:none;padding:5px;border-radius:4px" onclick="assignCode('${id}')">تكويد</button>
@@ -272,10 +254,8 @@
         if(!c) return;
         const q = query(dbRef, where("vCode", "==", c));
         const checkSnap = await getDocs(q);
-        if(!checkSnap.empty) { alert("هذا الكود مسجل لمركبة أخرى!"); return; }
-        try {
-            await updateDoc(doc(db, "orders", id), { vCode: c, approved: true });
-        } catch (e) { alert("خطأ: " + e.message); }
+        if(!checkSnap.empty) { alert("الكود مكرر!"); return; }
+        await updateDoc(doc(db, "orders", id), { vCode: c, approved: true });
     };
 
     window.filterData = () => {
@@ -287,9 +267,8 @@
         }
     };
 
-    window.deleteRecord = async (id) => { if(confirm("حذف الطلب؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "orders", id)); };
     window.viewImg = (src) => { const w = window.open(); w.document.write(`<img src="${src}" style="width:100%">`); };
 </script>
-
 </body>
 </html>
