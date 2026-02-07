@@ -102,15 +102,17 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // بيانات مشروع مهند الجديد (system-storage-bd0ed)
     const firebaseConfig = {
-        apiKey: "AIzaSyDLYhF33Z5ZZgwAcDpF7buWeQ3Gd7C4_4I",
-        authDomain: "system-kafr-sakr.firebaseapp.com",
-        projectId: "system-kafr-sakr",
-        storageBucket: "system-kafr-sakr.firebasestorage.app",
-        messagingSenderId: "498541563994",
-        appId: "1:498541563994:web:a26dacf288ba0ba4c14863"
+        apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
+        authDomain: "system-storage-bd0ed.firebaseapp.com",
+        projectId: "system-storage-bd0ed",
+        storageBucket: "system-storage-bd0ed.firebasestorage.app",
+        messagingSenderId: "501351821676",
+        appId: "1:501351821676:web:2926c58dedfc536cea8349",
+        measurementId: "G-80FBHRBB3Q"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -118,7 +120,7 @@
     const dbRef = collection(db, "orders");
     let userRole = "";
 
-    // دالة ضغط الصور لتحويلها لـ Base64 صغير الحجم
+    // ضغط الصور لتقليل حجم الداتا المخزنة مجاناً
     const compressImg = (file) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -128,13 +130,13 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const maxWidth = 600; // تصغير العرض لتقليل الحجم
+                    const maxWidth = 500; 
                     const scale = maxWidth / img.width;
                     canvas.width = maxWidth;
                     canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // جودة 60% لتقليل المساحة
+                    resolve(canvas.toDataURL('image/jpeg', 0.5)); // جودة 50% كافية جداً للبطاقة
                 };
             };
         });
@@ -147,7 +149,7 @@
         
         if(!f1 || !f2 || !document.getElementById('ownerName').value) { alert("أكمل البيانات!"); return; }
         
-        btn.disabled = true; btn.innerText = "جاري معالجة الصور وحفظ البيانات...";
+        btn.disabled = true; btn.innerText = "جاري الحفظ في سحابة كفر صقر...";
 
         try {
             const img1Base64 = await compressImg(f1);
@@ -165,7 +167,7 @@
                 timestamp: Date.now(),
                 approved: false, vCode: ""
             });
-            alert("تم الحفظ بنجاح يا بشمهندس ✅");
+            alert("تم الحفظ بنجاح يا بشمهندس مهند ✅");
             location.reload();
         } catch (e) {
             alert("خطأ: " + e.message);
@@ -202,15 +204,21 @@
     }
 
     window.assignCode = async (id) => {
-        const c = prompt("أدخل الكود:");
+        const c = prompt("أدخل الكود الجديد:");
         if(c) await updateDoc(doc(db, "orders", id), { vCode: c });
     };
 
-    window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "orders", id)); };
-    window.viewImg = (src) => { const w = window.open(); w.document.write(`<img src="${src}" style="width:100%">`); };
+    window.deleteRecord = async (id) => { if(confirm("هل أنت متأكد من حذف السجل؟")) await deleteDoc(doc(db, "orders", id)); };
+    window.viewImg = (src) => { 
+        const w = window.open(); 
+        w.document.write(`<title>معاينة المستند</title><img src="${src}" style="width:100%">`); 
+    };
     window.showTab = (id) => {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if(id === 'citizen') document.getElementById('t1').classList.add('active');
+        else document.getElementById('t2').classList.add('active');
     };
 </script>
 </body>
