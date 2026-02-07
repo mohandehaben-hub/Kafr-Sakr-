@@ -3,274 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة حصر المركبات - كفر صقر</title>
+    <title>منظومة كفر صقر الذكية | مهند التهامي</title>
     <style>
-        :root {
-            --primary-color: #1a5276;
-            --secondary-color: #27ae60;
-            --accent-color: #f39c12;
-            --bg-color: #f4f7f6;
-            --danger-color: #e74c3c;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .main-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 5px solid var(--accent-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-contact {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-            color: white;
-            transition: 0.3s;
-        }
-
-        .btn-call { background-color: #2980b9; }
-        .btn-whatsapp { background-color: #25d366; }
-
-        .container {
-            max-width: 1100px;
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-
-        h3 { color: var(--primary-color); border-right: 4px solid var(--accent-color); padding-right: 10px; }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .form-group { margin-bottom: 10px; text-align: right; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .table-wrapper { overflow-x: auto; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; }
-        th, td { padding: 10px; border: 1px solid #eee; text-align: center; }
-        th { background-color: var(--primary-color); color: white; white-space: nowrap; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-
-        .btn-del { background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .btn-export { background: #34495e; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 10px; width: 100%; font-weight: bold; }
-
-        #searchInput { margin-bottom: 15px; border: 2px solid var(--primary-color); }
+        :root { --primary: #1a5276; --secondary: #27ae60; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; direction: rtl; }
+        header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tabs { display: flex; background: white; cursor: pointer; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; color: #555; transition: 0.3s; }
+        .tab.active { color: var(--primary); border-bottom: 4px solid var(--primary); background: #f9f9f9; }
+        .container { max-width: 900px; margin: 20px auto; padding: 15px; }
+        .content { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: none; }
+        .content.active { display: block; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #333; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { background: var(--secondary); color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
+        th { background: var(--primary); color: white; font-size: 14px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; color: white; font-weight: bold; }
+        .img-view { color: #2980b9; cursor: pointer; font-weight: bold; text-decoration: underline; }
+        .btn-action { width: auto; padding: 5px 10px; font-size: 12px; margin: 2px; }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <h1>رئاسة مركز و مدينة كفر صقر</h1>
-        <p>نظام إدارة وحصر المركبات (تحديث 2026)</p>
-        <div class="header-buttons">
-            <a href="tel:01021102607" class="btn-contact btn-call">📞 اتصال بالدعم</a>
-            <a href="https://wa.me/201021102607" target="_blank" class="btn-contact btn-whatsapp">💬 واتساب</a>
-        </div>
-    </header>
+<header>
+    <h1>منظومة حصر المركبات - كفر صقر</h1>
+    <p>تطوير وإشراف: م. مهند إيهاب التهامي</p>
+</header>
 
-    <div class="container">
-        <div class="card">
-            <h3>➕ تسجيل بيانات مالك ومركبة</h3>
-            <form id="vehicleForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>👤 اسم صاحب المركبة:</label>
-                        <input type="text" id="ownerName" placeholder="الاسم رباعي" required>
-                    </div>
-                    <div class="form-group">
-                        <label>🆔 الرقم القومي (14 رقم):</label>
-                        <input type="text" id="nationalId" pattern="\d{14}" title="يجب إدخال 14 رقم" placeholder="الرقم القومي كاملاً" required>
-                    </div>
-                    <div class="form-group">
-                        <label>📞 رقم الهاتف:</label>
-                        <input type="tel" id="phone" placeholder="01xxxxxxxxx" required>
-                    </div>
-                    <div class="form-group">
-                        <label>🏠 العنوان بالتفصيل:</label>
-                        <input type="text" id="address" placeholder="القرية / الحي / الشارع" required>
-                    </div>
-                    <div class="form-group">
-                        <label>🚜 نوع المركبة:</label>
-                        <select id="vehicleType" required>
-                            <option value="تكتوك">تكتوك</option>
-                            <option value="موتوسيكل">موتوسيكل</option>
-                            <option value="تروسيكل">تروسيكل</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>🔢 الرقم الكودي للمركبة:</label>
-                        <input type="number" id="vehicleNumber" placeholder="رقم اللوحة أو الكود" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn-submit">حفظ البيانات في القاعدة المحلية</button>
-            </form>
-        </div>
+<div class="tabs">
+    <div class="tab active" onclick="showTab('citizen')">تسجيل بيانات مواطن</div>
+    <div class="tab" onclick="loginProcess()">لوحة المسؤولين 🔐</div>
+</div>
 
-        <div class="card">
-            <h3>📋 الأرشيف المسجل</h3>
-            <button class="btn-export" onclick="exportToCSV()">📥 تحميل قاعدة البيانات كملف Excel (CSV)</button>
-            
-            <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="ابحث بالاسم، الرقم القومي، أو الكود...">
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>الرقم القومي</th>
-                            <th>الهاتف</th>
-                            <th>العنوان</th>
-                            <th>النوع</th>
-                            <th>الكود</th>
-                            <th>إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody"></tbody>
-                </table>
-            </div>
-        </div>
+<div class="container">
+    <div id="citizen" class="content active">
+        <h3>📝 إدخال بيانات المركبة</h3>
+        <label>الاسم الرباعي للمالك:</label>
+        <input type="text" id="ownerName" placeholder="اكتب الاسم كما هو بالبطاقة">
+        
+        <label>الرقم القومي (14 رقم):</label>
+        <input type="number" id="nationalId" placeholder="الرقم القومي">
+        
+        <label>بيانات المركبة (النوع والكود):</label>
+        <input type="text" id="vDetails" placeholder="مثلاً: توكتوك - كود 123">
+        
+        <label>تصوير بطاقة الرقم القومي:</label>
+        <input type="file" id="file1" accept="image/*">
+        
+        <label>تصوير أوراق الملكية:</label>
+        <input type="file" id="file2" accept="image/*">
+        
+        <button id="submitBtn">إرسال البيانات الآن ✅</button>
     </div>
 
-    <script>
-        let vehicles = JSON.parse(localStorage.getItem('kafr_saqr_full_data')) || [];
+    <div id="adminArea" class="content">
+        <h3 id="roleTitle">لوحة التحكم</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>المالك</th>
+                        <th>المركبة</th>
+                        <th>الحالة</th>
+                        <th>المرفقات</th>
+                        <th id="controlCol">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable">
+                    </tbody>
+            </table>
+        </div>
+        <button onclick="location.reload()" style="background:#7f8c8d; margin-top:20px;">تسجيل الخروج</button>
+    </div>
+</div>
 
-        document.getElementById('vehicleForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+<script type="module">
+    // استيراد أدوات جوجل السحابية
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // إعدادات مشروعك الحقيقية (من الصور التي أرسلتها)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDLYhF33Z5ZZgwAcDpF7buWeQ3Gd7C4_4I",
+        authDomain: "system-kafr-sakr.firebaseapp.com",
+        projectId: "system-kafr-sakr",
+        storageBucket: "system-kafr-sakr.firebasestorage.app",
+        messagingSenderId: "498541563994",
+        appId: "1:498541563994:web:a26dacf288ba0ba4c14863",
+        measurementId: "G-X5K5FMS6PX"
+    };
+
+    // تشغيل الاتصال
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const dbRef = collection(db, "orders");
+    let currentUserRole = ""; 
+
+    // --- وظيفة تسجيل الدخول حسب الصلاحيات ---
+    window.loginProcess = () => {
+        const u = prompt("اسم المستخدم:");
+        const p = prompt("كلمة المرور:");
+
+        if (u === "Eltohamy" && p === "551855125500") {
+            currentUserRole = "SUPER"; // مدير النظام (كل شيء)
+        } else if (u === "Bahe" && p === "55185512") {
+            currentUserRole = "EDITOR"; // مراجع (رؤية وموافقة)
+        } else if (u === "Bahe1" && p === "55185512") {
+            currentUserRole = "VIEWER"; // مشاهد (رؤية فقط)
+        } else {
+            alert("خطأ في بيانات الدخول!");
+            return;
+        }
+        
+        document.getElementById('roleTitle').innerText = "لوحة تحكم: " + u;
+        showTab('adminArea');
+        renderAdminData();
+    };
+
+    // --- وظيفة جلب البيانات وعرضها حسب الصلاحية ---
+    function renderAdminData() {
+        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+            const tableBody = document.getElementById('dataTable');
+            const controlHeader = document.getElementById('controlCol');
+            tableBody.innerHTML = '';
             
-            const newEntry = {
-                owner: document.getElementById('ownerName').value,
-                nid: document.getElementById('nationalId').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                type: document.getElementById('vehicleType').value,
-                number: document.getElementById('vehicleNumber').value,
-                id: Date.now()
-            };
+            // إخفاء عمود التحكم للمشاهد فقط
+            controlHeader.style.display = (currentUserRole === "VIEWER") ? "none" : "table-cell";
 
-            vehicles.push(newEntry);
-            saveAndRefresh();
-            this.reset();
+            snap.forEach(documentSnapshot => {
+                const item = documentSnapshot.data();
+                const id = documentSnapshot.id;
+                
+                let statusBadge = item.approved ? 
+                    '<span class="badge" style="background:green">مقبول</span>' : 
+                    '<span class="badge" style="background:orange">انتظار</span>';
+                
+                let actionButtons = "";
+                if (currentUserRole === "SUPER") {
+                    actionButtons = `<button class="btn-action" style="background:green" onclick="approveRecord('${id}')">موافقة</button>
+                                     <button class="btn-action" style="background:red" onclick="deleteRecord('${id}')">حذف</button>`;
+                } else if (currentUserRole === "EDITOR") {
+                    actionButtons = `<button class="btn-action" style="background:green" onclick="approveRecord('${id}')">موافقة</button>`;
+                }
+
+                tableBody.innerHTML += `<tr>
+                    <td>${item.owner}</td>
+                    <td>${item.vehicle}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <span class="img-view" onclick="openMedia('${item.img1}')">بطاقة</span> | 
+                        <span class="img-view" onclick="openMedia('${item.img2}')">ملكية</span>
+                    </td>
+                    ${currentUserRole !== "VIEWER" ? `<td>${actionButtons}</td>` : ""}
+                </tr>`;
+            });
+        });
+    }
+
+    // --- أوامر المسؤولين ---
+    window.approveRecord = async (id) => { 
+        await updateDoc(doc(db, "orders", id), { approved: true }); 
+        alert("تم اعتماد الطلب بنجاح");
+    };
+    
+    window.deleteRecord = async (id) => { 
+        if(confirm("هل أنت متأكد من حذف هذا السجل نهائياً؟")) {
+            await deleteDoc(doc(db, "orders", id)); 
+        }
+    };
+
+    window.openMedia = (data) => {
+        const win = window.open("");
+        win.document.write(`<img src="${data}" style="width:100%; max-width:600px; display:block; margin:auto;">`);
+    };
+
+    // --- وظيفة المواطن: إرسال الطلب ---
+    document.getElementById('submitBtn').onclick = async () => {
+        const btn = document.getElementById('submitBtn');
+        const name = document.getElementById('ownerName').value;
+        const nid = document.getElementById('nationalId').value;
+        const v = document.getElementById('vDetails').value;
+        const f1 = document.getElementById('file1').files[0];
+        const f2 = document.getElementById('file2').files[0];
+
+        if(!name || !f1 || !f2) { alert("من فضلك أكمل كافة البيانات والصور"); return; }
+
+        btn.disabled = true; btn.innerText = "جاري الحفظ في السحابة...";
+
+        const toBase64 = file => new Promise(resolve => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
         });
 
-        function saveAndRefresh() {
-            localStorage.setItem('kafr_saqr_full_data', JSON.stringify(vehicles));
-            renderTable(vehicles);
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = '';
-            
-            data.forEach((item) => {
-                const row = `<tr>
-                    <td>${item.owner}</td>
-                    <td>${item.nid}</td>
-                    <td>${item.phone}</td>
-                    <td>${item.address}</td>
-                    <td>${item.type}</td>
-                    <td><b style="color:var(--primary-color)">${item.number}</b></td>
-                    <td>
-                        <button class="btn-del" onclick="deleteItem(${item.id})">حذف</button>
-                    </td>
-                </tr>`;
-                tbody.innerHTML += row;
+        try {
+            await addDoc(dbRef, {
+                owner: name,
+                nationalId: nid,
+                vehicle: v,
+                img1: await toBase64(f1),
+                img2: await toBase64(f2),
+                timestamp: Date.now(),
+                approved: false
             });
+            alert("تم إرسال طلبك بنجاح للمراجعة.");
+            location.reload();
+        } catch (err) {
+            alert("حدث خطأ! تأكد من إعدادات Firestore (Rules)");
+            btn.disabled = false;
         }
+    };
+</script>
 
-        function deleteItem(id) {
-            if(confirm('هل تريد حذف هذا السجل نهائياً؟')) {
-                vehicles = vehicles.filter(item => item.id !== id);
-                saveAndRefresh();
-            }
-        }
+<script>
+    // وظيفة التنقل البسيط بين التبويبات
+    function showTab(tabId) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if(tabId === 'citizen') document.querySelector('.tab').classList.add('active');
+    }
+</script>
 
-        function searchTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = vehicles.filter(item => 
-                item.owner.toLowerCase().includes(query) || 
-                item.nid.includes(query) ||
-                item.number.toString().includes(query)
-            );
-            renderTable(filtered);
-        }
-
-        function exportToCSV() {
-            if(vehicles.length === 0) return alert('الأرشيف فارغ حالياً');
-            
-            let csvContent = "\uFEFFالاسم,الرقم القومي,الهاتف,العنوان,نوع المركبة,الكود\n";
-            vehicles.forEach(v => {
-                csvContent += `"${v.owner}","${v.nid}","${v.phone}","${v.address}","${v.type}","${v.number}"\n`;
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "ارشيف_مركبات_كفر_صقر_2026.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // تشغيل الجدول عند فتح الصفحة
-        renderTable(vehicles);
-    </script>
 </body>
 </html>
