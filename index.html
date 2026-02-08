@@ -170,7 +170,7 @@ const compressImg = (file) => {
 };
 
 // =====================
-// التكويد التلقائي + حفظ البيانات
+// التكويد التلقائي + أزرار المواطن
 // =====================
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const btn = document.getElementById('submitBtn');
@@ -182,7 +182,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     if (!/^[0-9]{14}$/.test(nid)) { alert("يرجى إدخال 14 رقماً للرقم القومي"); return; }
     if (!/^01[0125][0-9]{8}$/.test(tel)) { alert("يرجى إدخال رقم هاتف مصري صحيح"); return; }
     if (!owner || files.length === 0) { alert("يرجى ملء الاسم ورفع الصور"); return; }
-    
+
     btn.disabled = true; btn.innerText = "جاري المعالجة...";
     try {
         const imgArray = [];
@@ -193,7 +193,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
         const snapshot = await getDocs(query(dbRef, orderBy("vCode", "desc")));
         snapshot.forEach(docSnap => {
             const code = parseInt(docSnap.data().vCode);
-            if (!isNaN(code) && code > lastCode) lastCode = code;
+            if(!isNaN(code) && code > lastCode) lastCode = code;
         });
         const newCode = lastCode + 1;
 
@@ -207,8 +207,12 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             vCode: newCode.toString()
         };
         await addDoc(dbRef, data);
+
         alert(`تم تسجيل طلبك ✅\nرقم المركبة: ${newCode}`);
+
+        // فتح واتساب تلقائي
         window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالقومي: ${nid}%0Aالكود: ${newCode}`, '_blank');
+
         location.reload();
     } catch(e){ console.error(e); alert("حدث خطأ!"); btn.disabled = false; }
 });
@@ -258,4 +262,7 @@ function renderAdmin(){
                 const mainImg=document.getElementById("mainViewImg");
                 const thumbContainer=document.getElementById("modalThumbnails");
                 thumbContainer.innerHTML=''; mainImg.src=item.images[0];
-                item.images.forEach
+                item.images.forEach(src=>{
+                    const img=document.createElement('img');
+                    img.src=src; img.style.width="60px"; img.style.height="60px"; img.style.cursor="pointer"; img.style.borderRadius="8px";
+                    img.onclick=()=> main
