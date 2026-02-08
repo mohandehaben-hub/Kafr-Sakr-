@@ -282,6 +282,7 @@
                         <th>الهاتف</th>
                         <th>العنوان</th>
                         <th>النوع</th>
+                        <th>الموديل</th>
                         <th>الكود</th>
                         <th>تاريخ التكويد</th>
                         <th>الصور</th>
@@ -325,7 +326,12 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>الموديل واللون</label>
+                <label>موديل السنة</label>
+                <select id="editVYear">
+                    </select>
+            </div>
+            <div class="input-group" style="grid-column: 1 / -1;">
+                <label>الوصف واللون</label>
                 <input type="text" id="editVDesc">
             </div>
             <div class="input-group" style="grid-column: 1 / -1;">
@@ -364,14 +370,19 @@
 </footer>
 
 <script>
-    // تعبئة سنوات الموديل من 2000 إلى 2200
-    const yearSelect = document.getElementById('vYear');
-    for (let year = 2000; year <= 2200; year++) {
-        let opt = document.createElement('option');
-        opt.value = year;
-        opt.innerText = year;
-        yearSelect.appendChild(opt);
+    // تعبئة سنوات الموديل من 2000 إلى 2200 لصفحة المواطن وصفحة التعديل
+    function fillYears(selectId) {
+        const select = document.getElementById(selectId);
+        if(!select) return;
+        for (let year = 2000; year <= 2200; year++) {
+            let opt = document.createElement('option');
+            opt.value = year;
+            opt.innerText = year;
+            select.appendChild(opt);
+        }
     }
+    fillYears('vYear');
+    fillYears('editVYear');
 
     const locations = [
         "مدينة كفر صقر", "حي النصر", "حي الزهور", "حي تيسير", "حي السعادة", "حي السلام", "حي الروضة",
@@ -485,7 +496,8 @@
             await addDoc(dbRef, {
                 owner, nationalId: nid, phone: phone,
                 vType: document.getElementById('vType').value,
-                vDesc: `موديل ${year} - لون ${color}`, // دمج السنة واللون في حقل الوصف
+                vYear: year,
+                vDesc: `موديل ${year} - لون ${color}`,
                 address: mainLocation + " - " + extraAddress, 
                 images: imgArray, 
                 timestamp: Date.now(),
@@ -497,7 +509,6 @@
         } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
-    // بقية وظائف الـ Admin و Excel والـ Modals بقيت كما هي لضمان استقرار النظام
     async function getSmartNextCode() {
         const snap = await getDocs(dbRef);
         let maxCode = 100;
@@ -519,7 +530,7 @@
     };
 
     function printItem(item) {
-        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>وصف المركبة:</b> ${item.vDesc}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي - م/ مهند التهامي</footer></div>`;
+        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>الموديل:</b> ${item.vYear || '-'}</p><p><b>وصف المركبة:</b> ${item.vDesc}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي - م/ مهند التهامي</footer></div>`;
         const originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent;
         window.print();
@@ -535,7 +546,7 @@
                 const item = s.data(); const id = s.id;
                 total++; item.vCode ? coded++ : pending++;
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.phone || '-'}</td><td>${item.address || '-'}</td><td>${item.vType}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
+                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.phone || '-'}</td><td>${item.address || '-'}</td><td>${item.vType}</td><td style="font-weight:bold; color:var(--primary);">${item.vYear || '-'}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
@@ -556,6 +567,7 @@
                     document.getElementById('editNid').value = item.nationalId;
                     document.getElementById('editPhone').value = item.phone;
                     document.getElementById('editVType').value = item.vType;
+                    document.getElementById('editVYear').value = item.vYear || '';
                     document.getElementById('editVDesc').value = item.vDesc || '';
                     document.getElementById('editAddress').value = item.address || '';
                     document.getElementById('editVCode').value = item.vCode || '';
@@ -589,6 +601,7 @@
                 nationalId: document.getElementById('editNid').value,
                 phone: document.getElementById('editPhone').value,
                 vType: document.getElementById('editVType').value,
+                vYear: document.getElementById('editVYear').value,
                 vDesc: document.getElementById('editVDesc').value,
                 address: document.getElementById('editAddress').value,
                 vCode: document.getElementById('editVCode').value.toString()
