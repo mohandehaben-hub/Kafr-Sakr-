@@ -1,9 +1,3 @@
-تمام! 😎
-هنا النسخة الكاملة والطويلة للكود، بكل التفاصيل الأصلية مع الإضافات اللي طلبتها (التكويد التلقائي، أزرار المواطن، الخ) بدون أي تصغير:
-
-⸻
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -217,11 +211,6 @@
             </div>
         </div>
         <button id="submitBtn">تأكيد البيانات وحفظ الطلب ✅</button>
-
-        <div id="citizenActions" style="margin-top:20px; display:flex; gap:10px; flex-wrap: wrap;">
-            <button id="callBtn" style="background:#2980b9; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">📞 اتصل</button>
-            <button id="waBtn" style="background:#25D366; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">💬 واتساب</button>
-        </div>
     </div>
 </div>
 
@@ -259,121 +248,142 @@
 </footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = { apiKey:"AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U", authDomain:"system-storage-bd0ed.firebaseapp.com", projectId:"system-storage-bd0ed", storageBucket:"system-storage-bd0ed.firebasestorage.app", messagingSenderId:"501351821676", appId:"1:501351821676:web:2926c58dedfc536cea8349" };
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const dbRef = collection(db, "orders");
-let userRole = "";
+    const firebaseConfig = {
+        apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
+        authDomain: "system-storage-bd0ed.firebaseapp.com",
+        projectId: "system-storage-bd0ed",
+        storageBucket: "system-storage-bd0ed.firebasestorage.app",
+        messagingSenderId: "501351821676",
+        appId: "1:501351821676:web:2926c58dedfc536cea8349"
+    };
 
-// ضغط الصور قبل الرفع
-const compressImg = (file) => {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-            const img = new Image();
-            img.src = e.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const maxWidth = 600;
-                const scale = maxWidth / img.width;
-                canvas.width = maxWidth;
-                canvas.height = img.height * scale;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                resolve(canvas.toDataURL('image/jpeg', 0.6));
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const dbRef = collection(db, "orders");
+    let userRole = "";
+
+    const compressImg = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxWidth = 600;
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth; canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
             };
-        };
+        });
+    };
+
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('submitBtn');
+        const files = document.getElementById('multiFiles').files;
+        const owner = document.getElementById('ownerName').value.trim();
+        const nid = document.getElementById('nationalId').value.trim();
+        const tel = document.getElementById('phone').value.trim();
+
+        if (!/^[0-9]{14}$/.test(nid)) { alert("يرجى إدخال 14 رقماً للرقم القومي"); return; }
+        if (!/^01[0125][0-9]{8}$/.test(tel)) { alert("يرجى إدخال رقم هاتف مصري صحيح"); return; }
+        if (!owner || files.length === 0) { alert("يرجى ملء الاسم ورفع الصور"); return; }
+
+        btn.disabled = true; btn.innerText = "جاري المعالجة...";
+        try {
+            const imgArray = [];
+            for(let f of files) { imgArray.push(await compressImg(f)); }
+            const data = {
+                owner, nationalId: nid, phone: tel,
+                address: document.getElementById('address').value,
+                vType: document.getElementById('vType').value,
+                vDesc: document.getElementById('vDesc').value,
+                images: imgArray, timestamp: Date.now(), vCode: ""
+            };
+            await addDoc(dbRef, data);
+            alert("تم تسجيل طلبك بنجاح ✅");
+            window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالقومي: ${nid}`, '_blank');
+            location.reload();
+        } catch (e) { alert("حدث خطأ!"); btn.disabled = false; }
     });
-};
 
-// ======== إضافة التكويد التلقائي + أزرار المواطن ========
-document.getElementById('submitBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('submitBtn');
-    const files = document.getElementById('multiFiles').files;
-    const owner = document.getElementById('ownerName').value.trim();
-    const nid = document.getElementById('nationalId').value.trim();
-    const tel = document.getElementById('phone').value.trim();
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة السر:");
+        if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
+        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
+        else { alert("خطأ في الدخول!"); return; }
+        document.getElementById('citizenPage').style.display = 'none';
+        document.getElementById('adminPage').style.display = 'block';
+        renderAdmin();
+    });
 
-    if (!/^[0-9]{14}$/.test(nid)) { alert("يرجى إدخال 14 رقماً للرقم القومي"); return; }
-    if (!/^01[0125][0-9]{8}$/.test(tel)) { alert("يرجى إدخال رقم هاتف مصري صحيح"); return; }
-    if (!owner || files.length === 0) { alert("يرجى ملء الاسم ورفع الصور"); return; }
+    function renderAdmin() {
+        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+            const tableBody = document.getElementById('dataTable');
+            tableBody.innerHTML = '';
+            snap.forEach(s => {
+                const item = s.data(); const id = s.id;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:bold">${item.owner}</td>
+                    <td style="mso-number-format:'\@'">${item.nationalId}</td>
+                    <td style="mso-number-format:'\@'">${item.phone}</td>
+                    <td>${item.address}</td><td>${item.vType}</td>
+                    <td>${item.vCode || '⏳'}</td>
+                    <td><button class="view-btn">🖼️</button></td>
+                    <td>
+                        <button class="code-btn">كود</button>
+                        ${userRole==='SUPER'?'<button class="del-btn" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">حذف</button>':''}
+                    </td>`;
+                
+                tr.querySelector('.view-btn').onclick = () => {
+                    const modal = document.getElementById("imgModal");
+                    const mainImg = document.getElementById("mainViewImg");
+                    const thumbContainer = document.getElementById("modalThumbnails");
+                    thumbContainer.innerHTML = '';
+                    mainImg.src = item.images[0];
+                    item.images.forEach(src => {
+                        const img = document.createElement('img');
+                        img.src = src; img.style.width="60px"; img.style.height="60px"; img.style.cursor="pointer"; img.style.borderRadius="8px";
+                        img.onclick = () => mainImg.src = src;
+                        thumbContainer.appendChild(img);
+                    });
+                    modal.style.display = "block";
+                };
 
-    btn.disabled = true; btn.innerText = "جاري المعالجة...";
-
-    try {
-        const imgArray = [];
-        for (let f of files) { imgArray.push(await compressImg(f)); }
-
-        // ====== التكويد التلقائي ======
-        let lastCode = 0;
-        const snapshot = await getDocs(query(dbRef, orderBy("vCode","desc")));
-        snapshot.forEach(docSnap => { const code = parseInt(docSnap.data().vCode); if(!isNaN(code) && code > lastCode) lastCode = code; });
-        const newCode = lastCode + 1;
-
-        const data = {
-            owner,
-            nationalId: nid,
-            phone: tel,
-            address: document.getElementById('address').value,
-            vType: document.getElementById('vType').value,
-            vDesc: document.getElementById('vDesc').value,
-            images: imgArray,
-            timestamp: Date.now(),
-            vCode: newCode.toString()
-        };
-
-        await addDoc(dbRef, data);
-        alert(`تم تسجيل طلبك ✅\nرقم المركبة: ${newCode}`);
-
-        window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالقومي: ${nid}%0Aالكود: ${newCode}`, '_blank');
-        location.reload();
-    } catch(e) {
-        console.error(e);
-        alert("حدث خطأ!");
-        btn.disabled = false;
+                tr.querySelector('.code-btn').onclick = async () => {
+                    const code = prompt("أدخل كود المركبة:");
+                    if(code) {
+                        await updateDoc(doc(db, "orders", id), { vCode: code });
+                        alert("تم التكويد ✅");
+                    }
+                };
+                if(userRole==='SUPER') tr.querySelector('.del-btn').onclick = () => { if(confirm("حذف؟")) deleteDoc(doc(db, "orders", id)); };
+                tableBody.appendChild(tr);
+            });
+        });
     }
-});
 
-// أزرار المواطن دايمًا
-document.getElementById('callBtn').onclick = () => window.location.href = "tel:010211102607";
-document.getElementById('waBtn').onclick = () => {
-    const owner = document.getElementById('ownerName').value.trim() || "غير محدد";
-    window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}`, '_blank');
-};
+    document.getElementById('exportExcelBtn').onclick = () => {
+        const table = document.getElementById("excelTable");
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Data" });
+        const ws = wb.Sheets["Data"];
+        Object.keys(ws).forEach(key => {
+            if (key.startsWith('B') || key.startsWith('C')) {
+                if (ws[key].v) { ws[key].t = 's'; ws[key].v = "" + ws[key].v; }
+            }
+        });
+        XLSX.writeFile(wb, "بيانات_كفر_صقر.xlsx");
+    };
 
-// ===== تسجيل دخول المشرف ======
-document.getElementById('loginBtn').addEventListener('click', () => {
-    const u = prompt("اسم المستخدم:");
-    const p = prompt("كلمة السر:");
-    if(u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
-    else if(u === "Bahe" && p === "55185512") userRole = "EDITOR";
-    else { alert("خطأ في الدخول!"); return; }
-
-    document.getElementById('citizenPage').style.display = 'none';
-    document.getElementById('adminPage').style.display = 'block';
-    renderAdmin();
-});
-
-// ===== عرض الطلبات للمشرف ======
-function renderAdmin() {
-    onSnapshot(query(dbRef, orderBy("timestamp","desc")), (snap) => {
-        const tableBody = document.getElementById('dataTable');
-        tableBody.innerHTML = '';
-        snap.forEach(s => {
-            const item = s.data();
-            const id = s.id;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight:bold">${item.owner}</td>
-                <td style="mso-number-format:'\\@'">${item.nationalId}</td>
-                <td style="mso-number-format:'\\@'">${item.phone}</td>
-                <td>${item.address}</td>
-                <td>${item.vType}</td>
-                <td>${item.vCode || '⏳'}</td>
-                <td><button class="view-btn">🖼️</button></td>
-                <td>
-                    <button class="code-btn">ك
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
+</script>
+</body>
+</html>
