@@ -16,7 +16,7 @@
 --text:#2c3e50;
 }
 body{
-font-family:Segoe UI,Arial;
+font-family:'Segoe UI',Arial;
 background:var(--bg);
 margin:0;
 color:var(--text);
@@ -30,13 +30,14 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 border-bottom:4px solid var(--accent);
+flex-wrap:wrap;
 }
 .container{max-width:1000px;margin:30px auto;padding:0 20px;}
 .card{
 background:#fff;
 padding:30px;
 border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.07);
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 .page-title{text-align:center;color:var(--primary);margin-bottom:30px;}
 .form-grid{
@@ -44,21 +45,25 @@ display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 gap:20px;
 }
+.full-row{grid-column:1/-1;}
 .input-group{display:flex;flex-direction:column;}
 .input-group label{margin-bottom:6px;font-weight:700;}
 .input-group input,.input-group select{
-padding:12px;border:2px solid #e0e6ed;border-radius:12px;
+padding:12px;
+border:2px solid #e0e6ed;
+border-radius:12px;
 }
 #submitBtn{
 width:100%;
 background:var(--secondary);
 color:#fff;
-padding:15px;
+padding:16px;
 border:none;
 border-radius:12px;
 font-size:18px;
 font-weight:800;
 cursor:pointer;
+margin-top:20px;
 }
 .admin-content{display:none;width:95%;margin:20px auto;}
 table{
@@ -76,9 +81,28 @@ font-size:14px;
 }
 th{background:#ecf0f1;}
 button{cursor:pointer;border-radius:8px;padding:6px 10px;border:none;}
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+z-index:9999;
+text-align:center;
+}
+.modal img{
+max-width:90%;
+max-height:80vh;
+margin-top:30px;
+border-radius:12px;
+}
 .engineer-footer{
-background:#1c2833;color:#d5dbdb;text-align:center;
-padding:10px;position:fixed;bottom:0;width:100%;
+background:#1c2833;
+color:#d5dbdb;
+text-align:center;
+padding:10px;
+position:fixed;
+bottom:0;
+width:100%;
 border-top:3px solid var(--accent);
 }
 </style>
@@ -89,54 +113,65 @@ border-top:3px solid var(--accent);
 <header>
 <div>
 <h2>رئاسة مركز ومدينة كفر صقر</h2>
-<p>تحيات رئيس المدينة</p>
+<p>منظومة تكويد المركبات</p>
 </div>
 <button id="loginBtn">🔐 لوحة التحكم</button>
 </header>
 
+<!-- المواطن -->
 <div class="container" id="citizenPage">
 <div class="card">
 <h2 class="page-title">تسجيل بيانات المركبة</h2>
+
 <div class="form-grid">
-<div class="input-group">
-<label>الاسم</label>
+<div class="input-group full-row">
+<label>الاسم الرباعي</label>
 <input id="ownerName">
 </div>
+
 <div class="input-group">
 <label>الرقم القومي</label>
 <input id="nationalId">
 </div>
+
 <div class="input-group">
-<label>الهاتف</label>
+<label>رقم الهاتف</label>
 <input id="phone">
 </div>
+
 <div class="input-group">
-<label>النوع</label>
+<label>نوع المركبة</label>
 <select id="vType">
 <option>توكتوك</option>
 <option>موتوسيكل</option>
 <option>تروسيكل</option>
 </select>
 </div>
+
 <div class="input-group">
-<label>الوصف</label>
+<label>الموديل / اللون</label>
 <input id="vDesc">
 </div>
-<div class="input-group">
+
+<div class="input-group full-row">
 <label>العنوان</label>
 <input id="address">
 </div>
-<div class="input-group">
-<label>الصور</label>
+
+<div class="input-group full-row">
+<label>صور المركبة والمستندات</label>
 <input type="file" id="multiFiles" multiple accept="image/*">
 </div>
 </div>
-<button id="submitBtn">تسجيل الطلب ✅</button>
+
+<button id="submitBtn">تأكيد الطلب ✅</button>
 </div>
 </div>
 
+<!-- الأدمن -->
 <div id="adminPage" class="admin-content">
-<h2>لوحة مراجعة الطلبات</h2>
+<h2>مراجعة الطلبات</h2>
+
 <table id="excelTable">
 <thead>
 <tr>
@@ -146,12 +181,19 @@ border-top:3px solid var(--accent);
 <th>النوع</th>
 <th>الحالة</th>
 <th>الكود</th>
+<th>الصور</th>
 <th>إجراء</th>
 </tr>
 </thead>
 <tbody id="dataTable"></tbody>
 </table>
+
 <button id="exportExcelBtn">📤 تصدير Excel</button>
+</div>
+
+<div id="imgModal" class="modal">
+<span style="color:white;font-size:40px;cursor:pointer" onclick="imgModal.style.display='none'">×</span>
+<img id="modalImg">
 </div>
 
 <footer class="engineer-footer">
@@ -160,28 +202,48 @@ border-top:3px solid var(--accent);
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, updateDoc, doc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+getFirestore,collection,addDoc,onSnapshot,
+query,orderBy,updateDoc,doc,getDocs,where
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
+const firebaseConfig={
 apiKey:"AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
 authDomain:"system-storage-bd0ed.firebaseapp.com",
 projectId:"system-storage-bd0ed"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const dbRef = collection(db,"orders");
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const dbRef=collection(db,"orders");
+
+const compressImg=file=>new Promise(res=>{
+const r=new FileReader();
+r.onload=e=>{
+const i=new Image();
+i.onload=()=>{
+const c=document.createElement("canvas");
+const s=600/i.width;
+c.width=600;c.height=i.height*s;
+c.getContext("2d").drawImage(i,0,0,c.width,c.height);
+res(c.toDataURL("image/jpeg",.6));
+};
+i.src=e.target.result;
+};
+r.readAsDataURL(file);
+});
 
 async function generateVehicleCode(type){
-const prefix = type==="توكتوك"?"TK":type==="موتوسيكل"?"MT":"TR";
-const q = query(dbRef,where("vType","==",type));
-const snap = await getDocs(q);
-return `KS-${prefix}-${String(snap.size+1).padStart(6,"0")}`;
+const p=type==="توكتوك"?"TK":type==="موتوسيكل"?"MT":"TR";
+const q=query(dbRef,where("vType","==",type));
+const s=await getDocs(q);
+return `KS-${p}-${String(s.size+1).padStart(6,"0")}`;
 }
 
-document.getElementById("submitBtn").onclick = async ()=>{
-const files = multiFiles.files;
-if(!files.length) return alert("أضف صور");
+submitBtn.onclick=async()=>{
+if(!multiFiles.files.length)return alert("أضف صور");
+const imgs=[];
+for(const f of multiFiles.files)imgs.push(await compressImg(f));
 
 await addDoc(dbRef,{
 owner:ownerName.value,
@@ -190,18 +252,19 @@ phone:phone.value,
 vType:vType.value,
 vDesc:vDesc.value,
 address:address.value,
-images:[],
+images:imgs,
 timestamp:Date.now(),
 status:"NEW",
 vCode:""
 });
-alert("تم التسجيل");
+alert("تم التسجيل بنجاح");
 location.reload();
 };
 
-loginBtn.onclick = ()=>{
-const u=prompt("user");const p=prompt("pass");
-if(u!=="Eltohamy"||p!=="551855125500")return alert("رفض");
+loginBtn.onclick=()=>{
+const u=prompt("user"),p=prompt("pass");
+if(u!=="Eltohamy"||p!=="551855125500")return alert("مرفوض");
+
 citizenPage.style.display="none";
 adminPage.style.display="block";
 
@@ -217,9 +280,14 @@ tr.innerHTML=`
 <td>${i.vType}</td>
 <td>${i.status==="NEW"?"⏳ جديد":"✅ تم"}</td>
 <td>${i.vCode||"—"}</td>
+<td><button>🖼️</button></td>
 <td><button>كود</button></td>`;
-tr.querySelector("button").onclick=async()=>{
-if(i.vCode)return alert("مكود");
+tr.querySelectorAll("button")[0].onclick=()=>{
+modalImg.src=i.images[0];
+imgModal.style.display="block";
+};
+tr.querySelectorAll("button")[1].onclick=async()=>{
+if(i.vCode)return alert("مكودة");
 const code=await generateVehicleCode(i.vType);
 await updateDoc(doc(db,"orders",d.id),{vCode:code,status:"APPROVED"});
 };
