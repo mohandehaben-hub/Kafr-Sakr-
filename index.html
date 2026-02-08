@@ -478,3 +478,51 @@
             cursor: pointer;
             border-radius: 10px;
             transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        #modalThumbnails img:hover {
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        #closeModalBtn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10001;
+        }
+
+        #closeModalBtn:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* Footer */
+        .engineer-footer {
+            background: linear-gradient(135deg, #1c2833, #2c3e50);
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.9rem;
+            z-index: 1000;
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .engineer-footer b {
+            color: #f1c40f;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .engineer-footer p {
+            margin: 5px 0 0;
+            opacity: 0.8;
