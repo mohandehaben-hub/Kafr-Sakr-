@@ -38,7 +38,9 @@
         .btn-wa { background: #25D366; color: white; }
         
         .admin-content { display: none; padding: 20px; }
-        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); overflow-y: auto; }
+        .modal-content { background: white; margin: 5% auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 20px; position: relative; }
+        
         .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.8rem; border-top: 3px solid var(--accent); }
         .support-box { background: #f0f7ff; border: 2px dashed #3498db; border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
     </style>
@@ -142,6 +144,65 @@
     <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 10px; padding: 20px;"></div>
 </div>
 
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:var(--primary); border-bottom:2px solid #eee; padding-bottom:10px;">تعديل بيانات المركبة</h3>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="input-group" style="grid-column: 1 / -1;">
+                <label>الاسم الرباعي</label>
+                <input type="text" id="editOwner">
+            </div>
+            <div class="input-group">
+                <label>الرقم القومي</label>
+                <input type="number" id="editNid">
+            </div>
+            <div class="input-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="editPhone">
+            </div>
+            <div class="input-group">
+                <label>نوع المركبة</label>
+                <select id="editVType">
+                    <option value="توكتوك">توكتوك</option>
+                    <option value="موتوسيكل">موتوسيكل</option>
+                    <option value="تروسيكل">تروسيكل</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>الموديل واللون</label>
+                <input type="text" id="editVDesc">
+            </div>
+            <div class="input-group" style="grid-column: 1 / -1;">
+                <label>العنوان</label>
+                <input type="text" id="editAddress">
+            </div>
+            <div class="input-group" style="grid-column: 1 / -1;">
+                <label>رقم الكود</label>
+                <input type="text" id="editVCode" style="border-color:var(--secondary); font-weight:bold;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button id="saveEditBtn" class="btn btn-primary" style="flex:1;">حفظ التعديلات ✅</button>
+            <button onclick="document.getElementById('editModal').style.display='none'" class="btn btn-del">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="codeModal" class="modal">
+    <div class="modal-content" style="max-width:400px; text-align:center;">
+        <h3 style="color:var(--primary);">تكويد المركبة</h3>
+        <p id="codeHint" style="font-size:0.9rem; color:#666;"></p>
+        <div class="input-group">
+            <label>أدخل الكود المطلوب:</label>
+            <input type="text" id="manualCodeInput" style="text-align:center; font-size:1.5rem; font-weight:bold; color:var(--secondary);">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1;">تأكيد التكويد</button>
+            <button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del">إغلاق</button>
+        </div>
+    </div>
+</div>
+
 <footer class="engineer-footer">
     تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير أنظمة أمنية وتطوير برمجيات 01021102607
 </footer>
@@ -163,6 +224,7 @@
     const db = getFirestore(app);
     const dbRef = collection(db, "orders");
     let userRole = "";
+    let currentEditId = "";
 
     const compressImg = (file) => {
         return new Promise((resolve) => {
@@ -255,34 +317,38 @@
                     <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
                     <td><button class="btn view-btn">🖼️</button></td>
                     <td style="display:flex; gap:5px;">
-                        <button class="btn btn-auto" title="تكويد ذكي">🔢 ذكي</button>
+                        <button class="btn btn-auto" title="تكويد ذكي/يدوي">🔢 كود</button>
                         <button class="btn btn-edit" title="تعديل">✏️</button>
                         ${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}
                     </td>`;
 
-                // التكويد الذكي
+                // التكويد الذكي واليدوي المطور
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
-                    if(confirm(`آخر كود هو (${info.last}). هل تريد صرف الكود الجديد (${info.next})؟`)) {
-                        await updateDoc(doc(db, "orders", id), { vCode: info.next.toString() });
-                    }
+                    document.getElementById('codeHint').innerText = `آخر كود مسجل هو: ${info.last}`;
+                    document.getElementById('manualCodeInput').value = info.next;
+                    document.getElementById('codeModal').style.display = 'block';
+                    
+                    document.getElementById('confirmCodeBtn').onclick = async () => {
+                        const newCode = document.getElementById('manualCodeInput').value;
+                        if(!newCode) return alert("يرجى إدخال الكود");
+                        await updateDoc(doc(db, "orders", id), { vCode: newCode.toString() });
+                        document.getElementById('codeModal').style.display = 'none';
+                    };
                 };
 
-                // تعديل البيانات
-                tr.querySelector('.btn-edit').onclick = async () => {
-                    const nName = prompt("تعديل الاسم:", item.owner) || item.owner;
-                    const nNid = prompt("تعديل الرقم القومي:", item.nationalId) || item.nationalId;
-                    const nPhone = prompt("تعديل الهاتف:", item.phone) || item.phone;
-                    const nDesc = prompt("تعديل الموديل:", item.vDesc) || item.vDesc;
-                    const nAddr = prompt("تعديل العنوان:", item.address) || item.address;
-                    const nCode = prompt("تعديل الكود (اختياري):", item.vCode) || item.vCode;
-
-                    await updateDoc(doc(db, "orders", id), {
-                        owner: nName, nationalId: nNid, phone: nPhone,
-                        vDesc: nDesc, address: nAddr, vCode: nCode.toString()
-                    });
-                    alert("تم التحديث بنجاح ✅");
+                // تعديل البيانات عبر الواجهة الاحترافية
+                tr.querySelector('.btn-edit').onclick = () => {
+                    currentEditId = id;
+                    document.getElementById('editOwner').value = item.owner;
+                    document.getElementById('editNid').value = item.nationalId;
+                    document.getElementById('editPhone').value = item.phone;
+                    document.getElementById('editVType').value = item.vType;
+                    document.getElementById('editVDesc').value = item.vDesc || '';
+                    document.getElementById('editAddress').value = item.address || '';
+                    document.getElementById('editVCode').value = item.vCode || '';
+                    document.getElementById('editModal').style.display = 'block';
                 };
 
                 if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف الطلب نهائياً؟")) deleteDoc(doc(db, "orders", id)); };
@@ -309,6 +375,24 @@
         });
     }
 
+    // حفظ التعديلات من الـ Modal
+    document.getElementById('saveEditBtn').onclick = async () => {
+        if(!currentEditId) return;
+        try {
+            await updateDoc(doc(db, "orders", currentEditId), {
+                owner: document.getElementById('editOwner').value,
+                nationalId: document.getElementById('editNid').value,
+                phone: document.getElementById('editPhone').value,
+                vType: document.getElementById('editVType').value,
+                vDesc: document.getElementById('editVDesc').value,
+                address: document.getElementById('editAddress').value,
+                vCode: document.getElementById('editVCode').value.toString()
+            });
+            alert("تم تحديث البيانات بنجاح ✅");
+            document.getElementById('editModal').style.display = 'none';
+        } catch (e) { alert("خطأ في التحديث"); }
+    };
+
     document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
     document.getElementById('searchInput').oninput = (e) => {
         const term = e.target.value.toLowerCase();
@@ -319,6 +403,13 @@
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
         XLSX.writeFile(wb, "بيانات_تكويد_كفر_صقر.xlsx");
+    };
+
+    // إغلاق المودال عند الضغط خارجه
+    window.onclick = (event) => {
+        if (event.target.className === 'modal') {
+            event.target.style.display = "none";
+        }
     };
 </script>
 </body>
