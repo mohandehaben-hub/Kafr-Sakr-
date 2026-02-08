@@ -6,43 +6,162 @@
     <title>منظومة تكويد المركبات - كفر صقر</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #1a5276; --secondary: #27ae60; --accent: #d35400; --bg: #f4f7f9; --text-dark: #2c3e50; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; direction: rtl; color: var(--text-dark); padding-bottom: 90px; }
-        header { background: var(--primary); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-bottom: 4px solid var(--accent); }
-        .header-title h1 { margin: 0; font-size: 1.5rem; }
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
-        /* الإحصائيات */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border-bottom: 4px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .stat-card h3 { margin: 5px 0; font-size: 1.8rem; color: var(--primary); }
-        .stat-card p { margin: 0; color: #666; font-size: 0.9rem; font-weight: bold; }
+        /* تعريف الألوان والتأثيرات الزجاجية */
+        :root { 
+            --primary: #1a5276; 
+            --secondary: #27ae60; 
+            --accent: #d35400; 
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-white: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-dark: #2c3e50; 
+        }
 
-        /* النماذج والجداول */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-gradient); 
+            background-attachment: fixed;
+            margin: 0; 
+            direction: rtl; 
+            color: var(--text-dark); 
+            padding-bottom: 90px; 
+        }
+
+        /* هيدر زجاجي مثبت */
+        header { 
+            background: rgba(26, 82, 118, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: white; 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1); 
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-title h1 { margin: 0; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* الكروت الزجاجية */
+        .card { 
+            background: var(--glass-white); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 35px; 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px rgba(31, 38, 135, 0.1); 
+        }
+        
+        /* إحصائيات زجاجية ملونة */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { 
+            background: rgba(255, 255, 255, 0.5); 
+            backdrop-filter: blur(6px);
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: center; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-7px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .stat-card h3 { margin: 10px 0; font-size: 2rem; color: var(--primary); }
+        .stat-card p { margin: 0; color: #555; font-size: 0.95rem; font-weight: bold; }
+
+        /* تنسيق المدخلات */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        .input-group label { margin-bottom: 8px; font-weight: bold; }
-        .input-group input, .input-group select { padding: 12px; border: 2px solid #e0e6ed; border-radius: 10px; }
+        .input-group label { margin-bottom: 10px; font-weight: 600; color: var(--primary); }
+        .input-group input, .input-group select { 
+            padding: 14px; 
+            border: 1px solid var(--glass-border); 
+            border-radius: 12px; 
+            background: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(26, 82, 118, 0.1); }
         
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: var(--primary); font-weight: bold; }
+        /* الجداول الزجاجية */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; background: transparent; }
+        th { background: rgba(26, 82, 118, 0.1); color: var(--primary); padding: 18px; border-radius: 12px; }
+        td { padding: 15px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(4px); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        td:first-child { border-right: 1px solid var(--glass-border); border-radius: 0 15px 15px 0; }
+        td:last-child { border-left: 1px solid var(--glass-border); border-radius: 15px 0 0 15px; }
         
-        /* الأزرار */
-        .btn { cursor: pointer; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.9rem; }
+        /* الأزرار العصرية */
+        .btn { 
+            cursor: pointer; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 14px; 
+            font-weight: bold; 
+            transition: all 0.3s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn:active { transform: scale(0.96); }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-auto { background: #3498db; color: white; }
         .btn-edit { background: #f39c12; color: white; }
         .btn-del { background: #e74c3c; color: white; }
         .btn-wa { background: #25D366; color: white; }
         
-        .admin-content { display: none; padding: 20px; }
-        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); overflow-y: auto; }
-        .modal-content { background: white; margin: 5% auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 20px; position: relative; }
+        .admin-content { display: none; padding: 25px; }
         
-        .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.8rem; border-top: 3px solid var(--accent); }
-        .support-box { background: #f0f7ff; border: 2px dashed #3498db; border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
+        /* النوافذ المنبثقة (Modals) */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 10000; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(10px);
+            overflow-y: auto; 
+        }
+        .modal-content { 
+            background: rgba(255, 255, 255, 0.95); 
+            margin: 5% auto; 
+            padding: 35px; 
+            width: 90%; 
+            max-width: 650px; 
+            border-radius: 28px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .engineer-footer { 
+            background: rgba(28, 40, 51, 0.95); 
+            backdrop-filter: blur(8px);
+            color: #d5dbdb; 
+            text-align: center; 
+            padding: 18px; 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            font-size: 0.85rem; 
+            border-top: 3px solid var(--accent); 
+            z-index: 999;
+        }
+        .support-box { 
+            background: rgba(52, 152, 219, 0.08); 
+            border: 2px dashed rgba(52, 152, 219, 0.4); 
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-top: 30px; 
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -52,16 +171,16 @@
         <h1>رئاسة مركز ومدينة كفر صقر</h1>
         <small style="color: #f1c40f;">د/ أحمد المقدم - رئيس المدينة</small>
     </div>
-    <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.2); color: white;">🔐 لوحة التحكم</button>
+    <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">🔐 لوحة التحكم</button>
 </header>
 
 <div class="container" id="citizenPage">
     <div class="card">
-        <h2 style="text-align: center; color: var(--primary);">تسجيل بيانات المركبة</h2>
+        <h2 style="text-align: center; color: var(--primary); margin-bottom: 35px;">📝 تسجيل بيانات المركبة</h2>
         <div class="form-grid">
             <div class="input-group" style="grid-column: 1 / -1;">
                 <label>الاسم الرباعي للمالك</label>
-                <input type="text" id="ownerName" placeholder="كما في البطاقة">
+                <input type="text" id="ownerName" placeholder="أدخل اسم المالك بالكامل كما في البطاقة">
             </div>
             <div class="input-group">
                 <label>الرقم القومي (14 رقم)</label>
@@ -89,14 +208,14 @@
             </div>
             <div class="input-group" style="grid-column: 1 / -1;">
                 <label>رفع الصور والمستندات</label>
-                <input type="file" id="multiFiles" multiple accept="image/*">
+                <input type="file" id="multiFiles" multiple accept="image/*" style="background: rgba(26, 82, 118, 0.05); padding: 25px; border: 2px dashed #bdc3c7;">
             </div>
         </div>
-        <button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.2rem; margin-top: 20px;">إرسال الطلب ✅</button>
+        <button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.3rem; margin-top: 30px; padding: 16px;">إرسال الطلب ✅</button>
 
         <div class="support-box">
-            <p style="margin-top:0; font-weight:bold; color:var(--primary);">تواصل مع الدعم الفني للمنظومة:</p>
-            <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <p style="margin-top:0; font-weight:bold; color:var(--primary);">الدعم الفني والبرمجي:</p>
+            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
                 <a href="https://wa.me/201021102607" target="_blank" class="btn btn-wa">💬 م/ مهند (واتساب)</a>
                 <a href="tel:01021102607" class="btn btn-wa" style="background:#3498db;">📞 م/ مهند (اتصال)</a>
             </div>
@@ -106,14 +225,14 @@
 
 <div id="adminPage" class="admin-content">
     <div class="stats-grid">
-        <div class="stat-card" style="border-color: #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
-        <div class="stat-card" style="border-color: #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
-        <div class="stat-card" style="border-color: #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
+        <div class="stat-card" style="border-bottom: 5px solid #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
+        <div class="stat-card" style="border-bottom: 5px solid #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
+        <div class="stat-card" style="border-bottom: 5px solid #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
     </div>
 
     <div class="card">
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <input type="text" id="searchInput" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd;" placeholder="بحث بالاسم أو الرقم القومي...">
+        <div style="display:flex; gap:12px; margin-bottom:30px;">
+            <input type="text" id="searchInput" style="flex:1; padding:14px; border-radius:14px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.9);" placeholder="بحث بالاسم أو الرقم القومي...">
             <button id="exportExcelBtn" class="btn" style="background:#27ae60; color:white;">تصدير Excel</button>
             <button onclick="location.reload()" class="btn btn-del">خروج</button>
         </div>
@@ -139,15 +258,15 @@
 </div>
 
 <div id="imgModal" class="modal">
-    <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer;" id="closeModalBtn">&times;</span>
-    <img id="mainViewImg" style="max-width:80%; max-height:70vh; display:block; margin:50px auto; border:5px solid white; border-radius:10px;">
-    <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 10px; padding: 20px;"></div>
+    <span style="position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; z-index: 10001;" id="closeModalBtn">&times;</span>
+    <img id="mainViewImg" style="max-width:85%; max-height:75vh; display:block; margin:60px auto; border:6px solid white; border-radius:20px; box-shadow: 0 0 40px rgba(0,0,0,0.6);">
+    <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 12px; padding: 20px; flex-wrap: wrap;"></div>
 </div>
 
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <h3 style="color:var(--primary); border-bottom:2px solid #eee; padding-bottom:10px;">تعديل بيانات المركبة</h3>
-        <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+        <h3 style="color:var(--primary); border-bottom:2px solid var(--glass-border); padding-bottom:15px; margin-top:0;">🔧 تعديل بيانات المركبة</h3>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-top:20px;">
             <div class="input-group" style="grid-column: 1 / -1;">
                 <label>الاسم الرباعي</label>
                 <input type="text" id="editOwner">
@@ -177,28 +296,28 @@
                 <input type="text" id="editAddress">
             </div>
             <div class="input-group" style="grid-column: 1 / -1;">
-                <label>رقم الكود</label>
-                <input type="text" id="editVCode" style="border-color:var(--secondary); font-weight:bold;">
+                <label>رقم الكود (تعديل مباشر)</label>
+                <input type="text" id="editVCode" style="border: 2px solid var(--secondary); font-weight:bold; color:var(--secondary);">
             </div>
         </div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button id="saveEditBtn" class="btn btn-primary" style="flex:1;">حفظ التعديلات ✅</button>
-            <button onclick="document.getElementById('editModal').style.display='none'" class="btn btn-del">إلغاء</button>
+        <div style="display:flex; gap:12px; margin-top:30px;">
+            <button id="saveEditBtn" class="btn btn-primary" style="flex:1; padding:14px;">تأكيد التعديلات ✅</button>
+            <button onclick="document.getElementById('editModal').style.display='none'" class="btn btn-del" style="flex:1; padding:14px;">إلغاء</button>
         </div>
     </div>
 </div>
 
 <div id="codeModal" class="modal">
-    <div class="modal-content" style="max-width:400px; text-align:center;">
-        <h3 style="color:var(--primary);">تكويد المركبة</h3>
-        <p id="codeHint" style="font-size:0.9rem; color:#666;"></p>
+    <div class="modal-content" style="max-width:420px; text-align:center;">
+        <h3 style="color:var(--primary);">🔢 نظام التكويد الذكي</h3>
+        <p id="codeHint" style="font-size:1rem; color:#555; background: rgba(0,0,0,0.05); padding:12px; border-radius:12px;"></p>
         <div class="input-group">
-            <label>أدخل الكود المطلوب:</label>
-            <input type="text" id="manualCodeInput" style="text-align:center; font-size:1.5rem; font-weight:bold; color:var(--secondary);">
+            <label>الكود المخصص للمركبة:</label>
+            <input type="text" id="manualCodeInput" style="text-align:center; font-size:2rem; font-weight:bold; color:var(--secondary); border: 2px solid var(--secondary); height: 60px;">
         </div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1;">تأكيد التكويد</button>
-            <button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del">إغلاق</button>
+        <div style="display:flex; gap:12px; margin-top:30px;">
+            <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1;">تأكيد الكود</button>
+            <button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del">تجاهل</button>
         </div>
     </div>
 </div>
@@ -260,7 +379,7 @@
         const checkSnap = await getDocs(query(dbRef, where("nationalId", "==", nid)));
         if(!checkSnap.empty) { alert("هذا الرقم القومي مسجل مسبقاً!"); return; }
 
-        btn.disabled = true; btn.innerText = "جاري معالجة الصور والحفظ...";
+        btn.disabled = true; btn.innerText = "جاري الحفظ والتشفير...";
         try {
             const imgArray = [];
             for(let f of files) { imgArray.push(await compressImg(f)); }
@@ -271,9 +390,9 @@
                 address: document.getElementById('address').value,
                 images: imgArray, timestamp: Date.now(), vCode: ""
             });
-            alert("تم التسجيل بنجاح!");
+            alert("تم تسجيل بياناتك في المنظومة بنجاح!");
             location.reload();
-        } catch (e) { alert("حدث خطأ في الاتصال"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
+        } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
     async function getSmartNextCode() {
@@ -287,7 +406,7 @@
     }
 
     document.getElementById('loginBtn').onclick = () => {
-        const u = prompt("User:"); const p = prompt("Pass:");
+        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة المرور:");
         if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
         else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
         else return;
@@ -315,30 +434,28 @@
                     <td>${item.vDesc || '-'}</td>
                     <td>${item.address || '-'}</td>
                     <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
-                    <td><button class="btn view-btn">🖼️</button></td>
-                    <td style="display:flex; gap:5px;">
-                        <button class="btn btn-auto" title="تكويد ذكي/يدوي">🔢 كود</button>
+                    <td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td>
+                    <td style="display:flex; gap:6px;">
+                        <button class="btn btn-auto" title="تكويد">🔢 كود</button>
                         <button class="btn btn-edit" title="تعديل">✏️</button>
                         ${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}
                     </td>`;
 
-                // التكويد الذكي واليدوي المطور
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
-                    document.getElementById('codeHint').innerText = `آخر كود مسجل هو: ${info.last}`;
+                    document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last})`;
                     document.getElementById('manualCodeInput').value = info.next;
                     document.getElementById('codeModal').style.display = 'block';
                     
                     document.getElementById('confirmCodeBtn').onclick = async () => {
                         const newCode = document.getElementById('manualCodeInput').value;
-                        if(!newCode) return alert("يرجى إدخال الكود");
+                        if(!newCode) return alert("يرجى إدخال كود صحيح");
                         await updateDoc(doc(db, "orders", id), { vCode: newCode.toString() });
                         document.getElementById('codeModal').style.display = 'none';
                     };
                 };
 
-                // تعديل البيانات عبر الواجهة الاحترافية
                 tr.querySelector('.btn-edit').onclick = () => {
                     currentEditId = id;
                     document.getElementById('editOwner').value = item.owner;
@@ -360,7 +477,7 @@
                     thumbContainer.innerHTML = ''; mainImg.src = item.images[0];
                     item.images.forEach(src => {
                         const img = document.createElement('img');
-                        img.src = src; img.style.width="60px"; img.style.height="60px"; img.style.cursor="pointer"; img.style.objectFit="cover";
+                        img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
                         img.onclick = () => mainImg.src = src;
                         thumbContainer.appendChild(img);
                     });
@@ -375,7 +492,6 @@
         });
     }
 
-    // حفظ التعديلات من الـ Modal
     document.getElementById('saveEditBtn').onclick = async () => {
         if(!currentEditId) return;
         try {
@@ -388,9 +504,9 @@
                 address: document.getElementById('editAddress').value,
                 vCode: document.getElementById('editVCode').value.toString()
             });
-            alert("تم تحديث البيانات بنجاح ✅");
+            alert("تم تحديث قاعدة البيانات بنجاح ✅");
             document.getElementById('editModal').style.display = 'none';
-        } catch (e) { alert("خطأ في التحديث"); }
+        } catch (e) { alert("حدث خطأ أثناء التحديث"); }
     };
 
     document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
@@ -402,10 +518,9 @@
     };
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "بيانات_تكويد_كفر_صقر.xlsx");
+        XLSX.writeFile(wb, "منظومة_تكويد_كفر_صقر.xlsx");
     };
 
-    // إغلاق المودال عند الضغط خارجه
     window.onclick = (event) => {
         if (event.target.className === 'modal') {
             event.target.style.display = "none";
