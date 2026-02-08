@@ -258,13 +258,12 @@
             <table id="excelTable">
                 <thead>
                     <tr>
+                        <th>تاريخ الطلب</th>
                         <th>المالك</th>
                         <th>الرقم القومي</th>
-                        <th>الهاتف</th>
                         <th>النوع</th>
-                        <th>الموديل</th>
-                        <th>العنوان</th>
                         <th>الكود</th>
+                        <th>تاريخ التكويد</th>
                         <th>الصور</th>
                         <th>الإجراءات</th>
                     </tr>
@@ -363,6 +362,13 @@
     let userRole = "";
     let currentEditId = "";
 
+    // دالة لتنسيق التاريخ والوقت بشكل جميل
+    const formatDateTime = (ts) => {
+        if (!ts) return "-";
+        const d = new Date(ts);
+        return d.toLocaleDateString('ar-EG') + " " + d.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+    };
+
     const compressImg = (file) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -406,7 +412,10 @@
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
                 address: document.getElementById('address').value,
-                images: imgArray, timestamp: Date.now(), vCode: ""
+                images: imgArray, 
+                timestamp: Date.now(), // تاريخ الطلب
+                codedAt: null, // تاريخ التكويد (فارغ حالياً)
+                vCode: ""
             });
             alert("تم تسجيل بياناتك في المنظومة بنجاح!");
             location.reload();
@@ -433,7 +442,6 @@
         loadAdminData();
     };
 
-    // 2. وظيفة الطباعة (إضافة كاملة)
     function printItem(item) {
         const printContent = `
             <div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;">
@@ -443,7 +451,7 @@
                     <p><b>اسم المالك:</b> ${item.owner}</p>
                     <p><b>الرقم القومي:</b> ${item.nationalId}</p>
                     <p><b>نوع المركبة:</b> ${item.vType}</p>
-                    <p><b>الموديل واللون:</b> ${item.vDesc}</p>
+                    <p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p>
                 </div>
                 <div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;">
                     <span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br>
@@ -457,7 +465,7 @@
         const originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent;
         window.print();
-        location.reload(); // لإعادة الصفحة لحالتها الأصلية بعد الطباعة
+        location.reload();
     }
 
     function loadAdminData() {
@@ -472,13 +480,12 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
+                    <td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td>
                     <td>${item.owner}</td>
                     <td>${item.nationalId}</td>
-                    <td>${item.phone}</td>
                     <td>${item.vType}</td>
-                    <td>${item.vDesc || '-'}</td>
-                    <td>${item.address || '-'}</td>
                     <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
+                    <td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td>
                     <td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td>
                     <td style="display:flex; gap:6px;">
                         <button class="btn btn-auto" title="تكويد">🔢</button>
@@ -496,16 +503,17 @@
                     
                     document.getElementById('confirmCodeBtn').onclick = async () => {
                         const newCode = document.getElementById('manualCodeInput').value;
-                        if(!newCode) return alert("يرجى إدخل كود صحيح");
-                        await updateDoc(doc(db, "orders", id), { vCode: newCode.toString() });
+                        if(!newCode) return alert("يرجى إدخال كود صحيح");
+                        // تحديث الكود وتاريخ التكويد معاً
+                        await updateDoc(doc(db, "orders", id), { 
+                            vCode: newCode.toString(),
+                            codedAt: Date.now() 
+                        });
                         document.getElementById('codeModal').style.display = 'none';
                     };
                 };
 
-                // تفعيل زر الطباعة المضاف
-                tr.querySelector('.btn-print').onclick = () => {
-                    printItem(item);
-                };
+                tr.querySelector('.btn-print').onclick = () => { printItem(item); };
 
                 tr.querySelector('.btn-edit').onclick = () => {
                     currentEditId = id;
@@ -562,7 +570,6 @@
 
     document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
     
-    // 1. وظيفة البحث (إضافة كاملة دون تغيير منطقك)
     document.getElementById('searchInput').oninput = (e) => {
         const term = e.target.value.toLowerCase();
         document.querySelectorAll('#dataTable tr').forEach(row => {
