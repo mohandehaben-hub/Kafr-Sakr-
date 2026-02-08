@@ -374,4 +374,16 @@
     document.getElementById('exportExcelBtn').onclick = () => {
         const table = document.getElementById("excelTable");
         const wb = XLSX.utils.table_to_book(table, { sheet: "Data" });
-        const ws =
+        const ws = wb.Sheets["Data"];
+        Object.keys(ws).forEach(key => {
+            if (key.startsWith('B') || key.startsWith('C')) {
+                if (ws[key].v) { ws[key].t = 's'; ws[key].v = "" + ws[key].v; }
+            }
+        });
+        XLSX.writeFile(wb, "بيانات_كفر_صقر.xlsx");
+    };
+
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
+</script>
+</body>
+</html>
