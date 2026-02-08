@@ -64,6 +64,22 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 10px 40px rgba(31, 38, 135, 0.1); 
         }
+
+        /* --- إضافة: تنسيق نتائج البحث عن المواقع --- */
+        .search-results { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: white; 
+            border: 1px solid #ddd; 
+            border-radius: 12px; 
+            display: none; 
+            position: absolute;
+            width: 100%;
+            z-index: 999;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .result-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; transition: 0.2s; color: #333; }
+        .result-item:hover { background-color: var(--primary); color: white; }
         
         /* إحصائيات زجاجية ملونة */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
@@ -83,15 +99,16 @@
 
         /* تنسيق المدخلات */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        .input-group { display: flex; flex-direction: column; margin-bottom: 15px; position: relative; }
         .input-group label { margin-bottom: 10px; font-weight: 600; color: var(--primary); }
-        .input-group input, .input-group select { 
+        .input-group input, .input-group select, .input-group textarea { 
             padding: 14px; 
             border: 1px solid var(--glass-border); 
             border-radius: 12px; 
             background: rgba(255, 255, 255, 0.85);
             font-size: 1rem;
             transition: 0.3s;
+            font-family: inherit;
         }
         .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(26, 82, 118, 0.1); }
         
@@ -116,7 +133,6 @@
             gap: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .btn:active { transform: scale(0.96); }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-auto { background: #3498db; color: white; }
         .btn-edit { background: #f39c12; color: white; }
@@ -126,7 +142,6 @@
         
         .admin-content { display: none; padding: 25px; }
         
-        /* النوافذ المنبثقة (Modals) */
         .modal { 
             display: none; 
             position: fixed; 
@@ -148,7 +163,6 @@
             position: relative;
         }
         
-        /* تنسيق الفوتر ليكون سطر واحد */
         .engineer-footer { 
             background: rgba(28, 40, 51, 0.95); 
             backdrop-filter: blur(8px);
@@ -162,8 +176,6 @@
             border-top: 3px solid var(--accent); 
             z-index: 999;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         .support-box { 
             background: rgba(52, 152, 219, 0.08); 
@@ -174,7 +186,6 @@
             text-align: center;
         }
 
-        /* تنسيق الطباعة */
         @media print {
             body * { visibility: hidden; }
             #printSection, #printSection * { visibility: visible; }
@@ -220,10 +231,18 @@
                 <label>الموديل واللون</label>
                 <input type="text" id="vDesc" placeholder="مثال: بجاج 2024 أحمر">
             </div>
+
             <div class="input-group" style="grid-column: 1 / -1;">
-                <label>العنوان بالتفصيل</label>
-                <input type="text" id="address">
+                <label>البحث عن القرية / المنطقة:</label>
+                <input type="text" id="locSearchInput" placeholder="اكتب اسم المكان هنا (مثلاً: البوها، حي تيسير...)" onkeyup="filterLocations()">
+                <div id="resultsList" class="search-results"></div>
             </div>
+
+            <div class="input-group" id="detailSection" style="display:none; grid-column: 1 / -1;">
+                <label id="selectedPlaceLabel"></label>
+                <textarea id="detailedAddress" rows="2" placeholder="رقم الشارع، اسم المحل، أو علامة مميزة..."></textarea>
+            </div>
+
             <div class="input-group" style="grid-column: 1 / -1;">
                 <label>رفع الصور والمستندات</label>
                 <input type="file" id="multiFiles" multiple accept="image/*" style="background: rgba(26, 82, 118, 0.05); padding: 25px; border: 2px dashed #bdc3c7;">
@@ -247,7 +266,6 @@
         <div class="stat-card" style="border-bottom: 5px solid #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
         <div class="stat-card" style="border-bottom: 5px solid #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
     </div>
-
     <div class="card">
         <div style="display:flex; gap:12px; margin-bottom:30px;">
             <input type="text" id="searchInput" style="flex:1; padding:14px; border-radius:14px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.9);" placeholder="بحث بالاسم أو الرقم القومي...">
@@ -343,6 +361,49 @@
     🚀 تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> 🛡️ خبير أنظمة أمنية وتطوير برمجيات 📱 01021102607
 </footer>
 
+<script>
+    const locations = [
+        "مدينة كفر صقر", "حي النصر", "حي الزهور", "حي تيسير", "حي السعادة", "حي السلام", "حي الروضة",
+        "منطقة المحطة", "منطقة المحكمة", "شارع الجلاء", "منطقة المستشفى العام", "أبو الشقوق", "تليجة",
+        "منشأة يوسف منصور", "الحماديين", "الزراعية", "البوها", "الهجارسة", "ابن العاص", "السلطان حسن",
+        "القراموص", "كفر حماد", "القضاة", "الحوامدة", "سنجها", "كفر الشاويش", "ناطورة", "منشأة عبد اللطيف واكد",
+        "كفر السويركي", "كفر الفرايحة", "المؤانسة", "المشاعلة", "منشأة صدقي", "شيط الهوى", "زور أبو الليل",
+        "شانيط الأحواز", "منشأة بشارة", "آهيل", "البتية", "تيرة", "المشرع", "كفر بدران", "منشأة صبحي",
+        "شيوا", "كفر أبوشيخة", "عزبة الوكيل", "عزبة الدباغ", "عزبة الخمسة", "عزبة الصفيح", "عزبة الشواف",
+        "عزبة واكد", "عزبة صادق", "عزبة البحر", "عزبة سلامة", "عزبة أبو الليل", "كفر الأستاذ", "عزبة عبد السلام",
+        "عزبة المختار", "عزبة رأفت", "عزبة منصور", "كفر يوسف", "عزبة علي عبد الحليم", "عزبة المأمور",
+        "عزبة البرج", "عزبة الميزانية", "عزبة السلطان خضر", "عزبة دوش", "عزبة جودة", "كفر هلال", "عزبة مراد",
+        "عزبة أبو غانم", "عزبة الشرقاوي", "عزبة شاهين", "منشأة شلبي", "الرباعيين", "كفر أبو شرابية",
+        "الفرابين", "شنيطة الحرابوة", "نجوم", "كفر يونس", "عزبة شرف", "المنشية الجديدة"
+    ];
+
+    function filterLocations() {
+        let input = document.getElementById('locSearchInput').value;
+        let resultsDiv = document.getElementById('resultsList');
+        resultsDiv.innerHTML = '';
+        if (input.length > 0) {
+            let filtered = locations.filter(loc => loc.includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(loc => {
+                    let item = document.createElement('div');
+                    item.classList.add('result-item');
+                    item.innerText = loc;
+                    item.onclick = () => selectLocation(loc);
+                    resultsDiv.appendChild(item);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        } else { resultsDiv.style.display = 'none'; }
+    }
+
+    function selectLocation(loc) {
+        document.getElementById('locSearchInput').value = loc;
+        document.getElementById('resultsList').style.display = 'none';
+        document.getElementById('detailSection').style.display = 'block';
+        document.getElementById('selectedPlaceLabel').innerText = "العنوان بالتفصيل في (" + loc + "):";
+    }
+</script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -362,7 +423,6 @@
     let userRole = "";
     let currentEditId = "";
 
-    // دالة لتنسيق التاريخ والوقت بشكل جميل
     const formatDateTime = (ts) => {
         if (!ts) return "-";
         const d = new Date(ts);
@@ -395,9 +455,13 @@
         const owner = document.getElementById('ownerName').value;
         const nid = document.getElementById('nationalId').value;
         const phone = document.getElementById('phone').value;
+        
+        // --- تعديل: سحب العنوان من الحقول الجديدة ---
+        const mainLocation = document.getElementById('locSearchInput').value;
+        const extraAddress = document.getElementById('detailedAddress').value;
 
-        if (nid.length !== 14 || !owner || files.length === 0) { 
-            alert("يرجى إكمال البيانات ورفع الصور (الرقم القومي 14 رقم)"); return; 
+        if (nid.length !== 14 || !owner || files.length === 0 || !mainLocation) { 
+            alert("يرجى إكمال البيانات واختيار الموقع ورفع الصور"); return; 
         }
 
         const checkSnap = await getDocs(query(dbRef, where("nationalId", "==", nid)));
@@ -411,10 +475,10 @@
                 owner, nationalId: nid, phone: phone,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
-                address: document.getElementById('address').value,
+                address: mainLocation + " - " + extraAddress, // حفظ العنوان المدمج
                 images: imgArray, 
-                timestamp: Date.now(), // تاريخ الطلب
-                codedAt: null, // تاريخ التكويد (فارغ حالياً)
+                timestamp: Date.now(),
+                codedAt: null,
                 vCode: ""
             });
             alert("تم تسجيل بياناتك في المنظومة بنجاح!");
@@ -422,6 +486,7 @@
         } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
+    // بقية وظائف الـ Admin و Excel والـ Modals بقيت كما هي دون تغيير
     async function getSmartNextCode() {
         const snap = await getDocs(dbRef);
         let maxCode = 100;
@@ -443,25 +508,7 @@
     };
 
     function printItem(item) {
-        const printContent = `
-            <div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;">
-                <h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
-                <h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2>
-                <div style="text-align: right; font-size: 1.4rem; margin-top: 30px;">
-                    <p><b>اسم المالك:</b> ${item.owner}</p>
-                    <p><b>الرقم القومي:</b> ${item.nationalId}</p>
-                    <p><b>نوع المركبة:</b> ${item.vType}</p>
-                    <p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p>
-                </div>
-                <div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;">
-                    <span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br>
-                    <b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b>
-                </div>
-                <footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">
-                    تم الاستخراج بواسطة منظومة التكويد الذكي - م/ مهند التهامي
-                </footer>
-            </div>
-        `;
+        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي - م/ مهند التهامي</footer></div>`;
         const originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent;
         window.print();
@@ -473,48 +520,25 @@
             const tableBody = document.getElementById('dataTable');
             tableBody.innerHTML = '';
             let total=0, coded=0, pending=0;
-
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
                 total++; item.vCode ? coded++ : pending++;
-
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td>
-                    <td>${item.owner}</td>
-                    <td>${item.nationalId}</td>
-                    <td>${item.vType}</td>
-                    <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
-                    <td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td>
-                    <td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td>
-                    <td style="display:flex; gap:6px;">
-                        <button class="btn btn-auto" title="تكويد">🔢</button>
-                        <button class="btn btn-print" title="طباعة">🖨️</button>
-                        <button class="btn btn-edit" title="تعديل">✏️</button>
-                        ${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}
-                    </td>`;
-
+                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.vType}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
                     document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last})`;
                     document.getElementById('manualCodeInput').value = info.next;
                     document.getElementById('codeModal').style.display = 'block';
-                    
                     document.getElementById('confirmCodeBtn').onclick = async () => {
                         const newCode = document.getElementById('manualCodeInput').value;
                         if(!newCode) return alert("يرجى إدخال كود صحيح");
-                        // تحديث الكود وتاريخ التكويد معاً
-                        await updateDoc(doc(db, "orders", id), { 
-                            vCode: newCode.toString(),
-                            codedAt: Date.now() 
-                        });
+                        await updateDoc(doc(db, "orders", id), { vCode: newCode.toString(), codedAt: Date.now() });
                         document.getElementById('codeModal').style.display = 'none';
                     };
                 };
-
                 tr.querySelector('.btn-print').onclick = () => { printItem(item); };
-
                 tr.querySelector('.btn-edit').onclick = () => {
                     currentEditId = id;
                     document.getElementById('editOwner').value = item.owner;
@@ -526,23 +550,18 @@
                     document.getElementById('editVCode').value = item.vCode || '';
                     document.getElementById('editModal').style.display = 'block';
                 };
-
                 if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف الطلب نهائياً؟")) deleteDoc(doc(db, "orders", id)); };
-
                 tr.querySelector('.view-btn').onclick = () => {
                     const modal = document.getElementById("imgModal");
                     const mainImg = document.getElementById("mainViewImg");
                     const thumbContainer = document.getElementById("modalThumbnails");
                     thumbContainer.innerHTML = ''; mainImg.src = item.images[0];
                     item.images.forEach(src => {
-                        const img = document.createElement('img');
-                        img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
-                        img.onclick = () => mainImg.src = src;
-                        thumbContainer.appendChild(img);
+                        const img = document.createElement('img'); img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
+                        img.onclick = () => mainImg.src = src; thumbContainer.appendChild(img);
                     });
                     modal.style.display = "block";
                 };
-
                 tableBody.appendChild(tr);
             });
             document.getElementById('statTotal').innerText = total;
@@ -582,11 +601,7 @@
         XLSX.writeFile(wb, "منظومة_تكويد_كفر_صقر.xlsx");
     };
 
-    window.onclick = (event) => {
-        if (event.target.className === 'modal') {
-            event.target.style.display = "none";
-        }
-    };
+    window.onclick = (event) => { if (event.target.className === 'modal') event.target.style.display = "none"; };
 </script>
 </body>
 </html>
