@@ -44,7 +44,13 @@
             z-index: 1000;
         }
 
-        .header-title h1 { margin: 0; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        /* تعديل حجم الخط ليصبح سطر واحد */
+        .header-title h1 { 
+            margin: 0; 
+            font-size: 1.25rem; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            white-space: nowrap;
+        }
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
 
@@ -141,18 +147,22 @@
             position: relative;
         }
         
+        /* تنسيق الفوتر ليكون سطر واحد */
         .engineer-footer { 
             background: rgba(28, 40, 51, 0.95); 
             backdrop-filter: blur(8px);
             color: #d5dbdb; 
             text-align: center; 
-            padding: 18px; 
+            padding: 12px; 
             position: fixed; 
             bottom: 0; 
             width: 100%; 
             font-size: 0.85rem; 
             border-top: 3px solid var(--accent); 
             z-index: 999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .support-box { 
             background: rgba(52, 152, 219, 0.08); 
@@ -168,7 +178,7 @@
 
 <header>
     <div class="header-title">
-        <h1>رئاسة مركز ومدينة كفر صقر</h1>
+        <h1>🏛️ رئاسة مركز ومدينة كفر صقر</h1>
         <small style="color: #f1c40f;">د/ أحمد المقدم - رئيس المدينة</small>
     </div>
     <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">🔐 لوحة التحكم</button>
@@ -323,7 +333,7 @@
 </div>
 
 <footer class="engineer-footer">
-    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير أنظمة أمنية وتطوير برمجيات 01021102607
+    🚀 تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> 🛡️ خبير أنظمة أمنية وتطوير برمجيات 📱 01021102607
 </footer>
 
 <script type="module">
