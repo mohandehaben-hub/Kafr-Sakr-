@@ -13,28 +13,34 @@
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         
+        /* الإحصائيات */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border-bottom: 4px solid #ddd; }
-        .stat-card h3 { margin: 5px 0; color: var(--primary); }
+        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border-bottom: 4px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .stat-card h3 { margin: 5px 0; font-size: 1.8rem; color: var(--primary); }
+        .stat-card p { margin: 0; color: #666; font-size: 0.9rem; font-weight: bold; }
 
+        /* النماذج والجداول */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
         .input-group label { margin-bottom: 8px; font-weight: bold; }
         .input-group input, .input-group select { padding: 12px; border: 2px solid #e0e6ed; border-radius: 10px; }
         
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; font-size: 0.9rem; }
-        th, td { padding: 10px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: var(--primary); }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: var(--primary); font-weight: bold; }
         
-        .btn { cursor: pointer; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        /* الأزرار */
+        .btn { cursor: pointer; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.9rem; }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-auto { background: #3498db; color: white; }
         .btn-edit { background: #f39c12; color: white; }
         .btn-del { background: #e74c3c; color: white; }
+        .btn-wa { background: #25D366; color: white; }
         
         .admin-content { display: none; padding: 20px; }
         .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
         .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.8rem; border-top: 3px solid var(--accent); }
+        .support-box { background: #f0f7ff; border: 2px dashed #3498db; border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -85,14 +91,22 @@
             </div>
         </div>
         <button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.2rem; margin-top: 20px;">إرسال الطلب ✅</button>
+
+        <div class="support-box">
+            <p style="margin-top:0; font-weight:bold; color:var(--primary);">تواصل مع الدعم الفني للمنظومة:</p>
+            <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+                <a href="https://wa.me/201021102607" target="_blank" class="btn btn-wa">💬 م/ مهند (واتساب)</a>
+                <a href="tel:01021102607" class="btn btn-wa" style="background:#3498db;">📞 م/ مهند (اتصال)</a>
+            </div>
+        </div>
     </div>
 </div>
 
 <div id="adminPage" class="admin-content">
     <div class="stats-grid">
-        <div class="stat-card"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
-        <div class="stat-card"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
-        <div class="stat-card"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
+        <div class="stat-card" style="border-color: #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
+        <div class="stat-card" style="border-color: #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
+        <div class="stat-card" style="border-color: #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
     </div>
 
     <div class="card">
@@ -104,7 +118,17 @@
         <div style="overflow-x:auto;">
             <table id="excelTable">
                 <thead>
-                    <tr><th>المالك</th><th>القومي</th><th>الهاتف</th><th>الموديل</th><th>العنوان</th><th>الكود</th><th>الصور</th><th>الإجراءات</th></tr>
+                    <tr>
+                        <th>المالك</th>
+                        <th>الرقم القومي</th>
+                        <th>الهاتف</th>
+                        <th>النوع</th>
+                        <th>الموديل</th>
+                        <th>العنوان</th>
+                        <th>الكود</th>
+                        <th>الصور</th>
+                        <th>الإجراءات</th>
+                    </tr>
                 </thead>
                 <tbody id="dataTable"></tbody>
             </table>
@@ -119,14 +143,22 @@
 </div>
 
 <footer class="engineer-footer">
-    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - 01021102607
+    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير أنظمة أمنية وتطوير برمجيات 01021102607
 </footer>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U", authDomain: "system-storage-bd0ed.firebaseapp.com", projectId: "system-storage-bd0ed", storageBucket: "system-storage-bd0ed.firebasestorage.app", messagingSenderId: "501351821676", appId: "1:501351821676:web:2926c58dedfc536cea8349" };
+    const firebaseConfig = {
+        apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
+        authDomain: "system-storage-bd0ed.firebaseapp.com",
+        projectId: "system-storage-bd0ed",
+        storageBucket: "system-storage-bd0ed.firebasestorage.app",
+        messagingSenderId: "501351821676",
+        appId: "1:501351821676:web:2926c58dedfc536cea8349"
+    };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const dbRef = collection(db, "orders");
@@ -134,13 +166,18 @@
 
     const compressImg = (file) => {
         return new Promise((resolve) => {
-            const reader = new FileReader(); reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
             reader.onload = (e) => {
-                const img = new Image(); img.src = e.target.result;
+                const img = new Image();
+                img.src = e.target.result;
                 img.onload = () => {
-                    const canvas = document.createElement('canvas'); const maxWidth = 600; const scale = maxWidth / img.width;
+                    const canvas = document.createElement('canvas');
+                    const maxWidth = 600;
+                    const scale = maxWidth / img.width;
                     canvas.width = maxWidth; canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     resolve(canvas.toDataURL('image/jpeg', 0.6));
                 };
             };
@@ -149,35 +186,49 @@
 
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
+        const files = document.getElementById('multiFiles').files;
         const owner = document.getElementById('ownerName').value;
         const nid = document.getElementById('nationalId').value;
-        if (nid.length !== 14 || !owner) return alert("أكمل البيانات");
+        const phone = document.getElementById('phone').value;
+
+        if (nid.length !== 14 || !owner || files.length === 0) { 
+            alert("يرجى إكمال البيانات ورفع الصور (الرقم القومي 14 رقم)"); return; 
+        }
 
         const checkSnap = await getDocs(query(dbRef, where("nationalId", "==", nid)));
-        if(!checkSnap.empty) return alert("هذا الرقم القومي مسجل مسبقاً!");
+        if(!checkSnap.empty) { alert("هذا الرقم القومي مسجل مسبقاً!"); return; }
 
-        btn.disabled = true; btn.innerText = "جاري الحفظ...";
-        const imgArray = []; const files = document.getElementById('multiFiles').files;
-        for(let f of files) { imgArray.push(await compressImg(f)); }
-        
-        await addDoc(dbRef, {
-            owner, nationalId: nid, phone: document.getElementById('phone').value,
-            vType: document.getElementById('vType').value, vDesc: document.getElementById('vDesc').value,
-            address: document.getElementById('address').value, images: imgArray, timestamp: Date.now(), vCode: ""
-        });
-        alert("تم التسجيل بنجاح!"); location.reload();
+        btn.disabled = true; btn.innerText = "جاري معالجة الصور والحفظ...";
+        try {
+            const imgArray = [];
+            for(let f of files) { imgArray.push(await compressImg(f)); }
+            await addDoc(dbRef, {
+                owner, nationalId: nid, phone: phone,
+                vType: document.getElementById('vType').value,
+                vDesc: document.getElementById('vDesc').value,
+                address: document.getElementById('address').value,
+                images: imgArray, timestamp: Date.now(), vCode: ""
+            });
+            alert("تم التسجيل بنجاح!");
+            location.reload();
+        } catch (e) { alert("حدث خطأ في الاتصال"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
     async function getSmartNextCode() {
-        const snap = await getDocs(dbRef); let max = 100;
-        snap.forEach(d => { const c = parseInt(d.data().vCode); if(!isNaN(c) && c > max) max = c; });
-        return { last: max, next: max + 1 };
+        const snap = await getDocs(dbRef);
+        let maxCode = 100;
+        snap.forEach(d => {
+            const code = parseInt(d.data().vCode);
+            if(!isNaN(code) && code > maxCode) maxCode = code;
+        });
+        return { last: maxCode, next: maxCode + 1 };
     }
 
     document.getElementById('loginBtn').onclick = () => {
         const u = prompt("User:"); const p = prompt("Pass:");
         if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
-        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR"; else return;
+        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
+        else return;
         document.getElementById('citizenPage').style.display = 'none';
         document.getElementById('adminPage').style.display = 'block';
         loadAdminData();
@@ -185,68 +236,89 @@
 
     function loadAdminData() {
         onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
-            const tableBody = document.getElementById('dataTable'); tableBody.innerHTML = '';
+            const tableBody = document.getElementById('dataTable');
+            tableBody.innerHTML = '';
             let total=0, coded=0, pending=0;
 
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
                 total++; item.vCode ? coded++ : pending++;
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${item.owner}</td><td>${item.nationalId}</td><td>${item.phone}</td><td>${item.vDesc || '-'}</td><td>${item.address || '-'}</td>
+                    <td>${item.owner}</td>
+                    <td>${item.nationalId}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.vType}</td>
+                    <td>${item.vDesc || '-'}</td>
+                    <td>${item.address || '-'}</td>
                     <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
                     <td><button class="btn view-btn">🖼️</button></td>
-                    <td>
-                        <button class="btn btn-auto" title="تكويد تلقائي">🔢 ذكي</button>
-                        <button class="btn btn-edit" title="تعديل البيانات">✏️</button>
+                    <td style="display:flex; gap:5px;">
+                        <button class="btn btn-auto" title="تكويد ذكي">🔢 ذكي</button>
+                        <button class="btn btn-edit" title="تعديل">✏️</button>
                         ${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}
                     </td>`;
 
+                // التكويد الذكي
                 tr.querySelector('.btn-auto').onclick = async () => {
-                    if(item.vCode) return alert("مكودة بالفعل");
+                    if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
-                    if(confirm(`آخر رقم: (${info.last}). هل تريد صرف الكود الجديد (${info.next})؟`)) {
+                    if(confirm(`آخر كود هو (${info.last}). هل تريد صرف الكود الجديد (${info.next})؟`)) {
                         await updateDoc(doc(db, "orders", id), { vCode: info.next.toString() });
                     }
                 };
 
+                // تعديل البيانات
                 tr.querySelector('.btn-edit').onclick = async () => {
                     const nName = prompt("تعديل الاسم:", item.owner) || item.owner;
                     const nNid = prompt("تعديل الرقم القومي:", item.nationalId) || item.nationalId;
-                    const nPhone = prompt("رقم الهاتف:", item.phone) || item.phone;
-                    const nDesc = prompt("الموديل واللون:", item.vDesc) || item.vDesc;
-                    const nAddr = prompt("العنوان:", item.address) || item.address;
+                    const nPhone = prompt("تعديل الهاتف:", item.phone) || item.phone;
+                    const nDesc = prompt("تعديل الموديل:", item.vDesc) || item.vDesc;
+                    const nAddr = prompt("تعديل العنوان:", item.address) || item.address;
                     const nCode = prompt("تعديل الكود (اختياري):", item.vCode) || item.vCode;
-                    
-                    await updateDoc(doc(db, "orders", id), { owner: nName, nationalId: nNid, phone: nPhone, vDesc: nDesc, address: nAddr, vCode: nCode.toString() });
-                    alert("تم تحديث البيانات بنجاح ✅");
+
+                    await updateDoc(doc(db, "orders", id), {
+                        owner: nName, nationalId: nNid, phone: nPhone,
+                        vDesc: nDesc, address: nAddr, vCode: nCode.toString()
+                    });
+                    alert("تم التحديث بنجاح ✅");
                 };
 
-                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف؟")) deleteDoc(doc(db, "orders", id)); };
+                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف الطلب نهائياً؟")) deleteDoc(doc(db, "orders", id)); };
+
                 tr.querySelector('.view-btn').onclick = () => {
-                    const modal = document.getElementById("imgModal"); const mainImg = document.getElementById("mainViewImg");
-                    const thumbContainer = document.getElementById("modalThumbnails"); thumbContainer.innerHTML = '';
-                    mainImg.src = item.images[0];
+                    const modal = document.getElementById("imgModal");
+                    const mainImg = document.getElementById("mainViewImg");
+                    const thumbContainer = document.getElementById("modalThumbnails");
+                    thumbContainer.innerHTML = ''; mainImg.src = item.images[0];
                     item.images.forEach(src => {
-                        const img = document.createElement('img'); img.src = src; img.style.width="60px"; img.style.cursor="pointer";
-                        img.onclick = () => mainImg.src = src; thumbContainer.appendChild(img);
+                        const img = document.createElement('img');
+                        img.src = src; img.style.width="60px"; img.style.height="60px"; img.style.cursor="pointer"; img.style.objectFit="cover";
+                        img.onclick = () => mainImg.src = src;
+                        thumbContainer.appendChild(img);
                     });
                     modal.style.display = "block";
                 };
+
                 tableBody.appendChild(tr);
             });
-            document.getElementById('statTotal').innerText = total; document.getElementById('statCoded').innerText = coded; document.getElementById('statPending').innerText = pending;
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statCoded').innerText = coded;
+            document.getElementById('statPending').innerText = pending;
         });
     }
 
     document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
     document.getElementById('searchInput').oninput = (e) => {
         const term = e.target.value.toLowerCase();
-        document.querySelectorAll('#dataTable tr').forEach(row => { row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none'; });
+        document.querySelectorAll('#dataTable tr').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
     };
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "بيانات_كفر_صقر.xlsx");
+        XLSX.writeFile(wb, "بيانات_تكويد_كفر_صقر.xlsx");
     };
 </script>
 </body>
