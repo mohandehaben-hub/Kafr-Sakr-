@@ -13,35 +13,34 @@
         .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         
-        /* Stats Styles - Interactive */
+        /* Stats Styles */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border-bottom: 4px solid #ddd; cursor: pointer; transition: 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .stat-card.active { border-bottom-color: var(--primary); background: #eef2f5; }
+        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border-bottom: 4px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .stat-card h3 { margin: 5px 0; font-size: 1.8rem; color: var(--primary); }
+        .stat-card p { margin: 0; color: #666; font-size: 0.9rem; font-weight: bold; }
 
-        /* Form Styles */
+        /* Form & Table Styles */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
         .input-group label { margin-bottom: 8px; font-weight: bold; }
         .input-group input, .input-group select { padding: 12px; border: 2px solid #e0e6ed; border-radius: 10px; }
         
-        /* Table Styles */
         table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; overflow: hidden; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
         th { background: #f8f9fa; color: var(--primary); }
         
         .btn { cursor: pointer; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-primary { background: var(--secondary); color: white; }
-        .btn-wa { background: #25D366; color: white; }
-        .btn-call { background: #3498db; color: white; }
-        .btn-auto { background: #8e44ad; color: white; }
+        .btn-wa { background: #25D366; color: white; font-size: 0.9rem; }
+        .btn-call { background: #3498db; color: white; font-size: 0.9rem; }
+        .btn-auto { background: #3498db; color: white; margin-left: 5px; }
         .btn-del { background: #e74c3c; color: white; }
         
         .admin-content { display: none; padding: 20px; }
-        .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.8rem; border-top: 3px solid var(--accent); z-index: 1000; }
+        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .engineer-footer { background: #1c2833; color: #d5dbdb; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 0.8rem; border-top: 3px solid var(--accent); }
         
-        .contact-section { background: #f0f7ff; border: 2px dashed #3498db; border-radius: 15px; padding: 20px; margin-top: 30px; text-align: center; }
+        .support-box { background: #f0f7ff; border: 2px dashed #3498db; border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -68,7 +67,7 @@
             </div>
             <div class="input-group">
                 <label>رقم الهاتف (11 رقم)</label>
-                <input type="number" id="phone" oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);">
+                <input type="tel" id="phone" oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);">
             </div>
             <div class="input-group">
                 <label>نوع المركبة</label>
@@ -91,24 +90,24 @@
                 <input type="file" id="multiFiles" multiple accept="image/*">
             </div>
         </div>
-        <button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.2rem; margin-top: 20px;">إرسال الطلب وحفظ البيانات ✅</button>
+        <button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.2rem; margin-top: 20px;">إرسال الطلب ✅</button>
 
-        <div class="contact-section">
-            <h4 style="margin-top:0;">للاستفسار وتعديل البيانات تواصل مع المسؤولين:</h4>
-            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-                <a href="https://wa.me/201021102607" class="btn btn-wa" target="_blank">💬 واتساب م/ مهند</a>
+        <div class="support-box">
+            <p style="margin-top:0; font-weight:bold; color:var(--primary);">هل تواجه مشكلة أو تريد الاستفسار؟ تواصل معنا:</p>
+            <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+                <a href="https://wa.me/201021102607" target="_blank" class="btn btn-wa">💬 واتساب م/ مهند</a>
                 <a href="tel:01021102607" class="btn btn-call">📞 اتصال م/ مهند</a>
-                <a href="https://wa.me/201011111111" class="btn btn-wa" style="background:#128C7E;">💬 واتساب أ/ باهي</a>
+                <a href="https://wa.me/201011111111" target="_blank" class="btn btn-wa" style="background:#128C7E;">💬 واتساب أ/ باهي</a>
             </div>
         </div>
     </div>
 </div>
 
-<div id="adminPage" class="admin-content container">
+<div id="adminPage" class="admin-content">
     <div class="stats-grid">
-        <div class="stat-card active" id="statAllBtn" style="border-color: #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
-        <div class="stat-card" id="statCodedBtn" style="border-color: #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
-        <div class="stat-card" id="statWaitBtn" style="border-color: #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
+        <div class="stat-card" style="border-color: #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
+        <div class="stat-card" style="border-color: #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
+        <div class="stat-card" style="border-color: #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
     </div>
 
     <div class="card">
@@ -128,8 +127,14 @@
     </div>
 </div>
 
+<div id="imgModal" class="modal">
+    <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer;" id="closeModalBtn">&times;</span>
+    <img id="mainViewImg" style="max-width:80%; max-height:70vh; display:block; margin:50px auto; border:5px solid white; border-radius:10px;">
+    <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 10px; padding: 20px;"></div>
+</div>
+
 <footer class="engineer-footer">
-    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير أنظمة أمنية - 01021102607
+    تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b> - خبير أنظمة أمنية وتطوير برمجيات 01021102607
 </footer>
 
 <script type="module">
@@ -149,46 +154,68 @@
     const db = getFirestore(app);
     const dbRef = collection(db, "orders");
     let userRole = "";
-    let currentFilter = "all";
 
-    // منع التكرار (التحقق من الرقم القومي)
-    async function checkDuplicate(nid) {
-        const q = query(dbRef, where("nationalId", "==", nid));
-        const snap = await getDocs(q);
-        return !snap.empty;
-    }
+    // [الحفاظ على مكتبة الصور الأصلية]
+    const compressImg = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxWidth = 600;
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth; canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
+            };
+        });
+    };
 
+    // إرسال البيانات مع ميزة منع التكرار والتحقق
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
+        const files = document.getElementById('multiFiles').files;
         const owner = document.getElementById('ownerName').value;
         const nid = document.getElementById('nationalId').value;
         const phone = document.getElementById('phone').value;
 
-        if (nid.length !== 14) return alert("الرقم القومي يجب أن يكون 14 رقماً");
-        if (phone.length !== 11) return alert("رقم الهاتف يجب أن يكون 11 رقماً");
-        if (await checkDuplicate(nid)) return alert("هذا الرقم القومي مسجل مسبقاً!");
+        if (nid.length !== 14) { alert("الرقم القومي يجب أن يكون 14 رقماً"); return; }
+        if (phone.length !== 11) { alert("رقم الهاتف يجب أن يكون 11 رقماً"); return; }
+        if (files.length === 0 || !owner) { alert("أكمل البيانات وارفع الصور"); return; }
 
-        btn.disabled = true; btn.innerText = "جاري الحفظ...";
+        // التحقق من عدم التكرار
+        const checkQ = query(dbRef, where("nationalId", "==", nid));
+        const checkSnap = await getDocs(checkQ);
+        if(!checkSnap.empty) { alert("هذا الرقم القومي مسجل مسبقاً في المنظومة!"); return; }
+
+        btn.disabled = true; btn.innerText = "جاري معالجة الصور وحفظ الطلب...";
         try {
+            const imgArray = [];
+            for(let f of files) { imgArray.push(await compressImg(f)); }
             await addDoc(dbRef, {
-                owner, nationalId: nid, phone,
+                owner, nationalId: nid, phone: phone,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
                 address: document.getElementById('address').value,
-                images: [], timestamp: Date.now(), vCode: ""
+                images: imgArray, timestamp: Date.now(), vCode: ""
             });
-            alert("تم التسجيل بنجاح! سيتم التواصل معكم.");
+            alert("تم التسجيل بنجاح!");
             location.reload();
-        } catch (e) { alert("خطأ!"); btn.disabled = false; }
+        } catch (e) { alert("خطأ في الاتصال"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
-    // التكويد الذكي
+    // نظام التكويد الذكي المطور (سد الثغرات)
     async function getSmartNextCode() {
-        const snap = await getDocs(dbRef);
+        const snap = await getDocs(query(dbRef));
         let codes = [];
         snap.forEach(d => { if(d.data().vCode) codes.push(parseInt(d.data().vCode)); });
-        codes.sort((a,b) => a-b);
-        let next = 101;
+        let next = 101; 
+        codes.sort((a,b) => a - b);
         for(let c of codes) { if(c === next) next++; }
         return next;
     }
@@ -200,61 +227,78 @@
         else return;
         document.getElementById('citizenPage').style.display = 'none';
         document.getElementById('adminPage').style.display = 'block';
-        loadAdmin();
+        loadAdminData();
     };
 
-    function loadAdmin() {
+    function loadAdminData() {
         onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
             const tableBody = document.getElementById('dataTable');
             tableBody.innerHTML = '';
-            let stats = { total: 0, coded: 0, wait: 0 };
+            let total=0, coded=0, pending=0;
 
             snap.forEach(s => {
                 const item = s.data(); const id = s.id;
-                stats.total++; item.vCode ? stats.coded++ : stats.wait++;
-
-                if(currentFilter === 'wait' && item.vCode) return;
-                if(currentFilter === 'coded' && !item.vCode) return;
+                total++; item.vCode ? coded++ : pending++;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${item.owner}</td>
-                    <td>${item.nationalId}</td>
+                    <td style="mso-number-format:'\@'">${item.nationalId}</td>
                     <td>${item.phone}</td>
                     <td>${item.vType}</td>
                     <td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td>
-                    <td>🖼️</td>
+                    <td><button class="btn view-btn">🖼️</button></td>
                     <td>
                         <button class="btn btn-auto">تكويد ذكي</button>
-                        ${userRole==='SUPER' ? '<button class="btn btn-del">حذف</button>':''}
+                        <button class="btn" style="background:#8e44ad; color:white;">يدوي</button>
+                        ${userRole==='SUPER'?'<button class="btn btn-del">حذف</button>':''}
                     </td>`;
 
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("مكودة بالفعل");
                     const next = await getSmartNextCode();
-                    await updateDoc(doc(db, "orders", id), { vCode: next.toString() });
-                    alert(`تم تخصيص الكود ${next} تلقائياً`);
+                    if(confirm(`صرف الكود المتاح ${next}؟`)) {
+                        await updateDoc(doc(db, "orders", id), { vCode: next.toString() });
+                    }
                 };
 
-                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => deleteDoc(doc(db, "orders", id));
+                tr.querySelectorAll('.btn')[1].onclick = async () => {
+                    const c = prompt("أدخل الكود يدوياً:");
+                    if(c) await updateDoc(doc(db, "orders", id), { vCode: c });
+                };
+
+                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف نهائي؟")) deleteDoc(doc(db, "orders", id)); };
+
+                tr.querySelector('.view-btn').onclick = () => {
+                    const modal = document.getElementById("imgModal");
+                    const mainImg = document.getElementById("mainViewImg");
+                    const thumbContainer = document.getElementById("modalThumbnails");
+                    thumbContainer.innerHTML = '';
+                    mainImg.src = item.images[0];
+                    item.images.forEach(src => {
+                        const img = document.createElement('img');
+                        img.src = src; img.style.width="60px"; img.style.cursor="pointer"; img.style.borderRadius="5px";
+                        img.onclick = () => mainImg.src = src;
+                        thumbContainer.appendChild(img);
+                    });
+                    modal.style.display = "block";
+                };
+
                 tableBody.appendChild(tr);
             });
-            document.getElementById('statTotal').innerText = stats.total;
-            document.getElementById('statCoded').innerText = stats.coded;
-            document.getElementById('statPending').innerText = stats.wait;
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statCoded').innerText = coded;
+            document.getElementById('statPending').innerText = pending;
         });
     }
 
-    // تفعيل الفلاتر عند الضغط على الإحصائيات
-    document.getElementById('statAllBtn').onclick = () => { currentFilter = 'all'; updateFilterUI('statAllBtn'); loadAdmin(); };
-    document.getElementById('statCodedBtn').onclick = () => { currentFilter = 'coded'; updateFilterUI('statCodedBtn'); loadAdmin(); };
-    document.getElementById('statWaitBtn').onclick = () => { currentFilter = 'wait'; updateFilterUI('statWaitBtn'); loadAdmin(); };
-
-    function updateFilterUI(activeId) {
-        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
-        document.getElementById(activeId).classList.add('active');
-    }
-
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
+    document.getElementById('searchInput').oninput = (e) => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('#dataTable tr').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
+    };
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
         XLSX.writeFile(wb, "بيانات_كفر_صقر.xlsx");
