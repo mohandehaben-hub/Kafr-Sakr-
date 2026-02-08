@@ -279,7 +279,7 @@
                         <th>تاريخ الطلب</th>
                         <th>المالك</th>
                         <th>الرقم القومي</th>
-                        <th>النوع</th>
+                        <th>الهاتف</th> <th>العنوان</th> <th>النوع</th>
                         <th>الكود</th>
                         <th>تاريخ التكويد</th>
                         <th>الصور</th>
@@ -456,7 +456,6 @@
         const nid = document.getElementById('nationalId').value;
         const phone = document.getElementById('phone').value;
         
-        // --- تعديل: سحب العنوان من الحقول الجديدة ---
         const mainLocation = document.getElementById('locSearchInput').value;
         const extraAddress = document.getElementById('detailedAddress').value;
 
@@ -475,7 +474,7 @@
                 owner, nationalId: nid, phone: phone,
                 vType: document.getElementById('vType').value,
                 vDesc: document.getElementById('vDesc').value,
-                address: mainLocation + " - " + extraAddress, // حفظ العنوان المدمج
+                address: mainLocation + " - " + extraAddress, 
                 images: imgArray, 
                 timestamp: Date.now(),
                 codedAt: null,
@@ -486,7 +485,6 @@
         } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
-    // بقية وظائف الـ Admin و Excel والـ Modals بقيت كما هي دون تغيير
     async function getSmartNextCode() {
         const snap = await getDocs(dbRef);
         let maxCode = 100;
@@ -524,7 +522,10 @@
                 const item = s.data(); const id = s.id;
                 total++; item.vCode ? coded++ : pending++;
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.vType}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
+                
+                // --- مضاف هنا بيانات الهاتف والعنوان في الجدول ---
+                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.phone || '-'}</td><td>${item.address || '-'}</td><td>${item.vType}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
+                
                 tr.querySelector('.btn-auto').onclick = async () => {
                     if(item.vCode) return alert("المركبة مكودة بالفعل");
                     const info = await getSmartNextCode();
