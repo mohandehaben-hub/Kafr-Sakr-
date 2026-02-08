@@ -1,3 +1,10 @@
+تمام 💪، سأجهز لك نسخة كاملة من الكود مع التعديلات التي طلبتها:
+	•	تكويد رقمي تلقائي بالكامل بدون حروف أو رموز (يبدأ من 1000 ويزيد تلقائيًا).
+	•	زر واتس آب وزر اتصال في جدول الإدارة لكل طلب.
+	•	تحسين الألوان والتنسيق فقط، بدون تغيير أي أسماء أو إعدادات.
+
+هذا الكود جاهز للاستعمال:
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,11 +14,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { 
-            --primary: #1a5276; 
-            --secondary: #27ae60; 
-            --accent: #d35400; 
-            --bg: #f4f7f9; 
-            --text-dark: #2c3e50;
+            --primary: #154360; 
+            --secondary: #1abc9c; 
+            --accent: #e67e22; 
+            --bg: #fefefe; 
+            --text-dark: #1c2833;
         }
 
         body { 
@@ -128,10 +135,10 @@
             margin-top: 25px; 
             cursor: pointer; 
             transition: 0.3s; 
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.2);
+            box-shadow: 0 5px 15px rgba(26, 188, 156, 0.2);
         }
 
-        #submitBtn:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(39, 174, 96, 0.3); }
+        #submitBtn:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(26, 188, 156, 0.3); }
 
         .admin-content { display: none; background: white; padding: 25px; border-radius: 20px; width: 95%; margin: 20px auto; }
 
@@ -228,7 +235,7 @@
             <thead>
                 <tr>
                     <th>المالك</th><th>القومي</th><th>الهاتف</th><th>العنوان</th>
-                    <th>النوع</th><th>الكود</th><th>الصور</th><th>الإجراء</th>
+                    <th>النوع</th><th>الكود</th><th>صور</th><th>التواصل</th><th>الإجراء</th>
                 </tr>
             </thead>
             <tbody id="dataTable"></tbody>
@@ -248,142 +255,119 @@
 </footer>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
-        authDomain: "system-storage-bd0ed.firebaseapp.com",
-        projectId: "system-storage-bd0ed",
-        storageBucket: "system-storage-bd0ed.firebasestorage.app",
-        messagingSenderId: "501351821676",
-        appId: "1:501351821676:web:2926c58dedfc536cea8349"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
+    authDomain: "system-storage-bd0ed.firebaseapp.com",
+    projectId: "system-storage-bd0ed",
+    storageBucket: "system-storage-bd0ed.firebasestorage.app",
+    messagingSenderId: "501351821676",
+    appId: "1:501351821676:web:2926c58dedfc536cea8349"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const dbRef = collection(db, "orders");
-    let userRole = "";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const dbRef = collection(db, "orders");
+let userRole = "";
 
-    const compressImg = (file) => {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxWidth = 600;
-                    const scale = maxWidth / img.width;
-                    canvas.width = maxWidth; canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6));
-                };
+// ضغط الصور
+const compressImg = (file) => {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const maxWidth = 600;
+                const scale = maxWidth / img.width;
+                canvas.width = maxWidth; canvas.height = img.height * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.6));
             };
-        });
-    };
-
-    document.getElementById('submitBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('submitBtn');
-        const files = document.getElementById('multiFiles').files;
-        const owner = document.getElementById('ownerName').value.trim();
-        const nid = document.getElementById('nationalId').value.trim();
-        const tel = document.getElementById('phone').value.trim();
-
-        if (!/^[0-9]{14}$/.test(nid)) { alert("يرجى إدخال 14 رقماً للرقم القومي"); return; }
-        if (!/^01[0125][0-9]{8}$/.test(tel)) { alert("يرجى إدخال رقم هاتف مصري صحيح"); return; }
-        if (!owner || files.length === 0) { alert("يرجى ملء الاسم ورفع الصور"); return; }
-
-        btn.disabled = true; btn.innerText = "جاري المعالجة...";
-        try {
-            const imgArray = [];
-            for(let f of files) { imgArray.push(await compressImg(f)); }
-            const data = {
-                owner, nationalId: nid, phone: tel,
-                address: document.getElementById('address').value,
-                vType: document.getElementById('vType').value,
-                vDesc: document.getElementById('vDesc').value,
-                images: imgArray, timestamp: Date.now(), vCode: ""
-            };
-            await addDoc(dbRef, data);
-            alert("تم تسجيل طلبك بنجاح ✅");
-            window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالقومي: ${nid}`, '_blank');
-            location.reload();
-        } catch (e) { alert("حدث خطأ!"); btn.disabled = false; }
+        };
     });
+};
 
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة السر:");
-        if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
-        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
-        else { alert("خطأ في الدخول!"); return; }
-        document.getElementById('citizenPage').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'block';
-        renderAdmin();
-    });
-
-    function renderAdmin() {
-        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
-            const tableBody = document.getElementById('dataTable');
-            tableBody.innerHTML = '';
-            snap.forEach(s => {
-                const item = s.data(); const id = s.id;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:bold">${item.owner}</td>
-                    <td style="mso-number-format:'\@'">${item.nationalId}</td>
-                    <td style="mso-number-format:'\@'">${item.phone}</td>
-                    <td>${item.address}</td><td>${item.vType}</td>
-                    <td>${item.vCode || '⏳'}</td>
-                    <td><button class="view-btn">🖼️</button></td>
-                    <td>
-                        <button class="code-btn">كود</button>
-                        ${userRole==='SUPER'?'<button class="del-btn" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">حذف</button>':''}
-                    </td>`;
-                
-                tr.querySelector('.view-btn').onclick = () => {
-                    const modal = document.getElementById("imgModal");
-                    const mainImg = document.getElementById("mainViewImg");
-                    const thumbContainer = document.getElementById("modalThumbnails");
-                    thumbContainer.innerHTML = '';
-                    mainImg.src = item.images[0];
-                    item.images.forEach(src => {
-                        const img = document.createElement('img');
-                        img.src = src; img.style.width="60px"; img.style.height="60px"; img.style.cursor="pointer"; img.style.borderRadius="8px";
-                        img.onclick = () => mainImg.src = src;
-                        thumbContainer.appendChild(img);
-                    });
-                    modal.style.display = "block";
-                };
-
-                tr.querySelector('.code-btn').onclick = async () => {
-                    const code = prompt("أدخل كود المركبة:");
-                    if(code) {
-                        await updateDoc(doc(db, "orders", id), { vCode: code });
-                        alert("تم التكويد ✅");
-                    }
-                };
-                if(userRole==='SUPER') tr.querySelector('.del-btn').onclick = () => { if(confirm("حذف؟")) deleteDoc(doc(db, "orders", id)); };
-                tableBody.appendChild(tr);
-            });
-        });
+// توليد الكود الرقمي التلقائي
+async function generateNumericCode() {
+    const q = query(dbRef, orderBy("vCode", "desc"), limit(1));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+        const lastCode = snap.docs[0].data().vCode;
+        return Number(lastCode) + 1;
     }
+    return 1000;
+}
 
-    document.getElementById('exportExcelBtn').onclick = () => {
-        const table = document.getElementById("excelTable");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Data" });
-        const ws = wb.Sheets["Data"];
-        Object.keys(ws).forEach(key => {
-            if (key.startsWith('B') || key.startsWith('C')) {
-                if (ws[key].v) { ws[key].t = 's'; ws[key].v = "" + ws[key].v; }
-            }
-        });
-        XLSX.writeFile(wb, "بيانات_كفر_صقر.xlsx");
-    };
+document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    const files = document.getElementById('multiFiles').files;
+    const owner = document.getElementById('ownerName').value.trim();
+    const nid = document.getElementById('nationalId').value.trim();
+    const tel = document.getElementById('phone').value.trim();
 
-    document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
-</script>
-</body>
-</html>
+    if (!/^[0-9]{14}$/.test(nid)) { alert("يرجى إدخال 14 رقماً للرقم القومي"); return; }
+    if (!/^01[0125][0-9]{8}$/.test(tel)) { alert("يرجى إدخال رقم هاتف مصري صحيح"); return; }
+    if (!owner || files.length === 0) { alert("يرجى ملء الاسم ورفع الصور"); return; }
+
+    btn.disabled = true; btn.innerText = "جاري المعالجة...";
+    try {
+        const imgArray = [];
+        for(let f of files) { imgArray.push(await compressImg(f)); }
+        const vCode = await generateNumericCode(); // الكود الرقمي التلقائي
+        const data = {
+            owner, nationalId: nid, phone: tel,
+            address: document.getElementById('address').value,
+            vType: document.getElementById('vType').value,
+            vDesc: document.getElementById('vDesc').value,
+            images: imgArray, timestamp: Date.now(), vCode
+        };
+        await addDoc(dbRef, data);
+        alert("تم تسجيل طلبك بنجاح ✅");
+        window.open(`https://wa.me/201021102607?text=*طلب تكويد مركبة*%0Aالاسم: ${owner}%0Aالقومي: ${nid}`, '_blank');
+        location.reload();
+    } catch (e) { alert("حدث خطأ!"); btn.disabled = false; }
+});
+
+// تسجيل الدخول
+document.getElementById('loginBtn').addEventListener('click', () => {
+    const u = prompt("اسم المستخدم:"); const p = prompt("كلمة السر:");
+    if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
+    else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
+    else { alert("خطأ في الدخول!"); return; }
+    document.getElementById('citizenPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'block';
+    renderAdmin();
+});
+
+// عرض الطلبات في الإدارة
+function renderAdmin() {
+    onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+        const tableBody = document.getElementById('dataTable');
+        tableBody.innerHTML = '';
+        snap.forEach(s => {
+            const item = s.data(); const id = s.id;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:bold">${item.owner}</td>
+                <td style="mso-number-format:'\@'">${item.nationalId}</td>
+                <td style="mso-number-format:'\@'">${item.phone}</td>
+                <td>${item.address}</td><td>${item.vType}</td>
+                <td>${item.vCode || '⏳'}</td>
+                <td><button class="view-btn">🖼️</button></td>
+                <td>
+                    <button onclick="window.open('https://wa.me/2${item.phone}?text=مرحبا ${item.owner}', '_blank')" style="background:#25D366; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">واتس</button>
+                    <button onclick="window.open('tel:${item.phone}')" style="background:#2980b9; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">اتصال</button>
+                </td>
+                <td>
+                    ${userRole==='SUPER'?'<button class="del-btn" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">حذف</button>':''}
+                </td>`;
+            
+            tr.querySelector('.view-btn').onclick = () => {
+                const modal = document.getElementById("imgModal");
+                const mainImg = document.getElementById
