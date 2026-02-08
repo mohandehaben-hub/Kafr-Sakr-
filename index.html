@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة تكويد المركبات - كفر صقر</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Firebase scripts (global, not modules) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
     <style>
         :root { --primary: #1a5276; --secondary: #27ae60; --accent: #d35400; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; direction: rtl; padding-bottom: 90px; color: #2c3e50; }
@@ -133,10 +136,8 @@
     تصميم وتطوير الخبير الأمني: <b>م/ مهند إيهاب التهامي</b> 🛡️ | جميع الحقوق محفوظة 2026
 </footer>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+<script>
+    // Firebase initialization (global)
     const firebaseConfig = {
         apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
         authDomain: "system-storage-bd0ed.firebaseapp.com",
@@ -146,9 +147,9 @@
         appId: "1:501351821676:web:2926c58dedfc536cea8349"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const dbRef = collection(db, "orders");
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const dbRef = db.collection("orders");
     let allRecords = [];
     let role = "";
 
@@ -174,7 +175,7 @@
         }
 
         try {
-            await addDoc(dbRef, {
+            await dbRef.add({
                 owner: name, nationalId: nid,
                 phone: document.getElementById('phone').value,
                 vType: document.getElementById('vType').value,
@@ -200,7 +201,7 @@
         document.getElementById('citizenPage').style.display = 'none';
         document.getElementById('adminPage').style.display = 'block';
         
-        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+        dbRef.orderBy("timestamp", "desc").onSnapshot((snap) => {
             allRecords = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             render(allRecords);
         });
@@ -231,6 +232,7 @@
 
     window.openGallery = (id) => {
         const item = allRecords.find(r => r.id === id);
+        if (!item || !item.images || item.images.length === 0) return alert("لا توجد صور لهذا السجل");
         const modal = document.getElementById("imgModal");
         const main = document.getElementById("mainViewImg");
         const thumbs = document.getElementById("modalThumbnails");
@@ -244,23 +246,8 @@
 
     window.doCode = async (id) => {
         const code = prompt("أدخل رقم الكود الجديد:");
-        if(code) await updateDoc(doc(db, "orders", id), { vCode: code });
+        if(code) await db.collection("orders").doc(id).update({ vCode: code });
     };
 
     window.doDel = async (id) => {
-        if(confirm("هل تريد حذف هذا السجل نهائياً؟")) await deleteDoc(doc(db, "orders", id));
-    };
-
-    document.getElementById('searchInput').oninput = (e) => {
-        const v = e.target.value.toLowerCase();
-        const f = allRecords.filter(r => r.owner.toLowerCase().includes(v) || r.nationalId.includes(v) || r.phone.includes(v));
-        render(f);
-    };
-
-    document.getElementById('exportExcelBtn').onclick = () => {
-        const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "سجل_كفر_صقر_الرقمي.xlsx");
-    };
-</script>
-</body>
-</html>
+        if(confirm("هل تريد حذف هذا السجل نهائ
