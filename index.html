@@ -373,17 +373,21 @@
 
 <div id="adminPage" class="admin-content">
     <div class="stats-grid">
-        <div class="stat-card" style="border-bottom: 5px solid #3498db;"> <p>إجمالي الطلبات</p> <h3 id="statTotal">0</h3> </div>
+        <div class="stat-card" style="border-bottom: 5px solid #3498db;"> <p>إجمالي المركبات</p> <h3 id="statTotal">0</h3> </div>
+        <div class="stat-card" style="border-bottom: 5px solid #d35400;"> <p>الشكاوى الواردة</p> <h3 id="statCompTotal">0</h3> </div>
         <div class="stat-card" style="border-bottom: 5px solid #27ae60;"> <p>تم التكويد</p> <h3 id="statCoded">0</h3> </div>
-        <div class="stat-card" style="border-bottom: 5px solid #e67e22;"> <p>قيد الانتظار</p> <h3 id="statPending">0</h3> </div>
     </div>
+    
     <div class="card">
-        <div style="display:flex; gap:12px; margin-bottom:30px;">
-            <input type="text" id="searchInput" style="flex:1; padding:14px; border-radius:14px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.9);" placeholder="بحث بالاسم أو الرقم القومي...">
+        <div style="display:flex; gap:12px; margin-bottom:30px; flex-wrap: wrap;">
+            <button id="showOrdersBtn" class="btn" style="background: var(--primary); color: white;">🚜 جدول المركبات</button>
+            <button id="showComplaintsBtn" class="btn" style="background: var(--accent); color: white;">⚖️ قائمة الشكاوى</button>
+            <input type="text" id="searchInput" style="flex:1; padding:14px; border-radius:14px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.9);" placeholder="بحث عام...">
             <button id="exportExcelBtn" class="btn" style="background:#27ae60; color:white;">تصدير Excel</button>
             <button onclick="location.reload()" class="btn btn-del">خروج</button>
         </div>
-        <div style="overflow-x:auto;">
+
+        <div id="ordersTableContainer" style="overflow-x:auto;">
             <table id="excelTable">
                 <thead>
                     <tr>
@@ -401,6 +405,22 @@
                     </tr>
                 </thead>
                 <tbody id="dataTable"></tbody>
+            </table>
+        </div>
+
+        <div id="complaintsTableContainer" style="overflow-x:auto; display: none;">
+            <table id="complaintsTable">
+                <thead>
+                    <tr>
+                        <th>تاريخ البلاغ</th>
+                        <th>رقم المبلغ</th>
+                        <th>نوع الشكوى</th>
+                        <th>التفاصيل</th>
+                        <th>المرفقات (4 صور)</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="compTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -438,8 +458,7 @@
             </div>
             <div class="input-group">
                 <label>موديل السنة</label>
-                <select id="editVYear">
-                    </select>
+                <select id="editVYear"></select>
             </div>
             <div class="input-group" style="grid-column: 1 / -1;">
                 <label>الوصف واللون</label>
@@ -560,6 +579,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const dbRef = collection(db, "orders");
+    const compRef = collection(db, "complaints");
     let userRole = "";
     let currentEditId = "";
 
@@ -628,13 +648,11 @@
         } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
-    // --- منطق إرسال الشكاوى والتحقق الأمني (نفس نظام الرفع تماماً) ---
+    // --- منطق إرسال الشكاوى والتحقق الأمني ---
     document.getElementById('submitCompBtn').onclick = async () => {
         const btn = document.getElementById('submitCompBtn');
         const phone = document.getElementById('compPhone').value;
         const details = document.getElementById('compDetails').value;
-        
-        // مصفوفة بمدخلات الملفات الأربعة
         const fileInputs = [
             document.getElementById('compSelfie'),
             document.getElementById('compIdCard'),
@@ -642,51 +660,38 @@
             document.getElementById('compDriverImg')
         ];
 
-        if (phone.length < 11) { alert("يرجى إدخال رقم هاتف صحيح"); return; }
-        if (!details) { alert("يرجى كتابة تفاصيل الشكوى"); return; }
-        
-        // التأكد من رفع الصور الأساسية (أول صورتين)
-        if (!fileInputs[0].files[0] || !fileInputs[1].files[0]) { 
-            alert("يجب رفع صورة السيلفي والبطاقة للتأكد من هوية المرسل"); 
-            return; 
+        if (phone.length < 11 || !details || !fileInputs[0].files[0] || !fileInputs[1].files[0]) { 
+            alert("يرجى إكمال البيانات (رقم الهاتف، التفاصيل، السيلفي، والبطاقة)"); return; 
         }
 
-        btn.disabled = true;
-        btn.innerText = "جاري الحفظ والمعالجة...";
-
+        btn.disabled = true; btn.innerText = "جاري المعالجة الأمنية...";
         try {
-            // تجميع الصور في مصفوفة واحدة مثل نظام المركبات تماماً
             const imgArray = [];
             for (let input of fileInputs) {
-                if (input.files.length > 0) {
-                    const compressed = await compressImg(input.files[0]);
-                    imgArray.push(compressed);
-                }
+                if (input.files.length > 0) imgArray.push(await compressImg(input.files[0]));
             }
-
-            const compData = {
-                phone: phone,
-                type: document.getElementById('compType').value,
-                details: details,
-                images: imgArray, // رفع المصفوفة كاملة
-                timestamp: Date.now(),
-                status: "قيد المراجعة الأمنية"
-            };
-
-            await addDoc(collection(db, "complaints"), compData);
-
-            alert("تم إرسال بلاغك وتوثيق الصور بنجاح. ✅");
+            await addDoc(compRef, {
+                phone, type: document.getElementById('compType').value,
+                details, images: imgArray, timestamp: Date.now()
+            });
+            alert("تم إرسال بلاغك وتوثيقه بنجاح ✅");
             location.reload();
-
-        } catch (error) {
-            console.error(error);
-            alert("حدث خطأ أثناء الإرسال");
-            btn.disabled = false;
-            btn.innerText = "إرسال الشكوى والتحقق الأمني ✉️";
-        }
+        } catch (error) { alert("خطأ في الإرسال"); btn.disabled = false; btn.innerText = "إرسال الشكوى ✉️"; }
     };
 
-    // --- باقي وظائف لوحة التحكم والطباعة ---
+    // --- وظيفة التنقل في لوحة التحكم ---
+    document.getElementById('showOrdersBtn').onclick = () => {
+        document.getElementById('ordersTableContainer').style.display = 'block';
+        document.getElementById('complaintsTableContainer').style.display = 'none';
+    };
+
+    document.getElementById('showComplaintsBtn').onclick = () => {
+        document.getElementById('ordersTableContainer').style.display = 'none';
+        document.getElementById('complaintsTableContainer').style.display = 'block';
+        loadComplaints();
+    };
+
+    // --- وظائف لوحة التحكم والبيانات ---
     async function getSmartNextCode() {
         const snap = await getDocs(dbRef);
         let maxCode = 100;
@@ -708,14 +713,35 @@
         document.getElementById('adminPage').style.display = 'block';
         document.getElementById('goPortalBtn').style.display = 'inline-flex';
         loadAdminData();
+        loadComplaints();
     };
 
-    function printItem(item) {
-        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>الموديل:</b> ${item.vYear || '-'}</p><p><b>وصف المركبة:</b> ${item.vDesc}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي - م/ مهند التهامي</footer></div>`;
-        const originalBody = document.body.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
-        location.reload();
+    function loadComplaints() {
+        onSnapshot(query(compRef, orderBy("timestamp", "desc")), (snap) => {
+            const body = document.getElementById('compTableBody');
+            body.innerHTML = '';
+            document.getElementById('statCompTotal').innerText = snap.size;
+            snap.forEach(s => {
+                const item = s.data(); const id = s.id;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${formatDateTime(item.timestamp)}</td><td>${item.phone}</td><td style="color:var(--accent); font-weight:bold;">${item.type}</td><td style="font-size:0.9rem;">${item.details}</td><td><button class="btn view-comp-images" style="background:rgba(211, 84, 0, 0.1); color:var(--accent);">🖼️ صور (${item.images.length})</button></td><td><button class="btn btn-del">🗑️</button></td>`;
+                tr.querySelector('.view-comp-images').onclick = () => viewImages(item.images);
+                tr.querySelector('.btn-del').onclick = () => confirm("حذف البلاغ؟") && deleteDoc(doc(db, "complaints", id));
+                body.appendChild(tr);
+            });
+        });
+    }
+
+    function viewImages(images) {
+        const modal = document.getElementById("imgModal");
+        const mainImg = document.getElementById("mainViewImg");
+        const thumbContainer = document.getElementById("modalThumbnails");
+        thumbContainer.innerHTML = ''; mainImg.src = images[0];
+        images.forEach(src => {
+            const img = document.createElement('img'); img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
+            img.onclick = () => mainImg.src = src; thumbContainer.appendChild(img);
+        });
+        modal.style.display = "block";
     }
 
     function loadAdminData() {
@@ -741,7 +767,7 @@
                         document.getElementById('codeModal').style.display = 'none';
                     };
                 };
-                tr.querySelector('.btn-print').onclick = () => { printItem(item); };
+                tr.querySelector('.btn-print').onclick = () => printItem(item);
                 tr.querySelector('.btn-edit').onclick = () => {
                     currentEditId = id;
                     document.getElementById('editOwner').value = item.owner;
@@ -754,24 +780,22 @@
                     document.getElementById('editVCode').value = item.vCode || '';
                     document.getElementById('editModal').style.display = 'block';
                 };
-                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => { if(confirm("حذف الطلب نهائياً؟")) deleteDoc(doc(db, "orders", id)); };
-                tr.querySelector('.view-btn').onclick = () => {
-                    const modal = document.getElementById("imgModal");
-                    const mainImg = document.getElementById("mainViewImg");
-                    const thumbContainer = document.getElementById("modalThumbnails");
-                    thumbContainer.innerHTML = ''; mainImg.src = item.images[0];
-                    item.images.forEach(src => {
-                        const img = document.createElement('img'); img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
-                        img.onclick = () => mainImg.src = src; thumbContainer.appendChild(img);
-                    });
-                    modal.style.display = "block";
-                };
+                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => confirm("حذف الطلب نهائياً؟") && deleteDoc(doc(db, "orders", id));
+                tr.querySelector('.view-btn').onclick = () => viewImages(item.images);
                 tableBody.appendChild(tr);
             });
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statCoded').innerText = coded;
             document.getElementById('statPending').innerText = pending;
         });
+    }
+
+    function printItem(item) {
+        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>الموديل:</b> ${item.vYear || '-'}</p><p><b>وصف المركبة:</b> ${item.vDesc}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي</footer></div>`;
+        const originalBody = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        location.reload();
     }
 
     document.getElementById('saveEditBtn').onclick = async () => {
@@ -787,23 +811,23 @@
                 address: document.getElementById('editAddress').value,
                 vCode: document.getElementById('editVCode').value.toString()
             });
-            alert("تم تحديث قاعدة البيانات بنجاح ✅");
+            alert("تم التحديث ✅");
             document.getElementById('editModal').style.display = 'none';
-        } catch (e) { alert("حدث خطأ أثناء التحديث"); }
+        } catch (e) { alert("حدث خطأ"); }
     };
 
     document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
     
     document.getElementById('searchInput').oninput = (e) => {
         const term = e.target.value.toLowerCase();
-        document.querySelectorAll('#dataTable tr').forEach(row => {
+        document.querySelectorAll('#dataTable tr, #compTableBody tr').forEach(row => {
             row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
         });
     };
 
     document.getElementById('exportExcelBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "منظومة_تكويد_كفر_صقر.xlsx");
+        XLSX.writeFile(wb, "منظومة_كفر_صقر.xlsx");
     };
 
     window.onclick = (event) => { if (event.target.className === 'modal') event.target.style.display = "none"; };
