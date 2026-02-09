@@ -1,357 +1,905 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة الخدمات الرقمية المطورة - كفر صقر</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        :root { 
-            --primary: #1a5276; 
-            --secondary: #27ae60; 
-            --accent: #d35400; 
-            --pending: #e67e22;
-            --approved: #27ae60;
-            --rejected: #e74c3c;
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --glass-white: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg-gradient); 
-            background-attachment: fixed;
-            margin: 0; 
-            direction: rtl; 
-            padding-bottom: 60px;
-        }
-
-        header { 
-            background: rgba(26, 82, 118, 0.9); 
-            backdrop-filter: blur(10px);
-            color: white; 
-            padding: 20px 5%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-
-        .card { 
-            background: var(--glass-white); 
-            backdrop-filter: blur(10px);
-            padding: 30px; 
-            border-radius: 20px; 
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-        }
-
-        /* تنسيق بوابة الاختيار */
-        .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
-        .portal-card {
-            background: white; padding: 40px; border-radius: 20px; text-align: center; cursor: pointer;
-            transition: 0.3s; border: 2px solid transparent;
-        }
-        .portal-card:hover { transform: translateY(-10px); border-color: var(--primary); }
-
-        /* التنسيقات العامة للمدخلات */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        .input-group label { margin-bottom: 8px; font-weight: bold; color: var(--primary); }
-        .input-group input, .input-group select, .input-group textarea { 
-            padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-family: inherit;
-        }
-
-        /* تحليل البيانات تلقائياً */
-        .auto-info { 
-            background: #e8f4f8; padding: 10px; border-radius: 10px; margin-top: 5px; 
-            display: none; grid-template-columns: 1fr 1fr; font-size: 0.9rem; font-weight: bold; color: #1a5276;
-        }
-
-        /* الجداول */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
-        th { background: var(--primary); color: white; }
-        .status-badge { padding: 5px 10px; border-radius: 15px; color: white; font-size: 0.8rem; font-weight: bold; }
-
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-primary { background: var(--secondary); color: white; }
-        .btn-danger { background: var(--rejected); color: white; }
-        .btn-admin { background: #34495e; color: white; }
-
-        #adminSection { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منظومة تكويد المركبات المتطورة - كفر صقر</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root { 
+--primary: #1a5276; --secondary: #27ae60; --accent: #d35400; --danger: #e74c3c;
+--warning: #f39c12; --info: #3498db; --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+--glass-white: rgba(255, 255, 255, 0.85); --glass-border: rgba(255, 255, 255, 0.5);
+--text-dark: #2c3e50; --shadow-lg: 0 20px 60px rgba(0,0,0,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+background: var(--bg-gradient); background-attachment: fixed;
+direction: rtl; color: var(--text-dark); padding-bottom: 100px; min-height: 100vh;
+}
+header { 
+background: rgba(26, 82, 118, 0.95); backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px); color: white; padding: 20px 5%; 
+display: flex; justify-content: space-between; align-items: center; 
+box-shadow: var(--shadow-lg); border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+position: sticky; top: 0; z-index: 1000; animation: slideDown 0.5s ease;
+}
+@keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.header-title h1 { margin: 0; font-size: 1.4rem; text-shadow: 0 3px 6px rgba(0,0,0,0.3); }
+.header-title small { color: #f1c40f; font-size: 0.85rem; display: block; margin-top: 5px; }
+.container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+.card { 
+background: var(--glass-white); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+padding: 40px; border-radius: 30px; border: 2px solid var(--glass-border);
+box-shadow: var(--shadow-lg); animation: fadeIn 0.6s ease; margin-bottom: 30px;
+}
+.portal-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; margin-top: 50px; }
+.portal-box {
+background: var(--glass-white); backdrop-filter: blur(20px); padding: 60px 35px;
+border-radius: 35px; text-align: center; cursor: pointer; border: 3px solid transparent;
+transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+box-shadow: 0 15px 40px rgba(0,0,0,0.15); position: relative; overflow: hidden;
+}
+.portal-box::before {
+content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+transform: scale(0); transition: transform 0.6s ease;
+}
+.portal-box:hover::before { transform: scale(1); }
+.portal-box:hover { transform: translateY(-10px) scale(1.03); border-color: var(--primary);
+background: white; box-shadow: 0 25px 60px rgba(26, 82, 118, 0.3); }
+.portal-box i { font-size: 90px; display: block; margin-bottom: 25px; animation: pulse 2s infinite; }
+.portal-box h2 { color: var(--primary); margin: 15px 0; font-size: 1.5rem; }
+.portal-box p { color: #666; font-size: 1rem; line-height: 1.6; }
+.search-results { 
+max-height: 250px; overflow-y: auto; background: white; border: 2px solid var(--glass-border); 
+border-radius: 15px; display: none; position: absolute; width: 100%; z-index: 999;
+box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 5px;
+}
+.result-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; 
+transition: all 0.3s; color: #333; font-weight: 500; }
+.result-item:hover { background: linear-gradient(90deg, var(--primary) 0%, var(--info) 100%); 
+color: white; padding-right: 25px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+gap: 25px; margin-bottom: 35px; }
+.stat-card { 
+background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%); 
+backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; 
+border: 2px solid var(--glass-border); box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+transition: all 0.4s ease; position: relative; overflow: hidden;
+}
+.stat-card::before {
+content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+}
+.stat-card:hover { transform: translateY(-10px) rotate(2deg); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
+.stat-card h3 { margin: 15px 0; font-size: 2.5rem; background: linear-gradient(45deg, var(--primary), var(--info));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+.stat-card p { margin: 0; color: #555; font-size: 1rem; font-weight: 600; text-transform: uppercase; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+.input-group { display: flex; flex-direction: column; margin-bottom: 20px; position: relative; }
+.input-group label { margin-bottom: 12px; font-weight: 700; color: var(--primary); font-size: 1rem;
+display: flex; align-items: center; gap: 8px; }
+.input-group label::before { content: '●'; color: var(--accent); font-size: 0.8rem; }
+.input-group input, .input-group select, .input-group textarea { 
+padding: 16px; border: 2px solid var(--glass-border); border-radius: 15px; 
+background: rgba(255, 255, 255, 0.95); font-size: 1.05rem; transition: all 0.3s;
+font-family: inherit; font-weight: 500;
+}
+.input-group input:focus, .input-group select:focus, .input-group textarea:focus { 
+outline: none; border-color: var(--primary); 
+box-shadow: 0 0 0 5px rgba(26, 82, 118, 0.15); transform: translateY(-2px); 
+}
+.input-group input.error { border-color: var(--danger); animation: shake 0.5s; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 
+75% { transform: translateX(10px); } }
+.validation-msg { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+display: none; font-weight: 600; }
+.validation-msg.error { background: rgba(231, 76, 60, 0.1); color: var(--danger); display: block; }
+.validation-msg.success { background: rgba(39, 174, 96, 0.1); color: var(--secondary); display: block; }
+table { width: 100%; border-collapse: separate; border-spacing: 0 10px; background: transparent; }
+thead { position: sticky; top: 80px; z-index: 100; }
+th { background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); 
+color: white; padding: 20px; font-size: 1rem; font-weight: 700; text-transform: uppercase;
+box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+th:first-child { border-radius: 0 20px 20px 0; }
+th:last-child { border-radius: 20px 0 0 20px; }
+td { padding: 18px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); 
+border-top: 2px solid var(--glass-border); border-bottom: 2px solid var(--glass-border);
+font-weight: 500; transition: all 0.3s; }
+tr:hover td { background: rgba(255, 255, 255, 0.98); transform: scale(1.01); }
+td:first-child { border-right: 2px solid var(--glass-border); border-radius: 0 20px 20px 0; }
+td:last-child { border-left: 2px solid var(--glass-border); border-radius: 20px 0 0 20px; }
+.btn { 
+cursor: pointer; border: none; padding: 14px 24px; border-radius: 16px; font-weight: 700; 
+transition: all 0.4s ease; display: inline-flex; align-items: center; justify-content: center; 
+gap: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); font-size: 1rem;
+position: relative; overflow: hidden; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.btn::before {
+content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+background: rgba(255,255,255,0.3); border-radius: 50%; transition: width 0.6s, height 0.6s;
+transform: translate(-50%, -50%);
+}
+.btn:hover::before { width: 300px; height: 300px; }
+.btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+.btn:active { transform: translateY(-1px); }
+.btn-primary { background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white; }
+.btn-auto { background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; }
+.btn-edit { background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; }
+.btn-del { background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; }
+.btn-wa { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; }
+.btn-print { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; }
+.admin-content { display: none; padding: 30px 0; }
+.modal { 
+display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; 
+background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto; 
+animation: fadeIn 0.3s ease;
+}
+.modal-content { 
+background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%); 
+margin: 3% auto; padding: 45px; width: 92%; max-width: 750px; border-radius: 35px; 
+border: 3px solid var(--glass-border); box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+position: relative; animation: slideDown 0.5s ease;
+}
+.modal-content h3 { color: var(--primary); border-bottom: 3px solid var(--glass-border); 
+padding-bottom: 20px; margin-top: 0; font-size: 1.8rem; }
+.close-modal { position: absolute; top: 20px; left: 25px; color: var(--danger); 
+font-size: 45px; cursor: pointer; transition: all 0.3s; font-weight: bold; }
+.close-modal:hover { transform: rotate(90deg) scale(1.2); color: #c0392b; }
+.engineer-footer { 
+background: linear-gradient(135deg, rgba(28, 40, 51, 0.98) 0%, rgba(44, 62, 80, 0.98) 100%); 
+backdrop-filter: blur(15px); color: #ecf0f1; text-align: center; padding: 18px; 
+position: fixed; bottom: 0; width: 100%; font-size: 0.95rem; 
+border-top: 4px solid var(--accent); z-index: 999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+font-weight: 600; letter-spacing: 0.5px;
+}
+.support-box { 
+background: linear-gradient(135deg, rgba(52, 152, 219, 0.12) 0%, rgba(155, 89, 182, 0.12) 100%); 
+border: 3px dashed rgba(52, 152, 219, 0.5); border-radius: 25px; padding: 30px; 
+margin-top: 35px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.support-box p { margin-top: 0; font-weight: 700; color: var(--primary); font-size: 1.2rem; 
+margin-bottom: 20px; }
+.loading { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+z-index: 20000; }
+.spinner { border: 8px solid rgba(255,255,255,0.3); border-top: 8px solid var(--primary);
+border-radius: 50%; width: 80px; height: 80px; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@media print { body * { visibility: hidden; } #printSection, #printSection * { visibility: visible; }
+#printSection { position: absolute; left: 0; top: 0; width: 100%; } }
+@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } 
+.portal-container { grid-template-columns: 1fr; } .header-title h1 { font-size: 1.1rem; } }
+</style>
 </head>
 <body>
-
+<div class="loading" id="loadingSpinner"><div class="spinner"></div></div>
 <header>
-    <div>
-        <h1 style="margin:0; font-size: 1.5rem;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
-        <small>منظومة الرقابة والتكويد الإلكتروني</small>
-    </div>
-    <button id="adminLoginBtn" class="btn btn-admin">🔐 دخول المسؤول</button>
-</header>
-
-<div class="container">
-    <div id="portalSection">
-        <h2 style="text-align:center; color: var(--primary);">مرحباً بك في البوابة الرقمية</h2>
-        <div class="portal-grid">
-            <div class="portal-card" onclick="showPage('ownerForm')">
-                <span style="font-size: 50px;">🚜</span>
-                <h3>تسجيل مركبة جديدة</h3>
-                <p>توكتوك - موتوسيكل - تروسيكل</p>
-            </div>
-            <div class="portal-card" onclick="showPage('complaintForm')">
-                <span style="font-size: 50px;">⚖️</span>
-                <h3>تقديم بلاغ / شكوى</h3>
-                <p>بلاغات أمنية ومخالفات مرورية</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="ownerForm" style="display:none;" class="card">
-        <h2 style="color:var(--primary); text-align:center;">📝 استمارة تسجيل البيانات</h2>
-        <div class="form-grid">
-            <div class="input-group" style="grid-column: 1 / -1;">
-                <label>الاسم الرباعي للمالك</label>
-                <input type="text" id="ownerName" placeholder="أدخل الاسم كما هو في البطاقة">
-            </div>
-            <div class="input-group">
-                <label>الرقم القومي (14 رقم)</label>
-                <input type="number" id="natId" oninput="decodeID(this.value)">
-                <div id="idDetails" class="auto-info">
-                    <div id="resBirth">تاريخ الميلاد: -</div>
-                    <div id="resGender">النوع: -</div>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>رقم الهاتف</label>
-                <input type="tel" id="ownerPhone" placeholder="01xxxxxxxxx">
-            </div>
-            <div class="input-group">
-                <label>نوع المركبة</label>
-                <select id="vType">
-                    <option value="توكتوك">توكتوك</option>
-                    <option value="موتوسيكل">موتوسيكل</option>
-                    <option value="تروسيكل">تروسيكل</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>موديل السنة</label>
-                <input type="number" id="vModel" placeholder="مثلاً: 2023">
-            </div>
-            <div class="input-group" style="grid-column: 1 / -1;">
-                <label>العنوان التفصيلي (القرية/الشارع)</label>
-                <textarea id="fullAddress" rows="2"></textarea>
-            </div>
-            <div class="input-group" style="grid-column: 1 / -1;">
-                <label>رفع صور المركبة والمستندات (البطاقة + عقد الشراء)</label>
-                <input type="file" id="ownerFiles" multiple accept="image/*">
-            </div>
-        </div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn btn-primary" style="flex:2;" onclick="submitOrder()">إرسال البيانات ✅</button>
-            <button class="btn btn-danger" style="flex:1;" onclick="location.reload()">إلغاء</button>
-        </div>
-    </div>
-
-    <div id="adminSection">
-        <div class="card" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="margin:0;">📊 لوحة إدارة المنظومة</h2>
-            <div>
-                <input type="text" id="searchTable" placeholder="بحث سريع..." style="padding:10px; border-radius:8px; border:1px solid #ccc;">
-                <button class="btn btn-primary" onclick="exportToExcel()">تصدير إكسيل 📥</button>
-                <button class="btn btn-danger" onclick="location.reload()">خروج</button>
-            </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-            <table id="mainTable">
-                <thead>
-                    <tr>
-                        <th>تاريخ التقديم</th>
-                        <th>المالك</th>
-                        <th>الرقم القومي</th>
-                        <th>تاريخ الميلاد</th>
-                        <th>الحالة</th>
-                        <th>المسؤول المراجع</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-    </div>
+<div class="header-title">
+<h1>🏛️ رئاسة مركز ومدينة كفر صقر</h1>
+<small>د/ أحمد المقدم - رئيس المدينة</small>
 </div>
-
-<script type="module">
-    // تهيئة Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
-        authDomain: "system-storage-bd0ed.firebaseapp.com",
-        projectId: "system-storage-bd0ed",
-        storageBucket: "system-storage-bd0ed.firebasestorage.app",
-        messagingSenderId: "501351821676",
-        appId: "1:501351821676:web:2926c58dedfc536cea8349"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const ordersRef = collection(db, "orders");
-
-    // دالة فك شفرة الرقم القومي لاستخراج تاريخ الميلاد
-    window.decodeID = function(val) {
-        const id = val.toString();
-        const display = document.getElementById('idDetails');
-        if(id.length === 14) {
-            display.style.display = 'grid';
-            let century = id[0] === '2' ? '19' : '20';
-            let year = century + id.substring(1,3);
-            let month = id.substring(3,5);
-            let day = id.substring(5,7);
-            let gender = parseInt(id[12]) % 2 === 0 ? "أنثى" : "ذكر";
-            
-            document.getElementById('resBirth').innerText = `تاريخ الميلاد: ${day}/${month}/${year}`;
-            document.getElementById('resGender').innerText = `النوع: ${gender}`;
-            // تخزين القيم في سمات مخفية لاستخدامها عند الحفظ
-            display.dataset.birth = `${day}/${month}/${year}`;
-        } else {
-            display.style.display = 'none';
-        }
-    }
-
-    // التنقل بين الصفحات
-    window.showPage = function(id) {
-        document.getElementById('portalSection').style.display = 'none';
-        document.getElementById(id).style.display = 'block';
-    }
-
-    // إرسال الطلب
-    window.submitOrder = async function() {
-        const name = document.getElementById('ownerName').value;
-        const idNum = document.getElementById('natId').value;
-        const birth = document.getElementById('idDetails').dataset.birth;
-        const files = document.getElementById('ownerFiles').files;
-
-        if(!name || idNum.length !== 14) return alert("يرجى التأكد من الاسم والرقم القومي");
-
-        // معالجة الصور (بدون ضغط كما طلبت)
-        let images = [];
-        for(let file of files) {
-            const base64 = await toBase64(file);
-            images.push(base64);
-        }
-
-        const data = {
-            ownerName: name,
-            nationalId: idNum,
-            birthDate: birth || "غير محدد",
-            phone: document.getElementById('ownerPhone').value,
-            vType: document.getElementById('vType').value,
-            vModel: document.getElementById('vModel').value,
-            address: document.getElementById('fullAddress').value,
-            status: "قيد المراجعة",
-            reviewedBy: "لم يحدد", // المسؤول
-            timestamp: Date.now(),
-            imgs: images
-        };
-
-        try {
-            await addDoc(ordersRef, data);
-            alert("تم إرسال طلبك بنجاح. سيتم فحصه من قبل الإدارة.");
-            location.reload();
-        } catch (e) {
-            alert("خطأ في الإرسال: " + e.message);
-        }
-    }
-
-    // تحويل الملف لـ Base64
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-
-    // تسجيل دخول المسؤول
-    document.getElementById('adminLoginBtn').onclick = () => {
-        const pass = prompt("أدخل كلمة مرور المسؤول:");
-        if(pass === "2026") { // يمكنك تغيير كلمة المرور هنا
-            document.getElementById('portalSection').style.display = 'none';
-            document.getElementById('ownerForm').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'block';
-            loadAdminData();
-        } else {
-            alert("كلمة مرور خاطئة");
-        }
-    };
-
-    // جلب البيانات للمسؤول
-    function loadAdminData() {
-        const q = query(ordersRef, orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = "";
-            snapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                const id = docSnap.id;
-                
-                let color = item.status === "مقبول" ? "#27ae60" : (item.status === "مرفوض" ? "#e74c3c" : "#e67e22");
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${new Date(item.timestamp).toLocaleDateString('ar-EG')}</td>
-                        <td><b>${item.ownerName}</b></td>
-                        <td>${item.nationalId}</td>
-                        <td>${item.birthDate}</td>
-                        <td><span class="status-badge" style="background:${color}">${item.status}</span></td>
-                        <td>${item.reviewedBy}</td>
-                        <td>
-                            <button onclick="changeStatus('${id}', 'مقبول')" class="btn btn-primary" style="padding:5px 10px;">قبول</button>
-                            <button onclick="changeStatus('${id}', 'مرفوض')" class="btn btn-danger" style="padding:5px 10px;">رفض</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        });
-    }
-
-    // تحديث الحالة وتحديد المسؤول
-    window.changeStatus = async function(id, newStatus) {
-        const adminName = prompt("اسم المسؤول المراجع:");
-        if(!adminName) return;
-        
-        await updateDoc(doc(db, "orders", id), {
-            status: newStatus,
-            reviewedBy: adminName
-        });
-        alert("تم تحديث الحالة بواسطة " + adminName);
-    }
-
-    // تصدير إكسيل
-    window.exportToExcel = function() {
-        const table = document.getElementById("mainTable");
-        const wb = XLSX.utils.table_to_book(table);
-        XLSX.writeFile(wb, "تقرير_منظومة_كفر_صقر.xlsx");
-    }
-
-    // بحث سريع في الجدول
-    document.getElementById('searchTable').onkeyup = function() {
-        let val = this.value.toLowerCase();
-        let rows = document.querySelectorAll("#tableBody tr");
-        rows.forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
-        });
-    };
-
+<div style="display:flex; gap:12px; flex-wrap: wrap;">
+<button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none;" onclick="location.reload()">🏠 البوابة</button>
+<button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4);">🔐 لوحة التحكم</button>
+</div>
+</header>
+<div class="container">
+<div id="portalSection">
+<h2 style="text-align: center; color: white; margin-top: 50px; margin-bottom: 15px; font-size: 2.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">أهلاً بك في بوابة الخدمات الرقمية المتطورة</h2>
+<p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 50px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">يرجى اختيار القسم الذي ترغب في الدخول إليه</p>
+<div class="portal-container">
+<div class="portal-box" onclick="openService('citizenPage')">
+<i style="font-style: normal; font-size: 85px;">🚜</i>
+<h2>قسم تكويد المركبات</h2>
+<p>تسجيل بيانات التوكتوك والموتوسيكل والتروسيكل والميكروباص بالمنظومة الذكية</p>
+</div>
+<div class="portal-box" onclick="openService('complaintsModule')" style="border-bottom: 6px solid var(--accent);">
+<i style="font-style: normal; font-size: 85px;">⚖️</i>
+<h2 style="color: var(--accent);">بوابة الشكاوى والأمن</h2>
+<p>تقديم البلاغات والشكاوى والتحقق الأمني المباشر مع التوثيق الكامل</p>
+</div>
+</div>
+</div>
+<div id="citizenPage" style="display:none;">
+<div class="card">
+<h2 style="text-align: center; color: var(--primary); margin-bottom: 40px; font-size: 2rem;">📝 تسجيل بيانات المركبة في المنظومة</h2>
+<div class="form-grid">
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>الاسم الرباعي للمالك</label>
+<input type="text" id="ownerName" placeholder="أدخل اسم المالك بالكامل كما في البطاقة">
+</div>
+<div class="input-group">
+<label>الرقم القومي (14 رقم)</label>
+<input type="text" id="nationalId" maxlength="14" placeholder="مثال: 29501011234567" oninput="validateNationalId(this)">
+<div id="nidValidation" class="validation-msg"></div>
+</div>
+<div class="input-group">
+<label>تاريخ الميلاد (للتحقق)</label>
+<input type="date" id="birthDate" onchange="verifyBirthDate()">
+<div id="birthValidation" class="validation-msg"></div>
+</div>
+<div class="input-group">
+<label>رقم الهاتف (11 رقم)</label>
+<input type="tel" id="phone" maxlength="11" placeholder="01XXXXXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+<div class="input-group">
+<label>نوع المركبة</label>
+<select id="vType">
+<option value="توكتوك">توكتوك</option>
+<option value="موتوسيكل">موتوسيكل</option>
+<option value="تروسيكل">تروسيكل</option>
+<option value="ميكروباص">ميكروباص</option>
+</select>
+</div>
+<div class="input-group">
+<label>موديل المركبة (السنة)</label>
+<select id="vYear"><option value="">اختر السنة...</option></select>
+</div>
+<div class="input-group">
+<label>لون المركبة</label>
+<input type="text" id="vColor" placeholder="مثال: أحمر، أسود، أبيض...">
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>البحث عن القرية / المنطقة:</label>
+<input type="text" id="locSearchInput" placeholder="اكتب اسم المكان هنا (مثلاً: البوها، حي تيسير...)" onkeyup="filterLocations()">
+<div id="resultsList" class="search-results"></div>
+</div>
+<div class="input-group" id="detailSection" style="display:none; grid-column: 1 / -1;">
+<label id="selectedPlaceLabel"></label>
+<textarea id="detailedAddress" rows="3" placeholder="رقم الشارع، اسم المحل، أو علامة مميزة..."></textarea>
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>رفع الصور والمستندات (بدون ضغط - جودة أصلية)</label>
+<input type="file" id="multiFiles" multiple accept="image/*" style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.08) 0%, rgba(52, 152, 219, 0.08) 100%); padding: 30px; border: 3px dashed var(--primary); font-weight: 600;">
+<small style="color: #666; margin-top: 10px; display: block;">✓ يتم رفع الصور بجودتها الأصلية بدون ضغط</small>
+</div>
+</div>
+<button id="submitBtn" class="btn btn-primary" style="width: 100%; font-size: 1.4rem; margin-top: 35px; padding: 20px;">إرسال الطلب ✅</button>
+<div class="support-box">
+<p>الدعم الفني والمساعدة:</p>
+<div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+<a href="https://wa.me/201021102607" target="_blank" class="btn btn-wa">💬 واتساب</a>
+<a href="tel:01021102607" class="btn btn-wa" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%);">📞 اتصال</a>
+</div>
+</div>
+</div>
+</div>
+<div id="complaintsModule" style="display:none;">
+<div class="card" style="border: 3px solid var(--accent);">
+<h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚠️ قسم الشكاوى والتحقق الأمني</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+<div class="input-group">
+<label>نوع الشكوى / البلاغ</label>
+<select id="compType" style="padding: 16px; border-radius: 15px; border: 2px solid var(--glass-border);">
+<option value="بلاغ عن مركبة مخالفة">بلاغ عن مركبة مخالفة</option>
+<option value="تحديث بيانات أمنية">تحديث بيانات أمنية</option>
+<option value="شكوى من سائق">شكوى من سائق</option>
+<option value="أخرى">أخرى</option>
+</select>
+</div>
+<div class="input-group">
+<label>رقم هاتف التواصل (11 رقم)</label>
+<input type="tel" id="compPhone" maxlength="11" placeholder="010XXXXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>تفاصيل المشكلة / البلاغ</label>
+<textarea id="compDetails" rows="4" placeholder="اكتب تفاصيل البلاغ هنا لتوثيقه أمنياً..." style="padding: 16px; border-radius: 15px; border: 2px solid var(--glass-border); font-family: inherit;"></textarea>
+</div>
+<div class="input-group">
+<label>📸 صورة سيلفي (للمرسل)</label>
+<input type="file" id="compSelfie" accept="image/*" style="padding: 12px;">
+</div>
+<div class="input-group">
+<label>🪪 صورة البطاقة (شخصي)</label>
+<input type="file" id="compIdCard" accept="image/*" style="padding: 12px;">
+</div>
+<div class="input-group">
+<label>🔢 صورة لوحة المركبة</label>
+<input type="file" id="compPlate" accept="image/*" style="padding: 12px;">
+</div>
+<div class="input-group">
+<label>👤 صورة السائق أو المشكلة</label>
+<input type="file" id="compDriverImg" accept="image/*" style="padding: 12px;">
+</div>
+</div>
+<button id="submitCompBtn" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 20px; font-size: 1.3rem; margin-top: 30px;">
+إرسال الشكوى والتحقق الأمني ✉️
+</button>
+</div>
+</div>
+</div>
+<div id="adminPage" class="admin-content">
+<div class="stats-grid">
+<div class="stat-card"><p>إجمالي المركبات</p><h3 id="statTotal">0</h3></div>
+<div class="stat-card"><p>الشكاوى الواردة</p><h3 id="statCompTotal">0</h3></div>
+<div class="stat-card"><p>تم التكويد</p><h3 id="statCoded">0</h3></div>
+<div class="stat-card"><p>قيد الانتظار</p><h3 id="statPending">0</h3></div>
+</div>
+<div class="card">
+<div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap;">
+<button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
+<button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
+<input type="text" id="searchInput" style="flex:1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث عام في جميع البيانات...">
+<button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
+<button onclick="location.reload()" class="btn btn-del">🚪 خروج</button>
+</div>
+<div id="ordersTableContainer" style="overflow-x:auto;">
+<table id="excelTable">
+<thead>
+<tr>
+<th>تاريخ الطلب</th><th>المالك</th><th>الرقم القومي</th><th>الهاتف</th>
+<th>العنوان</th><th>النوع</th><th>الموديل</th><th>الكود</th>
+<th>تاريخ التكويد</th><th>الصور</th><th>الإجراءات</th>
+</tr>
+</thead>
+<tbody id="dataTable"></tbody>
+</table>
+</div>
+<div id="complaintsTableContainer" style="overflow-x:auto; display: none;">
+<table id="complaintsTable">
+<thead>
+<tr>
+<th>تاريخ البلاغ</th><th>رقم المبلغ</th><th>نوع الشكوى</th>
+<th>التفاصيل</th><th>المرفقات (4 صور)</th><th>الإجراءات</th>
+</tr>
+</thead>
+<tbody id="compTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="imgModal" class="modal">
+<span class="close-modal" id="closeModalBtn">&times;</span>
+<img id="mainViewImg" style="max-width:90%; max-height:80vh; display:block; margin:80px auto 30px; border:8px solid white; border-radius:25px; box-shadow: 0 0 60px rgba(0,0,0,0.8);">
+<div id="modalThumbnails" style="display: flex; justify-content: center; gap: 15px; padding: 25px; flex-wrap: wrap;"></div>
+</div>
+<div id="editModal" class="modal">
+<div class="modal-content">
+<span class="close-modal" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
+<h3>🔧 تعديل بيانات المركبة</h3>
+<div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-top:25px;">
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>الاسم الرباعي</label>
+<input type="text" id="editOwner">
+</div>
+<div class="input-group">
+<label>الرقم القومي</label>
+<input type="text" id="editNid" maxlength="14">
+</div>
+<div class="input-group">
+<label>رقم الهاتف</label>
+<input type="tel" id="editPhone" maxlength="11">
+</div>
+<div class="input-group">
+<label>نوع المركبة</label>
+<select id="editVType">
+<option value="توكتوك">توكتوك</option>
+<option value="موتوسيكل">موتوسيكل</option>
+<option value="تروسيكل">تروسيكل</option>
+<option value="ميكروباص">ميكروباص</option>
+</select>
+</div>
+<div class="input-group">
+<label>موديل السنة</label>
+<select id="editVYear"></select>
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>الوصف واللون</label>
+<input type="text" id="editVDesc">
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>العنوان</label>
+<input type="text" id="editAddress">
+</div>
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>رقم الكود (تعديل مباشر)</label>
+<input type="text" id="editVCode" style="border: 3px solid var(--secondary); font-weight:bold; color:var(--secondary); font-size: 1.3rem; text-align: center;">
+</div>
+</div>
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="saveEditBtn" class="btn btn-primary" style="flex:1; padding:18px; font-size: 1.1rem;">تأكيد التعديلات ✅</button>
+<button onclick="document.getElementById('editModal').style.display='none'" class="btn btn-del" style="flex:1; padding:18px; font-size: 1.1rem;">إلغاء ❌</button>
+</div>
+</div>
+</div>
+<div id="codeModal" class="modal">
+<div class="modal-content" style="max-width:500px; text-align:center;">
+<span class="close-modal" onclick="document.getElementById('codeModal').style.display='none'">&times;</span>
+<h3 style="color:var(--primary); font-size: 1.8rem;">🔢 نظام التكويد الذكي</h3>
+<p id="codeHint" style="font-size:1.1rem; color:#555; background: rgba(0,0,0,0.06); padding:18px; border-radius:15px; margin: 25px 0; font-weight: 600;"></p>
+<div class="input-group">
+<label style="justify-content: center;">الكود المخصص للمركبة:</label>
+<input type="text" id="manualCodeInput" style="text-align:center; font-size:2.5rem; font-weight:bold; color:var(--secondary); border: 3px solid var(--secondary); height: 80px;">
+</div>
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="confirmCodeBtn" class="btn btn-primary" style="flex:1; padding:18px; font-size: 1.1rem;">تأكيد الكود ✅</button>
+<button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del" style="padding:18px; font-size: 1.1rem;">تجاهل ❌</button>
+</div>
+</div>
+</div>
+<footer class="engineer-footer">
+تم التطوير والتحديث بواسطة م/ مهند التهامي - 01021102607 | نظام متطور بتقنيات حديثة
+</footer>
+<script>
+function openService(serviceId) {
+document.getElementById('portalSection').style.display = 'none';
+document.getElementById(serviceId).style.display = 'block';
+document.getElementById('goPortalBtn').style.display = 'inline-flex';
+}
+function fillYears(selectId) {
+const select = document.getElementById(selectId);
+if(!select) return;
+for (let year = 2000; year <= 2200; year++) {
+let opt = document.createElement('option');
+opt.value = year; opt.innerText = year;
+select.appendChild(opt);
+}
+}
+fillYears('vYear'); fillYears('editVYear');
+function validateNationalId(input) {
+const nid = input.value.replace(/[^0-9]/g, '');
+input.value = nid;
+const msgDiv = document.getElementById('nidValidation');
+if (nid.length === 0) { msgDiv.style.display = 'none'; input.classList.remove('error'); return; }
+if (nid.length !== 14) {
+msgDiv.className = 'validation-msg error';
+msgDiv.innerText = '❌ الرقم القومي يجب أن يكون 14 رقم';
+input.classList.add('error');
+return false;
+}
+const century = nid[0];
+if (!['2', '3'].includes(century)) {
+msgDiv.className = 'validation-msg error';
+msgDiv.innerText = '❌ الرقم القومي غير صحيح (يجب أن يبدأ بـ 2 أو 3)';
+input.classList.add('error');
+return false;
+}
+const year = parseInt((century === '2' ? '19' : '20') + nid.substring(1, 3));
+const month = parseInt(nid.substring(3, 5));
+const day = parseInt(nid.substring(5, 7));
+if (month < 1 || month > 12 || day < 1 || day > 31) {
+msgDiv.className = 'validation-msg error';
+msgDiv.innerText = '❌ تاريخ الميلاد في الرقم القومي غير صحيح';
+input.classList.add('error');
+return false;
+}
+msgDiv.className = 'validation-msg success';
+msgDiv.innerText = `✅ الرقم القومي صحيح - تاريخ الميلاد المستخرج: ${day}/${month}/${year}`;
+input.classList.remove('error');
+document.getElementById('birthDate').value = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+return true;
+}
+function verifyBirthDate() {
+const nid = document.getElementById('nationalId').value;
+const birthInput = document.getElementById('birthDate').value;
+const msgDiv = document.getElementById('birthValidation');
+if (!nid || nid.length !== 14 || !birthInput) {
+msgDiv.style.display = 'none';
+return;
+}
+const century = nid[0];
+const year = parseInt((century === '2' ? '19' : '20') + nid.substring(1, 3));
+const month = parseInt(nid.substring(3, 5));
+const day = parseInt(nid.substring(5, 7));
+const nidDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+if (birthInput === nidDate) {
+msgDiv.className = 'validation-msg success';
+msgDiv.innerText = '✅ تاريخ الميلاد مطابق للرقم القومي';
+return true;
+} else {
+msgDiv.className = 'validation-msg error';
+msgDiv.innerText = `❌ تاريخ الميلاد غير مطابق! التاريخ الصحيح: ${day}/${month}/${year}`;
+return false;
+}
+}
+const locations = [
+"مدينة كفر صقر", "حي النصر", "حي الزهور", "حي تيسير", "حي السعادة", "حي السلام", "حي الروضة",
+"منطقة المحطة", "منطقة المحكمة", "شارع الجلاء", "منطقة المستشفى العام", "أبو الشقوق", "تليجة",
+"منشأة يوسف منصور", "الحماديين", "الزراعية", "البوها", "الهجارسة", "ابن العاص", "السلطان حسن",
+"القراموص", "كفر حماد", "القضاة", "الحوامدة", "سنجها", "كفر الشاويش", "ناطورة", "منشأة عبد اللطيف واكد",
+"كفر السويركي", "كفر الفرايحة", "المؤانسة", "المشاعلة", "منشأة صدقي", "شيط الهوى", "زور أبو الليل",
+"شانيط الأحواز", "منشأة بشارة", "آهيل", "البتية", "تيرة", "المشرع", "كفر بدران", "منشأة صبحي",
+"شيوا", "كفر أبوشيخة", "عزبة الوكيل", "عزبة الدباغ", "عزبة الخمسة", "عزبة الصفيح", "عزبة الشواف",
+"عزبة واكد", "عزبة صادق", "عزبة البحر", "عزبة سلامة", "عزبة أبو الليل", "كفر الأستاذ", "عزبة عبد السلام",
+"عزبة المختار", "عزبة رأفت", "عزبة منصور", "كفر يوسف", "عزبة علي عبد الحليم", "عزبة المأمور",
+"عزبة البرج", "عزبة الميزانية", "عزبة السلطان خضر", "عزبة دوش", "عزبة جودة", "كفر هلال", "عزبة مراد",
+"عزبة أبو غانم", "عزبة الشرقاوي", "عزبة شاهين", "منشأة شلبي", "الرباعيين", "كفر أبو شرابية",
+"الفرابين", "شنيطة الحرابوة", "نجوم", "كفر يونس", "عزبة شرف", "المنشية الجديدة"
+];
+function filterLocations() {
+let input = document.getElementById('locSearchInput').value;
+let resultsDiv = document.getElementById('resultsList');
+resultsDiv.innerHTML = '';
+if (input.length > 0) {
+let filtered = locations.filter(loc => loc.includes(input));
+if (filtered.length > 0) {
+resultsDiv.style.display = 'block';
+filtered.forEach(loc => {
+let item = document.createElement('div');
+item.classList.add('result-item');
+item.innerText = loc;
+item.onclick = () => selectLocation(loc);
+resultsDiv.appendChild(item);
+});
+} else { resultsDiv.style.display = 'none'; }
+} else { resultsDiv.style.display = 'none'; }
+}
+function selectLocation(loc) {
+document.getElementById('locSearchInput').value = loc;
+document.getElementById('resultsList').style.display = 'none';
+document.getElementById('detailSection').style.display = 'block';
+document.getElementById('selectedPlaceLabel').innerText = "العنوان بالتفصيل في (" + loc + "):";
+}
 </script>
-
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const firebaseConfig = {
+apiKey: "AIzaSyC0GsXy-mODZ_O2uqFJMKsjmK9bNDbrU9U",
+authDomain: "system-storage-bd0ed.firebaseapp.com",
+projectId: "system-storage-bd0ed",
+storageBucket: "system-storage-bd0ed.firebasestorage.app",
+messagingSenderId: "501351821676",
+appId: "1:501351821676:web:2926c58dedfc536cea8349"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const dbRef = collection(db, "orders");
+const compRef = collection(db, "complaints");
+let userRole = "";
+let currentEditId = "";
+const formatDateTime = (ts) => {
+if (!ts) return "-";
+const d = new Date(ts);
+return d.toLocaleDateString('ar-EG') + " " + d.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+};
+const convertToBase64 = (file) => {
+return new Promise((resolve) => {
+const reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onload = () => resolve(reader.result);
+});
+};
+document.getElementById('submitBtn').onclick = async () => {
+const btn = document.getElementById('submitBtn');
+const files = document.getElementById('multiFiles').files;
+const owner = document.getElementById('ownerName').value;
+const nid = document.getElementById('nationalId').value;
+const phone = document.getElementById('phone').value;
+const year = document.getElementById('vYear').value;
+const color = document.getElementById('vColor').value;
+const mainLocation = document.getElementById('locSearchInput').value;
+const extraAddress = document.getElementById('detailedAddress').value;
+const birthDate = document.getElementById('birthDate').value;
+if (!validateNationalId(document.getElementById('nationalId'))) {
+alert("❌ يرجى إدخال رقم قومي صحيح (14 رقم)");
+return;
+}
+if (!verifyBirthDate()) {
+alert("❌ تاريخ الميلاد غير مطابق للرقم القومي");
+return;
+}
+if (nid.length !== 14 || !owner || files.length === 0 || !mainLocation || !year || !birthDate) { 
+alert("❌ يرجى إكمال جميع البيانات المطلوبة"); 
+return; 
+}
+if (phone.length !== 11) {
+alert("❌ رقم الهاتف يجب أن يكون 11 رقم");
+return;
+}
+document.getElementById('loadingSpinner').style.display = 'block';
+const checkSnap = await getDocs(query(dbRef, where("nationalId", "==", nid)));
+if(!checkSnap.empty) { 
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("❌ هذا الرقم القومي مسجل مسبقاً في المنظومة!"); 
+return; 
+}
+btn.disabled = true; 
+btn.innerText = "جاري الحفظ بالجودة الأصلية...";
+try {
+const imgArray = [];
+for(let f of files) { 
+imgArray.push(await convertToBase64(f)); 
+}
+await addDoc(dbRef, {
+owner, nationalId: nid, phone: phone, birthDate: birthDate,
+vType: document.getElementById('vType').value,
+vYear: year,
+vDesc: `موديل ${year} - لون ${color}`,
+address: mainLocation + " - " + extraAddress, 
+images: imgArray, 
+timestamp: Date.now(),
+codedAt: null,
+vCode: ""
+});
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("✅ تم تسجيل بياناتك في المنظومة بنجاح!");
+location.reload();
+} catch (e) { 
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("❌ حدث خطأ في الاتصال بالسيرفر"); 
+btn.disabled = false; 
+btn.innerText = "إرسال الطلب ✅"; 
+}
+};
+document.getElementById('submitCompBtn').onclick = async () => {
+const btn = document.getElementById('submitCompBtn');
+const phone = document.getElementById('compPhone').value;
+const details = document.getElementById('compDetails').value;
+const fileInputs = [
+document.getElementById('compSelfie'),
+document.getElementById('compIdCard'),
+document.getElementById('compPlate'),
+document.getElementById('compDriverImg')
+];
+if (phone.length !== 11 || !details || !fileInputs[0].files[0] || !fileInputs[1].files[0]) { 
+alert("❌ يرجى إكمال البيانات (رقم الهاتف 11 رقم، التفاصيل، السيلفي، والبطاقة)"); 
+return; 
+}
+document.getElementById('loadingSpinner').style.display = 'block';
+btn.disabled = true; 
+btn.innerText = "جاري المعالجة الأمنية...";
+try {
+const imgArray = [];
+for (let input of fileInputs) {
+if (input.files.length > 0) imgArray.push(await convertToBase64(input.files[0]));
+}
+await addDoc(compRef, {
+phone, 
+type: document.getElementById('compType').value,
+details, 
+images: imgArray, 
+timestamp: Date.now()
+});
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("✅ تم إرسال بلاغك وتوثيقه بنجاح");
+location.reload();
+} catch (error) { 
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("❌ خطأ في الإرسال"); 
+btn.disabled = false; 
+btn.innerText = "إرسال الشكوى ✉️"; 
+}
+};
+document.getElementById('showOrdersBtn').onclick = () => {
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+};
+document.getElementById('showComplaintsBtn').onclick = () => {
+document.getElementById('ordersTableContainer').style.display = 'none';
+document.getElementById('complaintsTableContainer').style.display = 'block';
+loadComplaints();
+};
+async function getSmartNextCode() {
+const snap = await getDocs(dbRef);
+let maxCode = 100;
+snap.forEach(d => {
+const code = parseInt(d.data().vCode);
+if(!isNaN(code) && code > maxCode) maxCode = code;
+});
+return { last: maxCode, next: maxCode + 1 };
+}
+document.getElementById('loginBtn').onclick = () => {
+const u = prompt("اسم المستخدم:");
+const p = prompt("كلمة المرور:");
+if (u === "Eltohamy" && p === "551855125500") {
+userRole = "SUPER";
+} else {
+alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
+return;
+}
+document.getElementById('portalSection').style.display = 'none';
+document.getElementById('citizenPage').style.display = 'none';
+document.getElementById('complaintsModule').style.display = 'none';
+document.getElementById('adminPage').style.display = 'block';
+document.getElementById('goPortalBtn').style.display = 'inline-flex';
+loadAdminData();
+loadComplaints();
+};
+function loadComplaints() {
+onSnapshot(query(compRef, orderBy("timestamp", "desc")), (snap) => {
+const body = document.getElementById('compTableBody');
+body.innerHTML = '';
+document.getElementById('statCompTotal').innerText = snap.size;
+snap.forEach(s => {
+const item = s.data(); 
+const id = s.id;
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="font-size:0.9rem;">${formatDateTime(item.timestamp)}</td>
+<td style="font-weight:bold; color:var(--primary);">${item.phone}</td>
+<td style="color:var(--accent); font-weight:bold; font-size:0.95rem;">${item.type}</td>
+<td style="font-size:0.9rem; max-width: 300px;">${item.details}</td>
+<td><button class="btn view-comp-images" style="background:rgba(211, 84, 0, 0.15); color:var(--accent); font-weight:bold;">🖼️ عرض الصور (${item.images.length})</button></td>
+<td><button class="btn btn-del" style="padding:10px 16px;">🗑️ حذف</button></td>
+`;
+tr.querySelector('.view-comp-images').onclick = () => viewImages(item.images);
+tr.querySelector('.btn-del').onclick = () => {
+if(confirm("⚠️ هل أنت متأكد من حذف هذا البلاغ نهائياً؟")) {
+deleteDoc(doc(db, "complaints", id));
+alert("✅ تم الحذف بنجاح");
+}
+};
+body.appendChild(tr);
+});
+});
+}
+function viewImages(images) {
+const modal = document.getElementById("imgModal");
+const mainImg = document.getElementById("mainViewImg");
+const thumbContainer = document.getElementById("modalThumbnails");
+thumbContainer.innerHTML = ''; 
+mainImg.src = images[0];
+images.forEach(src => {
+const img = document.createElement('img'); 
+img.src = src; 
+img.style.width="80px"; 
+img.style.height="80px"; 
+img.style.cursor="pointer"; 
+img.style.objectFit="cover"; 
+img.style.borderRadius="15px"; 
+img.style.border="3px solid white";
+img.style.transition="all 0.3s";
+img.onmouseover = () => img.style.transform = "scale(1.1)";
+img.onmouseout = () => img.style.transform = "scale(1)";
+img.onclick = () => mainImg.src = src; 
+thumbContainer.appendChild(img);
+});
+modal.style.display = "block";
+}
+function loadAdminData() {
+onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+const tableBody = document.getElementById('dataTable');
+tableBody.innerHTML = '';
+let total=0, coded=0, pending=0;
+snap.forEach(s => {
+const item = s.data(); 
+const id = s.id;
+total++; 
+item.vCode ? coded++ : pending++;
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="font-size:0.85rem; color:#555;">${formatDateTime(item.timestamp)}</td>
+<td style="font-weight:bold;">${item.owner}</td>
+<td style="font-family:monospace; font-weight:600;">${item.nationalId}</td>
+<td style="font-weight:600;">${item.phone || '-'}</td>
+<td style="font-size:0.9rem;">${item.address || '-'}</td>
+<td><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold; font-size:0.85rem;">${item.vType}</span></td>
+<td style="font-weight:bold; color:var(--primary); font-size:1.05rem;">${item.vYear || '-'}</td>
+<td style="font-weight:bold; font-size:1.2rem; color:${item.vCode?'var(--secondary)':'var(--danger)'}">${item.vCode || '⏳ قيد الانتظار'}</td>
+<td style="font-size:0.85rem; color:var(--secondary); font-weight:600;">${formatDateTime(item.codedAt)}</td>
+<td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px; font-weight:bold;">🖼️ ${item.images.length}</button></td>
+<td style="display:flex; gap:8px; flex-wrap:wrap;">
+<button class="btn btn-auto" title="تكويد" style="padding:10px 14px;">🔢</button>
+<button class="btn btn-print" title="طباعة" style="padding:10px 14px;">🖨️</button>
+<button class="btn btn-edit" title="تعديل" style="padding:10px 14px;">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:10px 14px;">🗑️</button>
+</td>
+`;
+tr.querySelector('.btn-auto').onclick = async () => {
+if(item.vCode) {
+alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
+return;
+}
+const info = await getSmartNextCode();
+document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
+document.getElementById('manualCodeInput').value = info.next;
+document.getElementById('codeModal').style.display = 'block';
+document.getElementById('confirmCodeBtn').onclick = async () => {
+const newCode = document.getElementById('manualCodeInput').value;
+if(!newCode) {
+alert("❌ يرجى إدخال كود صحيح");
+return;
+}
+document.getElementById('loadingSpinner').style.display = 'block';
+await updateDoc(doc(db, "orders", id), { 
+vCode: newCode.toString(), 
+codedAt: Date.now() 
+});
+document.getElementById('loadingSpinner').style.display = 'none';
+document.getElementById('codeModal').style.display = 'none';
+alert("✅ تم التكويد بنجاح!");
+};
+};
+tr.querySelector('.btn-print').onclick = () => printItem(item);
+tr.querySelector('.btn-edit').onclick = () => {
+currentEditId = id;
+document.getElementById('editOwner').value = item.owner;
+document.getElementById('editNid').value = item.nationalId;
+document.getElementById('editPhone').value = item.phone;
+document.getElementById('editVType').value = item.vType;
+document.getElementById('editVYear').value = item.vYear || '';
+document.getElementById('editVDesc').value = item.vDesc || '';
+document.getElementById('editAddress').value = item.address || '';
+document.getElementById('editVCode').value = item.vCode || '';
+document.getElementById('editModal').style.display = 'block';
+};
+tr.querySelector('.btn-del').onclick = () => {
+if(confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
+deleteDoc(doc(db, "orders", id));
+alert("✅ تم الحذف بنجاح");
+}
+};
+tr.querySelector('.view-btn').onclick = () => viewImages(item.images);
+tableBody.appendChild(tr);
+});
+document.getElementById('statTotal').innerText = total;
+document.getElementById('statCoded').innerText = coded;
+document.getElementById('statPending').innerText = pending;
+});
+}
+function printItem(item) {
+const printContent = `
+<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 50px; border: 12px double var(--primary); text-align: center; max-width: 800px; margin: auto;">
+<h1 style="color: var(--primary); font-size: 2.5rem; margin-bottom: 10px;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
+<h3 style="color: #666; margin-bottom: 30px;">د/ أحمد المقدم - رئيس المدينة</h3>
+<h2 style="border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 30px; color: var(--primary);">بطاقة تعريف مركبة معتمدة</h2>
+<div style="text-align: right; font-size: 1.5rem; margin-top: 40px; line-height: 2.5;">
+<p><b style="color: var(--primary);">اسم المالك:</b> ${item.owner}</p>
+<p><b style="color: var(--primary);">الرقم القومي:</b> ${item.nationalId}</p>
+<p><b style="color: var(--primary);">رقم الهاتف:</b> ${item.phone || '-'}</p>
+<p><b style="color: var(--primary);">نوع المركبة:</b> ${item.vType}</p>
+<p><b style="color: var(--primary);">الموديل:</b> ${item.vYear || '-'}</p>
+<p><b style="color: var(--primary);">وصف المركبة:</b> ${item.vDesc}</p>
+<p><b style="color: var(--primary);">العنوان:</b> ${item.address}</p>
+<p><b style="color: var(--primary);">تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p>
+</div>
+<div style="margin-top: 60px; padding: 30px; border: 6px solid var(--secondary); display: inline-block; border-radius: 20px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);">
+<span style="font-size: 1.4rem; color: #555; display: block; margin-bottom: 15px;">كود المركبة المعتمد</span>
+<b style="font-size: 5rem; color: var(--secondary); font-weight: 900; letter-spacing: 5px;">${item.vCode || 'قيد التكويد'}</b>
+</div>
+<footer style="margin-top: 120px; font-size: 1rem; color: #888; border-top: 2px solid #ddd; padding-top: 20px;">
+<p>تم الاستخراج بواسطة منظومة التكويد الذكي المتطورة</p>
+<p style="margin-top: 10px;">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>
+</footer>
+</div>
+`;
+const originalBody = document.body.innerHTML;
+document.body.innerHTML = printContent;
+window.print();
+location.reload();
+}
+document.getElementById('saveEditBtn').onclick = async () => {
+if(!currentEditId) return;
+document.getElementById('loadingSpinner').style.display = 'block';
+try {
+await updateDoc(doc(db, "orders", currentEditId), {
+owner: document.getElementById('editOwner').value,
+nationalId: document.getElementById('editNid').value,
+phone: document.getElementById('editPhone').value,
+vType: document.getElementById('editVType').value,
+vYear: document.getElementById('editVYear').value,
+vDesc: document.getElementById('editVDesc').value,
+address: document.getElementById('editAddress').value,
+vCode: document.getElementById('editVCode').value.toString()
+});
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("✅ تم التحديث بنجاح");
+document.getElementById('editModal').style.display = 'none';
+} catch (e) { 
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("❌ حدث خطأ في التحديث"); 
+}
+};
+document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
+document.getElementById('searchInput').oninput = (e) => {
+const term = e.target.value.toLowerCase();
+document.querySelectorAll('#dataTable tr, #compTableBody tr').forEach(row => {
+row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
+});
+};
+document.getElementById('exportExcelBtn').onclick = () => {
+const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
+XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
+alert("✅ تم تصدير البيانات بنجاح");
+};
+window.onclick = (event) => { 
+if (event.target.className === 'modal') event.target.style.display = "none"; 
+};
+</script>
 </body>
 </html>
