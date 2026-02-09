@@ -258,6 +258,60 @@
             </div>
         </div>
     </div>
+
+    <div class="card" id="complaintsModule" style="border: 2px solid #d35400; background: rgba(255, 255, 255, 0.8); border-radius: 24px; padding: 35px; margin-top: 25px; margin-bottom: 25px; direction: rtl;">
+        <h2 style="text-align: center; color: #d35400; margin-bottom: 25px;">⚠️ قسم الشكاوى والتحقق الأمني</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">نوع الشكوى / البلاغ</label>
+                <select id="compType" style="padding: 14px; border-radius: 12px; border: 1px solid #ccc;">
+                    <option value="بلاغ عن مركبة مخالفة">بلاغ عن مركبة مخالفة</option>
+                    <option value="تحديث بيانات أمنية">تحديث بيانات أمنية</option>
+                    <option value="شكوى من سائق">شكوى من سائق</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+            </div>
+
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">رقم هاتف التواصل (11 رقم)</label>
+                <input type="tel" id="compPhone" maxlength="11" placeholder="010XXXXXXXX" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                       style="padding: 14px; border-radius: 12px; border: 1px solid #ccc;">
+            </div>
+
+            <div class="input-group" style="grid-column: 1 / -1; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">تفاصيل المشكلة / البلاغ</label>
+                <textarea id="compDetails" rows="3" placeholder="اكتب تفاصيل البلاغ هنا لتوثيقه أمنياً..." 
+                          style="padding: 14px; border-radius: 12px; border: 1px solid #ccc; font-family: inherit;"></textarea>
+            </div>
+
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">📸 صورة سيلفي (للمرسل)</label>
+                <input type="file" id="compSelfie" accept="image/*" style="padding: 10px;">
+            </div>
+
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">🪪 صورة البطاقة (شخصي)</label>
+                <input type="file" id="compIdCard" accept="image/*" style="padding: 10px;">
+            </div>
+
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">🔢 صورة لوحة المركبة</label>
+                <input type="file" id="compPlate" accept="image/*" style="padding: 10px;">
+            </div>
+
+            <div class="input-group" style="display: flex; flex-direction: column;">
+                <label style="font-weight: bold; color: #1a5276; margin-bottom: 10px;">👤 صورة السائق أو المشكلة</label>
+                <input type="file" id="compDriverImg" accept="image/*" style="padding: 10px;">
+            </div>
+        </div>
+
+        <button id="submitCompBtn" style="width: 100%; background: #d35400; color: white; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 25px; transition: 0.3s;">
+            إرسال الشكوى والتحقق الأمني ✉️
+        </button>
+    </div>
 </div>
 
 <div id="adminPage" class="admin-content">
@@ -366,7 +420,7 @@
 </div>
 
 <footer class="engineer-footer">
-  
+  تم التطوير بواسطة م/ مهند التهامي - 01021102607
 </footer>
 
 <script>
@@ -471,6 +525,7 @@
         });
     };
 
+    // --- منطق إرسال طلب التكويد الأساسي ---
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
         const files = document.getElementById('multiFiles').files;
@@ -509,6 +564,53 @@
         } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
+    // --- منطق إرسال الشكاوى والتحقق الأمني (الجديد) ---
+    document.getElementById('submitCompBtn').onclick = async () => {
+        const btn = document.getElementById('submitCompBtn');
+        const phone = document.getElementById('compPhone').value;
+        const details = document.getElementById('compDetails').value;
+        const selfie = document.getElementById('compSelfie').files[0];
+        const idCard = document.getElementById('compIdCard').files[0];
+        const plate = document.getElementById('compPlate').files[0];
+        const driver = document.getElementById('compDriverImg').files[0];
+
+        if (phone.length < 11) { alert("يرجى إدخال رقم هاتف صحيح"); return; }
+        if (!details) { alert("يرجى كتابة تفاصيل الشكوى"); return; }
+        if (!selfie || !idCard) { alert("يجب رفع صورة السيلفي والبطاقة للتأكد من هوية المرسل"); return; }
+
+        btn.disabled = true;
+        btn.innerText = "جاري التشفير والرفع...";
+
+        try {
+            const compData = {
+                phone: phone,
+                type: document.getElementById('compType').value,
+                details: details,
+                images: {
+                    selfie: await compressImg(selfie),
+                    idCard: await compressImg(idCard),
+                    plate: plate ? await compressImg(plate) : null,
+                    driver: driver ? await compressImg(driver) : null
+                },
+                timestamp: Date.now(),
+                status: "قيد المراجعة الأمنية"
+            };
+
+            // الحفظ في كولكشن منفصل (complaints)
+            await addDoc(collection(db, "complaints"), compData);
+
+            alert("تم إرسال بلاغك بنجاح. سيتم فحصه من قبل المسؤول المختص. ✅");
+            location.reload();
+
+        } catch (error) {
+            console.error("Error sending complaint: ", error);
+            alert("حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى");
+            btn.disabled = false;
+            btn.innerText = "إرسال الشكوى والتحقق الأمني ✉️";
+        }
+    };
+
+    // --- باقي وظائف لوحة التحكم والطباعة ---
     async function getSmartNextCode() {
         const snap = await getDocs(dbRef);
         let maxCode = 100;
