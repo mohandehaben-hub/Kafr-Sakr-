@@ -11,6 +11,9 @@
             --primary: #1a5276; 
             --secondary: #27ae60; 
             --accent: #d35400; 
+            --pending: #e67e22; /* برتقالي */
+            --approved: #27ae60; /* أخضر */
+            --rejected: #e74c3c; /* أحمر */
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --glass-white: rgba(255, 255, 255, 0.75);
             --glass-border: rgba(255, 255, 255, 0.4);
@@ -136,6 +139,18 @@
         }
         .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(26, 82, 118, 0.1); }
         
+        /* تنسيقات الحالة الملونة */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .status-pending { background-color: var(--pending); }
+        .status-approved { background-color: var(--approved); }
+        .status-rejected { background-color: var(--rejected); }
+
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; background: transparent; }
         th { background: rgba(26, 82, 118, 0.1); color: var(--primary); padding: 18px; border-radius: 12px; }
         td { padding: 15px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(4px); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
@@ -208,6 +223,19 @@
             text-align: center;
         }
 
+        /* تنسيق بيانات فك شفرة الرقم القومي */
+        .id-decoder-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+            background: rgba(26, 82, 118, 0.05);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+        .id-decoder-info div { font-size: 0.85rem; color: #1a5276; font-weight: bold; }
+
         @media print {
             body * { visibility: hidden; }
             #printSection, #printSection * { visibility: visible; }
@@ -259,7 +287,11 @@
                 </div>
                 <div class="input-group">
                     <label>الرقم القومي (14 رقم)</label>
-                    <input type="number" id="nationalId" oninput="if(this.value.length > 14) this.value = this.value.slice(0, 14);">
+                    <input type="number" id="nationalId" oninput="validateAndDecodeID(this.value)">
+                    <div id="idDecoder" class="id-decoder-info">
+                        <div id="decodedBirth">تاريخ الميلاد: -</div>
+                        <div id="decodedGender">النوع: -</div>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>رقم الهاتف (11 رقم)</label>
@@ -392,14 +424,14 @@
                 <thead>
                     <tr>
                         <th>تاريخ الطلب</th>
+                        <th>الحالة</th>
                         <th>المالك</th>
                         <th>الرقم القومي</th>
                         <th>الهاتف</th>
                         <th>العنوان</th>
                         <th>النوع</th>
                         <th>الموديل</th>
-                        <th>الكود</th>
-                        <th>تاريخ التكويد</th>
+                        <th>الكود الرسمي</th>
                         <th>الصور</th>
                         <th>الإجراءات</th>
                     </tr>
@@ -482,15 +514,29 @@
 
 <div id="codeModal" class="modal">
     <div class="modal-content" style="max-width:420px; text-align:center;">
-        <h3 style="color:var(--primary);">🔢 نظام التكويد الذكي</h3>
+        <h3 style="color:var(--primary);">🔢 نظام التكويد اليدوي الرسمي</h3>
         <p id="codeHint" style="font-size:1rem; color:#555; background: rgba(0,0,0,0.05); padding:12px; border-radius:12px;"></p>
         <div class="input-group">
-            <label>الكود المخصص للمركبة:</label>
-            <input type="text" id="manualCodeInput" style="text-align:center; font-size:2rem; font-weight:bold; color:var(--secondary); border: 2px solid var(--secondary); height: 60px;">
+            <label>أدخل الكود الرسمي (مثال: ص-2026-01):</label>
+            <input type="text" id="manualCodeInput" style="text-align:center; font-size:1.5rem; font-weight:bold; color:var(--secondary); border: 2px solid var(--secondary); height: 50px;">
         </div>
         <div style="display:flex; gap:12px; margin-top:30px;">
-            <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1;">تأكيد الكود</button>
-            <button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del">تجاهل</button>
+            <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1;">تفعيل وقبول الطلب</button>
+            <button onclick="document.getElementById('codeModal').style.display='none'" class="btn btn-del">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="rejectModal" class="modal">
+    <div class="modal-content" style="max-width:420px; text-align:center;">
+        <h3 style="color:var(--rejected);">🚫 رفض الطلب مع ذكر السبب</h3>
+        <div class="input-group">
+            <label>سبب الرفض (سيظهر للمواطن):</label>
+            <textarea id="rejectReasonInput" rows="3" placeholder="مثلاً: الصور غير واضحة، البطاقة منتهية..."></textarea>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:30px;">
+            <button id="confirmRejectBtn" class="btn btn-del" style="flex:1;">تأكيد الرفض</button>
+            <button onclick="document.getElementById('rejectModal').style.display='none'" class="btn btn-primary" style="background:#7f8c8d;">إلغاء</button>
         </div>
     </div>
 </div>
@@ -500,6 +546,29 @@
 </footer>
 
 <script>
+    // نظام فك شفرة الرقم القومي
+    function validateAndDecodeID(val) {
+        const id = val.toString();
+        const display = document.getElementById('idDecoder');
+        if(id.length === 14) {
+            display.style.display = 'grid';
+            // القرن
+            let century = id[0] === '2' ? '19' : '20';
+            // التاريخ
+            let year = century + id.substring(1,3);
+            let month = id.substring(3,5);
+            let day = id.substring(5,7);
+            // النوع
+            let gender = parseInt(id[12]) % 2 === 0 ? "أنثى" : "ذكر";
+            
+            document.getElementById('decodedBirth').innerText = `تاريخ الميلاد: ${day}/${month}/${year}`;
+            document.getElementById('decodedGender').innerText = `النوع: ${gender}`;
+        } else {
+            display.style.display = 'none';
+        }
+        if(val.length > 14) document.getElementById('nationalId').value = val.slice(0, 14);
+    }
+
     // وظيفة لفتح الأقسام من البوابة
     function openService(serviceId) {
         document.getElementById('portalSection').style.display = 'none';
@@ -507,7 +576,7 @@
         document.getElementById('goPortalBtn').style.display = 'inline-flex';
     }
 
-    // تعبئة سنوات الموديل من 2000 إلى 2200 لصفحة المواطن وصفحة التعديل
+    // تعبئة سنوات الموديل
     function fillYears(selectId) {
         const select = document.getElementById(selectId);
         if(!select) return;
@@ -582,6 +651,7 @@
     const compRef = collection(db, "complaints");
     let userRole = "";
     let currentEditId = "";
+    let currentProcessId = ""; // للقبول والرفض
 
     const formatDateTime = (ts) => {
         if (!ts) return "-";
@@ -609,7 +679,7 @@
         });
     };
 
-    // --- منطق إرسال طلب التكويد الأساسي للمركبات ---
+    // --- منطق إرسال طلب التكويد ---
     document.getElementById('submitBtn').onclick = async () => {
         const btn = document.getElementById('submitBtn');
         const files = document.getElementById('multiFiles').files;
@@ -640,15 +710,16 @@
                 address: mainLocation + " - " + extraAddress, 
                 images: imgArray, 
                 timestamp: Date.now(),
-                codedAt: null,
+                status: "Pending", // الحالة الافتراضية
+                rejectReason: "",
                 vCode: ""
             });
-            alert("تم تسجيل بياناتك في المنظومة بنجاح!");
+            alert("تم تسجيل بياناتك بنجاح! سيتم مراجعة الطلب وتكويد المركبة.");
             location.reload();
-        } catch (e) { alert("حدث خطأ في الاتصال بالسيرفر"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
+        } catch (e) { alert("حدث خطأ في الاتصال"); btn.disabled = false; btn.innerText = "إرسال الطلب ✅"; }
     };
 
-    // --- منطق إرسال الشكاوى والتحقق الأمني ---
+    // --- منطق إرسال الشكاوى ---
     document.getElementById('submitCompBtn').onclick = async () => {
         const btn = document.getElementById('submitCompBtn');
         const phone = document.getElementById('compPhone').value;
@@ -661,10 +732,10 @@
         ];
 
         if (phone.length < 11 || !details || !fileInputs[0].files[0] || !fileInputs[1].files[0]) { 
-            alert("يرجى إكمال البيانات (رقم الهاتف، التفاصيل، السيلفي، والبطاقة)"); return; 
+            alert("يرجى إكمال البيانات"); return; 
         }
 
-        btn.disabled = true; btn.innerText = "جاري المعالجة الأمنية...";
+        btn.disabled = true; btn.innerText = "جاري المعالجة...";
         try {
             const imgArray = [];
             for (let input of fileInputs) {
@@ -674,163 +745,228 @@
                 phone, type: document.getElementById('compType').value,
                 details, images: imgArray, timestamp: Date.now()
             });
-            alert("تم إرسال بلاغك وتوثيقه بنجاح ✅");
+            alert("تم إرسال بلاغك للجهات المعنية بنجاح.");
             location.reload();
-        } catch (error) { alert("خطأ في الإرسال"); btn.disabled = false; btn.innerText = "إرسال الشكوى ✉️"; }
+        } catch (e) { alert("خطأ!"); btn.disabled = false; }
     };
 
-    // --- وظيفة التنقل في لوحة التحكم ---
+    // --- نظام الدخول للأدمن وعرض البيانات ---
+    document.getElementById('loginBtn').onclick = () => {
+        const pass = prompt("أدخل كلمة مرور النظام:");
+        if (pass === "2026") {
+            userRole = "admin";
+            document.getElementById('portalSection').style.display = 'none';
+            document.getElementById('citizenPage').style.display = 'none';
+            document.getElementById('complaintsModule').style.display = 'none';
+            document.getElementById('adminPage').style.display = 'block';
+            document.getElementById('goPortalBtn').style.display = 'inline-flex';
+            loadData();
+            loadComplaints();
+        } else { alert("عذراً، كلمة المرور خاطئة"); }
+    };
+
+    function loadData() {
+        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
+            const tbody = document.getElementById('dataTable');
+            tbody.innerHTML = "";
+            let codedCount = 0;
+            
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                if(data.status === "Approved") codedCount++;
+
+                const tr = document.createElement('tr');
+                
+                // تحديد لون الحالة
+                let statusClass = "status-pending";
+                let statusText = "قيد الانتظار";
+                if(data.status === "Approved") { statusClass = "status-approved"; statusText = "مقبول"; }
+                if(data.status === "Rejected") { statusClass = "status-rejected"; statusText = "مرفوض"; }
+
+                tr.innerHTML = `
+                    <td>${formatDateTime(data.timestamp)}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span>
+                        ${data.rejectReason ? '<br><small style="color:red">السبب: '+data.rejectReason+'</small>' : ''}
+                    </td>
+                    <td>${data.owner}</td>
+                    <td>${data.nationalId}</td>
+                    <td>${data.phone}</td>
+                    <td>${data.address}</td>
+                    <td>${data.vType}</td>
+                    <td>${data.vYear}</td>
+                    <td style="font-weight:bold; color:var(--secondary)">${data.vCode || "-"}</td>
+                    <td><button class="btn btn-auto" onclick="viewImages('${docSnap.id}')">🖼️ ${data.images.length}</button></td>
+                    <td>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="openCodeModal('${docSnap.id}')">قبول</button>
+                            <button class="btn btn-del" style="padding:5px 10px; font-size:12px;" onclick="openRejectModal('${docSnap.id}')">رفض</button>
+                            <button class="btn btn-edit" style="padding:5px 10px; font-size:12px;" onclick="editOrder('${docSnap.id}')">📝</button>
+                            <button class="btn btn-del" style="padding:5px 10px; font-size:12px;" onclick="deleteOrder('${docSnap.id}')">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('statTotal').innerText = snap.size;
+            document.getElementById('statCoded').innerText = codedCount;
+        });
+    }
+
+    // --- وظائف الأدمن للقبول والرفض ---
+    window.openCodeModal = (id) => {
+        currentProcessId = id;
+        document.getElementById('manualCodeInput').value = `ص-2026-`;
+        document.getElementById('codeModal').style.display = 'block';
+    };
+
+    document.getElementById('confirmCodeBtn').onclick = async () => {
+        const code = document.getElementById('manualCodeInput').value;
+        if(code.length < 5) return alert("يرجى إدخال كود صحيح");
+        await updateDoc(doc(db, "orders", currentProcessId), {
+            status: "Approved",
+            vCode: code,
+            rejectReason: ""
+        });
+        document.getElementById('codeModal').style.display = 'none';
+    };
+
+    window.openRejectModal = (id) => {
+        currentProcessId = id;
+        document.getElementById('rejectModal').style.display = 'block';
+    };
+
+    document.getElementById('confirmRejectBtn').onclick = async () => {
+        const reason = document.getElementById('rejectReasonInput').value;
+        if(!reason) return alert("يرجى كتابة سبب الرفض");
+        await updateDoc(doc(db, "orders", currentProcessId), {
+            status: "Rejected",
+            rejectReason: reason,
+            vCode: ""
+        });
+        document.getElementById('rejectModal').style.display = 'none';
+    };
+
+    // --- عرض الصور المسجلة ---
+    window.viewImages = async (id) => {
+        const snap = await getDocs(query(dbRef));
+        const order = snap.docs.find(d => d.id === id).data();
+        const mainImg = document.getElementById('mainViewImg');
+        const thumbs = document.getElementById('modalThumbnails');
+        
+        mainImg.src = order.images[0];
+        thumbs.innerHTML = "";
+        order.images.forEach(img => {
+            const i = document.createElement('img');
+            i.src = img; i.style.width = "70px"; i.style.height = "50px"; i.style.cursor = "pointer";
+            i.onclick = () => mainImg.src = img;
+            thumbs.appendChild(i);
+        });
+        document.getElementById('imgModal').style.display = 'block';
+    };
+
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('imgModal').style.display = 'none';
+
+    // --- حذف وتعديل ---
+    window.deleteOrder = async (id) => {
+        if(confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) await deleteDoc(doc(db, "orders", id));
+    };
+
+    window.editOrder = async (id) => {
+        const snap = await getDocs(query(dbRef));
+        const data = snap.docs.find(d => d.id === id).data();
+        currentEditId = id;
+        document.getElementById('editOwner').value = data.owner;
+        document.getElementById('editNid').value = data.nationalId;
+        document.getElementById('editPhone').value = data.phone;
+        document.getElementById('editVType').value = data.vType;
+        document.getElementById('editVYear').value = data.vYear;
+        document.getElementById('editVDesc').value = data.vDesc;
+        document.getElementById('editAddress').value = data.address;
+        document.getElementById('editVCode').value = data.vCode || "";
+        document.getElementById('editModal').style.display = 'block';
+    };
+
+    document.getElementById('saveEditBtn').onclick = async () => {
+        await updateDoc(doc(db, "orders", currentEditId), {
+            owner: document.getElementById('editOwner').value,
+            nationalId: document.getElementById('editNid').value,
+            phone: document.getElementById('editPhone').value,
+            vType: document.getElementById('editVType').value,
+            vYear: document.getElementById('editVYear').value,
+            vDesc: document.getElementById('editVDesc').value,
+            address: document.getElementById('editAddress').value,
+            vCode: document.getElementById('editVCode').value
+        });
+        document.getElementById('editModal').style.display = 'none';
+        alert("تم تحديث البيانات");
+    };
+
+    // --- تحميل الشكاوى ---
+    function loadComplaints() {
+        onSnapshot(query(compRef, orderBy("timestamp", "desc")), (snap) => {
+            const tbody = document.getElementById('compTableBody');
+            tbody.innerHTML = "";
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatDateTime(data.timestamp)}</td>
+                    <td>${data.phone}</td>
+                    <td>${data.type}</td>
+                    <td>${data.details}</td>
+                    <td><button class="btn btn-auto" onclick="viewCompImages('${docSnap.id}')">🖼️ ${data.images.length} صور</button></td>
+                    <td><button class="btn btn-del" onclick="deleteComp('${docSnap.id}')">حذف</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('statCompTotal').innerText = snap.size;
+        });
+    }
+
+    window.viewCompImages = async (id) => {
+        const snap = await getDocs(query(compRef));
+        const data = snap.docs.find(d => d.id === id).data();
+        const mainImg = document.getElementById('mainViewImg');
+        const thumbs = document.getElementById('modalThumbnails');
+        mainImg.src = data.images[0];
+        thumbs.innerHTML = "";
+        data.images.forEach(img => {
+            const i = document.createElement('img');
+            i.src = img; i.style.width = "70px"; i.style.height = "50px"; i.onclick = () => mainImg.src = img;
+            thumbs.appendChild(i);
+        });
+        document.getElementById('imgModal').style.display = 'block';
+    };
+
+    window.deleteComp = async (id) => { if(confirm("حذف البلاغ؟")) await deleteDoc(doc(db, "complaints", id)); };
+
+    // تبديل الجداول
     document.getElementById('showOrdersBtn').onclick = () => {
         document.getElementById('ordersTableContainer').style.display = 'block';
         document.getElementById('complaintsTableContainer').style.display = 'none';
     };
-
     document.getElementById('showComplaintsBtn').onclick = () => {
         document.getElementById('ordersTableContainer').style.display = 'none';
         document.getElementById('complaintsTableContainer').style.display = 'block';
-        loadComplaints();
     };
 
-    // --- وظائف لوحة التحكم والبيانات ---
-    async function getSmartNextCode() {
-        const snap = await getDocs(dbRef);
-        let maxCode = 100;
-        snap.forEach(d => {
-            const code = parseInt(d.data().vCode);
-            if(!isNaN(code) && code > maxCode) maxCode = code;
-        });
-        return { last: maxCode, next: maxCode + 1 };
-    }
-
-    document.getElementById('loginBtn').onclick = () => {
-        const u = prompt("اسم المستخدم:"); const p = prompt("كلمة المرور:");
-        if (u === "Eltohamy" && p === "551855125500") userRole = "SUPER";
-        else if (u === "Bahe" && p === "55185512") userRole = "EDITOR";
-        else return;
-        document.getElementById('portalSection').style.display = 'none';
-        document.getElementById('citizenPage').style.display = 'none';
-        document.getElementById('complaintsModule').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'block';
-        document.getElementById('goPortalBtn').style.display = 'inline-flex';
-        loadAdminData();
-        loadComplaints();
-    };
-
-    function loadComplaints() {
-        onSnapshot(query(compRef, orderBy("timestamp", "desc")), (snap) => {
-            const body = document.getElementById('compTableBody');
-            body.innerHTML = '';
-            document.getElementById('statCompTotal').innerText = snap.size;
-            snap.forEach(s => {
-                const item = s.data(); const id = s.id;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${formatDateTime(item.timestamp)}</td><td>${item.phone}</td><td style="color:var(--accent); font-weight:bold;">${item.type}</td><td style="font-size:0.9rem;">${item.details}</td><td><button class="btn view-comp-images" style="background:rgba(211, 84, 0, 0.1); color:var(--accent);">🖼️ صور (${item.images.length})</button></td><td><button class="btn btn-del">🗑️</button></td>`;
-                tr.querySelector('.view-comp-images').onclick = () => viewImages(item.images);
-                tr.querySelector('.btn-del').onclick = () => confirm("حذف البلاغ؟") && deleteDoc(doc(db, "complaints", id));
-                body.appendChild(tr);
-            });
-        });
-    }
-
-    function viewImages(images) {
-        const modal = document.getElementById("imgModal");
-        const mainImg = document.getElementById("mainViewImg");
-        const thumbContainer = document.getElementById("modalThumbnails");
-        thumbContainer.innerHTML = ''; mainImg.src = images[0];
-        images.forEach(src => {
-            const img = document.createElement('img'); img.src = src; img.style.width="65px"; img.style.height="65px"; img.style.cursor="pointer"; img.style.objectFit="cover"; img.style.borderRadius="12px"; img.style.border="2px solid white";
-            img.onclick = () => mainImg.src = src; thumbContainer.appendChild(img);
-        });
-        modal.style.display = "block";
-    }
-
-    function loadAdminData() {
-        onSnapshot(query(dbRef, orderBy("timestamp", "desc")), (snap) => {
-            const tableBody = document.getElementById('dataTable');
-            tableBody.innerHTML = '';
-            let total=0, coded=0, pending=0;
-            snap.forEach(s => {
-                const item = s.data(); const id = s.id;
-                total++; item.vCode ? coded++ : pending++;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="font-size:0.8rem; color:#555;">${formatDateTime(item.timestamp)}</td><td>${item.owner}</td><td>${item.nationalId}</td><td>${item.phone || '-'}</td><td>${item.address || '-'}</td><td>${item.vType}</td><td style="font-weight:bold; color:var(--primary);">${item.vYear || '-'}</td><td style="font-weight:bold; color:${item.vCode?'#27ae60':'#e74c3c'}">${item.vCode || '⏳'}</td><td style="font-size:0.8rem; color:#27ae60;">${formatDateTime(item.codedAt)}</td><td><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.1); color:var(--primary); padding:8px 12px;">🖼️</button></td><td style="display:flex; gap:6px;"><button class="btn btn-auto" title="تكويد">🔢</button><button class="btn btn-print" title="طباعة">🖨️</button><button class="btn btn-edit" title="تعديل">✏️</button>${userRole==='SUPER'?'<button class="btn btn-del">🗑️</button>':''}</td>`;
-                tr.querySelector('.btn-auto').onclick = async () => {
-                    if(item.vCode) return alert("المركبة مكودة بالفعل");
-                    const info = await getSmartNextCode();
-                    document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last})`;
-                    document.getElementById('manualCodeInput').value = info.next;
-                    document.getElementById('codeModal').style.display = 'block';
-                    document.getElementById('confirmCodeBtn').onclick = async () => {
-                        const newCode = document.getElementById('manualCodeInput').value;
-                        if(!newCode) return alert("يرجى إدخال كود صحيح");
-                        await updateDoc(doc(db, "orders", id), { vCode: newCode.toString(), codedAt: Date.now() });
-                        document.getElementById('codeModal').style.display = 'none';
-                    };
-                };
-                tr.querySelector('.btn-print').onclick = () => printItem(item);
-                tr.querySelector('.btn-edit').onclick = () => {
-                    currentEditId = id;
-                    document.getElementById('editOwner').value = item.owner;
-                    document.getElementById('editNid').value = item.nationalId;
-                    document.getElementById('editPhone').value = item.phone;
-                    document.getElementById('editVType').value = item.vType;
-                    document.getElementById('editVYear').value = item.vYear || '';
-                    document.getElementById('editVDesc').value = item.vDesc || '';
-                    document.getElementById('editAddress').value = item.address || '';
-                    document.getElementById('editVCode').value = item.vCode || '';
-                    document.getElementById('editModal').style.display = 'block';
-                };
-                if(userRole==='SUPER') tr.querySelector('.btn-del').onclick = () => confirm("حذف الطلب نهائياً؟") && deleteDoc(doc(db, "orders", id));
-                tr.querySelector('.view-btn').onclick = () => viewImages(item.images);
-                tableBody.appendChild(tr);
-            });
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statCoded').innerText = coded;
-            document.getElementById('statPending').innerText = pending;
-        });
-    }
-
-    function printItem(item) {
-        const printContent = `<div id="printSection" style="direction: rtl; font-family: 'Segoe UI'; padding: 40px; border: 10px double #1a5276; text-align: center;"><h1 style="color: #1a5276;">🏛️ رئاسة مركز ومدينة كفر صقر</h1><h2 style="border-bottom: 2px solid #333; padding-bottom: 10px;">بطاقة تعريف مركبة</h2><div style="text-align: right; font-size: 1.4rem; margin-top: 30px;"><p><b>اسم المالك:</b> ${item.owner}</p><p><b>الرقم القومي:</b> ${item.nationalId}</p><p><b>نوع المركبة:</b> ${item.vType}</p><p><b>الموديل:</b> ${item.vYear || '-'}</p><p><b>وصف المركبة:</b> ${item.vDesc}</p><p><b>تاريخ التكويد:</b> ${formatDateTime(item.codedAt)}</p></div><div style="margin-top: 50px; padding: 20px; border: 4px solid #27ae60; display: inline-block;"><span style="font-size: 1.2rem;">كود المركبة المعتمد</span><br><b style="font-size: 4rem; color: #27ae60;">${item.vCode || 'قيد التكويد'}</b></div><footer style="margin-top: 100px; font-size: 0.9rem; color: #666;">تم الاستخراج بواسطة منظومة التكويد الذكي</footer></div>`;
-        const originalBody = document.body.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
-        location.reload();
-    }
-
-    document.getElementById('saveEditBtn').onclick = async () => {
-        if(!currentEditId) return;
-        try {
-            await updateDoc(doc(db, "orders", currentEditId), {
-                owner: document.getElementById('editOwner').value,
-                nationalId: document.getElementById('editNid').value,
-                phone: document.getElementById('editPhone').value,
-                vType: document.getElementById('editVType').value,
-                vYear: document.getElementById('editVYear').value,
-                vDesc: document.getElementById('editVDesc').value,
-                address: document.getElementById('editAddress').value,
-                vCode: document.getElementById('editVCode').value.toString()
-            });
-            alert("تم التحديث ✅");
-            document.getElementById('editModal').style.display = 'none';
-        } catch (e) { alert("حدث خطأ"); }
-    };
-
-    document.getElementById('closeModalBtn').onclick = () => document.getElementById("imgModal").style.display = "none";
-    
-    document.getElementById('searchInput').oninput = (e) => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('#dataTable tr, #compTableBody tr').forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
+    // البحث العام
+    document.getElementById('searchInput').onkeyup = function() {
+        let val = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#dataTable tr");
+        rows.forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
         });
     };
 
+    // تصدير Excel
     document.getElementById('exportExcelBtn').onclick = () => {
-        const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-        XLSX.writeFile(wb, "منظومة_كفر_صقر.xlsx");
+        const table = document.getElementById("excelTable");
+        const wb = XLSX.utils.table_to_book(table);
+        XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString()}.xlsx`);
     };
 
-    window.onclick = (event) => { if (event.target.className === 'modal') event.target.style.display = "none"; };
 </script>
+
 </body>
 </html>
