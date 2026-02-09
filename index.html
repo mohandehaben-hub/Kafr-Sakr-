@@ -539,12 +539,12 @@ document.getElementById('selectedPlaceLabel').innerText = "العنوان بال
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const firebaseConfig = {
-apiKey: "YOUR_FIREBASE_API_KEY", // ضع API Key بتاعك هنا
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-projectId: "YOUR_PROJECT_ID",
-storageBucket: "YOUR_PROJECT.firebasestorage.app",
-messagingSenderId: "YOUR_SENDER_ID",
-appId: "YOUR_APP_ID"
+apiKey: "AIzaSyDUZ8F7RbCEE_L3x-xVYqGHxPZqE-vH9lM",
+authDomain: "system-storage-bd0ed.firebaseapp.com",
+projectId: "system-storage-bd0ed",
+storageBucket: "system-storage-bd0ed.firebasestorage.app",
+messagingSenderId: "1059726732430",
+appId: "1:1059726732430:web:e4c8e3f3b8e3e3e3e3e3e3"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -584,27 +584,35 @@ try {
 const formData = new FormData();
 formData.append('file', blob);
 formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+console.log('Uploading to:', CLOUDINARY_CLOUD_NAME, 'Preset:', CLOUDINARY_UPLOAD_PRESET);
+
 const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
 method: 'POST',
 body: formData
 });
+
+console.log('Response status:', response.status);
 const data = await response.json();
+console.log('Response data:', data);
+
 if (data.secure_url) {
 resolve(data.secure_url);
 } else if (data.error) {
 console.error('Cloudinary Error:', data.error);
-reject(new Error(`Cloudinary: ${data.error.message}`));
+reject(new Error(`Cloudinary Error: ${data.error.message}`));
 } else {
-reject(new Error('فشل رفع الصورة - تحقق من Upload Preset'));
+reject(new Error('فشل رفع الصورة - استجابة غير متوقعة'));
 }
 } catch (error) {
 console.error('Upload Error:', error);
-reject(error);
+reject(new Error(`خطأ في الرفع: ${error.message}`));
 }
 }, 'image/jpeg', 0.70);
 };
+img.onerror = () => reject(new Error('فشل تحميل الصورة'));
 };
-reader.onerror = reject;
+reader.onerror = () => reject(new Error('فشل قراءة الملف'));
 });
 };
 document.getElementById('submitBtn').onclick = async () => {
