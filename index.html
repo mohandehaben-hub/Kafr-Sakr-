@@ -15,7 +15,7 @@
 <!-- Auth0 SDK -->
 <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 
-<!-- Auth0 Configuration (Inline) -->
+<!-- Auth0 Configuration -->
 <script>
 // ═══════════════════════════════════════════════════════════════
 // Auth0 Configuration - Secure Authentication System
@@ -31,7 +31,8 @@ const AUTH0_CONFIG = {
 const USER_ROLES = {
     'eltohamy@bahe.com': 'SUPER',
     'Bahe@1.com': 'ADMIN',
-    'viewer@kafr.com': 'VIEWER'
+    'viewer@kafr.com': 'VIEWER',
+    'ahmed@kafr.com': 'ADMIN'  // مستخدم جديد
 };
 
 // Initialize Auth0 Client
@@ -52,41 +53,40 @@ async function initAuth0() {
     }
 }
 
-// Login with Auth0
-async function loginWithAuth0(email, password) {
+// Login with Auth0 - Universal Login (Popup)
+async function loginWithAuth0() {
     try {
-        const response = await fetch(`https://${AUTH0_CONFIG.domain}/oauth/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                grant_type: 'password',
-                username: email,
-                password: password,
-                client_id: AUTH0_CONFIG.clientId,
-                scope: 'openid profile email'
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Invalid credentials');
+        if (!auth0Client) {
+            throw new Error('Auth0 غير جاهز');
         }
 
-        const data = await response.json();
-        const userRole = USER_ROLES[email] || 'VIEWER';
+        // Open Auth0 login popup
+        await auth0Client.loginWithPopup({
+            authorizationParams: {
+                prompt: 'login'
+            }
+        });
+
+        // Get user info after successful login
+        const user = await auth0Client.getUser();
+        
+        if (!user || !user.email) {
+            throw new Error('فشل الحصول على بيانات المستخدم');
+        }
+
+        const userRole = USER_ROLES[user.email] || 'VIEWER';
         
         return {
             success: true,
-            email: email,
+            email: user.email,
             role: userRole,
-            token: data.access_token
+            user: user
         };
     } catch (error) {
         console.error('Login error:', error);
         return {
             success: false,
-            error: error.message
+            error: error.message || 'فشل تسجيل الدخول'
         };
     }
 }
@@ -1309,8 +1309,11 @@ alt="علم الشرقية">
 <script>
 console.log('═'.repeat(60));
 console.log('✅ منظومة تكويد المركبات - كفر صقر');
-console.log('✅ المشروع الجديد - نظيف 100%');
-console.log('🔒 محمي بـ Auth0 - أمان 100%');
+console.log('✅ نظام تسجيل دخول بسيط - جاهز للاستخدام');
+console.log('🔐 بيانات الدخول:');
+console.log('   � مدير عام: eltohamy@bahe.com / idontseeyou2231');
+console.log('   🔧 مشرف: Bahe@1.com / 55185512');
+console.log('   👁️ عرض: viewer@kafr.com / view123');
 console.log('═'.repeat(60));
 
 // Initialize Auth0
@@ -2188,74 +2191,69 @@ document.getElementById('loginEmail').focus();
 };
 
 document.getElementById('confirmLoginBtn').onclick = async () => {
-const email = document.getElementById('loginEmail').value.trim();
-const password = document.getElementById('loginPassword').value;
+    // Auth0 Universal Login - No need for email/password fields
+    // Just trigger the Auth0 popup
+    
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('confirmLoginBtn').disabled = true;
+    document.getElementById('confirmLoginBtn').innerText = 'جاري فتح Auth0...';
 
-if (!email || !password) {
-alert("❌ يرجى إدخال البريد الإلكتروني وكلمة المرور");
-return;
-}
+    try {
+        const result = await loginWithAuth0();
 
-document.getElementById('loadingSpinner').style.display = 'block';
-document.getElementById('confirmLoginBtn').disabled = true;
-document.getElementById('confirmLoginBtn').innerText = 'جاري التحقق...';
+        if (!result.success) {
+            throw new Error(result.error || 'فشل تسجيل الدخول');
+        }
 
-try {
-const result = await loginWithAuth0(email, password);
+        userRole = result.role;
+        currentUsername = result.email.split('@')[0];
 
-if (!result.success) {
-throw new Error(result.error || 'فشل تسجيل الدخول');
-}
+        // Hide login modal
+        document.getElementById('loginModal').style.display = 'none';
 
-userRole = result.role;
-currentUsername = email.split('@')[0];
+        // Log admin login
+        await logAdminAction(currentUsername, 'تسجيل دخول', `دخول إلى لوحة التحكم بصلاحية: ${userRole}`);
 
-// Hide login modal
-document.getElementById('loginModal').style.display = 'none';
+        // Show role badge
+        const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
+        const roleColor = userRole === "SUPER" ? "#e74c3c" : userRole === "ADMIN" ? "#3498db" : "#95a5a6";
 
-// Log admin login
-await logAdminAction(currentUsername, 'تسجيل دخول', `دخول إلى لوحة التحكم بصلاحية: ${userRole}`);
+        document.getElementById('portalSection').style.display = 'none';
+        document.getElementById('citizenPage').style.display = 'none';
+        document.getElementById('inquiryPage').style.display = 'none';
+        document.getElementById('complaintsPage').style.display = 'none';
+        document.getElementById('complaintInquiryPage').style.display = 'none';
+        document.getElementById('adminPage').style.display = 'block';
+        document.getElementById('goPortalBtn').style.display = 'inline-flex';
 
-// Show role badge
-const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
-const roleColor = userRole === "SUPER" ? "#e74c3c" : userRole === "ADMIN" ? "#3498db" : "#95a5a6";
+        // Add role badge to header
+        const header = document.querySelector('header');
+        const existingBadge = document.getElementById('roleBadge');
+        if (existingBadge) existingBadge.remove();
+        const badge = document.createElement('div');
+        badge.id = 'roleBadge';
+        badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
+        badge.innerText = roleBadge;
+        header.appendChild(badge);
 
-document.getElementById('portalSection').style.display = 'none';
-document.getElementById('citizenPage').style.display = 'none';
-document.getElementById('inquiryPage').style.display = 'none';
-document.getElementById('complaintsPage').style.display = 'none';
-document.getElementById('complaintInquiryPage').style.display = 'none';
-document.getElementById('adminPage').style.display = 'block';
-document.getElementById('goPortalBtn').style.display = 'inline-flex';
+        loadAdminData();
+        loadComplaints();
 
-// Add role badge to header
-const header = document.querySelector('header');
-const existingBadge = document.getElementById('roleBadge');
-if (existingBadge) existingBadge.remove();
-const badge = document.createElement('div');
-badge.id = 'roleBadge';
-badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
-badge.innerText = roleBadge;
-header.appendChild(badge);
+        // Hide buttons based on role
+        if (userRole === 'VIEWER') {
+            document.getElementById('bulkImportBtn').style.display = 'none';
+        }
 
-loadAdminData();
-loadComplaints();
+        document.getElementById('loadingSpinner').style.display = 'none';
+        alert(`✅ مرحباً ${currentUsername}!\n🔐 تم تسجيل الدخول بنجاح عبر Auth0`);
 
-// Hide buttons based on role
-if (userRole === 'VIEWER') {
-document.getElementById('bulkImportBtn').style.display = 'none';
-}
-
-document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ مرحباً ${currentUsername}!\n🔐 تم تسجيل الدخول بنجاح`);
-
-} catch (error) {
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('confirmLoginBtn').disabled = false;
-document.getElementById('confirmLoginBtn').innerText = 'دخول 🚀';
-alert("❌ فشل تسجيل الدخول: " + error.message + "\n\nتأكد من البريد الإلكتروني وكلمة المرور");
-console.error('Login error:', error);
-}
+    } catch (error) {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('confirmLoginBtn').disabled = false;
+        document.getElementById('confirmLoginBtn').innerText = 'دخول 🚀';
+        alert("❌ فشل تسجيل الدخول: " + error.message);
+        console.error('Login error:', error);
+    }
 };
 
 // View Images
