@@ -172,8 +172,39 @@ border-radius: 50%; width: 80px; height: 80px; animation: spin 1s linear infinit
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @media print { body * { visibility: hidden; } #printSection, #printSection * { visibility: visible; }
 #printSection { position: absolute; left: 0; top: 0; width: 100%; } }
-@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } 
-.portal-container { grid-template-columns: 1fr; } .header-title h1 { font-size: 1.1rem; } }
+@media (max-width: 768px) { 
+.form-grid { grid-template-columns: 1fr; } 
+.portal-container { grid-template-columns: 1fr; gap: 20px; } 
+.header-title h1 { font-size: 1.1rem; } 
+.stats-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+.stat-card { padding: 20px; }
+.stat-card h3 { font-size: 2rem; }
+header { padding: 12px 3%; flex-wrap: wrap; }
+.card { padding: 25px 15px; }
+.portal-box { padding: 40px 25px; }
+.portal-box i { font-size: 70px; }
+.portal-box h2 { font-size: 1.3rem; }
+table { font-size: 0.85rem; }
+th, td { padding: 12px 8px; }
+.btn { padding: 10px 16px; font-size: 0.9rem; }
+.modal-content { width: 95%; padding: 25px 15px; margin: 5% auto; }
+.input-group input, .input-group select, .input-group textarea { font-size: 1rem; padding: 14px; }
+}
+@media (max-width: 480px) {
+.header-title h1 { font-size: 0.95rem; }
+.stats-grid { grid-template-columns: 1fr; }
+.portal-box { padding: 30px 20px; }
+.portal-box i { font-size: 60px; }
+.portal-box h2 { font-size: 1.1rem; }
+.stat-card h3 { font-size: 1.8rem; }
+table { font-size: 0.75rem; }
+th, td { padding: 10px 6px; }
+.btn { padding: 8px 12px; font-size: 0.85rem; }
+}
+@media (min-width: 1400px) {
+.container { max-width: 1600px; }
+.portal-container { grid-template-columns: repeat(3, 1fr); }
+}
 .flag-icon { transition: all 0.3s ease; }
 .flag-icon:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 20px rgba(255,255,255,0.4) !important; }
 .vehicle-card {
@@ -257,16 +288,6 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 <i style="font-style: normal; font-size: 85px;">🚜</i>
 <h2>قسم تكويد المركبات</h2>
 <p>تسجيل بيانات التوكتوك والموتوسيكل والتروسيكل والميكروباص بالمنظومة الذكية</p>
-</div>
-<div class="portal-box" onclick="openService('inquiryPage')" style="border-bottom: 6px solid var(--secondary);">
-<i style="font-style: normal; font-size: 85px;">🔍</i>
-<h2 style="color: var(--secondary);">استعلام عن حالة الطلب</h2>
-<p>تحقق من حالة طلبك ومعرفة الكود الخاص بمركبتك</p>
-</div>
-<div class="portal-box" onclick="openService('complaintsModule')" style="border-bottom: 6px solid var(--accent);">
-<i style="font-style: normal; font-size: 85px;">⚖️</i>
-<h2 style="color: var(--accent);">بوابة الشكاوى والأمن</h2>
-<p>تقديم البلاغات والشكاوى والتحقق الأمني المباشر مع التوثيق الكامل</p>
 </div>
 </div>
 </div>
@@ -389,123 +410,18 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 </div>
 </div>
 </div>
-<div id="inquiryPage" style="display:none;">
-<div class="card" style="border: 3px solid var(--secondary);">
-<h2 style="text-align: center; color: var(--secondary); margin-bottom: 40px; font-size: 2rem;">🔍 استعلام عن حالة الطلب والتكويد</h2>
-<p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1rem;">أدخل بياناتك للتحقق من حالة طلبك ومعرفة الكود الخاص بمركبتك</p>
-<div class="form-grid">
-<div class="input-group" style="grid-column: 1 / -1;">
-<label>الاسم الرباعي للمالك</label>
-<input type="text" id="inqOwnerName" placeholder="أدخل اسم المالك بالكامل">
-</div>
-<div class="input-group">
-<label>الرقم القومي (14 رقم)</label>
-<input type="text" id="inqNationalId" maxlength="14" placeholder="مثال: 29501011234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-</div>
-<div class="input-group">
-<label>رقم الهاتف (11 رقم)</label>
-<input type="tel" id="inqPhone" maxlength="11" placeholder="01XXXXXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-</div>
-<div class="input-group">
-<label>تاريخ الميلاد</label>
-<input type="date" id="inqBirthDate">
-</div>
-<div class="input-group">
-<label>نوع المركبة</label>
-<select id="inqVType">
-<option value="">اختر النوع...</option>
-<option value="توكتوك">توكتوك</option>
-<option value="موتوسيكل">موتوسيكل</option>
-<option value="تروسيكل">تروسيكل</option>
-<option value="ميكروباص">ميكروباص</option>
-</select>
-</div>
-</div>
-<button id="inquiryBtn" class="btn" style="width: 100%; font-size: 1.4rem; margin-top: 35px; padding: 20px; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">🔍 استعلام عن الحالة</button>
-<div id="inquiryResult" style="display:none; margin-top: 40px; padding: 40px; border-radius: 25px; text-align: center;"></div>
-</div>
-</div>
-<div id="complaintsModule" style="display:none;">
-<div class="card" style="border: 3px solid var(--accent);">
-<h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚠️ قسم الشكاوى والتحقق الأمني</h2>
-<p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.05rem;">نموذج تقديم الشكاوى والبلاغات مع التوثيق الكامل</p>
-<div class="form-grid">
-<div class="input-group" style="grid-column: 1 / -1;">
-<label>الاسم الرباعي (كما في البطاقة)</label>
-<input type="text" id="compOwnerName" placeholder="أدخل الاسم الكامل كما في البطاقة">
-</div>
-<div class="input-group">
-<label>الرقم القومي (14 رقم)</label>
-<input type="text" id="compNationalId" maxlength="14" placeholder="مثال: 29501011234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-</div>
-<div class="input-group">
-<label>رقم الهاتف (11 رقم)</label>
-<input type="tel" id="compPhone" maxlength="11" placeholder="01XXXXXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-</div>
-<div class="input-group">
-<label>نوع المركبة المشتكى منها</label>
-<select id="compVType">
-<option value="">اختر النوع...</option>
-<option value="توكتوك">توكتوك</option>
-<option value="موتوسيكل">موتوسيكل</option>
-<option value="تروسيكل">تروسيكل</option>
-<option value="ميكروباص">ميكروباص</option>
-<option value="أخرى">أخرى</option>
-</select>
-</div>
-<div class="input-group">
-<label>نوع الشكوى / البلاغ</label>
-<select id="compType">
-<option value="زيادة الأجرة">زيادة الأجرة</option>
-<option value="سوء معاملة">سوء معاملة</option>
-<option value="السب والشتم من السائق">السب والشتم من السائق</option>
-<option value="قيادة متهورة">قيادة متهورة</option>
-<option value="سرقة أو فقدان أغراض">سرقة أو فقدان أغراض داخل المركبة</option>
-<option value="نسيان شيء داخل المركبة">نسيان شيء داخل المركبة</option>
-<option value="رفض توصيل الراكب">رفض توصيل الراكب</option>
-<option value="مركبة مخالفة">مركبة مخالفة</option>
-<option value="تحديث بيانات أمنية">تحديث بيانات أمنية</option>
-<option value="أخرى">أخرى</option>
-</select>
-</div>
-<div class="input-group" style="grid-column: 1 / -1;">
-<label>تفاصيل الشكوى / البلاغ</label>
-<textarea id="compDetails" rows="5" placeholder="اكتب تفاصيل الشكوى بالكامل (مثال: سائق الميكروباص رقم XXX طلب زيادة في الأجرة من 5 جنيه إلى 10 جنيه...)" style="padding: 16px; border-radius: 15px; border: 2px solid var(--glass-border); font-family: inherit; font-size: 1.05rem;"></textarea>
-</div>
-<div class="input-group">
-<label>📸 صورة سيلفي (للمُبلِّغ) - إجباري</label>
-<input type="file" id="compSelfie" accept="image/*" style="padding: 16px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05); font-weight: 600;">
-</div>
-<div class="input-group">
-<label>🪪 صورة البطاقة الشخصية - إجباري</label>
-<input type="file" id="compIdCard" accept="image/*" style="padding: 16px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05); font-weight: 600;">
-</div>
-<div class="input-group" style="grid-column: 1 / -1;">
-<label>📷 صور المشكلة (السائق، المركبة، أو أي دليل) - اختياري</label>
-<input type="file" id="compProblemImages" multiple accept="image/*" style="padding: 20px; border: 3px dashed var(--info); background: rgba(52, 152, 219, 0.05); font-weight: 600;">
-<small style="color: #666; margin-top: 10px; display: block;">يمكنك رفع أكثر من صورة للمشكلة</small>
-</div>
-</div>
-<button id="submitCompBtn" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 20px; font-size: 1.3rem; margin-top: 30px;">
-إرسال الشكوى والتحقق الأمني ✉️
-</button>
-</div>
-</div>
-</div>
 <div id="adminPage" class="admin-content">
 <div class="stats-grid">
 <div class="stat-card"><p>إجمالي المركبات</p><h3 id="statTotal">0</h3></div>
-<div class="stat-card"><p>الشكاوى الواردة</p><h3 id="statCompTotal">0</h3></div>
 <div class="stat-card"><p>تم التكويد</p><h3 id="statCoded">0</h3></div>
 <div class="stat-card"><p>قيد الانتظار</p><h3 id="statPending">0</h3></div>
 </div>
 <div class="card">
 <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
-<button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAuditLogBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📋 سجل العمليات</button>
-<button id="showVisitorsBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">👁️ سجل الزوار</button>
-<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="showVisitorsBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">�️ سجل الزوار</button>
+<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">� استيراد من Excel</button>
 <div style="flex: 1; position: relative;">
 <input type="text" id="searchInput" style="width: 100%; padding:16px 50px 16px 16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600; transition: all 0.3s;" placeholder="🔍 بحث عام في جميع البيانات...">
 <button id="clearSearchBtn" onclick="document.getElementById('searchInput').value=''; document.getElementById('searchInput').dispatchEvent(new Event('input'));" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; font-size: 1.5rem; cursor: pointer; display: none;">✖</button>
@@ -523,17 +439,6 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 </tr>
 </thead>
 <tbody id="dataTable"></tbody>
-</table>
-</div>
-<div id="complaintsTableContainer" style="overflow-x:auto; display: none;">
-<table id="complaintsTable">
-<thead>
-<tr>
-<th>تاريخ البلاغ</th><th>رقم المبلغ</th><th>نوع الشكوى</th>
-<th>التفاصيل</th><th>المرفقات (4 صور)</th><th>الإجراءات</th>
-</tr>
-</thead>
-<tbody id="compTableBody"></tbody>
 </table>
 </div>
 <div id="auditLogContainer" style="overflow-x:auto; display: none;">
@@ -673,25 +578,6 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 <div id="successMessage" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 30px; border-radius: 20px; margin: 30px 0; border: 3px solid var(--secondary);"></div>
 <div id="successDetails" style="text-align: right; background: white; padding: 25px; border-radius: 15px; margin: 25px 0; border: 2px solid #ddd; line-height: 2;"></div>
 <button onclick="document.getElementById('successModal').style.display='none'; location.reload();" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white; padding: 18px 50px; font-size: 1.3rem; margin-top: 20px;">حسناً، شكراً 👍</button>
-</div>
-</div>
-</div>
-<div id="complaintSuccessModal" class="modal">
-<div class="modal-content" style="max-width: 700px; text-align: center; background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);">
-<span class="close-modal" onclick="document.getElementById('complaintSuccessModal').style.display='none'; location.reload();">&times;</span>
-<div style="margin: 30px 0;">
-<div style="width: 120px; height: 120px; margin: 0 auto 30px; background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite; box-shadow: 0 10px 40px rgba(211, 84, 0, 0.4);">
-<span style="font-size: 70px; color: white;">📨</span>
-</div>
-<h2 style="color: var(--accent); font-size: 2.5rem; margin: 20px 0; font-weight: 900;">تم استلام شكواك!</h2>
-<div style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.1) 0%, rgba(186, 74, 0, 0.1) 100%); padding: 30px; border-radius: 20px; margin: 30px 0; border: 3px solid var(--accent);">
-<p style="font-size: 1.3rem; color: #555; margin: 0; line-height: 1.8;">تم إرسال شكواك وتوثيقها بنجاح في النظام الأمني</p>
-</div>
-<div id="complaintDetails" style="text-align: right; background: white; padding: 25px; border-radius: 15px; margin: 25px 0; border: 2px solid #ddd; line-height: 2;"></div>
-<div style="background: rgba(243, 156, 18, 0.1); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px dashed var(--warning);">
-<p style="color: #555; font-size: 1.1rem; margin: 0;">⏳ سيتم المراجعة والرد في أقرب وقت ممكن</p>
-</div>
-<button onclick="document.getElementById('complaintSuccessModal').style.display='none'; location.reload();" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 18px 50px; font-size: 1.3rem; margin-top: 20px;">حسناً، شكراً 👍</button>
 </div>
 </div>
 </div>
@@ -932,7 +818,6 @@ appId: "1:1059726732430:web:e4c8e3f3b8e3e3e3e3e3e3"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const dbRef = collection(db, "orders");
-const compRef = collection(db, "complaints");
 const auditLogRef = collection(db, "auditLog");
 const visitorsRef = collection(db, "visitors");
 let userRole = "";
@@ -1203,169 +1088,13 @@ cameraStream.getTracks().forEach(track => track.stop());
 }
 };
 
-document.getElementById('inquiryBtn').onclick = async () => {
-const owner = document.getElementById('inqOwnerName').value.trim();
-const nid = document.getElementById('inqNationalId').value.trim();
-const phone = document.getElementById('inqPhone').value.trim();
-const birthDate = document.getElementById('inqBirthDate').value;
-const vType = document.getElementById('inqVType').value;
-
-if (!owner || nid.length !== 14 || phone.length !== 11 || !birthDate || !vType) {
-alert("❌ يرجى إكمال جميع البيانات بشكل صحيح");
-return;
-}
-
-document.getElementById('loadingSpinner').style.display = 'block';
-
-try {
-const q = query(dbRef, 
-where("nationalId", "==", nid),
-where("owner", "==", owner),
-where("phone", "==", phone),
-where("birthDate", "==", birthDate),
-where("vType", "==", vType)
-);
-
-const snapshot = await getDocs(q);
-const resultDiv = document.getElementById('inquiryResult');
-
-if (snapshot.empty) {
-resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%)';
-resultDiv.style.border = '3px solid var(--danger)';
-resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
-<h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد بيانات مطابقة</h3>
-<p style="color: #666; font-size: 1.1rem;">تأكد من صحة البيانات المدخلة أو قم بتسجيل طلب جديد</p>
-`;
-} else {
-const data = snapshot.docs[0].data();
-if (data.vCode && data.vCode !== "") {
-resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(46, 204, 113, 0.15) 100%)';
-resultDiv.style.border = '3px solid var(--secondary)';
-resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">✅</i>
-<h3 style="color: var(--secondary); margin-bottom: 20px; font-size: 1.8rem;">تم التكويد بنجاح!</h3>
-<div style="background: white; padding: 30px; border-radius: 20px; margin: 25px 0; border: 4px solid var(--secondary);">
-<p style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">كود المركبة الخاص بك:</p>
-<h2 style="color: var(--secondary); font-size: 4rem; font-weight: 900; margin: 0; letter-spacing: 3px;">${data.vCode}</h2>
-</div>
-<p style="color: #666; font-size: 1rem; margin-top: 20px;">تاريخ التكويد: ${formatDateTime(data.codedAt)}</p>
-<p style="color: #666; font-size: 1rem;">نوع المركبة: <strong>${data.vType}</strong> - موديل <strong>${data.vYear}</strong></p>
-`;
-} else {
-resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%)';
-resultDiv.style.border = '3px solid var(--warning)';
-resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">⏳</i>
-<h3 style="color: var(--warning); margin-bottom: 15px; font-size: 1.8rem;">طلبك قيد المراجعة</h3>
-<p style="color: #666; font-size: 1.1rem; line-height: 1.8;">تم استلام طلبك بنجاح وهو الآن في انتظار موافقة المسؤول والتكويد<br>سيتم إشعارك فور اكتمال التكويد</p>
-<p style="color: #666; font-size: 1rem; margin-top: 20px;">تاريخ التسجيل: ${formatDateTime(data.timestamp)}</p>
-`;
-}
-}
-
-document.getElementById('loadingSpinner').style.display = 'none';
-} catch (error) {
-document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ حدث خطأ في الاستعلام: " + error.message);
-}
-};
-
-document.getElementById('submitCompBtn').onclick = async () => {
-const btn = document.getElementById('submitCompBtn');
-const ownerName = document.getElementById('compOwnerName').value.trim();
-const nid = document.getElementById('compNationalId').value.trim();
-const phone = document.getElementById('compPhone').value.trim();
-const vType = document.getElementById('compVType').value;
-const compType = document.getElementById('compType').value;
-const details = document.getElementById('compDetails').value.trim();
-const selfie = document.getElementById('compSelfie').files[0];
-const idCard = document.getElementById('compIdCard').files[0];
-const problemImages = document.getElementById('compProblemImages').files;
-
-if (!ownerName || nid.length !== 14 || phone.length !== 11 || !vType || !details || !selfie || !idCard) { 
-alert("❌ يرجى إكمال جميع البيانات الإجبارية:\n- الاسم الكامل\n- الرقم القومي (14 رقم)\n- رقم الهاتف (11 رقم)\n- نوع المركبة\n- تفاصيل الشكوى\n- صورة السيلفي\n- صورة البطاقة"); 
-return; 
-}
-
-document.getElementById('loadingSpinner').style.display = 'block';
-btn.disabled = true; 
-btn.innerText = "جاري رفع الصور والبيانات...";
-
-try {
-const imgUrls = [];
-let imgCount = 0;
-
-// رفع السيلفي
-btn.innerText = "جاري رفع صورة السيلفي...";
-imgUrls.push(await uploadToCloudinary(selfie));
-imgCount++;
-
-// رفع البطاقة
-btn.innerText = "جاري رفع صورة البطاقة...";
-imgUrls.push(await uploadToCloudinary(idCard));
-imgCount++;
-
-// رفع صور المشكلة (إن وجدت)
-if (problemImages.length > 0) {
-for (let i = 0; i < problemImages.length; i++) {
-btn.innerText = `جاري رفع صورة المشكلة ${i + 1} من ${problemImages.length}...`;
-imgUrls.push(await uploadToCloudinary(problemImages[i]));
-imgCount++;
-}
-}
-
-await addDoc(compRef, {
-ownerName,
-nationalId: nid,
-phone, 
-vType,
-type: compType,
-details, 
-images: imgUrls,
-imageCount: imgCount,
-timestamp: Date.now()
-});
-
-document.getElementById('loadingSpinner').style.display = 'none';
-
-// عرض modal احترافي للشكوى
-document.getElementById('complaintDetails').innerHTML = `
-<p style="font-size: 1rem; color: #555; margin-bottom: 10px;"><strong style="color: var(--primary);">👤 الاسم:</strong> ${ownerName}</p>
-<p style="font-size: 1rem; color: #555; margin-bottom: 10px;"><strong style="color: var(--primary);">📞 الهاتف:</strong> ${phone}</p>
-<p style="font-size: 1rem; color: #555; margin-bottom: 10px;"><strong style="color: var(--primary);">🚜 نوع المركبة:</strong> ${vType}</p>
-<p style="font-size: 1rem; color: #555; margin-bottom: 10px;"><strong style="color: var(--primary);">⚠️ نوع الشكوى:</strong> ${compType}</p>
-<p style="font-size: 1rem; color: #555; margin-bottom: 10px;"><strong style="color: var(--primary);">📸 عدد الصور المرفقة:</strong> ${imgCount} صورة</p>
-<hr style="border: none; border-top: 2px dashed #ddd; margin: 15px 0;">
-<p style="font-size: 0.95rem; color: #666; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 10px; margin: 0;"><strong>التفاصيل:</strong><br>${details}</p>
-`;
-document.getElementById('complaintSuccessModal').style.display = 'block';
-} catch (error) { 
-document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ خطأ في الإرسال: " + error.message); 
-btn.disabled = false; 
-btn.innerText = "إرسال الشكوى والتحقق الأمني ✉️"; 
-}
-};
 document.getElementById('showOrdersBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'block';
-document.getElementById('complaintsTableContainer').style.display = 'none';
 document.getElementById('auditLogContainer').style.display = 'none';
 document.getElementById('visitorsLogContainer').style.display = 'none';
-};
-document.getElementById('showComplaintsBtn').onclick = () => {
-document.getElementById('ordersTableContainer').style.display = 'none';
-document.getElementById('complaintsTableContainer').style.display = 'block';
-document.getElementById('auditLogContainer').style.display = 'none';
-document.getElementById('visitorsLogContainer').style.display = 'none';
-loadComplaints();
 };
 document.getElementById('showAuditLogBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'none';
-document.getElementById('complaintsTableContainer').style.display = 'none';
 document.getElementById('auditLogContainer').style.display = 'block';
 document.getElementById('visitorsLogContainer').style.display = 'none';
 loadAuditLog();
@@ -1455,42 +1184,11 @@ return;
 }
 document.getElementById('portalSection').style.display = 'none';
 document.getElementById('citizenPage').style.display = 'none';
-document.getElementById('complaintsModule').style.display = 'none';
 document.getElementById('adminPage').style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
 logAction('تسجيل دخول', `المستخدم ${currentUser} دخل لوحة التحكم`);
 loadAdminData();
-loadComplaints();
 };
-function loadComplaints() {
-onSnapshot(query(compRef, orderBy("timestamp", "desc")), (snap) => {
-const body = document.getElementById('compTableBody');
-body.innerHTML = '';
-document.getElementById('statCompTotal').innerText = snap.size;
-snap.forEach(s => {
-const item = s.data(); 
-const id = s.id;
-const tr = document.createElement('tr');
-tr.innerHTML = `
-<td style="font-size:0.9rem;">${formatDateTime(item.timestamp)}</td>
-<td style="font-weight:bold; color:var(--primary);">${item.phone}</td>
-<td style="color:var(--accent); font-weight:bold; font-size:0.95rem;">${item.type}</td>
-<td style="font-size:0.9rem; max-width: 300px;">${item.details}</td>
-<td><button class="btn view-comp-images" style="background:rgba(211, 84, 0, 0.15); color:var(--accent); font-weight:bold;">🖼️ عرض الصور (${item.images.length})</button></td>
-<td><button class="btn btn-del" style="padding:10px 16px;">🗑️ حذف</button></td>
-`;
-tr.querySelector('.view-comp-images').onclick = () => viewImages(item.images);
-tr.querySelector('.btn-del').onclick = async () => {
-if(confirm("⚠️ هل أنت متأكد من حذف هذا البلاغ نهائياً؟")) {
-await deleteDoc(doc(db, "complaints", id));
-await logAction('حذف شكوى', `تم حذف شكوى من رقم الهاتف: ${item.phone} - النوع: ${item.type}`);
-alert("✅ تم الحذف بنجاح");
-}
-};
-body.appendChild(tr);
-});
-});
-}
 function viewImages(images) {
 const modal = document.getElementById("imgModal");
 const mainImg = document.getElementById("mainViewImg");
@@ -1700,15 +1398,6 @@ clearBtn.style.display = term !== '' ? 'block' : 'none';
 
 // البحث في جدول المركبات
 document.querySelectorAll('#dataTable tr').forEach(row => {
-totalCount++;
-const text = row.innerText.toLowerCase();
-const isMatch = text.includes(term);
-row.style.display = isMatch || term === '' ? '' : 'none';
-if (isMatch && term !== '') foundCount++;
-});
-
-// البحث في جدول الشكاوى
-document.querySelectorAll('#compTableBody tr').forEach(row => {
 totalCount++;
 const text = row.innerText.toLowerCase();
 const isMatch = text.includes(term);
