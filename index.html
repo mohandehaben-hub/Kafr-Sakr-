@@ -503,8 +503,9 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
-<button id="showAuditLogBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">� سجل العمليات</button>
-<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">�📥 استيراد من Excel</button>
+<button id="showAuditLogBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📋 سجل العمليات</button>
+<button id="showVisitorsBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">👁️ سجل الزوار</button>
+<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
 <div style="flex: 1; position: relative;">
 <input type="text" id="searchInput" style="width: 100%; padding:16px 50px 16px 16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600; transition: all 0.3s;" placeholder="🔍 بحث عام في جميع البيانات...">
 <button id="clearSearchBtn" onclick="document.getElementById('searchInput').value=''; document.getElementById('searchInput').dispatchEvent(new Event('input'));" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; font-size: 1.5rem; cursor: pointer; display: none;">✖</button>
@@ -932,6 +933,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const dbRef = collection(db, "orders");
 const compRef = collection(db, "complaints");
+const auditLogRef = collection(db, "auditLog");
+const visitorsRef = collection(db, "visitors");
 let userRole = "";
 let currentEditId = "";
 let currentUser = "";
@@ -1367,6 +1370,13 @@ document.getElementById('auditLogContainer').style.display = 'block';
 document.getElementById('visitorsLogContainer').style.display = 'none';
 loadAuditLog();
 };
+document.getElementById('showVisitorsBtn').onclick = () => {
+document.getElementById('ordersTableContainer').style.display = 'none';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('auditLogContainer').style.display = 'none';
+document.getElementById('visitorsLogContainer').style.display = 'block';
+loadVisitors();
+};
 
 // 📋 تحميل سجل العمليات
 function loadAuditLog() {
@@ -1388,6 +1398,33 @@ tr.innerHTML = `
 <td><span style="background: ${item.role === 'SUPER' ? 'linear-gradient(135deg, var(--danger) 0%, #c0392b 100%)' : 'linear-gradient(135deg, var(--info) 0%, #2874a6 100%)'}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem;">${item.role === 'SUPER' ? '🔒 مسؤول أعلى' : '👤 مسؤول عادي'}</span></td>
 <td style="font-weight:600; color:#8e44ad;">${item.action}</td>
 <td style="font-size:0.9rem; color:#555;">${item.details || '-'}</td>
+`;
+body.appendChild(tr);
+});
+});
+}
+
+// 👁️ تحميل سجل الزوار
+function loadVisitors() {
+onSnapshot(query(visitorsRef, orderBy("timestamp", "desc")), (snap) => {
+const body = document.getElementById('visitorsLogBody');
+body.innerHTML = '';
+
+if (snap.empty) {
+body.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999; font-size: 1.1rem;">👁️ لا توجد زيارات مسجلة بعد</td></tr>';
+return;
+}
+
+snap.forEach(s => {
+const item = s.data();
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="font-size:0.9rem; font-family: monospace;">${formatDateTime(item.timestamp)}</td>
+<td style="font-weight:bold; color:${item.phoneProvided ? 'var(--secondary)' : '#999'};">${item.phone || 'لم يتم التقديم'}</td>
+<td style="font-size:0.85rem; color:#555;">${item.userAgent ? item.userAgent.split(' ').slice(0, 3).join(' ') : '-'}</td>
+<td style="font-size:0.85rem; color:#555;">${item.platform || '-'}</td>
+<td style="font-size:0.85rem; color:#555;">${item.screenResolution || '-'}</td>
+<td style="font-size:0.85rem; color:#555;">${item.timezone || '-'}</td>
 `;
 body.appendChild(tr);
 });
