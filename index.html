@@ -935,6 +935,16 @@ height: 300px;
 <label style="justify-content: center;">الكود المخصص للمركبة:</label>
 <input type="text" id="manualCodeInput" style="text-align:center; font-size:2.5rem; font-weight:bold; color:var(--secondary); border: 3px solid var(--secondary); height: 80px;">
 </div>
+
+<!-- WhatsApp Notification Checkbox -->
+<div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px solid rgba(37, 211, 102, 0.3);">
+<label style="display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; font-size: 1.1rem; color: #16a34a; font-weight: 700;">
+<input type="checkbox" id="sendWhatsAppCode" checked style="width: 24px; height: 24px; cursor: pointer; accent-color: #16a34a;">
+<span>📱 إرسال إشعار واتساب للمواطن</span>
+</label>
+<small style="display: block; text-align: center; color: #666; margin-top: 10px; font-size: 0.9rem;">سيتم إرسال الكود ومعلومات الاستلام</small>
+</div>
+
 <div style="display:flex; gap:15px; margin-top:35px;">
 <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1; padding:18px; font-size: 1.1rem;">تأكيد الكود ✅</button>
 <button onclick="document.getElementById('codeModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">إلغاء ❌</button>
@@ -1124,6 +1134,70 @@ to { opacity: 1; }
 <div style="display:flex; gap:15px; margin-top:35px;">
 <button id="applyDateFilterBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">✅ تطبيق الفلتر</button>
 <button onclick="clearDateFilter()" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">🔄 إعادة تعيين</button>
+</div>
+</div>
+</div>
+
+<!-- Modal for Status Change -->
+<div id="statusChangeModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+<div style="background: white; margin: 5% auto; padding: 45px; width: 92%; max-width: 550px; border-radius: 35px; position: relative;">
+<span onclick="document.getElementById('statusChangeModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+<h3 style="color: #8e44ad; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">🔄 تغيير حالة الطلب</h3>
+
+<div class="input-group">
+<label style="font-size: 1.1rem; color: #8e44ad;">اختر الحالة الجديدة:</label>
+<select id="newStatusSelect" style="padding: 18px; border-radius: 12px; border: 3px solid #8e44ad; width: 100%; font-size: 1.1rem; font-weight: 700; color: #8e44ad;">
+<option value="pending">⏳ قيد المراجعة</option>
+<option value="approved">✓ تم القبول</option>
+<option value="coded">✅ تم التكويد</option>
+<option value="delivered">🎉 تم التسليم</option>
+</select>
+</div>
+
+<div class="input-group">
+<label style="font-size: 1.1rem; color: #8e44ad;">ملاحظة (اختياري):</label>
+<textarea id="statusNote" rows="3" placeholder="أضف ملاحظة..." style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%; font-size: 1rem;"></textarea>
+</div>
+
+<!-- WhatsApp Notification Checkbox -->
+<div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px solid rgba(37, 211, 102, 0.3);">
+<label style="display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; font-size: 1.1rem; color: #16a34a; font-weight: 700;">
+<input type="checkbox" id="sendWhatsAppStatus" checked style="width: 24px; height: 24px; cursor: pointer; accent-color: #16a34a;">
+<span>📱 إرسال إشعار واتساب للمواطن</span>
+</label>
+<small style="display: block; text-align: center; color: #666; margin-top: 10px; font-size: 0.9rem;">سيتم إرسال تحديث الحالة</small>
+</div>
+
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="confirmStatusChangeBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">✅ تأكيد التغيير</button>
+<button onclick="document.getElementById('statusChangeModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
+</div>
+</div>
+</div>
+
+<!-- Modal for Complaint Reply -->
+<div id="complaintReplyModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+<div style="background: white; margin: 5% auto; padding: 45px; width: 92%; max-width: 600px; border-radius: 35px; position: relative;">
+<span onclick="document.getElementById('complaintReplyModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+<h3 style="color: var(--secondary); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">💬 الرد على الشكوى</h3>
+
+<div class="input-group">
+<label style="font-size: 1.1rem; color: var(--secondary);">نص الرد:</label>
+<textarea id="complaintReplyText" rows="6" placeholder="اكتب الرد على الشكوى..." style="padding: 16px; border-radius: 12px; border: 3px solid var(--secondary); width: 100%; font-size: 1.05rem; line-height: 1.8;"></textarea>
+</div>
+
+<!-- WhatsApp Notification Checkbox -->
+<div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px solid rgba(37, 211, 102, 0.3);">
+<label style="display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; font-size: 1.1rem; color: #16a34a; font-weight: 700;">
+<input type="checkbox" id="sendWhatsAppReply" checked style="width: 24px; height: 24px; cursor: pointer; accent-color: #16a34a;">
+<span>📱 إرسال الرد عبر واتساب للمواطن</span>
+</label>
+<small style="display: block; text-align: center; color: #666; margin-top: 10px; font-size: 0.9rem;">سيتم إرسال نص الرد كاملاً</small>
+</div>
+
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="confirmComplaintReplyBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">✅ إرسال الرد</button>
+<button onclick="document.getElementById('complaintReplyModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
 </div>
 </div>
 </div>
@@ -1521,7 +1595,24 @@ by: "system"
 });
 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ تم تسجيل بياناتك بنجاح!\n\n📋 رقمك المرجعي: ${refNumber}\n\n⚠️ احتفظ بهذا الرقم للاستعلام عن حالة طلبك`);
+
+// Send confirmation WhatsApp to citizen
+const confirmMessage = `✅ *تم تسجيل طلبك بنجاح!*\n\n` +
+`👤 السيد/ة: ${owner}\n` +
+`🚜 نوع المركبة: ${vType}\n` +
+`📋 الرقم المرجعي: *${refNumber}*\n\n` +
+`⚠️ احتفظ بهذا الرقم للاستعلام عن حالة طلبك\n\n` +
+`⏳ سيتم مراجعة طلبك والتواصل معك قريباً\n\n` +
+`📞 للاستفسار: 01021102607\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+
+// Auto-send WhatsApp
+if (phone && phone.length === 11) {
+const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(confirmMessage)}`;
+window.open(whatsappUrl, '_blank');
+}
+
+alert(`✅ تم تسجيل بياناتك بنجاح!\n\n📋 رقمك المرجعي: ${refNumber}\n\n⚠️ احتفظ بهذا الرقم للاستعلام عن حالة طلبك\n\n📱 سيتم فتح واتساب لإرسال تأكيد الاستلام`);
 location.reload();
 } catch (e) {
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -1798,7 +1889,23 @@ timestamp: Date.now()
 });
 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("✅ تم إرسال شكواك بنجاح!\n\n📋 تم رفع جميع الصور المطلوبة\n⏳ سيتم المراجعة والرد في أقرب وقت.");
+
+// Send confirmation WhatsApp to citizen
+const confirmMessage = `✅ *تم استلام شكواك بنجاح!*\n\n` +
+`👤 السيد/ة: ${ownerName}\n` +
+`📋 نوع الشكوى: ${compType}\n` +
+`📸 تم رفع جميع الصور المطلوبة\n\n` +
+`⏳ سيتم مراجعة شكواك والرد عليك في أقرب وقت\n\n` +
+`📞 للاستفسار: 01021102607\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+
+// Auto-send WhatsApp (no confirmation needed for citizen's own submission)
+if (phone && phone.length === 11) {
+const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(confirmMessage)}`;
+window.open(whatsappUrl, '_blank');
+}
+
+alert("✅ تم إرسال شكواك بنجاح!\n\n📋 تم رفع جميع الصور المطلوبة\n⏳ سيتم المراجعة والرد في أقرب وقت.\n\n📱 سيتم فتح واتساب لإرسال تأكيد الاستلام");
 location.reload();
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -1947,6 +2054,23 @@ console.error("Error logging action:", error);
 }
 
 window.logAdminAction = logAdminAction;
+
+// Send WhatsApp Notification Function
+async function sendWhatsAppNotification(phone, message, confirmMessage = "هل تريد إرسال إشعار واتساب للمواطن؟") {
+if (!phone || phone.length !== 11) {
+return false;
+}
+
+const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
+
+if (confirm(confirmMessage)) {
+window.open(whatsappUrl, '_blank');
+return true;
+}
+return false;
+}
+
+window.sendWhatsAppNotification = sendWhatsAppNotification;
 
 // Get Smart Next Code
 async function getSmartNextCode() {
@@ -2159,36 +2283,14 @@ tr.innerHTML = `
 `;
 
 tr.querySelector('.btn-status').onclick = async () => {
-const newStatus = prompt("اختر الحالة:\n1 = قيد المراجعة (pending)\n2 = تم القبول (approved)\n3 = تم التكويد (coded)\n4 = تم التسليم (delivered)", "1");
-const statusMap = {
-"1": "pending",
-"2": "approved",
-"3": "coded",
-"4": "delivered"
-};
-const statusNames = {
-"pending": "قيد المراجعة",
-"approved": "تم القبول",
-"coded": "تم التكويد",
-"delivered": "تم التسليم"
-};
-if (newStatus && statusMap[newStatus]) {
-const note = prompt("ملاحظة (اختياري):", "");
-await updateDoc(doc(window.firebaseDb, "orders", id), {
-status: statusMap[newStatus],
-statusHistory: [...(item.statusHistory || []), {
-status: statusMap[newStatus],
-timestamp: Date.now(),
-note: note || "",
-by: userRole
-}]
-});
+// Show status change modal
+document.getElementById('statusChangeModal').style.display = 'block';
+document.getElementById('newStatusSelect').value = item.status || 'pending';
+document.getElementById('statusNote').value = '';
+document.getElementById('sendWhatsAppStatus').checked = true;
 
-// Log status change action
-await logAdminAction(currentUsername, 'تغيير حالة', `تم تغيير حالة مركبة ${item.vType} للمالك: ${item.owner} إلى: ${statusNames[statusMap[newStatus]]} (الرقم المرجعي: ${item.refNumber})`);
-
-alert("✅ تم تحديث الحالة بنجاح!");
-}
+// Store current item data for use in confirm button
+window.currentStatusChangeItem = { item, id };
 };
 
 tr.querySelector('.btn-code').onclick = async () => {
@@ -2228,9 +2330,9 @@ await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد 
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('codeModal').style.display = 'none';
 
-// Send WhatsApp notification
-const phone = item.phone;
-if (phone && phone.length === 11) {
+// Send WhatsApp notification if checkbox is checked
+const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
+if (sendWhatsApp) {
 const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
 `👤 السيد/ة: ${item.owner}\n` +
 `🔢 كود المركبة: *${newCode}*\n` +
@@ -2239,14 +2341,13 @@ const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
 `✅ يمكنك الآن استلام المركبة من المقر\n\n` +
 `_رئاسة مركز ومدينة كفر صقر_`;
 
-const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
-
-if (confirm("✅ تم التكويد بنجاح!\n\n📱 هل تريد إرسال إشعار واتساب للمواطن؟")) {
+if (item.phone && item.phone.length === 11) {
+const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
 window.open(whatsappUrl, '_blank');
 }
-} else {
-alert("✅ تم التكويد بنجاح!");
 }
+
+alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
 };
 };
 
@@ -2383,19 +2484,13 @@ tr.innerHTML = `
 `;
 
 tr.querySelector('.btn-reply').onclick = async () => {
-const reply = prompt("أدخل الرد على الشكوى:", item.reply || '');
-if (reply !== null) {
-await updateDoc(doc(window.firebaseDb, "complaints", id), {
-reply: reply,
-status: 'replied',
-repliedAt: Date.now()
-});
+// Show complaint reply modal
+document.getElementById('complaintReplyModal').style.display = 'block';
+document.getElementById('complaintReplyText').value = item.reply || '';
+document.getElementById('sendWhatsAppReply').checked = true;
 
-// Log complaint reply action
-await logAdminAction(currentUsername, 'الرد على شكوى', `تم الرد على شكوى من نوع: ${item.type} للمواطن: ${item.ownerName}`);
-
-alert("✅ تم حفظ الرد بنجاح");
-}
+// Store current complaint data
+window.currentComplaintReply = { item, id };
 };
 
 tr.querySelector('.btn-del').onclick = async () => {
@@ -2438,7 +2533,91 @@ document.getElementById('statCompTotal').innerText = total;
 document.getElementById('showOrdersBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'block';
 document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('adminLogsTableContainer').style.display = 'none';
 showAllOrdersInTable();
+};
+
+// Status Change Modal Handler
+document.getElementById('confirmStatusChangeBtn').onclick = async () => {
+if (!window.currentStatusChangeItem) return;
+
+const { item, id } = window.currentStatusChangeItem;
+const newStatus = document.getElementById('newStatusSelect').value;
+const note = document.getElementById('statusNote').value.trim();
+const sendWhatsApp = document.getElementById('sendWhatsAppStatus').checked;
+
+const statusNames = {
+"pending": "قيد المراجعة",
+"approved": "تم القبول",
+"coded": "تم التكويد",
+"delivered": "تم التسليم"
+};
+
+document.getElementById('loadingSpinner').style.display = 'block';
+
+await updateDoc(doc(window.firebaseDb, "orders", id), {
+status: newStatus,
+statusHistory: [...(item.statusHistory || []), {
+status: newStatus,
+timestamp: Date.now(),
+note: note || "",
+by: userRole
+}]
+});
+
+// Log status change action
+await logAdminAction(currentUsername, 'تغيير حالة', `تم تغيير حالة مركبة ${item.vType} للمالك: ${item.owner} إلى: ${statusNames[newStatus]} (الرقم المرجعي: ${item.refNumber})`);
+
+// Send WhatsApp notification if checkbox is checked
+if (sendWhatsApp && item.phone && item.phone.length === 11) {
+let message = '';
+const statusName = statusNames[newStatus];
+
+if (newStatus === 'approved') {
+message = `✅ *تم قبول طلبك!*\n\n` +
+`👤 السيد/ة: ${item.owner}\n` +
+`🚜 نوع المركبة: ${item.vType}\n` +
+`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+`✅ الحالة: ${statusName}\n` +
+`⏳ طلبك قيد التكويد، سيتم التواصل معك قريباً\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+} else if (newStatus === 'delivered') {
+message = `🎉 *تم تسليم المركبة!*\n\n` +
+`👤 السيد/ة: ${item.owner}\n` +
+`🚜 نوع المركبة: ${item.vType}\n` +
+`🔢 الكود: ${item.vCode || 'غير متوفر'}\n` +
+`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+`✅ الحالة: ${statusName}\n` +
+`🎊 شكراً لاستخدامكم منظومة التكويد\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+} else if (newStatus === 'pending') {
+message = `⏳ *تحديث حالة الطلب*\n\n` +
+`👤 السيد/ة: ${item.owner}\n` +
+`🚜 نوع المركبة: ${item.vType}\n` +
+`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+`⏳ الحالة: ${statusName}\n` +
+`📝 طلبك قيد المراجعة من قبل الإدارة\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+} else if (newStatus === 'coded') {
+message = `✅ *تم تكويد مركبتك!*\n\n` +
+`👤 السيد/ة: ${item.owner}\n` +
+`🚜 نوع المركبة: ${item.vType}\n` +
+`🔢 الكود: ${item.vCode || 'سيتم إبلاغك قريباً'}\n` +
+`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+`✅ الحالة: ${statusName}\n` +
+`📞 للاستفسار: 01021102607\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+}
+
+if (message) {
+const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
+window.open(whatsappUrl, '_blank');
+}
+}
+
+document.getElementById('loadingSpinner').style.display = 'none';
+document.getElementById('statusChangeModal').style.display = 'none';
+alert("✅ تم تحديث الحالة بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
 };
 
 document.getElementById('showComplaintsBtn').onclick = () => {
@@ -2446,6 +2625,48 @@ document.getElementById('ordersTableContainer').style.display = 'none';
 document.getElementById('complaintsTableContainer').style.display = 'block';
 document.getElementById('adminLogsTableContainer').style.display = 'none';
 loadComplaints();
+};
+
+// Complaint Reply Modal Handler
+document.getElementById('confirmComplaintReplyBtn').onclick = async () => {
+if (!window.currentComplaintReply) return;
+
+const { item, id } = window.currentComplaintReply;
+const reply = document.getElementById('complaintReplyText').value.trim();
+const sendWhatsApp = document.getElementById('sendWhatsAppReply').checked;
+
+if (!reply) {
+alert("❌ يرجى كتابة نص الرد");
+return;
+}
+
+document.getElementById('loadingSpinner').style.display = 'block';
+
+await updateDoc(doc(window.firebaseDb, "complaints", id), {
+reply: reply,
+status: 'replied',
+repliedAt: Date.now()
+});
+
+// Log complaint reply action
+await logAdminAction(currentUsername, 'الرد على شكوى', `تم الرد على شكوى من نوع: ${item.type} للمواطن: ${item.ownerName}`);
+
+// Send WhatsApp notification if checkbox is checked
+if (sendWhatsApp && item.phone && item.phone.length === 11) {
+const message = `✅ *تم الرد على شكواك!*\n\n` +
+`👤 السيد/ة: ${item.ownerName}\n` +
+`📋 نوع الشكوى: ${item.type}\n\n` +
+`💬 *الرد من الإدارة:*\n${reply}\n\n` +
+`📞 للاستفسار: 01021102607\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+
+const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
+window.open(whatsappUrl, '_blank');
+}
+
+document.getElementById('loadingSpinner').style.display = 'none';
+document.getElementById('complaintReplyModal').style.display = 'none';
+alert("✅ تم حفظ الرد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الرد" : ""));
 };
 
 document.getElementById('showAdminLogsBtn').onclick = () => {
@@ -2907,4 +3128,3 @@ alert('❌ حدث خطأ أثناء الاستيراد: ' + error.message);
 
 </body>
 </html>
-.
