@@ -570,8 +570,11 @@ alt="علم الشرقية">
 </div>
 
 <div class="input-group">
-<label>تاريخ الميلاد (للتحقق)</label>
-<input type="date" id="birthDate" onchange="verifyBirthDate()">
+<label>تاريخ الميلاد (أدخله يدوياً للتحقق)</label>
+<small style="color: #666; font-size: 0.85rem; display: block; margin-bottom: 8px; line-height: 1.5;">
+⚠️ أدخل تاريخ ميلادك يدوياً للتأكد من صحة الرقم القومي ومنع التكرار
+</small>
+<input type="date" id="birthDate" onchange="verifyBirthDate()" placeholder="اختر تاريخ ميلادك">
 <div id="birthValidation" style="font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; font-weight: 600;"></div>
 </div>
 
@@ -731,23 +734,61 @@ alt="علم الشرقية">
 <div id="adminPage" style="display:none;">
 <!-- Statistics Cards -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; margin-bottom: 35px;">
-<div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 2px solid var(--glass-border); box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-<p style="margin: 0; color: #555; font-size: 1rem; font-weight: 600;">إجمالي المركبات</p>
+<div class="stat-card" onclick="showAllOrders()" style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.15) 0%, rgba(52, 152, 219, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--primary); box-shadow: 0 8px 25px rgba(26, 82, 118, 0.2); cursor: pointer; transition: all 0.3s ease;">
+<p style="margin: 0; color: var(--primary); font-size: 1rem; font-weight: 600;">📋 إجمالي الطلبات</p>
 <h3 id="statTotal" style="margin: 15px 0; font-size: 2.5rem; color: var(--primary); font-weight: bold;">0</h3>
+<small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
 </div>
-<div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 2px solid var(--glass-border); box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-<p style="margin: 0; color: #555; font-size: 1rem; font-weight: 600;">تم التكويد</p>
+<div class="stat-card" onclick="showCodedOrders()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(46, 204, 113, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--secondary); box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2); cursor: pointer; transition: all 0.3s ease;">
+<p style="margin: 0; color: var(--secondary); font-size: 1rem; font-weight: 600;">✅ تم التكويد</p>
 <h3 id="statCoded" style="margin: 15px 0; font-size: 2.5rem; color: var(--secondary); font-weight: bold;">0</h3>
+<small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
 </div>
-<div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 2px solid var(--glass-border); box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-<p style="margin: 0; color: #555; font-size: 1rem; font-weight: 600;">قيد الانتظار</p>
+<div class="stat-card" onclick="showPendingOrders()" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.15) 0%, rgba(214, 137, 16, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--warning); box-shadow: 0 8px 25px rgba(243, 156, 18, 0.2); cursor: pointer; transition: all 0.3s ease;">
+<p style="margin: 0; color: var(--warning); font-size: 1rem; font-weight: 600;">⏳ قيد الانتظار</p>
 <h3 id="statPending" style="margin: 15px 0; font-size: 2.5rem; color: var(--warning); font-weight: bold;">0</h3>
+<small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
 </div>
-<div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 2px solid var(--glass-border); box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-<p style="margin: 0; color: #555; font-size: 1rem; font-weight: 600;">إجمالي الشكاوى</p>
+<div class="stat-card" onclick="showComplaintsTable()" style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.15) 0%, rgba(186, 74, 0, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--accent); box-shadow: 0 8px 25px rgba(211, 84, 0, 0.2); cursor: pointer; transition: all 0.3s ease;">
+<p style="margin: 0; color: var(--accent); font-size: 1rem; font-weight: 600;">⚖️ إجمالي الشكاوى</p>
 <h3 id="statCompTotal" style="margin: 15px 0; font-size: 2.5rem; color: var(--accent); font-weight: bold;">0</h3>
+<small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
 </div>
 </div>
+
+<style>
+.stat-card:hover {
+transform: translateY(-8px) scale(1.05);
+box-shadow: 0 15px 40px rgba(0,0,0,0.3) !important;
+}
+
+.stat-card:active {
+transform: translateY(-4px) scale(1.02);
+}
+
+.stat-card {
+position: relative;
+overflow: hidden;
+}
+
+.stat-card::before {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+width: 0;
+height: 0;
+background: rgba(255, 255, 255, 0.3);
+border-radius: 50%;
+transform: translate(-50%, -50%);
+transition: width 0.6s, height 0.6s;
+}
+
+.stat-card:hover::before {
+width: 300px;
+height: 300px;
+}
+</style>
 
 <div class="card">
 <!-- Control Buttons -->
@@ -762,6 +803,14 @@ alt="علم الشرقية">
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
 </div>
 
+<!-- Filter Status Message -->
+<div id="filterStatus" style="display:none; background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 15px 25px; border-radius: 15px; margin-bottom: 20px; border: 2px solid var(--info); text-align: center;">
+<p style="margin: 0; color: var(--info); font-weight: bold; font-size: 1.1rem;">
+<span id="filterStatusText">عرض جميع الطلبات</span>
+<button onclick="showAllOrders()" style="background: rgba(52, 152, 219, 0.2); border: none; padding: 5px 15px; border-radius: 8px; margin-right: 15px; cursor: pointer; color: var(--info); font-weight: bold;">🔄 إعادة تعيين</button>
+</p>
+</div>
+
 <!-- Orders Table -->
 <div id="ordersTableContainer" style="overflow-x:auto;">
 <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
@@ -772,6 +821,7 @@ alt="علم الشرقية">
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم القومي</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الصور</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
@@ -970,14 +1020,15 @@ input.style.borderColor = 'var(--danger)';
 return false;
 }
 
+// Don't show the extracted birth date - just confirm the ID is valid
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(39, 174, 96, 0.1)';
 msgDiv.style.color = 'var(--secondary)';
-msgDiv.innerText = `✅ الرقم القومي صحيح - تاريخ الميلاد المستخرج: ${day}/${month}/${year}`;
+msgDiv.innerText = '✅ الرقم القومي صحيح - الآن أدخل تاريخ ميلادك للتحقق';
 input.style.borderColor = 'var(--secondary)';
 
-// Auto-fill birth date
-document.getElementById('birthDate').value = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+// Don't auto-fill birth date - let user enter it manually
+// This is intentional for verification purposes
 
 return true;
 }
@@ -990,6 +1041,7 @@ const msgDiv = document.getElementById('birthValidation');
 
 if (!nid || nid.length !== 14 || !birthInput) {
 msgDiv.style.display = 'none';
+document.getElementById('birthDate').style.borderColor = 'var(--glass-border)';
 return;
 }
 
@@ -1004,14 +1056,14 @@ if (birthInput === nidDate) {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(39, 174, 96, 0.1)';
 msgDiv.style.color = 'var(--secondary)';
-msgDiv.innerText = '✅ تاريخ الميلاد مطابق للرقم القومي';
+msgDiv.innerText = '✅ تاريخ الميلاد مطابق للرقم القومي - البيانات صحيحة';
 document.getElementById('birthDate').style.borderColor = 'var(--secondary)';
 return true;
 } else {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(231, 76, 60, 0.1)';
 msgDiv.style.color = 'var(--danger)';
-msgDiv.innerText = `❌ تاريخ الميلاد غير مطابق! التاريخ الصحيح: ${day}/${month}/${year}`;
+msgDiv.innerText = '❌ تاريخ الميلاد غير مطابق للرقم القومي - تأكد من البيانات';
 document.getElementById('birthDate').style.borderColor = 'var(--danger)';
 return false;
 }
@@ -1495,10 +1547,12 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600;">${item.nationalId}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '⏳ قيد الانتظار'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">🖼️ ${item.images ? item.images.length : 0}</button></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
 <button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white;">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:10px 14px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">✏️</button>
 <button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🗑️</button>
 </td>
 `;
@@ -1522,7 +1576,7 @@ return;
 }
 
 document.getElementById('loadingSpinner').style.display = 'block';
-await updateDoc(doc(db, "orders", id), {
+await updateDoc(doc(window.firebaseDb, "orders", id), {
 vCode: newCode.toString(),
 codedAt: Date.now()
 });
@@ -1532,9 +1586,27 @@ alert("✅ تم التكويد بنجاح!");
 };
 };
 
+tr.querySelector('.btn-edit').onclick = async () => {
+const newOwner = prompt("الاسم الرباعي:", item.owner);
+if (!newOwner) return;
+const newPhone = prompt("رقم الهاتف:", item.phone);
+if (!newPhone) return;
+const newAddress = prompt("العنوان:", item.address);
+if (!newAddress) return;
+
+document.getElementById('loadingSpinner').style.display = 'block';
+await updateDoc(doc(window.firebaseDb, "orders", id), {
+owner: newOwner,
+phone: newPhone,
+address: newAddress
+});
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("✅ تم التعديل بنجاح!");
+};
+
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-await deleteDoc(doc(db, "orders", id));
+await deleteDoc(doc(window.firebaseDb, "orders", id));
 alert("✅ تم الحذف بنجاح");
 }
 };
@@ -1585,7 +1657,7 @@ tr.innerHTML = `
 tr.querySelector('.btn-reply').onclick = () => {
 const reply = prompt("أدخل الرد على الشكوى:", item.reply || '');
 if (reply !== null) {
-updateDoc(doc(db, "complaints", id), {
+updateDoc(doc(window.firebaseDb, "complaints", id), {
 reply: reply,
 status: 'replied',
 repliedAt: Date.now()
@@ -1596,7 +1668,7 @@ alert("✅ تم حفظ الرد بنجاح");
 
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذه الشكوى؟")) {
-await deleteDoc(doc(db, "complaints", id));
+await deleteDoc(doc(window.firebaseDb, "complaints", id));
 alert("✅ تم الحذف بنجاح");
 }
 };
@@ -1612,6 +1684,7 @@ document.getElementById('statCompTotal').innerText = total;
 document.getElementById('showOrdersBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'block';
 document.getElementById('complaintsTableContainer').style.display = 'none';
+showAllOrdersInTable();
 };
 
 document.getElementById('showComplaintsBtn').onclick = () => {
@@ -1619,6 +1692,69 @@ document.getElementById('ordersTableContainer').style.display = 'none';
 document.getElementById('complaintsTableContainer').style.display = 'block';
 loadComplaints();
 };
+
+// Filter functions for stat cards
+function showAllOrders() {
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'none';
+showAllOrdersInTable();
+}
+
+function showAllOrdersInTable() {
+document.querySelectorAll('#dataTable tr').forEach(row => {
+row.style.display = '';
+});
+}
+
+function showCodedOrders() {
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'block';
+document.getElementById('filterStatusText').innerText = '✅ عرض المركبات المكودة فقط';
+let count = 0;
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const codeCell = row.cells[6]; // Column index for code
+if (codeCell && codeCell.innerText.includes('⏳')) {
+row.style.display = 'none';
+} else {
+row.style.display = '';
+count++;
+}
+});
+document.getElementById('filterStatusText').innerText = `✅ عرض المركبات المكودة فقط (${count} مركبة)`;
+}
+
+function showPendingOrders() {
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'block';
+document.getElementById('filterStatusText').innerText = '⏳ عرض المركبات قيد الانتظار فقط';
+let count = 0;
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const codeCell = row.cells[6]; // Column index for code
+if (codeCell && codeCell.innerText.includes('⏳')) {
+row.style.display = '';
+count++;
+} else {
+row.style.display = 'none';
+}
+});
+document.getElementById('filterStatusText').innerText = `⏳ عرض المركبات قيد الانتظار فقط (${count} مركبة)`;
+}
+
+function showComplaintsTable() {
+document.getElementById('ordersTableContainer').style.display = 'none';
+document.getElementById('complaintsTableContainer').style.display = 'block';
+document.getElementById('filterStatus').style.display = 'none';
+loadComplaints();
+}
+
+// Make functions global
+window.showAllOrders = showAllOrders;
+window.showCodedOrders = showCodedOrders;
+window.showPendingOrders = showPendingOrders;
+window.showComplaintsTable = showComplaintsTable;
 
 // Export Excel
 document.getElementById('exportExcelBtn').onclick = () => {
