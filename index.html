@@ -124,16 +124,17 @@ margin-top: 20px;
    ═══════════════════════════════════════════════════════════════ */
 .portal-container {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-gap: 35px;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 30px;
 margin-top: 50px;
+padding: 0 10px;
 }
 
 .portal-box {
 background: var(--glass-white);
 backdrop-filter: blur(20px);
-padding: 60px 35px;
-border-radius: 35px;
+padding: 50px 30px;
+border-radius: 30px;
 text-align: center;
 cursor: pointer;
 border: 3px solid transparent;
@@ -141,6 +142,11 @@ transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 position: relative;
 overflow: hidden;
+min-height: 320px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
 }
 
 .portal-box::before {
@@ -160,10 +166,8 @@ transform: scale(1);
 }
 
 .portal-box:hover {
-transform: translateY(-10px) scale(1.03);
-border-color: var(--primary);
-background: white;
-box-shadow: 0 25px 60px rgba(26, 82, 118, 0.3);
+transform: translateY(-15px) scale(1.05);
+box-shadow: 0 30px 70px rgba(0,0,0,0.25);
 }
 
 .portal-box i {
@@ -171,18 +175,22 @@ font-size: 90px;
 display: block;
 margin-bottom: 25px;
 animation: pulse 2s infinite;
+filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
 }
 
 .portal-box h2 {
-color: var(--primary);
 margin: 15px 0;
-font-size: 1.5rem;
+font-size: 1.6rem;
+font-weight: 900;
+text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .portal-box p {
 color: #666;
 font-size: 1rem;
-line-height: 1.6;
+line-height: 1.8;
+margin: 15px 0 0 0;
+font-weight: 500;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -345,7 +353,25 @@ grid-template-columns: 1fr;
 
 .portal-container {
 grid-template-columns: 1fr;
-gap: 20px;
+gap: 25px;
+padding: 0 5px;
+}
+
+.portal-box {
+padding: 40px 25px;
+min-height: 280px;
+}
+
+.portal-box i {
+font-size: 70px;
+}
+
+.portal-box h2 {
+font-size: 1.4rem;
+}
+
+.portal-box p {
+font-size: 0.95rem;
 }
 
 .header-title h1 {
@@ -359,18 +385,6 @@ flex-wrap: wrap;
 
 .card {
 padding: 25px 15px;
-}
-
-.portal-box {
-padding: 40px 25px;
-}
-
-.portal-box i {
-font-size: 70px;
-}
-
-.portal-box h2 {
-font-size: 1.3rem;
 }
 }
 
@@ -485,9 +499,9 @@ alt="علم الشرقية">
 
 <div class="portal-container">
 <!-- Vehicle Coding Portal -->
-<div class="portal-box" onclick="openService('citizenPage')">
+<div class="portal-box" onclick="openService('citizenPage')" style="border-bottom: 6px solid var(--primary);">
 <i style="font-style: normal; font-size: 85px;">🚜</i>
-<h2>قسم تكويد المركبات</h2>
+<h2 style="color: var(--primary);">قسم تكويد المركبات</h2>
 <p>تسجيل بيانات التوكتوك والموتوسيكل والتروسيكل والميكروباص بالمنظومة الذكية</p>
 </div>
 
@@ -795,6 +809,7 @@ height: 300px;
 <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
+<button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; position: relative;">
@@ -850,6 +865,23 @@ height: 300px;
 </tr>
 </thead>
 <tbody id="compTableBody"></tbody>
+</table>
+</div>
+
+<!-- Admin Logs Table -->
+<div id="adminLogsTableContainer" style="overflow-x:auto; display: none;">
+<h3 style="color: #e74c3c; margin-bottom: 25px; text-align: center; font-size: 1.8rem;">📜 سجل عمليات المشرفين</h3>
+<table id="adminLogsTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+<thead>
+<tr>
+<th style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">المشرف</th>
+<th style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العملية</th>
+<th style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التفاصيل</th>
+<th style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ والوقت</th>
+<th style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">IP Address</th>
+</tr>
+</thead>
+<tbody id="adminLogsTableBody"></tbody>
 </table>
 </div>
 </div>
@@ -1654,6 +1686,28 @@ import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc,
 // Access Firebase instances from window (no redeclaration - using window directly)
 let currentEditId = "";
 let userRole = "";
+let currentUsername = "";
+
+// Create admin logs collection reference
+const adminLogsRef = collection(window.firebaseDb, "adminLogs");
+
+// Log Admin Action
+async function logAdminAction(username, action, details) {
+try {
+await addDoc(adminLogsRef, {
+username: username,
+role: userRole,
+action: action,
+details: details,
+timestamp: Date.now(),
+ipAddress: 'N/A'
+});
+} catch (error) {
+console.error("Error logging action:", error);
+}
+}
+
+window.logAdminAction = logAdminAction;
 
 // Get Smart Next Code
 async function getSmartNextCode() {
@@ -1677,7 +1731,7 @@ document.getElementById('loginPassword').value = '';
 document.getElementById('loginUsername').focus();
 };
 
-document.getElementById('confirmLoginBtn').onclick = () => {
+document.getElementById('confirmLoginBtn').onclick = async () => {
 const u = document.getElementById('loginUsername').value.trim();
 const p = document.getElementById('loginPassword').value;
 
@@ -1688,10 +1742,13 @@ return;
 
 if (u === "Eltohamy" && p === "idontseeyou2231") {
 userRole = "SUPER";
+currentUsername = u;
 } else if (u === "Bahe" && p === "55185512") {
 userRole = "ADMIN";
+currentUsername = u;
 } else if (u === "viewer" && p === "view123") {
 userRole = "VIEWER";
+currentUsername = u;
 } else {
 alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
 return;
@@ -1699,6 +1756,9 @@ return;
 
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
+
+// Log admin login
+await logAdminAction(currentUsername, 'تسجيل دخول', `دخول إلى لوحة التحكم بصلاحية: ${userRole}`);
 
 // Show role badge
 const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
@@ -1845,6 +1905,10 @@ note: `تم التكويد برقم: ${newCode}`,
 by: userRole
 }]
 });
+
+// Log action
+await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
+
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('codeModal').style.display = 'none';
 
@@ -2008,7 +2072,15 @@ showAllOrdersInTable();
 document.getElementById('showComplaintsBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'none';
 document.getElementById('complaintsTableContainer').style.display = 'block';
+document.getElementById('adminLogsTableContainer').style.display = 'none';
 loadComplaints();
+};
+
+document.getElementById('showAdminLogsBtn').onclick = () => {
+document.getElementById('ordersTableContainer').style.display = 'none';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('adminLogsTableContainer').style.display = 'block';
+loadAdminLogs();
 };
 
 // Filter functions for stat cards
@@ -2181,6 +2253,40 @@ row.style.display = 'none';
 }
 });
 document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات المفلترة (${count} طلب)`;
+}
+
+// Load Admin Logs
+function loadAdminLogs() {
+onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc")), (snap) => {
+const tableBody = document.getElementById('adminLogsTableBody');
+tableBody.innerHTML = '';
+
+if (snap.empty) {
+tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">لا يوجد سجل عمليات</td></tr>';
+return;
+}
+
+snap.forEach(s => {
+const item = s.data();
+const roleIcon = item.role === 'SUPER' ? '👑' : item.role === 'ADMIN' ? '🔧' : '👁️';
+const roleText = item.role === 'SUPER' ? 'مدير عام' : item.role === 'ADMIN' ? 'مشرف' : 'عرض فقط';
+
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">
+<span style="background: ${item.role === 'SUPER' ? '#e74c3c' : item.role === 'ADMIN' ? '#3498db' : '#95a5a6'}; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem;">
+${roleIcon} ${item.username}
+</span>
+<br><small style="color: #999; font-size: 0.85rem;">${roleText}</small>
+</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color: var(--primary);">${item.action}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color: #555;">${item.details}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family: monospace; color: #999;">${item.ipAddress || 'N/A'}</td>
+`;
+tableBody.appendChild(tr);
+});
+});
 }
 
 // Export Excel
