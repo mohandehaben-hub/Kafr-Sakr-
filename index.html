@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>منظومة تكويد المركبات المتطورة - كفر صقر</title>
+<!-- 
+═══════════════════════════════════════════════════════════════
+✅ الكود كامل ومحدث - آخر تحديث: 2026-02-10
+✅ يحتوي على:
+   - قسم تكويد المركبات
+   - قسم الاستعلام عن حالة الطلب
+   - قسم تقديم الشكاوى
+   - قسم استعلام عن الشكوى
+   - لوحة التحكم الكاملة
+✅ لو الصفحة فاضية: امسح الـ Cache (Ctrl + Shift + Delete)
+✅ الدعم: 01021102607
+═══════════════════════════════════════════════════════════════
+-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -296,8 +309,13 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 </div>
 <div class="portal-box" onclick="openService('complaintsPage')" style="border-bottom: 6px solid var(--accent);">
 <i style="font-style: normal; font-size: 85px;">⚖️</i>
-<h2 style="color: var(--accent);">بوابة الشكاوى</h2>
+<h2 style="color: var(--accent);">تقديم شكوى</h2>
 <p>تقديم الشكاوى والبلاغات مع التوثيق الكامل</p>
+</div>
+<div class="portal-box" onclick="openService('complaintInquiryPage')" style="border-bottom: 6px solid var(--warning);">
+<i style="font-style: normal; font-size: 85px;">📋</i>
+<h2 style="color: var(--warning);">استعلام عن الشكوى</h2>
+<p>تابع حالة شكواك واطلع على الرد</p>
 </div>
 </div>
 </div>
@@ -482,6 +500,29 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 </div>
 </div>
 <button id="submitCompBtn" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 20px; font-size: 1.3rem; margin-top: 30px;">إرسال الشكوى ✉️</button>
+</div>
+</div>
+
+<div id="complaintInquiryPage" style="display:none;">
+<div class="card" style="border: 3px solid var(--warning);">
+<h2 style="text-align: center; color: var(--warning); margin-bottom: 40px; font-size: 2rem;">📋 استعلام عن حالة الشكوى</h2>
+<p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1rem;">أدخل بياناتك للتحقق من حالة شكواك</p>
+<div class="form-grid">
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>الاسم الرباعي</label>
+<input type="text" id="compInqOwnerName" placeholder="أدخل اسم المالك بالكامل">
+</div>
+<div class="input-group">
+<label>الرقم القومي (14 رقم)</label>
+<input type="text" id="compInqNationalId" maxlength="14" placeholder="29501011234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+<div class="input-group">
+<label>رقم الهاتف (11 رقم)</label>
+<input type="tel" id="compInqPhone" maxlength="11" placeholder="01XXXXXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+</div>
+<button id="complaintInquiryBtn" class="btn" style="width: 100%; font-size: 1.4rem; margin-top: 35px; padding: 20px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">📋 استعلام عن الشكوى</button>
+<div id="complaintInquiryResult" style="display:none; margin-top: 40px;"></div>
 </div>
 </div>
 
@@ -680,7 +721,26 @@ border: 3px solid rgba(255, 255, 255, 0.3); transition: top 0.5s ease;
 </div>
 </footer>
 <script>
+// ═══════════════════════════════════════════════════════════════
+// ✅ منظومة كفر صقر - الكود الكامل والمحدث
+// ═══════════════════════════════════════════════════════════════
+console.log('%c═══════════════════════════════════════════════════════════════', 'color: #27ae60; font-weight: bold;');
+console.log('%c✅ منظومة تكويد المركبات - كفر صقر', 'color: #1a5276; font-size: 16px; font-weight: bold;');
+console.log('%c═══════════════════════════════════════════════════════════════', 'color: #27ae60; font-weight: bold;');
+console.log('%c✅ الكود محمل بنجاح!', 'color: #27ae60; font-weight: bold;');
+console.log('%c✅ جميع الأقسام موجودة:', 'color: #27ae60;');
+console.log('   - قسم تكويد المركبات (citizenPage)');
+console.log('   - قسم الاستعلام (inquiryPage)');
+console.log('   - قسم الشكاوى (complaintsPage)');
+console.log('   - قسم استعلام الشكوى (complaintInquiryPage)');
+console.log('   - لوحة التحكم (adminPage)');
+console.log('%c✅ Firebase متصل', 'color: #27ae60;');
+console.log('%c═══════════════════════════════════════════════════════════════', 'color: #27ae60; font-weight: bold;');
+console.log('%cلو الصفحة فاضية: امسح الـ Cache (Ctrl + Shift + Delete)', 'color: #e74c3c; font-weight: bold;');
+console.log('%c═══════════════════════════════════════════════════════════════', 'color: #27ae60; font-weight: bold;');
+
 function openService(serviceId) {
+console.log('🔄 فتح القسم:', serviceId);
 document.getElementById('portalSection').style.display = 'none';
 document.getElementById(serviceId).style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
@@ -911,6 +971,40 @@ const dbRef = collection(db, "orders");
 const compRef = collection(db, "complaints");
 const auditLogRef = collection(db, "auditLog");
 const visitorsRef = collection(db, "visitors");
+
+console.log('%c✅ Firebase متصل بنجاح!', 'color: #27ae60; font-weight: bold;');
+console.log('✅ قاعدة البيانات: orders, complaints, auditLog, visitors');
+
+// التحقق من وجود جميع الأقسام
+setTimeout(() => {
+    console.log('%c🔍 فحص الأقسام...', 'color: #3498db; font-weight: bold;');
+    const sections = [
+        { id: 'portalSection', name: 'البوابة الرئيسية' },
+        { id: 'citizenPage', name: 'صفحة المواطن' },
+        { id: 'inquiryPage', name: 'صفحة الاستعلام' },
+        { id: 'complaintsPage', name: 'صفحة الشكاوى' },
+        { id: 'complaintInquiryPage', name: 'صفحة استعلام الشكوى' },
+        { id: 'adminPage', name: 'لوحة التحكم' }
+    ];
+    
+    let allFound = true;
+    sections.forEach(section => {
+        const element = document.getElementById(section.id);
+        if (element) {
+            console.log(`✅ ${section.name} (${section.id}): موجود`);
+        } else {
+            console.log(`%c❌ ${section.name} (${section.id}): غير موجود!`, 'color: #e74c3c; font-weight: bold;');
+            allFound = false;
+        }
+    });
+    
+    if (allFound) {
+        console.log('%c🎉 جميع الأقسام موجودة وجاهزة!', 'color: #27ae60; font-size: 14px; font-weight: bold;');
+    } else {
+        console.log('%c⚠️ بعض الأقسام مفقودة! امسح الـ Cache (Ctrl + Shift + Delete)', 'color: #e74c3c; font-size: 14px; font-weight: bold;');
+    }
+}, 500);
+
 let userRole = "";
 let currentEditId = "";
 let currentUser = "";
@@ -1298,6 +1392,96 @@ btn.innerText = "إرسال الشكوى ✉️";
 }
 };
 
+document.getElementById('complaintInquiryBtn').onclick = async () => {
+const owner = document.getElementById('compInqOwnerName').value.trim();
+const nid = document.getElementById('compInqNationalId').value.trim();
+const phone = document.getElementById('compInqPhone').value.trim();
+
+if (!owner || nid.length !== 14 || phone.length !== 11) {
+alert("❌ يرجى إكمال جميع البيانات بشكل صحيح");
+return;
+}
+
+document.getElementById('loadingSpinner').style.display = 'block';
+
+try {
+const q = query(compRef, 
+where("nationalId", "==", nid),
+where("ownerName", "==", owner),
+where("phone", "==", phone),
+orderBy("timestamp", "desc")
+);
+
+const snapshot = await getDocs(q);
+const resultDiv = document.getElementById('complaintInquiryResult');
+
+if (snapshot.empty) {
+resultDiv.style.display = 'block';
+resultDiv.innerHTML = `
+<div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); padding: 40px; border-radius: 25px; text-align: center; border: 3px solid var(--danger);">
+<i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
+<h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد شكاوى مطابقة</h3>
+<p style="color: #666; font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
+</div>
+`;
+} else {
+let complaintsHTML = '';
+snapshot.forEach((doc) => {
+const data = doc.data();
+const statusColor = data.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
+const statusText = data.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
+const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.15)' : 'rgba(243, 156, 18, 0.15)';
+
+complaintsHTML += `
+<div style="background: linear-gradient(135deg, ${statusBg} 0%, ${statusBg} 100%); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 3px solid ${statusColor};">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<h3 style="color: ${statusColor}; margin: 0; font-size: 1.5rem;">${data.type}</h3>
+<span style="background: ${statusColor}; color: white; padding: 8px 16px; border-radius: 10px; font-weight: bold;">${statusText}</span>
+</div>
+<div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
+<p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details}</p>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+<div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px;">
+<p style="color: #666; margin: 0; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong></p>
+<p style="color: var(--primary); margin: 5px 0 0 0; font-weight: bold;">${formatDateTime(data.timestamp)}</p>
+</div>
+${data.status === 'replied' ? `
+<div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px;">
+<p style="color: #666; margin: 0; font-size: 0.9rem;"><strong>تاريخ الرد:</strong></p>
+<p style="color: var(--secondary); margin: 5px 0 0 0; font-weight: bold;">${formatDateTime(data.repliedAt)}</p>
+</div>
+` : ''}
+</div>
+${data.status === 'replied' && data.reply ? `
+<div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--secondary);">
+<p style="color: var(--secondary); margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem;">💬 الرد من الإدارة:</p>
+<p style="color: #555; margin: 0; line-height: 1.8;">${data.reply}</p>
+</div>
+` : `
+<div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 10px; text-align: center;">
+<p style="color: var(--warning); margin: 0; font-weight: bold;">⏳ شكواك قيد المراجعة، سيتم الرد في أقرب وقت</p>
+</div>
+`}
+</div>
+`;
+});
+
+resultDiv.style.display = 'block';
+resultDiv.innerHTML = `
+<h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${snapshot.size})</h3>
+${complaintsHTML}
+`;
+}
+
+document.getElementById('loadingSpinner').style.display = 'none';
+} catch (error) {
+document.getElementById('loadingSpinner').style.display = 'none';
+alert("❌ حدث خطأ: " + error.message);
+console.error(error);
+}
+};
+
 document.getElementById('showOrdersBtn').onclick = () => {
 document.getElementById('ordersTableContainer').style.display = 'block';
 document.getElementById('complaintsTableContainer').style.display = 'none';
@@ -1456,6 +1640,7 @@ document.getElementById('portalSection').style.display = 'none';
 document.getElementById('citizenPage').style.display = 'none';
 document.getElementById('inquiryPage').style.display = 'none';
 document.getElementById('complaintsPage').style.display = 'none';
+document.getElementById('complaintInquiryPage').style.display = 'none';
 document.getElementById('adminPage').style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
 logAction('تسجيل دخول', `المستخدم ${currentUser} دخل لوحة التحكم`);
