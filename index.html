@@ -932,8 +932,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const dbRef = collection(db, "orders");
 const compRef = collection(db, "complaints");
-const auditLogRef = collection(db, "auditLog");
-const visitorsRef = collection(db, "visitors");
 let userRole = "";
 let currentEditId = "";
 let currentUser = "";
@@ -1370,14 +1368,6 @@ document.getElementById('visitorsLogContainer').style.display = 'none';
 loadAuditLog();
 };
 
-document.getElementById('showVisitorsBtn').onclick = () => {
-document.getElementById('ordersTableContainer').style.display = 'none';
-document.getElementById('complaintsTableContainer').style.display = 'none';
-document.getElementById('auditLogContainer').style.display = 'none';
-document.getElementById('visitorsLogContainer').style.display = 'block';
-loadVisitorsLog();
-};
-
 // 📋 تحميل سجل العمليات
 function loadAuditLog() {
 onSnapshot(query(auditLogRef, orderBy("timestamp", "desc")), (snap) => {
@@ -1404,32 +1394,6 @@ body.appendChild(tr);
 });
 }
 
-// 👁️ تحميل سجل الزوار
-function loadVisitorsLog() {
-onSnapshot(query(visitorsRef, orderBy("timestamp", "desc")), (snap) => {
-const body = document.getElementById('visitorsLogBody');
-body.innerHTML = '';
-
-if (snap.empty) {
-body.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999; font-size: 1.1rem;">👁️ لا توجد زيارات مسجلة بعد</td></tr>';
-return;
-}
-
-snap.forEach(s => {
-const item = s.data();
-const tr = document.createElement('tr');
-tr.innerHTML = `
-<td style="font-size:0.9rem; font-family: monospace;">${formatDateTime(item.timestamp)}</td>
-<td style="font-weight:bold; color:${item.phoneProvided ? 'var(--secondary)' : '#999'};">${item.phone || 'لم يُقدم'}</td>
-<td style="font-size:0.85rem; color:#555;">${item.userAgent ? item.userAgent.substring(0, 50) + '...' : '-'}</td>
-<td style="font-weight:600; color:var(--primary);">${item.platform || '-'}</td>
-<td style="font-size:0.9rem;">${item.screenResolution || '-'}</td>
-<td style="font-size:0.9rem; color:#666;">${item.timezone || '-'}</td>
-`;
-body.appendChild(tr);
-});
-});
-}
 async function getSmartNextCode() {
 const snap = await getDocs(dbRef);
 let maxCode = 100;
