@@ -692,6 +692,7 @@ alt="علم الشرقية">
 <option value="سوء معاملة">سوء معاملة</option>
 <option value="قيادة متهورة">قيادة متهورة</option>
 <option value="مركبة مخالفة">مركبة مخالفة</option>
+<option value="عدم الالتزام بالكود">عدم الالتزام بالكود</option>
 <option value="أخرى">أخرى</option>
 </select>
 </div>
@@ -701,10 +702,39 @@ alt="علم الشرقية">
 <textarea id="compDetails" rows="5" placeholder="اكتب تفاصيل الشكوى بالكامل..."></textarea>
 </div>
 
+<!-- صورة سيلفي -->
 <div class="input-group" style="grid-column: 1 / -1;">
-<label>رفع صور (اختياري)</label>
-<input type="file" id="compImages" multiple accept="image/*" style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
+<label style="color: var(--accent); font-size: 1.1rem;">📸 صورة سيلفي (إثبات الهوية)</label>
+<input type="file" id="compSelfie" accept="image/*" capture="user" style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
+<small style="color: #666; margin-top: 10px; display: block;">✓ التقط صورة سيلفي واضحة لوجهك</small>
 </div>
+
+<!-- صورة البطاقة -->
+<div class="input-group" style="grid-column: 1 / -1;">
+<label style="color: var(--accent); font-size: 1.1rem;">🪪 صورة البطاقة الشخصية</label>
+<input type="file" id="compIdCard" accept="image/*" style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
+<small style="color: #666; margin-top: 10px; display: block;">✓ صورة واضحة للبطاقة الشخصية (الوجه الأمامي)</small>
+</div>
+
+<!-- صورة المشكلة -->
+<div class="input-group" style="grid-column: 1 / -1;">
+<label style="color: var(--accent); font-size: 1.1rem;">📷 صورة المشكلة</label>
+<input type="file" id="compProblemImage" accept="image/*" multiple style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
+<small style="color: #666; margin-top: 10px; display: block;">✓ صور توضح المشكلة أو الموقف (يمكن رفع أكثر من صورة)</small>
+</div>
+
+<!-- صورة لوحة المركبة أو الكود -->
+<div class="input-group" style="grid-column: 1 / -1;">
+<label style="color: var(--accent); font-size: 1.1rem;">🚜 صورة لوحة المركبة أو الكود</label>
+<input type="file" id="compVehicleImage" accept="image/*" style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
+<small style="color: #666; margin-top: 10px; display: block;">✓ صورة واضحة للوحة المركبة أو كود التكويد</small>
+</div>
+</div>
+
+<!-- ملخص الصور -->
+<div id="compImagesSummary" style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.1) 0%, rgba(186, 74, 0, 0.1) 100%); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px solid rgba(211, 84, 0, 0.3); display: none;">
+<h4 style="color: var(--accent); margin-top: 0;">📋 ملخص الصور المرفوعة:</h4>
+<div id="compImagesList" style="display: flex; flex-direction: column; gap: 10px;"></div>
 </div>
 
 <button id="submitCompBtn" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 20px; font-size: 1.3rem; margin-top: 30px;">
@@ -860,6 +890,7 @@ height: 300px;
 <th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">نوع الشكوى</th>
 <th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التفاصيل</th>
+<th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">المرفقات</th>
 <th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
 <th style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.95) 0%, rgba(186, 74, 0, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
 </tr>
@@ -1284,6 +1315,36 @@ delivered: { text: 'تم التسليم', color: '#16a085', icon: '🎉' }
 return statusMap[status] || statusMap.pending;
 };
 
+// Update complaint images summary
+function updateComplaintImagesSummary() {
+const selfie = document.getElementById('compSelfie').files[0];
+const idCard = document.getElementById('compIdCard').files[0];
+const problemImages = document.getElementById('compProblemImage').files;
+const vehicleImage = document.getElementById('compVehicleImage').files[0];
+
+const summary = document.getElementById('compImagesSummary');
+const list = document.getElementById('compImagesList');
+
+let hasImages = selfie || idCard || problemImages.length > 0 || vehicleImage;
+
+if (hasImages) {
+summary.style.display = 'block';
+let html = '';
+if (selfie) html += `<div style="color: var(--secondary); font-weight: 600;">✅ صورة سيلفي: ${selfie.name}</div>`;
+if (idCard) html += `<div style="color: var(--secondary); font-weight: 600;">✅ صورة البطاقة: ${idCard.name}</div>`;
+if (problemImages.length > 0) html += `<div style="color: var(--secondary); font-weight: 600;">✅ صور المشكلة: ${problemImages.length} صورة</div>`;
+if (vehicleImage) html += `<div style="color: var(--secondary); font-weight: 600;">✅ صورة المركبة: ${vehicleImage.name}</div>`;
+list.innerHTML = html;
+} else {
+summary.style.display = 'none';
+}
+}
+
+document.getElementById('compSelfie').onchange = updateComplaintImagesSummary;
+document.getElementById('compIdCard').onchange = updateComplaintImagesSummary;
+document.getElementById('compProblemImage').onchange = updateComplaintImagesSummary;
+document.getElementById('compVehicleImage').onchange = updateComplaintImagesSummary;
+
 // Test: Check all sections exist
 setTimeout(() => {
 const sections = ['portalSection', 'citizenPage', 'inquiryPage', 'complaintsPage', 'complaintInquiryPage'];
@@ -1506,35 +1567,155 @@ resultDiv.innerHTML = `
 const data = snapshot.docs[0].data();
 const statusInfo = window.getStatusDisplay(data.status || 'pending');
 
+// Build status history HTML with admin info
+let historyHTML = '';
+if (data.statusHistory && data.statusHistory.length > 0) {
+historyHTML = '<div style="background: white; padding: 25px; border-radius: 20px; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">';
+historyHTML += '<h4 style="color: var(--primary); margin: 0 0 20px 0; font-size: 1.3rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">📋 سجل حالة الطلب</h4>';
+historyHTML += '<div style="position: relative; padding-right: 30px;">';
+
+data.statusHistory.forEach((log, index) => {
+const logStatusInfo = window.getStatusDisplay(log.status);
+const isLast = index === data.statusHistory.length - 1;
+
+// Admin info
+let adminInfo = '';
+if (log.by) {
+if (log.by === 'SUPER') {
+adminInfo = '<span style="background: #e74c3c; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">👑 مدير عام</span>';
+} else if (log.by === 'ADMIN') {
+adminInfo = '<span style="background: #3498db; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">🔧 مشرف</span>';
+} else if (log.by === 'system') {
+adminInfo = '<span style="background: #95a5a6; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">🤖 النظام</span>';
+} else {
+adminInfo = `<span style="background: #7f8c8d; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">👤 ${log.by}</span>`;
+}
+}
+
+historyHTML += `
+<div style="position: relative; margin-bottom: ${isLast ? '0' : '25px'};">
+<div style="position: absolute; right: -30px; top: 5px; width: 18px; height: 18px; background: ${logStatusInfo.color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 2;"></div>
+${!isLast ? '<div style="position: absolute; right: -21px; top: 23px; width: 2px; height: calc(100% + 25px); background: #ddd; z-index: 1;"></div>' : ''}
+<div style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,250,250,0.95) 100%); padding: 18px; border-radius: 12px; border-right: 4px solid ${logStatusInfo.color}; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+<span style="background: ${logStatusInfo.color}; color: white; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 0.95rem;">${logStatusInfo.icon} ${logStatusInfo.text}</span>
+${adminInfo}
+</div>
+<span style="color: #999; font-size: 0.85rem; font-weight: 600;">${window.formatDateTime(log.timestamp)}</span>
+</div>
+${log.note ? `<p style="margin: 10px 0 0 0; color: #555; line-height: 1.6; font-size: 0.95rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 8px;">💬 ${log.note}</p>` : ''}
+</div>
+</div>
+`;
+});
+
+historyHTML += '</div></div>';
+}
+
 if (data.vCode && data.vCode !== "") {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(46, 204, 113, 0.15) 100%)';
+resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(46, 204, 113, 0.08) 100%)';
 resultDiv.style.border = '3px solid var(--secondary)';
 resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">✅</i>
-<h3 style="color: var(--secondary); margin-bottom: 20px; font-size: 1.8rem;">تم التكويد بنجاح!</h3>
-<div style="background: white; padding: 30px; border-radius: 20px; margin: 25px 0; border: 4px solid var(--secondary);">
-<p style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">كود المركبة:</p>
-<h2 style="color: var(--secondary); font-size: 4rem; font-weight: 900; margin: 0;">${data.vCode}</h2>
+<div style="text-align: center;">
+<i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;">✅</i>
+<h3 style="color: var(--secondary); margin-bottom: 25px; font-size: 2rem; font-weight: 900;">تم التكويد بنجاح!</h3>
 </div>
-<div style="background: ${statusInfo.color}; color: white; padding: 15px; border-radius: 15px; margin: 20px 0;">
-<p style="margin: 0; font-size: 1.2rem; font-weight: bold;">${statusInfo.icon} الحالة: ${statusInfo.text}</p>
+
+<div style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); padding: 35px; border-radius: 25px; margin: 25px 0; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3); text-align: center;">
+<p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 12px; font-weight: 600;">🔢 كود المركبة الخاص بك</p>
+<h2 style="color: white; font-size: 4.5rem; font-weight: 900; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.2); letter-spacing: 3px;">${data.vCode}</h2>
 </div>
-<p style="color: #666; font-size: 1rem;">تاريخ التكويد: ${window.formatDateTime(data.codedAt)}</p>
-<p style="color: #666; font-size: 1rem;">نوع المركبة: <strong>${data.vType}</strong></p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+</div>
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
+</div>
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">اللون</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🎨 ${data.vColor || 'غير محدد'}</p>
+</div>
+</div>
+
+<div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+<div>
+<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
+<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+</div>
+<div>
+<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التكويد</p>
+<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.codedAt)}</p>
+</div>
+</div>
+</div>
+
+${historyHTML}
+
+<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(52, 152, 219, 0.3); text-align: center;">
+<p style="margin: 0; color: var(--info); font-size: 1rem; line-height: 1.8;">
+<strong style="font-size: 1.1rem;">✅ يمكنك الآن استلام المركبة</strong><br>
+<span style="font-size: 0.95rem;">توجه إلى مقر رئاسة المركز مع المستندات المطلوبة</span>
+</p>
+</div>
 `;
 } else {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%)';
+resultDiv.style.background = 'linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(214, 137, 16, 0.08) 100%)';
 resultDiv.style.border = '3px solid var(--warning)';
 resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">${statusInfo.icon}</i>
-<h3 style="color: var(--warning); margin-bottom: 15px; font-size: 1.8rem;">${statusInfo.text}</h3>
-<div style="background: ${statusInfo.color}; color: white; padding: 15px; border-radius: 15px; margin: 20px 0;">
-<p style="margin: 0; font-size: 1.1rem; font-weight: bold;">الحالة: ${statusInfo.text}</p>
+<div style="text-align: center;">
+<i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;">${statusInfo.icon}</i>
+<h3 style="color: var(--warning); margin-bottom: 20px; font-size: 2rem; font-weight: 900;">${statusInfo.text}</h3>
 </div>
-<p style="color: #666; font-size: 1.1rem;">تم استلام طلبك وهو الآن قيد المعالجة</p>
-<p style="color: #666; font-size: 1rem; margin-top: 20px;">تاريخ التسجيل: ${window.formatDateTime(data.timestamp)}</p>
+
+<div style="background: ${statusInfo.color}; color: white; padding: 25px; border-radius: 20px; margin: 25px 0; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+<p style="margin: 0; font-size: 1.3rem; font-weight: bold;">${statusInfo.icon} ${statusInfo.text}</p>
+<p style="margin: 10px 0 0 0; font-size: 1rem; opacity: 0.95;">طلبك قيد المعالجة من قبل الإدارة</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+</div>
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
+</div>
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">اللون</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🎨 ${data.vColor || 'غير محدد'}</p>
+</div>
+</div>
+
+<div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+<div>
+<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
+<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+</div>
+<div>
+<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التسجيل</p>
+<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.timestamp)}</p>
+</div>
+</div>
+</div>
+
+${historyHTML}
+
+<div style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(243, 156, 18, 0.3); text-align: center;">
+<p style="margin: 0; color: var(--warning); font-size: 1rem; line-height: 1.8;">
+<strong style="font-size: 1.1rem;">⏳ يرجى الانتظار</strong><br>
+<span style="font-size: 0.95rem;">سيتم مراجعة طلبك والتواصل معك قريباً</span>
+</p>
+</div>
 `;
 }
 }
@@ -1554,10 +1735,20 @@ const nid = document.getElementById('compNationalId').value.trim();
 const phone = document.getElementById('compPhone').value.trim();
 const compType = document.getElementById('compType').value;
 const details = document.getElementById('compDetails').value.trim();
-const images = document.getElementById('compImages').files;
+
+// Get all image files
+const selfie = document.getElementById('compSelfie').files[0];
+const idCard = document.getElementById('compIdCard').files[0];
+const problemImages = document.getElementById('compProblemImage').files;
+const vehicleImage = document.getElementById('compVehicleImage').files[0];
 
 if (!ownerName || nid.length !== 14 || phone.length !== 11 || !compType || !details) {
 alert("❌ يرجى إكمال جميع البيانات المطلوبة");
+return;
+}
+
+if (!selfie || !idCard || !vehicleImage) {
+alert("❌ يرجى رفع الصور المطلوبة:\n• صورة سيلفي\n• صورة البطاقة\n• صورة المركبة/الكود");
 return;
 }
 
@@ -1566,12 +1757,31 @@ btn.disabled = true;
 btn.innerText = "جاري الإرسال...";
 
 try {
-const imgUrls = [];
-if (images.length > 0) {
-for (let i = 0; i < images.length; i++) {
-btn.innerText = `جاري رفع الصورة ${i + 1} من ${images.length}...`;
-const url = await uploadToCloudinary(images[i]);
-imgUrls.push(url);
+const imgUrls = {
+selfie: '',
+idCard: '',
+problemImages: [],
+vehicleImage: ''
+};
+
+// Upload selfie
+btn.innerText = "جاري رفع صورة السيلفي...";
+imgUrls.selfie = await uploadToCloudinary(selfie);
+
+// Upload ID card
+btn.innerText = "جاري رفع صورة البطاقة...";
+imgUrls.idCard = await uploadToCloudinary(idCard);
+
+// Upload vehicle image
+btn.innerText = "جاري رفع صورة المركبة...";
+imgUrls.vehicleImage = await uploadToCloudinary(vehicleImage);
+
+// Upload problem images
+if (problemImages.length > 0) {
+for (let i = 0; i < problemImages.length; i++) {
+btn.innerText = `جاري رفع صورة المشكلة ${i + 1} من ${problemImages.length}...`;
+const url = await uploadToCloudinary(problemImages[i]);
+imgUrls.problemImages.push(url);
 }
 }
 
@@ -1588,7 +1798,7 @@ timestamp: Date.now()
 });
 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("✅ تم إرسال شكواك بنجاح! سيتم المراجعة والرد في أقرب وقت.");
+alert("✅ تم إرسال شكواك بنجاح!\n\n📋 تم رفع جميع الصور المطلوبة\n⏳ سيتم المراجعة والرد في أقرب وقت.");
 location.reload();
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -1649,6 +1859,11 @@ complaintsHTML += `
 <p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details}</p>
 </div>
 <p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${formatDateTime(data.timestamp)}</p>
+${data.images ? `
+<div style="margin: 15px 0;">
+<button class="btn btn-view-inquiry-images" data-doc-id="${doc.id}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
+</div>
+` : ''}
 ${data.status === 'replied' && data.reply ? `
 <div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--secondary); margin-top: 15px;">
 <p style="color: var(--secondary); margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem;">💬 الرد من الإدارة:</p>
@@ -1668,6 +1883,30 @@ resultDiv.innerHTML = `
 <h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${snapshot.size})</h3>
 ${complaintsHTML}
 `;
+
+// Add event listeners for image viewing buttons
+const complaintsData = {};
+snapshot.forEach((doc) => {
+complaintsData[doc.id] = doc.data();
+});
+
+resultDiv.querySelectorAll('.btn-view-inquiry-images').forEach(btn => {
+btn.onclick = () => {
+const docId = btn.getAttribute('data-doc-id');
+const data = complaintsData[docId];
+if (data && data.images) {
+if (typeof data.images === 'object' && !Array.isArray(data.images)) {
+// New format: categorized images
+showCategorizedImages(data.images);
+} else if (Array.isArray(data.images)) {
+// Old format: array of images
+viewImages(data.images);
+}
+} else {
+alert("⚠️ لا توجد صور متاحة للعرض");
+}
+};
+});
 }
 
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -1816,6 +2055,70 @@ thumbContainer.appendChild(img);
 modal.style.display = "block";
 }
 
+// View Categorized Images (for complaints)
+function showCategorizedImages(images) {
+const modal = document.getElementById("imgModal");
+const mainImg = document.getElementById("mainViewImg");
+const thumbContainer = document.getElementById("modalThumbnails");
+
+thumbContainer.innerHTML = '';
+
+// Collect all images with labels
+const allImages = [];
+
+if (images.selfie) {
+allImages.push({ url: images.selfie, label: '📸 صورة سيلفي' });
+}
+if (images.idCard) {
+allImages.push({ url: images.idCard, label: '🪪 صورة البطاقة' });
+}
+if (images.vehicleImage) {
+allImages.push({ url: images.vehicleImage, label: '🚜 صورة المركبة/الكود' });
+}
+if (images.problemImages && images.problemImages.length > 0) {
+images.problemImages.forEach((url, index) => {
+allImages.push({ url: url, label: `📷 صورة المشكلة ${index + 1}` });
+});
+}
+
+if (allImages.length === 0) {
+alert("⚠️ لا توجد صور متاحة للعرض");
+return;
+}
+
+// Set first image
+mainImg.src = allImages[0].url;
+
+// Create thumbnails with labels
+allImages.forEach(imgData => {
+const container = document.createElement('div');
+container.style.textAlign = 'center';
+
+const img = document.createElement('img');
+img.src = imgData.url;
+img.style.width = "80px";
+img.style.height = "80px";
+img.style.cursor = "pointer";
+img.style.objectFit = "cover";
+img.style.borderRadius = "15px";
+img.style.border = "3px solid white";
+img.onclick = () => mainImg.src = imgData.url;
+
+const label = document.createElement('div');
+label.innerText = imgData.label;
+label.style.color = 'white';
+label.style.fontSize = '0.75rem';
+label.style.marginTop = '5px';
+label.style.fontWeight = 'bold';
+
+container.appendChild(img);
+container.appendChild(label);
+thumbContainer.appendChild(container);
+});
+
+modal.style.display = "block";
+}
+
 // Load Admin Data
 function loadAdminData() {
 onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
@@ -1839,6 +2142,9 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600;">${item.nationalId}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vYear || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:${statusInfo.color}; color:white; padding:8px 14px; border-radius:10px; font-weight:bold; font-size:0.9rem;">${statusInfo.icon} ${statusInfo.text}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
@@ -1860,6 +2166,12 @@ const statusMap = {
 "3": "coded",
 "4": "delivered"
 };
+const statusNames = {
+"pending": "قيد المراجعة",
+"approved": "تم القبول",
+"coded": "تم التكويد",
+"delivered": "تم التسليم"
+};
 if (newStatus && statusMap[newStatus]) {
 const note = prompt("ملاحظة (اختياري):", "");
 await updateDoc(doc(window.firebaseDb, "orders", id), {
@@ -1871,6 +2183,10 @@ note: note || "",
 by: userRole
 }]
 });
+
+// Log status change action
+await logAdminAction(currentUsername, 'تغيير حالة', `تم تغيير حالة مركبة ${item.vType} للمالك: ${item.owner} إلى: ${statusNames[statusMap[newStatus]]} (الرقم المرجعي: ${item.refNumber})`);
+
 alert("✅ تم تحديث الحالة بنجاح!");
 }
 };
@@ -1976,6 +2292,10 @@ note: "تم تعديل البيانات",
 by: userRole
 }]
 });
+
+// Log edit action
+await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('editModal').style.display = 'none';
 alert("✅ تم التعديل بنجاح!");
@@ -1985,6 +2305,10 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 await deleteDoc(doc(window.firebaseDb, "orders", id));
+
+// Log delete action
+await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+
 alert("✅ تم الحذف بنجاح");
 }
 };
@@ -2024,11 +2348,33 @@ total++;
 item.status === 'replied' ? replied++ : pending++;
 
 const tr = document.createElement('tr');
+
+// Build images display HTML
+let imagesHTML = '';
+if (item.images) {
+if (typeof item.images === 'object' && !Array.isArray(item.images)) {
+// New format: categorized images
+let imageCount = 0;
+if (item.images.selfie) imageCount++;
+if (item.images.idCard) imageCount++;
+if (item.images.vehicleImage) imageCount++;
+if (item.images.problemImages) imageCount += item.images.problemImages.length;
+
+imagesHTML = `<button class="btn btn-view-comp-images" style="background:rgba(211, 84, 0, 0.1); color:var(--accent); padding:10px 14px;">🖼️ عرض (${imageCount})</button>`;
+} else if (Array.isArray(item.images)) {
+// Old format: array of images
+imagesHTML = `<button class="btn btn-view-comp-images" style="background:rgba(211, 84, 0, 0.1); color:var(--accent); padding:10px 14px;">🖼️ عرض (${item.images.length})</button>`;
+}
+} else {
+imagesHTML = '<span style="color: #999;">لا توجد صور</span>';
+}
+
 tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">${item.ownerName}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color:var(--accent); font-weight:bold;">${item.type}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 300px;">${item.details}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);">${imagesHTML}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background: ${item.status === 'replied' ? 'var(--secondary)' : 'var(--warning)'}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${item.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة'}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
 <button class="btn btn-reply" title="الرد" style="padding:10px 14px; background: var(--secondary); color: white;">💬</button>
@@ -2036,14 +2382,18 @@ tr.innerHTML = `
 </td>
 `;
 
-tr.querySelector('.btn-reply').onclick = () => {
+tr.querySelector('.btn-reply').onclick = async () => {
 const reply = prompt("أدخل الرد على الشكوى:", item.reply || '');
 if (reply !== null) {
-updateDoc(doc(window.firebaseDb, "complaints", id), {
+await updateDoc(doc(window.firebaseDb, "complaints", id), {
 reply: reply,
 status: 'replied',
 repliedAt: Date.now()
 });
+
+// Log complaint reply action
+await logAdminAction(currentUsername, 'الرد على شكوى', `تم الرد على شكوى من نوع: ${item.type} للمواطن: ${item.ownerName}`);
+
 alert("✅ تم حفظ الرد بنجاح");
 }
 };
@@ -2051,9 +2401,31 @@ alert("✅ تم حفظ الرد بنجاح");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذه الشكوى؟")) {
 await deleteDoc(doc(window.firebaseDb, "complaints", id));
+
+// Log complaint deletion
+await logAdminAction(currentUsername, 'حذف شكوى', `تم حذف شكوى من نوع: ${item.type} للمواطن: ${item.ownerName}`);
+
 alert("✅ تم الحذف بنجاح");
 }
 };
+
+// View complaint images button
+const viewBtn = tr.querySelector('.btn-view-comp-images');
+if (viewBtn) {
+viewBtn.onclick = () => {
+if (item.images) {
+if (typeof item.images === 'object' && !Array.isArray(item.images)) {
+// New format: categorized images - show in modal with categories
+showCategorizedImages(item.images);
+} else if (Array.isArray(item.images)) {
+// Old format: array of images
+viewImages(item.images);
+}
+} else {
+alert("⚠️ لا توجد صور متاحة للعرض");
+}
+};
+}
 
 body.appendChild(tr);
 });
