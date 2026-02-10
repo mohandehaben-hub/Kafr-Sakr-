@@ -12,6 +12,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
 
+<!-- Auth0 SDK -->
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+
+<!-- Auth Configuration -->
+<script src="auth-config.js"></script>
+
 <style>
 /* ═══════════════════════════════════════════════════════════════
    CSS Variables
@@ -1071,8 +1077,8 @@ alt="علم الشرقية">
 
 <!-- Login Form -->
 <div class="input-group">
-<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">👤 اسم المستخدم</label>
-<input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">� البريد الإلكتروني</label>
+<input type="email" id="loginEmail" placeholder="أدخل البريد الإلكتروني" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
 </div>
 
 <div class="input-group">
@@ -1106,10 +1112,10 @@ to { opacity: 1; }
 </style>
 
 <!-- Info Box -->
-<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(52, 152, 219, 0.3);">
+<div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(39, 174, 96, 0.3);">
 <p style="margin: 0; color: #555; font-size: 0.9rem; text-align: center; line-height: 1.8;">
-<strong style="color: var(--primary);">ℹ️ ملاحظة:</strong><br>
-للدخول كمشرف، استخدم بيانات الاعتماد الخاصة بك
+<strong style="color: var(--secondary);">🔒 نظام آمن 100%</strong><br>
+محمي بتقنية Auth0 العالمية
 </p>
 </div>
 </div>
@@ -1225,7 +1231,15 @@ alt="علم الشرقية">
 console.log('═'.repeat(60));
 console.log('✅ منظومة تكويد المركبات - كفر صقر');
 console.log('✅ المشروع الجديد - نظيف 100%');
+console.log('🔒 محمي بـ Auth0 - أمان 100%');
 console.log('═'.repeat(60));
+
+// Initialize Auth0
+initAuth0().then(() => {
+console.log('✅ Auth0 ready');
+}).catch(err => {
+console.error('❌ Auth0 initialization error:', err);
+});
 
 // Navigation Function
 function openService(serviceId) {
@@ -2089,33 +2103,33 @@ window.getSmartNextCode = getSmartNextCode;
 // Login
 document.getElementById('loginBtn').onclick = () => {
 document.getElementById('loginModal').style.display = 'block';
-document.getElementById('loginUsername').value = '';
+document.getElementById('loginEmail').value = '';
 document.getElementById('loginPassword').value = '';
-document.getElementById('loginUsername').focus();
+document.getElementById('loginEmail').focus();
 };
 
 document.getElementById('confirmLoginBtn').onclick = async () => {
-const u = document.getElementById('loginUsername').value.trim();
-const p = document.getElementById('loginPassword').value;
+const email = document.getElementById('loginEmail').value.trim();
+const password = document.getElementById('loginPassword').value;
 
-if (!u || !p) {
-alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
+if (!email || !password) {
+alert("❌ يرجى إدخال البريد الإلكتروني وكلمة المرور");
 return;
 }
 
-if (u === "Eltohamy" && p === "idontseeyou2231") {
-userRole = "SUPER";
-currentUsername = u;
-} else if (u === "Bahe" && p === "55185512") {
-userRole = "ADMIN";
-currentUsername = u;
-} else if (u === "viewer" && p === "view123") {
-userRole = "VIEWER";
-currentUsername = u;
-} else {
-alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
-return;
+document.getElementById('loadingSpinner').style.display = 'block';
+document.getElementById('confirmLoginBtn').disabled = true;
+document.getElementById('confirmLoginBtn').innerText = 'جاري التحقق...';
+
+try {
+const result = await loginWithAuth0(email, password);
+
+if (!result.success) {
+throw new Error(result.error || 'فشل تسجيل الدخول');
 }
+
+userRole = result.role;
+currentUsername = email.split('@')[0];
 
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
@@ -2151,6 +2165,17 @@ loadComplaints();
 // Hide buttons based on role
 if (userRole === 'VIEWER') {
 document.getElementById('bulkImportBtn').style.display = 'none';
+}
+
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`✅ مرحباً ${currentUsername}!\n🔐 تم تسجيل الدخول بنجاح`);
+
+} catch (error) {
+document.getElementById('loadingSpinner').style.display = 'none';
+document.getElementById('confirmLoginBtn').disabled = false;
+document.getElementById('confirmLoginBtn').innerText = 'دخول 🚀';
+alert("❌ فشل تسجيل الدخول: " + error.message + "\n\nتأكد من البريد الإلكتروني وكلمة المرور");
+console.error('Login error:', error);
 }
 };
 
