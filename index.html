@@ -822,6 +822,9 @@ height: 300px;
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم القومي</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموديل</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">اللون</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العنوان</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
@@ -968,6 +971,74 @@ height: 300px;
 <span onclick="document.getElementById('activityLogModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
 <h3 style="color: #34495e; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📋 سجل العمليات</h3>
 <div id="activityLogContent" style="max-height: 500px; overflow-y: auto;"></div>
+</div>
+</div>
+
+<!-- Modal for Login -->
+<div id="loginModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); backdrop-filter: blur(20px); overflow-y: auto;">
+<div style="background: white; margin: 5% auto; padding: 50px; width: 92%; max-width: 500px; border-radius: 35px; position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.4);">
+<span onclick="document.getElementById('loginModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">&times;</span>
+
+<!-- Logos -->
+<div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 30px;">
+<img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
+style="width: 70px; height: 70px; object-fit: contain; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background: white; padding: 8px; border: 3px solid rgba(26, 82, 118, 0.3); animation: pulse 2s infinite;" 
+alt="علم مصر">
+<img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
+style="width: 70px; height: 70px; object-fit: contain; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background: white; padding: 8px; border: 3px solid rgba(26, 82, 118, 0.3); animation: pulse 2s infinite;" 
+alt="علم الشرقية">
+</div>
+
+<!-- Title -->
+<h3 style="color: var(--primary); font-size: 2rem; margin-bottom: 15px; text-align: center; font-weight: 900;">🔐 لوحة التحكم</h3>
+<p style="text-align: center; color: #666; margin-bottom: 35px; font-size: 1rem;">رئاسة مركز ومدينة كفر صقر</p>
+
+<!-- Egyptian Flag Stripe -->
+<div style="height: 6px; background: linear-gradient(90deg, #ce1126 0%, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #000000 66.66%, #000000 100%); border-radius: 10px; margin-bottom: 35px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+
+<!-- Login Form -->
+<div class="input-group">
+<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">👤 اسم المستخدم</label>
+<input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+</div>
+
+<div class="input-group">
+<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">🔒 كلمة المرور</label>
+<input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'" onkeypress="if(event.key==='Enter') document.getElementById('confirmLoginBtn').click()">
+</div>
+
+<!-- Login Button -->
+<button id="confirmLoginBtn" class="btn" style="width: 100%; padding: 20px; font-size: 1.3rem; margin-top: 25px; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(26, 82, 118, 0.4); position: relative; overflow: hidden; transition: all 0.3s;">
+<span style="position: relative; z-index: 1;">دخول 🚀</span>
+</button>
+
+<style>
+#confirmLoginBtn:hover {
+transform: translateY(-3px);
+box-shadow: 0 15px 40px rgba(26, 82, 118, 0.5);
+}
+
+#confirmLoginBtn:active {
+transform: translateY(0);
+}
+
+#loginModal {
+animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+</style>
+
+<!-- Info Box -->
+<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(52, 152, 219, 0.3);">
+<p style="margin: 0; color: #555; font-size: 0.9rem; text-align: center; line-height: 1.8;">
+<strong style="color: var(--primary);">ℹ️ ملاحظة:</strong><br>
+للدخول كمشرف، استخدم بيانات الاعتماد الخاصة بك
+</p>
+</div>
 </div>
 </div>
 
@@ -1600,8 +1671,20 @@ window.getSmartNextCode = getSmartNextCode;
 
 // Login
 document.getElementById('loginBtn').onclick = () => {
-const u = prompt("اسم المستخدم:");
-const p = prompt("كلمة المرور:");
+document.getElementById('loginModal').style.display = 'block';
+document.getElementById('loginUsername').value = '';
+document.getElementById('loginPassword').value = '';
+document.getElementById('loginUsername').focus();
+};
+
+document.getElementById('confirmLoginBtn').onclick = () => {
+const u = document.getElementById('loginUsername').value.trim();
+const p = document.getElementById('loginPassword').value;
+
+if (!u || !p) {
+alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
+return;
+}
 
 if (u === "Eltohamy" && p === "idontseeyou2231") {
 userRole = "SUPER";
@@ -1613,6 +1696,9 @@ userRole = "VIEWER";
 alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
 return;
 }
+
+// Hide login modal
+document.getElementById('loginModal').style.display = 'none';
 
 // Show role badge
 const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
