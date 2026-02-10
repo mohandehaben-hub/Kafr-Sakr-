@@ -796,6 +796,7 @@ height: 300px;
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; position: relative;">
 <input type="text" id="searchInput" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث...">
 </div>
@@ -822,6 +823,7 @@ height: 300px;
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الصور</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
@@ -874,6 +876,56 @@ height: 300px;
 </div>
 </div>
 
+<!-- Modal for Edit -->
+<div id="editModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+<div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 700px; border-radius: 35px; position: relative;">
+<span onclick="document.getElementById('editModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+<h3 style="color: var(--warning); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">✏️ تعديل بيانات المركبة</h3>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;">
+<div class="input-group">
+<label>الاسم الرباعي للمالك</label>
+<input type="text" id="editOwnerName" placeholder="أدخل الاسم الكامل">
+</div>
+
+<div class="input-group">
+<label>رقم الهاتف (11 رقم)</label>
+<input type="tel" id="editPhone" maxlength="11" placeholder="01XXXXXXXXX">
+</div>
+
+<div class="input-group">
+<label>نوع المركبة</label>
+<select id="editVType">
+<option value="توكتوك">توكتوك</option>
+<option value="موتوسيكل">موتوسيكل</option>
+<option value="تروسيكل">تروسيكل</option>
+<option value="ميكروباص">ميكروباص</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>موديل السنة</label>
+<select id="editVYear"></select>
+</div>
+
+<div class="input-group">
+<label>لون المركبة</label>
+<input type="text" id="editVColor" placeholder="مثال: أحمر، أسود...">
+</div>
+
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>العنوان</label>
+<textarea id="editAddress" rows="3" placeholder="أدخل العنوان بالتفصيل"></textarea>
+</div>
+</div>
+
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="confirmEditBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">حفظ التعديلات ✅</button>
+<button onclick="document.getElementById('editModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">إلغاء ❌</button>
+</div>
+</div>
+</div>
+
 <!-- Modal for Bulk Import -->
 <div id="bulkImportModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
 <div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 900px; border-radius: 35px; position: relative;">
@@ -906,6 +958,38 @@ height: 300px;
 <div style="display:flex; gap:15px; margin-top:35px;">
 <button id="confirmImportBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">✅ تأكيد الاستيراد</button>
 <button onclick="document.getElementById('bulkImportModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
+</div>
+</div>
+</div>
+
+<!-- Modal for Activity Log -->
+<div id="activityLogModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+<div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 800px; border-radius: 35px; position: relative;">
+<span onclick="document.getElementById('activityLogModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+<h3 style="color: #34495e; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📋 سجل العمليات</h3>
+<div id="activityLogContent" style="max-height: 500px; overflow-y: auto;"></div>
+</div>
+</div>
+
+<!-- Modal for Date Filter -->
+<div id="dateFilterModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+<div style="background: white; margin: 10% auto; padding: 45px; width: 92%; max-width: 500px; border-radius: 35px; position: relative;">
+<span onclick="document.getElementById('dateFilterModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+<h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📅 فلترة حسب التاريخ</h3>
+
+<div class="input-group">
+<label>من تاريخ:</label>
+<input type="date" id="filterFromDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
+</div>
+
+<div class="input-group">
+<label>إلى تاريخ:</label>
+<input type="date" id="filterToDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
+</div>
+
+<div style="display:flex; gap:15px; margin-top:35px;">
+<button id="applyDateFilterBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">✅ تطبيق الفلتر</button>
+<button onclick="clearDateFilter()" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">🔄 إعادة تعيين</button>
 </div>
 </div>
 </div>
@@ -955,6 +1039,19 @@ select.appendChild(opt);
 }
 }
 fillYears();
+
+// Fill Years for Edit Modal
+function fillEditYears() {
+const select = document.getElementById('editVYear');
+if (!select) return;
+for (let year = 2000; year <= 2030; year++) {
+let opt = document.createElement('option');
+opt.value = year;
+opt.innerText = year;
+select.appendChild(opt);
+}
+}
+fillEditYears();
 
 // Vehicle Type Selection
 function selectVehicleType(type) {
@@ -1074,6 +1171,15 @@ window.selectVehicleType = selectVehicleType;
 window.resetVehicleSelection = resetVehicleSelection;
 window.validateNationalId = validateNationalId;
 window.verifyBirthDate = verifyBirthDate;
+window.getStatusDisplay = function(status) {
+const statusMap = {
+pending: { text: 'قيد المراجعة', color: '#f39c12', icon: '⏳' },
+approved: { text: 'تم القبول', color: '#3498db', icon: '✓' },
+coded: { text: 'تم التكويد', color: '#27ae60', icon: '✅' },
+delivered: { text: 'تم التسليم', color: '#16a085', icon: '🎉' }
+};
+return statusMap[status] || statusMap.pending;
+};
 
 // Test: Check all sections exist
 setTimeout(() => {
@@ -1233,13 +1339,21 @@ phone,
 birthDate,
 vType,
 vYear: year,
+vColor: color,
 vDesc: `موديل ${year} - لون ${color}`,
 address,
 images: imgUrls,
 timestamp: Date.now(),
 codedAt: null,
 vCode: "",
-refNumber
+refNumber,
+status: "pending",
+statusHistory: [{
+status: "pending",
+timestamp: Date.now(),
+note: "تم استلام الطلب",
+by: "system"
+}]
 });
 
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -1287,6 +1401,8 @@ resultDiv.innerHTML = `
 `;
 } else {
 const data = snapshot.docs[0].data();
+const statusInfo = window.getStatusDisplay(data.status || 'pending');
+
 if (data.vCode && data.vCode !== "") {
 resultDiv.style.display = 'block';
 resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(46, 204, 113, 0.15) 100%)';
@@ -1298,7 +1414,10 @@ resultDiv.innerHTML = `
 <p style="color: #666; font-size: 1.1rem; margin-bottom: 10px;">كود المركبة:</p>
 <h2 style="color: var(--secondary); font-size: 4rem; font-weight: 900; margin: 0;">${data.vCode}</h2>
 </div>
-<p style="color: #666; font-size: 1rem;">تاريخ التكويد: ${formatDateTime(data.codedAt)}</p>
+<div style="background: ${statusInfo.color}; color: white; padding: 15px; border-radius: 15px; margin: 20px 0;">
+<p style="margin: 0; font-size: 1.2rem; font-weight: bold;">${statusInfo.icon} الحالة: ${statusInfo.text}</p>
+</div>
+<p style="color: #666; font-size: 1rem;">تاريخ التكويد: ${window.formatDateTime(data.codedAt)}</p>
 <p style="color: #666; font-size: 1rem;">نوع المركبة: <strong>${data.vType}</strong></p>
 `;
 } else {
@@ -1306,10 +1425,13 @@ resultDiv.style.display = 'block';
 resultDiv.style.background = 'linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%)';
 resultDiv.style.border = '3px solid var(--warning)';
 resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">⏳</i>
-<h3 style="color: var(--warning); margin-bottom: 15px; font-size: 1.8rem;">طلبك قيد المراجعة</h3>
-<p style="color: #666; font-size: 1.1rem;">تم استلام طلبك وهو الآن في انتظار التكويد</p>
-<p style="color: #666; font-size: 1rem; margin-top: 20px;">تاريخ التسجيل: ${formatDateTime(data.timestamp)}</p>
+<i style="font-size: 80px; display: block; margin-bottom: 20px;">${statusInfo.icon}</i>
+<h3 style="color: var(--warning); margin-bottom: 15px; font-size: 1.8rem;">${statusInfo.text}</h3>
+<div style="background: ${statusInfo.color}; color: white; padding: 15px; border-radius: 15px; margin: 20px 0;">
+<p style="margin: 0; font-size: 1.1rem; font-weight: bold;">الحالة: ${statusInfo.text}</p>
+</div>
+<p style="color: #666; font-size: 1.1rem;">تم استلام طلبك وهو الآن قيد المعالجة</p>
+<p style="color: #666; font-size: 1rem; margin-top: 20px;">تاريخ التسجيل: ${window.formatDateTime(data.timestamp)}</p>
 `;
 }
 }
@@ -1485,10 +1607,16 @@ if (u === "Eltohamy" && p === "idontseeyou2231") {
 userRole = "SUPER";
 } else if (u === "Bahe" && p === "55185512") {
 userRole = "ADMIN";
+} else if (u === "viewer" && p === "view123") {
+userRole = "VIEWER";
 } else {
 alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
 return;
 }
+
+// Show role badge
+const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
+const roleColor = userRole === "SUPER" ? "#e74c3c" : userRole === "ADMIN" ? "#3498db" : "#95a5a6";
 
 document.getElementById('portalSection').style.display = 'none';
 document.getElementById('citizenPage').style.display = 'none';
@@ -1498,8 +1626,23 @@ document.getElementById('complaintInquiryPage').style.display = 'none';
 document.getElementById('adminPage').style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
 
+// Add role badge to header
+const header = document.querySelector('header');
+const existingBadge = document.getElementById('roleBadge');
+if (existingBadge) existingBadge.remove();
+const badge = document.createElement('div');
+badge.id = 'roleBadge';
+badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
+badge.innerText = roleBadge;
+header.appendChild(badge);
+
 loadAdminData();
 loadComplaints();
+
+// Hide buttons based on role
+if (userRole === 'VIEWER') {
+document.getElementById('bulkImportBtn').style.display = 'none';
+}
 };
 
 // View Images
@@ -1540,6 +1683,9 @@ const id = s.id;
 total++;
 item.vCode ? coded++ : pending++;
 
+// Get status display
+const statusInfo = window.getStatusDisplay(item.status || 'pending');
+
 const tr = document.createElement('tr');
 tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:700; color:var(--info);">${item.refNumber || 'N/A'}</td>
@@ -1548,14 +1694,40 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '⏳ قيد الانتظار'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">🖼️ ${item.images ? item.images.length : 0}</button></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:${statusInfo.color}; color:white; padding:8px 14px; border-radius:10px; font-weight:bold; font-size:0.9rem;">${statusInfo.icon} ${statusInfo.text}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">�️ ${item.images ? item.images.length : 0}</button></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
-<button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:10px 14px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🗑️</button>
+<button class="btn btn-status" title="تغيير الحالة" style="padding:10px 14px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:10px 14px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:10px 14px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white;">📋</button>
 </td>
 `;
+
+tr.querySelector('.btn-status').onclick = async () => {
+const newStatus = prompt("اختر الحالة:\n1 = قيد المراجعة (pending)\n2 = تم القبول (approved)\n3 = تم التكويد (coded)\n4 = تم التسليم (delivered)", "1");
+const statusMap = {
+"1": "pending",
+"2": "approved",
+"3": "coded",
+"4": "delivered"
+};
+if (newStatus && statusMap[newStatus]) {
+const note = prompt("ملاحظة (اختياري):", "");
+await updateDoc(doc(window.firebaseDb, "orders", id), {
+status: statusMap[newStatus],
+statusHistory: [...(item.statusHistory || []), {
+status: statusMap[newStatus],
+timestamp: Date.now(),
+note: note || "",
+by: userRole
+}]
+});
+alert("✅ تم تحديث الحالة بنجاح!");
+}
+};
 
 tr.querySelector('.btn-code').onclick = async () => {
 if (item.vCode) {
@@ -1578,30 +1750,86 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 vCode: newCode.toString(),
-codedAt: Date.now()
+codedAt: Date.now(),
+status: "coded",
+statusHistory: [...(item.statusHistory || []), {
+status: "coded",
+timestamp: Date.now(),
+note: `تم التكويد برقم: ${newCode}`,
+by: userRole
+}]
 });
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('codeModal').style.display = 'none';
+
+// Send WhatsApp notification
+const phone = item.phone;
+if (phone && phone.length === 11) {
+const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
+`👤 السيد/ة: ${item.owner}\n` +
+`🔢 كود المركبة: *${newCode}*\n` +
+`🚜 نوع المركبة: ${item.vType}\n` +
+`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+`✅ يمكنك الآن استلام المركبة من المقر\n\n` +
+`_رئاسة مركز ومدينة كفر صقر_`;
+
+const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
+
+if (confirm("✅ تم التكويد بنجاح!\n\n📱 هل تريد إرسال إشعار واتساب للمواطن؟")) {
+window.open(whatsappUrl, '_blank');
+}
+} else {
 alert("✅ تم التكويد بنجاح!");
+}
 };
 };
 
 tr.querySelector('.btn-edit').onclick = async () => {
-const newOwner = prompt("الاسم الرباعي:", item.owner);
-if (!newOwner) return;
-const newPhone = prompt("رقم الهاتف:", item.phone);
-if (!newPhone) return;
-const newAddress = prompt("العنوان:", item.address);
-if (!newAddress) return;
+// Fill the edit form with current data
+document.getElementById('editOwnerName').value = item.owner;
+document.getElementById('editPhone').value = item.phone || '';
+document.getElementById('editVType').value = item.vType;
+document.getElementById('editVYear').value = item.vYear || '';
+document.getElementById('editVColor').value = item.vColor || '';
+document.getElementById('editAddress').value = item.address || '';
+
+// Show modal
+document.getElementById('editModal').style.display = 'block';
+
+// Handle confirm button
+document.getElementById('confirmEditBtn').onclick = async () => {
+const newOwner = document.getElementById('editOwnerName').value.trim();
+const newPhone = document.getElementById('editPhone').value.trim();
+const newVType = document.getElementById('editVType').value;
+const newVYear = document.getElementById('editVYear').value;
+const newVColor = document.getElementById('editVColor').value.trim();
+const newAddress = document.getElementById('editAddress').value.trim();
+
+if (!newOwner || !newPhone || newPhone.length !== 11) {
+alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
+return;
+}
 
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 owner: newOwner,
 phone: newPhone,
-address: newAddress
+vType: newVType,
+vYear: newVYear,
+vColor: newVColor,
+vDesc: `موديل ${newVYear}${newVColor ? ' - لون ' + newVColor : ''}`,
+address: newAddress,
+statusHistory: [...(item.statusHistory || []), {
+status: item.status || 'pending',
+timestamp: Date.now(),
+note: "تم تعديل البيانات",
+by: userRole
+}]
 });
 document.getElementById('loadingSpinner').style.display = 'none';
+document.getElementById('editModal').style.display = 'none';
 alert("✅ تم التعديل بنجاح!");
+};
 };
 
 tr.querySelector('.btn-del').onclick = async () => {
@@ -1609,6 +1837,10 @@ if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نها�
 await deleteDoc(doc(window.firebaseDb, "orders", id));
 alert("✅ تم الحذف بنجاح");
 }
+};
+
+tr.querySelector('.btn-log').onclick = () => {
+showActivityLog(item);
 };
 
 tr.querySelector('.view-btn').onclick = () => {
@@ -1755,6 +1987,115 @@ window.showAllOrders = showAllOrders;
 window.showCodedOrders = showCodedOrders;
 window.showPendingOrders = showPendingOrders;
 window.showComplaintsTable = showComplaintsTable;
+
+// Show Activity Log
+function showActivityLog(item) {
+const modal = document.getElementById('activityLogModal');
+const content = document.getElementById('activityLogContent');
+const history = item.statusHistory || [];
+
+let html = `
+<div style="background: linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #34495e;">
+<h4 style="color: #34495e; margin: 0 0 10px 0;">معلومات الطلب:</h4>
+<p style="margin: 5px 0;"><strong>المالك:</strong> ${item.owner}</p>
+<p style="margin: 5px 0;"><strong>الرقم المرجعي:</strong> ${item.refNumber || 'N/A'}</p>
+<p style="margin: 5px 0;"><strong>نوع المركبة:</strong> ${item.vType}</p>
+</div>
+`;
+
+if (history.length === 0) {
+html += '<p style="text-align: center; color: #999; padding: 40px;">لا يوجد سجل عمليات</p>';
+} else {
+html += '<div style="position: relative; padding-right: 30px;">';
+history.forEach((log, index) => {
+const statusInfo = window.getStatusDisplay(log.status);
+const isLast = index === history.length - 1;
+html += `
+<div style="position: relative; margin-bottom: 25px;">
+<div style="position: absolute; right: -30px; top: 0; width: 20px; height: 20px; background: ${statusInfo.color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+${!isLast ? '<div style="position: absolute; right: -21px; top: 20px; width: 2px; height: calc(100% + 25px); background: #ddd;"></div>' : ''}
+<div style="background: white; padding: 20px; border-radius: 15px; border: 2px solid ${statusInfo.color}; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+<span style="background: ${statusInfo.color}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">${statusInfo.icon} ${statusInfo.text}</span>
+<span style="color: #999; font-size: 0.85rem;">${window.formatDateTime(log.timestamp)}</span>
+</div>
+${log.note ? `<p style="margin: 10px 0 0 0; color: #555; line-height: 1.6;">${log.note}</p>` : ''}
+${log.by ? `<p style="margin: 10px 0 0 0; color: #999; font-size: 0.85rem;">بواسطة: ${log.by === 'SUPER' ? '👑 مدير عام' : log.by === 'ADMIN' ? '🔧 مشرف' : log.by}</p>` : ''}
+</div>
+</div>
+`;
+});
+html += '</div>';
+}
+
+content.innerHTML = html;
+modal.style.display = 'block';
+}
+
+window.showActivityLog = showActivityLog;
+
+// Date Filter
+let dateFilterActive = false;
+let filterFromTimestamp = null;
+let filterToTimestamp = null;
+
+document.getElementById('dateFilterBtn').onclick = () => {
+document.getElementById('dateFilterModal').style.display = 'block';
+};
+
+document.getElementById('applyDateFilterBtn').onclick = () => {
+const fromDate = document.getElementById('filterFromDate').value;
+const toDate = document.getElementById('filterToDate').value;
+
+if (!fromDate || !toDate) {
+alert("❌ يرجى اختيار التاريخ من والى");
+return;
+}
+
+filterFromTimestamp = new Date(fromDate).setHours(0, 0, 0, 0);
+filterToTimestamp = new Date(toDate).setHours(23, 59, 59, 999);
+dateFilterActive = true;
+
+document.getElementById('dateFilterModal').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'block';
+document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات من ${fromDate} إلى ${toDate}`;
+
+applyDateFilter();
+};
+
+function clearDateFilter() {
+dateFilterActive = false;
+filterFromTimestamp = null;
+filterToTimestamp = null;
+document.getElementById('filterFromDate').value = '';
+document.getElementById('filterToDate').value = '';
+document.getElementById('dateFilterModal').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'none';
+showAllOrdersInTable();
+}
+
+window.clearDateFilter = clearDateFilter;
+
+function applyDateFilter() {
+let count = 0;
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const timestampCell = row.cells[5]; // Date column
+if (timestampCell) {
+const dateText = timestampCell.innerText;
+// Try to parse the date - this is approximate
+const rowDate = new Date(dateText.split(' ')[0].split('/').reverse().join('-'));
+const rowTimestamp = rowDate.getTime();
+
+if (rowTimestamp >= filterFromTimestamp && rowTimestamp <= filterToTimestamp) {
+row.style.display = '';
+count++;
+} else {
+row.style.display = 'none';
+}
+}
+});
+document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات المفلترة (${count} طلب)`;
+}
 
 // Export Excel
 document.getElementById('exportExcelBtn').onclick = () => {
@@ -1967,7 +2308,14 @@ codedAt: record.vCode ? Date.now() : null,
 vCode: finalCode,
 refNumber: refNumber,
 importedBy: 'admin',
-importedAt: Date.now()
+importedAt: Date.now(),
+status: record.vCode ? "coded" : "pending",
+statusHistory: [{
+status: record.vCode ? "coded" : "pending",
+timestamp: Date.now(),
+note: record.vCode ? `استيراد مع كود: ${finalCode}` : "استيراد من Excel",
+by: userRole
+}]
 });
 
 successCount++;
