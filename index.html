@@ -687,7 +687,34 @@ alt="علم الشرقية">
 
 <div class="input-group">
 <label>موديل المركبة (السنة)</label>
-<select id="vYear"><option value="">اختر السنة...</option></select>
+<select id="vYear">
+<option value="">اختر السنة...</option>
+<option value="2024">2024</option>
+<option value="2023">2023</option>
+<option value="2022">2022</option>
+<option value="2021">2021</option>
+<option value="2020">2020</option>
+<option value="2019">2019</option>
+<option value="2018">2018</option>
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+<option value="2015">2015</option>
+<option value="2014">2014</option>
+<option value="2013">2013</option>
+<option value="2012">2012</option>
+<option value="2011">2011</option>
+<option value="2010">2010</option>
+<option value="2009">2009</option>
+<option value="2008">2008</option>
+<option value="2007">2007</option>
+<option value="2006">2006</option>
+<option value="2005">2005</option>
+<option value="2004">2004</option>
+<option value="2003">2003</option>
+<option value="2002">2002</option>
+<option value="2001">2001</option>
+<option value="2000">2000</option>
+</select>
 </div>
 
 <div class="input-group">
@@ -696,8 +723,32 @@ alt="علم الشرقية">
 </div>
 
 <div class="input-group" style="grid-column: 1 / -1;">
-<label>العنوان</label>
-<input type="text" id="address" placeholder="أدخل العنوان بالتفصيل">
+<label>البلد/القرية</label>
+<select id="village">
+<option value="">اختر البلد...</option>
+<option value="كفر صقر">كفر صقر</option>
+<option value="البوها">البوها</option>
+<option value="أولاد صقر">أولاد صقر</option>
+<option value="الحسينية">الحسينية</option>
+<option value="ههيا">ههيا</option>
+<option value="أبو حماد">أبو حماد</option>
+<option value="أبو كبير">أبو كبير</option>
+<option value="فاقوس">فاقوس</option>
+<option value="الزقازيق">الزقازيق</option>
+<option value="منيا القمح">منيا القمح</option>
+<option value="ديرب نجم">ديرب نجم</option>
+<option value="مشتول السوق">مشتول السوق</option>
+<option value="بلبيس">بلبيس</option>
+<option value="القنايات">القنايات</option>
+<option value="القرين">القرين</option>
+<option value="صان الحجر">صان الحجر</option>
+<option value="أخرى">أخرى</option>
+</select>
+</div>
+
+<div class="input-group" style="grid-column: 1 / -1;">
+<label>العنوان التفصيلي</label>
+<input type="text" id="address" placeholder="أدخل العنوان بالتفصيل (الشارع - الحي - معلم مميز)">
 </div>
 
 <div class="input-group" style="grid-column: 1 / -1;">
@@ -1072,8 +1123,32 @@ height: 300px;
 <input type="text" id="editVColor" placeholder="مثال: أحمر، أسود...">
 </div>
 
+<div class="input-group">
+<label>المدينة/القرية</label>
+<select id="editVillage">
+<option value="">اختر المدينة/القرية</option>
+<option value="كفر صقر">كفر صقر</option>
+<option value="البوها">البوها</option>
+<option value="أولاد صقر">أولاد صقر</option>
+<option value="الحسينية">الحسينية</option>
+<option value="ههيا">ههيا</option>
+<option value="أبو حماد">أبو حماد</option>
+<option value="أبو كبير">أبو كبير</option>
+<option value="فاقوس">فاقوس</option>
+<option value="الزقازيق">الزقازيق</option>
+<option value="منيا القمح">منيا القمح</option>
+<option value="ديرب نجم">ديرب نجم</option>
+<option value="مشتول السوق">مشتول السوق</option>
+<option value="بلبيس">بلبيس</option>
+<option value="القنايات">القنايات</option>
+<option value="القرين">القرين</option>
+<option value="صان الحجر">صان الحجر</option>
+<option value="أخرى">أخرى</option>
+</select>
+</div>
+
 <div class="input-group" style="grid-column: 1 / -1;">
-<label>العنوان</label>
+<label>العنوان التفصيلي</label>
 <textarea id="editAddress" rows="3" placeholder="أدخل العنوان بالتفصيل"></textarea>
 </div>
 </div>
@@ -1615,6 +1690,7 @@ const nid = document.getElementById('nationalId').value.trim();
 const phone = document.getElementById('phone').value.trim();
 const year = document.getElementById('vYear').value;
 const color = document.getElementById('vColor').value.trim();
+const village = document.getElementById('village').value;
 const address = document.getElementById('address').value.trim();
 const vType = document.getElementById('vType').value;
 const birthDate = document.getElementById('birthDate').value;
@@ -1631,7 +1707,7 @@ alert("❌ تاريخ الميلاد غير مطابق للرقم القومي")
 return;
 }
 
-if (!owner || nid.length !== 14 || phone.length !== 11 || !year || !vType || files.length === 0 || !birthDate) {
+if (!owner || nid.length !== 14 || phone.length !== 11 || !year || !vType || !village || !address || files.length === 0 || !birthDate) {
 alert("❌ يرجى إكمال جميع البيانات المطلوبة");
 return;
 }
@@ -1673,7 +1749,8 @@ vType,
 vYear: year,
 vColor: color,
 vDesc: `موديل ${year} - لون ${color}`,
-address,
+village,
+address: village ? `${village} - ${address}` : address,
 images: imgUrls,
 timestamp: Date.now(),
 codedAt: null,
@@ -2463,6 +2540,7 @@ document.getElementById('editPhone').value = item.phone || '';
 document.getElementById('editVType').value = item.vType;
 document.getElementById('editVYear').value = item.vYear || '';
 document.getElementById('editVColor').value = item.vColor || '';
+document.getElementById('editVillage').value = item.village || '';
 document.getElementById('editAddress').value = item.address || '';
 
 // Show modal
@@ -2475,6 +2553,7 @@ const newPhone = document.getElementById('editPhone').value.trim();
 const newVType = document.getElementById('editVType').value;
 const newVYear = document.getElementById('editVYear').value;
 const newVColor = document.getElementById('editVColor').value.trim();
+const newVillage = document.getElementById('editVillage').value;
 const newAddress = document.getElementById('editAddress').value.trim();
 
 if (!newOwner || !newPhone || newPhone.length !== 11) {
@@ -2490,7 +2569,8 @@ vType: newVType,
 vYear: newVYear,
 vColor: newVColor,
 vDesc: `موديل ${newVYear}${newVColor ? ' - لون ' + newVColor : ''}`,
-address: newAddress,
+village: newVillage,
+address: newVillage ? `${newVillage} - ${newAddress}` : newAddress,
 statusHistory: [...(item.statusHistory || []), {
 status: item.status || 'pending',
 timestamp: Date.now(),
@@ -3018,9 +3098,9 @@ document.getElementById('bulkImportModal').style.display = 'block';
 // Download Template
 document.getElementById('downloadTemplateBtn').onclick = () => {
 const templateData = [
-['الاسم الرباعي', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'موديل السنة', 'اللون', 'العنوان', 'كود المركبة'],
-['محمد أحمد علي حسن', '29501011234567', '01012345678', 'توكتوك', '2020', 'أحمر', 'كفر صقر - حي النصر', ''],
-['فاطمة محمود سعيد إبراهيم', '29601021234568', '01098765432', 'موتوسيكل', '2021', 'أسود', 'البوها - شارع الجلاء', '']
+['الاسم الرباعي', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'موديل السنة', 'اللون', 'المدينة/القرية', 'العنوان التفصيلي', 'كود المركبة'],
+['محمد أحمد علي حسن', '29501011234567', '01012345678', 'توكتوك', '2020', 'أحمر', 'كفر صقر', 'حي النصر', ''],
+['فاطمة محمود سعيد إبراهيم', '29601021234568', '01098765432', 'موتوسيكل', '2021', 'أسود', 'البوها', 'شارع الجلاء', '']
 ];
 
 const ws = XLSX.utils.aoa_to_sheet(templateData);
@@ -3060,7 +3140,8 @@ phone: ['هاتف', 'تليفون', 'موبايل', 'phone', 'mobile'],
 vType: ['نوع', 'المركبة', 'type', 'vehicle'],
 vYear: ['موديل', 'سنة', 'year', 'model'],
 vColor: ['لون', 'color'],
-address: ['عنوان', 'address', 'العنوان'],
+village: ['مدينة', 'قرية', 'المدينة', 'القرية', 'village', 'city'],
+address: ['عنوان', 'address', 'العنوان', 'تفصيلي'],
 vCode: ['كود', 'code', 'الكود']
 };
 
@@ -3108,6 +3189,7 @@ phone: String(row[columnMap.phone] || '').replace(/[^0-9]/g, ''),
 vType: row[columnMap.vType] || 'توكتوك',
 vYear: row[columnMap.vYear] || new Date().getFullYear(),
 vColor: row[columnMap.vColor] || '',
+village: row[columnMap.village] || '',
 address: row[columnMap.address] || '',
 vCode: row[columnMap.vCode] || ''
 };
@@ -3190,8 +3272,10 @@ nationalId: record.nationalId,
 phone: record.phone || '',
 vType: record.vType,
 vYear: record.vYear,
+vColor: record.vColor || '',
 vDesc: `موديل ${record.vYear}${record.vColor ? ' - لون ' + record.vColor : ''}`,
-address: record.address || '',
+village: record.village || '',
+address: record.village ? `${record.village} - ${record.address}` : (record.address || ''),
 images: [],
 timestamp: Date.now(),
 codedAt: record.vCode ? Date.now() : null,
