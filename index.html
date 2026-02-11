@@ -669,9 +669,9 @@ alt="علم الشرقية">
 <div class="input-group">
 <label>تاريخ الميلاد (أدخله يدوياً للتحقق)</label>
 <small style="color: #666; font-size: 0.85rem; display: block; margin-bottom: 8px; line-height: 1.5;">
-⚠️ أدخل تاريخ ميلادك يدوياً للتأكد من صحة الرقم القومي ومنع التكرار
+⚠️ اكتب تاريخ ميلادك بالأرقام فقط (مثال: 15011990 أو 1-5-1990)
 </small>
-<input type="date" id="birthDate" onchange="verifyBirthDate()" placeholder="اختر تاريخ ميلادك">
+<input type="text" id="birthDate" oninput="formatBirthDate(this)" onchange="verifyBirthDate()" placeholder="مثال: 15011990 أو 1/5/1990" maxlength="10">
 <div id="birthValidation" style="font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; font-weight: 600;"></div>
 </div>
 
@@ -1507,6 +1507,18 @@ input.style.borderColor = 'var(--secondary)';
 return true;
 }
 
+// Format Birth Date Input
+function formatBirthDate(input) {
+let value = input.value.replace(/[^0-9]/g, ''); // إزالة كل شيء ما عدا الأرقام
+if (value.length >= 2) {
+value = value.substring(0, 2) + '/' + value.substring(2);
+}
+if (value.length >= 5) {
+value = value.substring(0, 5) + '/' + value.substring(5, 9);
+}
+input.value = value;
+}
+
 // Verify Birth Date
 function verifyBirthDate() {
 const nid = document.getElementById('nationalId').value;
@@ -1519,6 +1531,27 @@ document.getElementById('birthDate').style.borderColor = 'var(--glass-border)';
 return;
 }
 
+// تحويل التاريخ المدخل إلى تنسيق YYYY-MM-DD
+let birthDate;
+const parts = birthInput.split('/');
+if (parts.length === 3) {
+const day = parts[0].padStart(2, '0');
+const month = parts[1].padStart(2, '0');
+let year = parts[2];
+// إذا كانت السنة رقمين فقط، نحولها لأربعة أرقام
+if (year.length === 2) {
+year = (parseInt(year) > 50 ? '19' : '20') + year;
+}
+birthDate = `${year}-${month}-${day}`;
+} else {
+msgDiv.style.display = 'block';
+msgDiv.style.background = 'rgba(231, 76, 60, 0.1)';
+msgDiv.style.color = 'var(--danger)';
+msgDiv.innerText = '❌ تنسيق التاريخ غير صحيح - استخدم: يوم/شهر/سنة';
+document.getElementById('birthDate').style.borderColor = 'var(--danger)';
+return false;
+}
+
 const century = nid[0];
 const year = parseInt((century === '2' ? '19' : '20') + nid.substring(1, 3));
 const month = parseInt(nid.substring(3, 5));
@@ -1526,7 +1559,7 @@ const day = parseInt(nid.substring(5, 7));
 
 const nidDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-if (birthInput === nidDate) {
+if (birthDate === nidDate) {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(39, 174, 96, 0.1)';
 msgDiv.style.color = 'var(--secondary)';
@@ -1537,7 +1570,7 @@ return true;
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(231, 76, 60, 0.1)';
 msgDiv.style.color = 'var(--danger)';
-msgDiv.innerText = '❌ تاريخ الميلاد غير مطابق للرقم القومي - تأكد من البيانات';
+msgDiv.innerText = `❌ تاريخ الميلاد غير مطابق للرقم القومي - المتوقع: ${day}/${month}/${year}`;
 document.getElementById('birthDate').style.borderColor = 'var(--danger)';
 return false;
 }
@@ -1693,7 +1726,22 @@ const color = document.getElementById('vColor').value.trim();
 const village = document.getElementById('village').value;
 const address = document.getElementById('address').value.trim();
 const vType = document.getElementById('vType').value;
-const birthDate = document.getElementById('birthDate').value;
+const birthDateInput = document.getElementById('birthDate').value;
+
+// تحويل تاريخ الميلاد إلى التنسيق الصحيح YYYY-MM-DD
+let birthDate = '';
+if (birthDateInput) {
+const parts = birthDateInput.split('/');
+if (parts.length === 3) {
+const day = parts[0].padStart(2, '0');
+const month = parts[1].padStart(2, '0');
+let year = parts[2];
+if (year.length === 2) {
+year = (parseInt(year) > 50 ? '19' : '20') + year;
+}
+birthDate = `${year}-${month}-${day}`;
+}
+}
 
 // Validate National ID
 if (!validateNationalId(document.getElementById('nationalId'))) {
@@ -1714,14 +1762,20 @@ return;
 
 // Check duplicate with birth date verification
 const checkSnap = await getDocs(query(dbRef, where("nationalId", "==", nid)));
+console.log('🔍 فحص الرقم القومي:', nid);
+console.log('📊 عدد السجلات المطابقة:', checkSnap.size);
 if (!checkSnap.empty) {
 // Check if birth date matches
 const existingData = checkSnap.docs[0].data();
+console.log('📅 تاريخ الميلاد المدخل:', birthDate);
+console.log('📅 تاريخ الميلاد المسجل:', existingData.birthDate);
+console.log('👤 المالك المسجل:', existingData.owner);
+console.log('🔢 الرقم المرجعي:', existingData.refNumber);
 if (existingData.birthDate === birthDate) {
-alert("❌ هذا الرقم القومي مسجل مسبقاً في المنظومة!");
+alert(`❌ هذا الرقم القومي مسجل مسبقاً في المنظومة!\n\n👤 المالك: ${existingData.owner}\n🔢 الرقم المرجعي: ${existingData.refNumber || 'غير متوفر'}`);
 return;
 } else {
-alert("⚠️ يوجد رقم قومي مشابه لكن تاريخ الميلاد مختلف. يرجى التحقق من البيانات.");
+alert(`⚠️ يوجد رقم قومي مشابه لكن تاريخ الميلاد مختلف.\n\n📅 تاريخ الميلاد المدخل: ${birthDate}\n📅 تاريخ الميلاد المسجل: ${existingData.birthDate}\n👤 المالك المسجل: ${existingData.owner}\n\nيرجى التحقق من البيانات.`);
 return;
 }
 }
