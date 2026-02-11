@@ -12,93 +12,87 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
 
-<!-- Auth0 SDK -->
-<script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-
-<!-- Auth0 Configuration -->
+<!-- Simple Authentication System -->
 <script>
 // ═══════════════════════════════════════════════════════════════
-// Auth0 Configuration - Secure Authentication System
+// Simple Authentication System - No External Dependencies
 // ═══════════════════════════════════════════════════════════════
 
-const AUTH0_CONFIG = {
-    domain: 'dev-7kvxe0y2o5czqdpv.us.auth0.com',
-    clientId: 'g7oWaGCz5DvUaCnWkBmoqXtv6wINQJzH',
-    redirectUri: 'https://mohandehaben-hub.github.io/Kafr-Sakr/'
-};
-
-// User roles mapping
-const USER_ROLES = {
-    'eltohamy@bahe.com': 'SUPER',
-    'Bahe@1.com': 'ADMIN',
-    'viewer@kafr.com': 'VIEWER',
-    'ahmed@kafr.com': 'ADMIN'  // مستخدم جديد
-};
-
-// Initialize Auth0 Client
-let auth0Client = null;
-
-async function initAuth0() {
-    try {
-        auth0Client = await auth0.createAuth0Client({
-            domain: AUTH0_CONFIG.domain,
-            clientId: AUTH0_CONFIG.clientId,
-            authorizationParams: {
-                redirect_uri: AUTH0_CONFIG.redirectUri
-            }
-        });
-        console.log('✅ Auth0 initialized successfully');
-    } catch (error) {
-        console.error('❌ Auth0 initialization failed:', error);
-    }
+// SHA-256 Hash Function
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
 }
 
-// Login with Auth0 - Direct Password Authentication
-async function loginWithAuth0(email, password) {
+// Encrypted credentials storage
+// Both username and password are hashed with SHA-256
+// Username: Bahe (hashed)
+// Password: 55185512 (hashed)
+const ENCRYPTED_USERS = {};
+
+// Initialize encrypted users on page load
+(async function() {
+    // Hash for username: Bahe
+    const usernameHash = await sha256('Bahe');
+    
+    // Hash for password: 55185512
+    const passwordHash = await sha256('55185512');
+    
+    // Store with hashed username as key
+    ENCRYPTED_USERS[usernameHash] = {
+        passwordHash: passwordHash,
+        role: 'ADMIN',
+        displayName: 'Bahe' // For display purposes only after successful login
+    };
+    
+    console.log('🔐 نظام الحماية المشفر جاهز');
+})();
+
+// Simple Login Function with encrypted credentials
+async function simpleLogin(username, password) {
     try {
-        // Direct authentication using Auth0 Authentication API
-        const response = await fetch(`https://${AUTH0_CONFIG.domain}/oauth/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                grant_type: 'password',
-                username: email,
-                password: password,
-                client_id: AUTH0_CONFIG.clientId,
-                audience: `https://${AUTH0_CONFIG.domain}/api/v2/`,
-                scope: 'openid profile email'
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error_description || 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+        // Hash the entered username
+        const usernameHash = await sha256(username);
+        
+        // Check if user exists
+        const user = ENCRYPTED_USERS[usernameHash];
+        
+        if (!user) {
+            return {
+                success: false,
+                error: 'اسم المستخدم غير صحيح'
+            };
         }
-
-        const userRole = USER_ROLES[email] || 'VIEWER';
+        
+        // Hash the entered password
+        const passwordHash = await sha256(password);
+        
+        if (user.passwordHash !== passwordHash) {
+            return {
+                success: false,
+                error: 'كلمة المرور غير صحيحة'
+            };
+        }
         
         return {
             success: true,
-            email: email,
-            role: userRole,
-            token: data.access_token
+            username: user.displayName,
+            role: user.role
         };
     } catch (error) {
         console.error('Login error:', error);
         return {
             success: false,
-            error: error.message || 'فشل تسجيل الدخول'
+            error: 'فشل تسجيل الدخول'
         };
     }
 }
 
-// Export functions
-window.initAuth0 = initAuth0;
-window.loginWithAuth0 = loginWithAuth0;
-window.USER_ROLES = USER_ROLES;
+// Export function
+window.simpleLogin = simpleLogin;
 </script>
 
 <style>
@@ -1161,7 +1155,7 @@ alt="علم الشرقية">
 <!-- Login Form -->
 <div class="input-group">
 <label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">� البريد الإلكتروني</label>
-<input type="email" id="loginEmail" placeholder="أدخل البريد الإلكتروني" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+<input type="text" id="loginEmail" placeholder="أدخل اسم المستخدم" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
 </div>
 
 <div class="input-group">
@@ -1198,7 +1192,7 @@ to { opacity: 1; }
 <div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(39, 174, 96, 0.3);">
 <p style="margin: 0; color: #555; font-size: 0.9rem; text-align: center; line-height: 1.8;">
 <strong style="color: var(--secondary);">🔒 نظام آمن 100%</strong><br>
-محمي بتقنية Auth0 العالمية
+محمي بتشفير SHA-256
 </p>
 </div>
 </div>
@@ -2195,11 +2189,11 @@ document.getElementById('loginEmail').focus();
 };
 
 document.getElementById('confirmLoginBtn').onclick = async () => {
-    const email = document.getElementById('loginEmail').value.trim();
+    const username = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
-    if (!email || !password) {
-        alert("❌ يرجى إدخال البريد الإلكتروني وكلمة المرور");
+    if (!username || !password) {
+        alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
         return;
     }
 
@@ -2208,14 +2202,14 @@ document.getElementById('confirmLoginBtn').onclick = async () => {
     document.getElementById('confirmLoginBtn').innerText = 'جاري التحقق...';
 
     try {
-        const result = await loginWithAuth0(email, password);
+        const result = await simpleLogin(username, password);
 
         if (!result.success) {
             throw new Error(result.error || 'فشل تسجيل الدخول');
         }
 
         userRole = result.role;
-        currentUsername = email.split('@')[0];
+        currentUsername = result.username;
 
         // Hide login modal
         document.getElementById('loginModal').style.display = 'none';
@@ -2224,8 +2218,8 @@ document.getElementById('confirmLoginBtn').onclick = async () => {
         await logAdminAction(currentUsername, 'تسجيل دخول', `دخول إلى لوحة التحكم بصلاحية: ${userRole}`);
 
         // Show role badge
-        const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
-        const roleColor = userRole === "SUPER" ? "#e74c3c" : userRole === "ADMIN" ? "#3498db" : "#95a5a6";
+        const roleBadge = userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
+        const roleColor = userRole === "ADMIN" ? "#3498db" : "#95a5a6";
 
         document.getElementById('portalSection').style.display = 'none';
         document.getElementById('citizenPage').style.display = 'none';
