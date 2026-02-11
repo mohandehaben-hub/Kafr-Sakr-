@@ -1430,14 +1430,16 @@ console.log(el ? `✅ ${id}: موجود` : `❌ ${id}: مفقود`);
 }, 500);
 </script>
 
+<!-- Secure Configuration - Load First -->
+<script src="./secure-config.public.js"></script>
+
 <!-- Firebase Integration - SECURE VERSION -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getSecureConfig, encryptSensitiveData, decryptSensitiveData } from "./secure-config.public.js";
 
-// Get encrypted configuration
-const secureConfig = getSecureConfig();
+// Get encrypted configuration from global SecureConfig object
+const secureConfig = window.SecureConfig.getSecureConfig();
 const firebaseConfig = secureConfig.firebase;
 
 const app = initializeApp(firebaseConfig);
@@ -1449,8 +1451,8 @@ const compRef = collection(db, "complaints");
 window.firebaseDb = db;
 window.dbRef = dbRef;
 window.compRef = compRef;
-window.encryptSensitiveData = encryptSensitiveData;
-window.decryptSensitiveData = decryptSensitiveData;
+window.encryptSensitiveData = window.SecureConfig.encryptSensitiveData;
+window.decryptSensitiveData = window.SecureConfig.decryptSensitiveData;
 
 console.log('✅ Firebase متصل بنجاح (وضع آمن)!');
 
@@ -2108,9 +2110,8 @@ alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور")
 return;
 }
 
-// Import secure authentication
-const { authenticateAdmin, createSession } = await import('./secure-config.public.js');
-const authResult = authenticateAdmin(u, p);
+// Use secure authentication from global SecureConfig object
+const authResult = window.SecureConfig.authenticateAdmin(u, p);
 
 if (!authResult.success) {
 alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
@@ -2120,7 +2121,7 @@ return;
 }
 
 // Create secure session
-const session = createSession(authResult.username, authResult.role);
+const session = window.SecureConfig.createSession(authResult.username, authResult.role);
 userRole = authResult.role;
 currentUsername = authResult.username;
 
