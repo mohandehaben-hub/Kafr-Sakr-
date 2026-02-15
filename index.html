@@ -493,6 +493,7 @@ alt="علم الشرقية">
 </div>
 <div style="display:flex; gap:12px; flex-wrap: wrap;">
 <button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none;" onclick="location.reload()">🏠 البوابة</button>
+<button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer;" onclick="logoutAdmin()">🚪 تسجيل خروج</button>
 <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4);">🔐 لوحة التحكم</button>
 </div>
 </div>
@@ -1722,6 +1723,21 @@ const address = document.getElementById('address').value.trim();
 const vType = document.getElementById('vType').value;
 const birthDate = document.getElementById('birthDate').value;
 
+// التحقق من حجم الصور ونوعها
+let totalSize = 0;
+for (let file of files) {
+  if (file.size > 5242880) { // 5MB
+    alert(`❌ حجم الصورة "${file.name}" يتجاوز 5MB\nيرجى اختيار صور أصغر`);
+    return;
+  }
+  totalSize += file.size;
+  // التحقق من نوع الملف
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    alert(`❌ الملف "${file.name}" غير صورة صحيحة\nيرجى استخدام JPG أو PNG أو WebP فقط`);
+    return;
+  }
+}
+
 // Validate National ID
 if (!validateNationalId(document.getElementById('nationalId'))) {
 alert("❌ يرجى إدخال رقم قومي صحيح (14 رقم)");
@@ -1798,6 +1814,8 @@ dataToSave = window.encryptSensitiveData(dataToSave);
 await addDoc(dbRef, dataToSave);
 
 document.getElementById('loadingSpinner').style.display = 'none';
+btn.disabled = false;
+btn.innerText = '📋 تسجيل المركبة';
 
 // Send confirmation WhatsApp to citizen
 const confirmMessage = `✅ *تم تسجيل طلبك بنجاح!*\n\n` +
@@ -2230,7 +2248,7 @@ console.error(error);
 
 <!-- Admin Panel JavaScript -->
 <script type="module">
-import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Access Firebase instances from window (no redeclaration - using window directly)
 let currentEditId = "";
@@ -2329,6 +2347,11 @@ const session = createSession(authResult.username, authResult.role);
 userRole = authResult.role;
 currentUsername = authResult.username;
 
+// Save to sessionStorage for session persistence
+sessionStorage.setItem('adminAuth', 'true');
+sessionStorage.setItem('adminRole', userRole);
+sessionStorage.setItem('adminUsername', currentUsername);
+
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
 
@@ -2346,6 +2369,8 @@ document.getElementById('complaintsPage').style.display = 'none';
 document.getElementById('complaintInquiryPage').style.display = 'none';
 document.getElementById('adminPage').style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
+document.getElementById('logoutBtn').style.display = 'inline-flex';
+document.getElementById('loginBtn').style.display = 'none';
 
 // Add role badge to header
 const header = document.querySelector('header');
@@ -2455,9 +2480,26 @@ thumbContainer.appendChild(container);
 modal.style.display = "block";
 }
 
+// Logout function
+window.logoutAdmin = function() {
+if (confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) {
+sessionStorage.removeItem('adminAuth');
+sessionStorage.removeItem('adminRole');
+sessionStorage.removeItem('adminUsername');
+document.getElementById('adminPage').style.display = 'none';
+document.getElementById('portalSection').style.display = 'block';
+document.getElementById('goPortalBtn').style.display = 'none';
+document.getElementById('logoutBtn').style.display = 'none';
+document.getElementById('loginBtn').style.display = 'inline-flex';
+const badge = document.getElementById('roleBadge');
+if (badge) badge.remove();
+location.reload();
+}
+};
+
 // Load Admin Data
 function loadAdminData() {
-onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
+onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(150)), (snap) => {
 const tableBody = document.getElementById('dataTable');
 tableBody.innerHTML = '';
 let total = 0, coded = 0, pending = 0;
@@ -2654,7 +2696,7 @@ document.getElementById('statPending').innerText = pending;
 
 // Load Complaints
 function loadComplaints() {
-onSnapshot(query(window.compRef, orderBy("timestamp", "desc")), (snap) => {
+onSnapshot(query(window.compRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
 const body = document.getElementById('compTableBody');
 body.innerHTML = '';
 let total = 0, pending = 0, replied = 0;
@@ -3067,7 +3109,7 @@ document.getElementById('filterStatusText').innerText = `📅 عرض الطلب�
 
 // Load Admin Logs
 function loadAdminLogs() {
-onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc")), (snap) => {
+onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc"), limit(200)), (snap) => {
 const tableBody = document.getElementById('adminLogsTableBody');
 tableBody.innerHTML = '';
 
@@ -3341,6 +3383,37 @@ document.getElementById('loadingSpinner').style.display = 'none';
 alert('❌ حدث خطأ أثناء الاستيراد: ' + error.message);
 }
 };
+
+// On page load - check for existing admin session
+(function() {
+const savedAuth = sessionStorage.getItem('adminAuth');
+const savedRole = sessionStorage.getItem('adminRole');
+const savedUsername = sessionStorage.getItem('adminUsername');
+
+if (savedAuth === 'true' && savedRole && savedUsername) {
+// Auto-restore admin session
+userRole = savedRole;
+currentUsername = savedUsername;
+document.getElementById('portalSection').style.display = 'none';
+document.getElementById('adminPage').style.display = 'block';
+document.getElementById('goPortalBtn').style.display = 'inline-flex';
+document.getElementById('logoutBtn').style.display = 'inline-flex';
+document.getElementById('loginBtn').style.display = 'none';
+
+// Restore badge
+const header = document.querySelector('header');
+const roleBadge = userRole === \"SUPER\" ? \"👑 مدير عام\" : userRole === \"ADMIN\" ? \"🔧 مشرف\" : \"👁️ عرض فقط\";
+const roleColor = userRole === \"SUPER\" ? \"#e74c3c\" : userRole === \"ADMIN\" ? \"#3498db\" : \"#95a5a6\";
+const badge = document.createElement('div');
+badge.id = 'roleBadge';
+badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
+badge.innerText = roleBadge;
+header.appendChild(badge);
+
+console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (${userRole})`);
+}
+})();
+
 </script>
 
 </body>
