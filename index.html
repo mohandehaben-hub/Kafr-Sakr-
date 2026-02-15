@@ -2482,7 +2482,7 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:${statusInfo.color}; color:white; padding:8px 14px; border-radius:10px; font-weight:bold; font-size:0.9rem;">${statusInfo.icon} ${statusInfo.text}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); text-align:center;"><span style="display:inline-block; background:${statusInfo.color}; color:white; padding:14px 22px; border-radius:14px; font-weight:900; font-size:0.95rem; box-shadow:0 6px 18px rgba(0,0,0,0.2); white-space:nowrap; letter-spacing:0.5px; border:2px solid rgba(255,255,255,0.3); transition:all 0.3s ease;">${statusInfo.icon} ${statusInfo.text}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">�️ ${item.images ? item.images.length : 0}</button></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
@@ -2688,7 +2688,7 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color:var(--accent); font-weight:bold;">${item.type}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 300px;">${item.details}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);">${imagesHTML}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background: ${item.status === 'replied' ? 'var(--secondary)' : 'var(--warning)'}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${item.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة'}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); text-align:center;"><span style="display:inline-block; background: ${item.status === 'replied' ? 'var(--secondary)' : 'var(--warning)'}; color: white; padding: 14px 22px; border-radius: 14px; font-weight: 900; font-size: 0.95rem; box-shadow: 0 6px 18px rgba(0,0,0,0.2); white-space: nowrap; letter-spacing: 0.5px; border: 2px solid rgba(255,255,255,0.3);">${item.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة'}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
 <button class="btn btn-reply" title="الرد" style="padding:10px 14px; background: var(--secondary); color: white;">💬</button>
 <button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🗑️</button>
