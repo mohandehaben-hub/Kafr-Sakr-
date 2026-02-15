@@ -1309,7 +1309,7 @@ const msgDiv = document.getElementById('nidValidation');
 if (nid.length === 0) {
 msgDiv.style.display = 'none';
 input.style.borderColor = 'var(--glass-border)';
-return;
+return false; // كان return بدون قيمة
 }
 
 if (nid.length !== 14) {
@@ -2255,6 +2255,11 @@ let currentEditId = "";
 let userRole = "";
 let currentUsername = "";
 
+// Store unsubscribe references for listeners
+let adminDataUnsubscribe = null;
+let complaintsUnsubscribe = null;
+let adminLogsUnsubscribe = null;
+
 // Create admin logs collection reference
 const adminLogsRef = collection(window.firebaseDb, "adminLogs");
 
@@ -2497,9 +2502,35 @@ location.reload();
 }
 };
 
-// Load Admin Data
+// Toggle Data Visibility
+let dataVisible = false;
+function toggleDataVisibility() {
+dataVisible = !dataVisible;
+const btn = document.getElementById('toggleDataBtn');
+const nationalIdCells = document.querySelectorAll('td:nth-child(3)'); // الرقم القومي
+const phoneCells = document.querySelectorAll('td:nth-child(4)'); // الهاتف
+
+if (dataVisible) {
+nationalIdCells.forEach(cell => cell.style.opacity = '1');
+phoneCells.forEach(cell => cell.style.opacity = '1');
+btn.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+btn.innerText = '🔒 إخفاء البيانات الحساسة';
+} else {
+nationalIdCells.forEach(cell => cell.style.opacity = '0.3');
+phoneCells.forEach(cell => cell.style.opacity = '0.3');
+btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+btn.innerText = '👁️ إظهار البيانات الكاملة';
+}
+}
+
+window.toggleDataVisibility = toggleDataVisibility;
 function loadAdminData() {
-onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(150)), (snap) => {
+// Unsubscribe from previous listener if exists
+if (adminDataUnsubscribe) {
+adminDataUnsubscribe();
+}
+
+adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(150)), (snap) => {
 const tableBody = document.getElementById('dataTable');
 tableBody.innerHTML = '';
 let total = 0, coded = 0, pending = 0;
@@ -2696,7 +2727,12 @@ document.getElementById('statPending').innerText = pending;
 
 // Load Complaints
 function loadComplaints() {
-onSnapshot(query(window.compRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
+// Unsubscribe from previous listener if exists
+if (complaintsUnsubscribe) {
+complaintsUnsubscribe();
+}
+
+complaintsUnsubscribe = onSnapshot(query(window.compRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
 const body = document.getElementById('compTableBody');
 body.innerHTML = '';
 let total = 0, pending = 0, replied = 0;
@@ -3109,7 +3145,12 @@ document.getElementById('filterStatusText').innerText = `📅 عرض الطلب�
 
 // Load Admin Logs
 function loadAdminLogs() {
-onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc"), limit(200)), (snap) => {
+// Unsubscribe from previous listener if exists
+if (adminLogsUnsubscribe) {
+adminLogsUnsubscribe();
+}
+
+adminLogsUnsubscribe = onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc"), limit(200)), (snap) => {
 const tableBody = document.getElementById('adminLogsTableBody');
 tableBody.innerHTML = '';
 
@@ -3402,8 +3443,8 @@ document.getElementById('loginBtn').style.display = 'none';
 
 // Restore badge
 const header = document.querySelector('header');
-const roleBadge = userRole === \"SUPER\" ? \"👑 مدير عام\" : userRole === \"ADMIN\" ? \"🔧 مشرف\" : \"👁️ عرض فقط\";
-const roleColor = userRole === \"SUPER\" ? \"#e74c3c\" : userRole === \"ADMIN\" ? \"#3498db\" : \"#95a5a6\";
+const roleBadge = userRole === 'SUPER' ? '👑 مدير عام' : userRole === 'ADMIN' ? '🔧 مشرف' : '👁️ عرض فقط';
+const roleColor = userRole === 'SUPER' ? '#e74c3c' : userRole === 'ADMIN' ? '#3498db' : '#95a5a6';
 const badge = document.createElement('div');
 badge.id = 'roleBadge';
 badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
