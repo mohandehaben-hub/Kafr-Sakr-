@@ -2168,7 +2168,7 @@ complaintsHTML += `
 <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
 <p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details}</p>
 </div>
-<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${formatDateTime(data.timestamp)}</p>
+<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.timestamp)}</p>
 ${data.images ? `
 <div style="margin: 15px 0;">
 <button class="btn btn-view-inquiry-images" data-doc-id="${doc.id}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
@@ -2914,12 +2914,12 @@ document.getElementById('filterStatus').style.display = 'block';
 document.getElementById('filterStatusText').innerText = '✅ عرض المركبات المكودة فقط';
 let count = 0;
 document.querySelectorAll('#dataTable tr').forEach(row => {
-const codeCell = row.cells[6]; // Column index for code
-if (codeCell && codeCell.innerText.includes('⏳')) {
-row.style.display = 'none';
-} else {
+const statusCell = row.cells[9]; // Column index for status (الحالة)
+if (statusCell && (statusCell.innerText.includes('تم التكويد') || statusCell.innerText.includes('تم التسليم'))) {
 row.style.display = '';
 count++;
+} else {
+row.style.display = 'none';
 }
 });
 document.getElementById('filterStatusText').innerText = `✅ عرض المركبات المكودة فقط (${count} مركبة)`;
@@ -2932,8 +2932,8 @@ document.getElementById('filterStatus').style.display = 'block';
 document.getElementById('filterStatusText').innerText = '⏳ عرض المركبات قيد الانتظار فقط';
 let count = 0;
 document.querySelectorAll('#dataTable tr').forEach(row => {
-const codeCell = row.cells[6]; // Column index for code
-if (codeCell && codeCell.innerText.includes('⏳')) {
+const statusCell = row.cells[9]; // Column index for status (الحالة)
+if (statusCell && (statusCell.innerText.includes('قيد المراجعة') || statusCell.innerText.includes('تم القبول'))) {
 row.style.display = '';
 count++;
 } else {
