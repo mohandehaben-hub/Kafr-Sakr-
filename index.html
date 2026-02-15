@@ -1581,13 +1581,13 @@ const isAuthenticated = () => { const session = getSession(); return session !==
 const ENCRYPTION_KEY = "KafrSakr@2026#SecureData";
 
 const encryptSensitiveData = (data) => {
-    if (data.nationalId) {
+    if (data.nationalId && data.nationalId.length === 14) {
         data.nationalId_encrypted = encrypt(data.nationalId, ENCRYPTION_KEY);
-        data.nationalId = data.nationalId.substring(0, 4) + "****" + data.nationalId.substring(10);
+        data.nationalId = data.nationalId.substring(0, 4) + "****" + data.nationalId.substring(10, 14);
     }
-    if (data.phone) {
+    if (data.phone && data.phone.length === 11) {
         data.phone_encrypted = encrypt(data.phone, ENCRYPTION_KEY);
-        data.phone_display = data.phone.substring(0, 3) + "****" + data.phone.substring(8);
+        data.phone_display = data.phone.substring(0, 3) + "****" + data.phone.substring(8, 11);
     }
     if (data.birthDate) {
         data.birthDate_encrypted = encrypt(data.birthDate, ENCRYPTION_KEY);
@@ -2526,7 +2526,7 @@ btn.innerText = '👁️ إظهار البيانات الكاملة';
 window.toggleDataVisibility = toggleDataVisibility;
 function loadAdminData() {
 // Unsubscribe from previous listener if exists
-if (adminDataUnsubscribe) {
+if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
 adminDataUnsubscribe();
 }
 
@@ -2728,7 +2728,7 @@ document.getElementById('statPending').innerText = pending;
 // Load Complaints
 function loadComplaints() {
 // Unsubscribe from previous listener if exists
-if (complaintsUnsubscribe) {
+if (complaintsUnsubscribe && typeof complaintsUnsubscribe === 'function') {
 complaintsUnsubscribe();
 }
 
@@ -3146,7 +3146,7 @@ document.getElementById('filterStatusText').innerText = `📅 عرض الطلب�
 // Load Admin Logs
 function loadAdminLogs() {
 // Unsubscribe from previous listener if exists
-if (adminLogsUnsubscribe) {
+if (adminLogsUnsubscribe && typeof adminLogsUnsubscribe === 'function') {
 adminLogsUnsubscribe();
 }
 
