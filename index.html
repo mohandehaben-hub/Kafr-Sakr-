@@ -861,7 +861,7 @@ height: 300px;
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; position: relative;">
-<input type="text" id="searchInput" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث...">
+<input type="text" id="searchInput" oninput="searchOrders()" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث بالاسم، الكود، الرقم القومي...">
 </div>
 <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
@@ -2639,18 +2639,83 @@ adminDataUnsubscribe();
 }
 
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(10000)), (snap) => {
-const ordersArray = [];
+// Load from Firebase
+const firebaseOrders = [];
 let total = 0, coded = 0, pending = 0;
 
 snap.forEach(s => {
 const item = s.data();
-const id = s.id;
+item.id = s.id;
+item.source = 'firebase';
+firebaseOrders.push(item);
 total++;
 if (item.status === 'coded' || item.status === 'delivered') {
 coded++;
 } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
 pending++;
 }
+});
+
+// Load from LocalStorage
+let localOrders = [];
+try {
+const stored = localStorage.getItem('vehicleOrders');
+if (stored) {
+const parsed = JSON.parse(stored);
+localOrders = parsed.map((item, index) => ({
+...item,
+id: item.id || `local-${index}`,
+source: 'localStorage',
+// Ensure all required fields exist
+owner: item.owner || item.name || 'غير محدد',
+vType: item.vType || 'غير محدد',
+nationalId: item.nationalId || '',
+phone: item.phone || '',
+address: item.address || '',
+chassisNumber: item.chassisNumber || '',
+motorNumber: item.motorNumber || '',
+vCode: item.vCode || '',
+vYear: item.vYear || '',
+vColor: item.vColor || '',
+refNumber: item.refNumber || `REF-${Date.now()}-${index}`,
+timestamp: item.timestamp || Date.now(),
+status: item.status || 'pending',
+images: item.images || []
+}));
+}
+} catch (e) {
+console.error('خطأ في قراءة LocalStorage:', e);
+}
+
+// Combine both sources (remove duplicates by nationalId)
+const allOrders = [...firebaseOrders];
+const existingNIDs = new Set(firebaseOrders.map(o => o.nationalId).filter(nid => nid));
+
+localOrders.forEach(order => {
+if (!order.nationalId || !existingNIDs.has(order.nationalId)) {
+allOrders.push(order);
+total++;
+if (order.status === 'coded' || order.status === 'delivered') {
+coded++;
+} else {
+pending++;
+}
+}
+});
+
+console.log(`📊 تم تحميل ${firebaseOrders.length} من Firebase و ${localOrders.length} من LocalStorage (إجمالي: ${allOrders.length} بعد إزالة التكرار)`);
+
+// Sort by vCode (numeric) - codes first, then non-coded at end
+allOrders.sort((a, b) => {
+const codeA = a.vCode ? parseInt(a.vCode) : 999999;
+const codeB = b.vCode ? parseInt(b.vCode) : 999999;
+return codeA - codeB;
+});
+
+// Build table rows
+const ordersArray = [];
+allOrders.forEach(item => {
+const id = item.id;
 
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
 const tr = document.createElement('tr');
@@ -3298,13 +3363,9 @@ XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('
 alert("✅ تم تصدير البيانات بنجاح");
 };
 
-// Search
-document.getElementById('searchInput').oninput = (e) => {
-const term = e.target.value.toLowerCase().trim();
-document.querySelectorAll('#dataTable tr').forEach(row => {
-const text = row.innerText.toLowerCase();
-row.style.display = text.includes(term) || term === '' ? '' : 'none';
-});
+// Search - استخدام نظام Pagination
+document.getElementById('searchInput').oninput = () => {
+searchOrders();
 };
 
 // Make functions and variables global
@@ -3737,9 +3798,35 @@ console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (
 let currentPage = 1;
 let recordsPerPage = 100;
 let allOrdersData = [];
+let filteredOrdersData = [];
+
+function searchOrders() {
+const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+if (!searchTerm) {
+filteredOrdersData = allOrdersData;
+} else {
+filteredOrdersData = allOrdersData.filter(orderData => {
+const item = orderData.item;
+return (
+(item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
+(item.name && item.name.toLowerCase().includes(searchTerm)) ||
+(item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) ||
+(item.nationalId && item.nationalId.toLowerCase().includes(searchTerm)) ||
+(item.phone && item.phone.includes(searchTerm)) ||
+(item.refNumber && item.refNumber.toLowerCase().includes(searchTerm)) ||
+(item.address && item.address.toLowerCase().includes(searchTerm)) ||
+(item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm)) ||
+(item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm))
+);
+});
+}
+currentPage = 1;
+renderCurrentPage();
+console.log(`🔍 البحث عن: "${searchTerm}" - النتائج: ${filteredOrdersData.length} من ${allOrdersData.length}`);
+}
 
 function changePage(direction) {
-const totalPages = Math.ceil(allOrdersData.length / recordsPerPage);
+const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage);
 currentPage += direction;
 if (currentPage < 1) currentPage = 1;
 if (currentPage > totalPages) currentPage = totalPages;
@@ -3755,11 +3842,11 @@ renderCurrentPage();
 function renderCurrentPage() {
 const startIndex = (currentPage - 1) * recordsPerPage;
 const endIndex = startIndex + recordsPerPage;
-const pageData = allOrdersData.slice(startIndex, endIndex);
-const totalPages = Math.ceil(allOrdersData.length / recordsPerPage);
+const pageData = filteredOrdersData.slice(startIndex, endIndex);
+const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1;
 
 document.getElementById('pageInfo').textContent = `صفحة ${currentPage} من ${totalPages}`;
-document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${allOrdersData.length} سجل`;
+document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${filteredOrdersData.length} سجل`;
 
 const tableBody = document.getElementById('dataTable');
 tableBody.innerHTML = '';
@@ -3769,11 +3856,13 @@ const tr = orderData.element;
 tableBody.appendChild(tr);
 });
 
-console.log(`📄 عرض الصفحة ${currentPage}: السجلات ${startIndex + 1}-${Math.min(endIndex, allOrdersData.length)}`);
+const actualEnd = Math.min(endIndex, filteredOrdersData.length);
+console.log(`📄 عرض الصفحة ${currentPage}/${totalPages}: السجلات ${startIndex + 1}-${actualEnd} من ${filteredOrdersData.length}`);
 }
 
 function initializePagination(ordersArray) {
 allOrdersData = ordersArray;
+filteredOrdersData = ordersArray;
 currentPage = 1;
 renderCurrentPage();
 }
