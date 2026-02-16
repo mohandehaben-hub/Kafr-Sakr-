@@ -886,6 +886,7 @@ height: 300px;
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموديل</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">اللون</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الشاسيه</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموتور</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العنوان</th>
@@ -1029,17 +1030,31 @@ height: 300px;
 
 <div style="background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); padding: 25px; border-radius: 20px; margin: 25px 0; border: 2px solid rgba(142, 68, 173, 0.3);">
 <h4 style="color: #8e44ad; margin-top: 0;">📋 تنسيق الملف المطلوب:</h4>
-<p style="color: #666; line-height: 1.8; margin: 15px 0;">يجب أن يحتوي ملف Excel على الأعمدة التالية:</p>
-<ol style="color: #555; line-height: 2; font-weight: 600;">
-<li>الاسم الرباعي</li>
-<li>الرقم القومي (14 رقم)</li>
-<li>رقم الهاتف (11 رقم)</li>
-<li>نوع المركبة (توكتوك / موتوسيكل / تروسيكل / ميكروباص)</li>
-<li>موديل السنة</li>
-<li>اللون</li>
-<li>العنوان</li>
-<li>كود المركبة (اختياري - سيتم توليده تلقائياً إذا كان فارغاً)</li>
+<p style="color: #666; line-height: 1.8; margin: 15px 0;">يدعم النظام طريقتين للاستيراد:</p>
+
+<div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
+<h5 style="color: #8e44ad; margin: 0 0 10px 0;">🧠 الطريقة الأولى: اكتشاف تلقائي (موصى به)</h5>
+<p style="color: #555; margin: 0; line-height: 1.6;">ضع أسماء الأعمدة في الصف الأول، وسيقوم النظام باكتشافها تلقائياً</p>
+<p style="color: #666; font-size: 0.9rem; margin: 5px 0 0 0;">مثال: "الاسم الرباعي" | "الرقم القومي" | "رقم الهاتف" | "نوع المركبة"</p>
+</div>
+
+<div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
+<h5 style="color: #8e44ad; margin: 0 0 10px 0;">📍 الطريقة الثانية: أعمدة ثابتة</h5>
+<p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">استخدم الترتيب التالي للأعمدة:</p>
+<ol style="color: #555; line-height: 1.8; font-weight: 600; margin: 0; padding-right: 20px;">
+<li><strong>العمود B:</strong> الكود (اختياري)</li>
+<li><strong>العمود C:</strong> الاسم الرباعي (إلزامي)</li>
+<li><strong>العمود D:</strong> الرقم القومي (14 رقم - إلزامي)</li>
+<li><strong>العمود E:</strong> العنوان</li>
+<li><strong>العمود F:</strong> رقم الشاسيه</li>
+<li><strong>العمود G:</strong> رقم الموتور</li>
+<li><strong>العمود H:</strong> رقم التليفون (11 رقم)</li>
 </ol>
+<p style="color: #e74c3c; font-weight: 600; margin: 10px 0 0 0; font-size: 0.9rem;">
+⚠️ الصف الأول (Header) سيتم تجاهله تلقائياً
+</p>
+</div>
+
 <button id="downloadTemplateBtn" class="btn" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; margin-top: 15px;">📄 تحميل ملف نموذجي</button>
 </div>
 
@@ -2628,6 +2643,7 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vYear || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.9rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:600;">${item.chassisNumber || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.9rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:600;">${item.motorNumber || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
@@ -3277,9 +3293,12 @@ window.getDocs = getDocs;
 window.query = query;
 window.where = where;
 
-// Bulk Import - Open new import page
+// Bulk Import - Open Modal instead of new page
 document.getElementById('bulkImportBtn').onclick = () => {
-window.open('import_excel.html', '_blank');
+document.getElementById('bulkImportModal').style.display = 'block';
+document.getElementById('bulkImportFile').value = '';
+document.getElementById('importPreview').style.display = 'none';
+document.getElementById('importPreview').innerHTML = '';
 };
 
 // Download Template
@@ -3316,9 +3335,32 @@ alert('❌ الملف فارغ أو لا يحتوي على بيانات');
 return;
 }
 
+// Try Fixed Columns First (B-H format)
+let useFixedColumns = false;
+const columnMap = {};
+
+// Check if data follows fixed column format (B=1, C=2, D=3, etc.)
+// If row has data in columns 1-7 (B-H), use fixed format
+if (jsonData[1] && jsonData[1].length >= 3) {
+const hasDataInFixedCols = jsonData[1][2] && jsonData[1][3]; // C and D columns
+if (hasDataInFixedCols) {
+useFixedColumns = true;
+console.log('📍 استخدام الأعمدة الثابتة (B-H)');
+}
+}
+
+if (useFixedColumns) {
+// Fixed columns: B=1, C=2, D=3, E=4, F=5, G=6, H=7
+columnMap.vCode = 1;        // B - الكود
+columnMap.owner = 2;        // C - الاسم
+columnMap.nationalId = 3;   // D - الرقم القومي
+columnMap.address = 4;      // E - العنوان
+columnMap.chassisNumber = 5; // F - الشاسيه
+columnMap.motorNumber = 6;   // G - الموتور
+columnMap.phone = 7;         // H - رقم التليفون
+} else {
 // Smart Column Detection
 const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
-const columnMap = {};
 
 const patterns = {
 owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
@@ -3328,7 +3370,9 @@ vType: ['نوع', 'المركبة', 'type', 'vehicle'],
 vYear: ['موديل', 'سنة', 'year', 'model'],
 vColor: ['لون', 'color'],
 address: ['عنوان', 'address', 'العنوان'],
-vCode: ['كود', 'code', 'الكود']
+vCode: ['كود', 'code', 'الكود'],
+chassisNumber: ['شاسيه', 'chassis', 'الشاسيه'],
+motorNumber: ['موتور', 'motor', 'الموتور']
 };
 
 // Match columns automatically
@@ -3342,30 +3386,37 @@ break;
 }
 }
 
+console.log('🧠 استخدام الاكتشاف التلقائي');
+}
+
 // Check required columns
 if (columnMap.owner === undefined || columnMap.nationalId === undefined) {
-alert('❌ لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\nتأكد من وجود هذه الأعمدة في الملف');
+alert('❌ لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\n\nتأكد من:\n• استخدام الترتيب الصحيح للأعمدة (B-H)\n• أو وضع أسماء الأعمدة في الصف الأول');
 return;
 }
 
 importedData = [];
 const preview = document.getElementById('importPreview');
 let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - 1} سجل):</h4>
-<p style="color: #666; margin-bottom: 15px;">✅ تم اكتشاف الأعمدة تلقائياً: ${Object.keys(columnMap).join(', ')}</p>
-<table style="width: 100%; border-collapse: collapse;">
+<p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
+<table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
 <thead>
 <tr style="background: #8e44ad; color: white;">
-<th style="padding: 10px; border: 1px solid #ddd;">الاسم</th>
-<th style="padding: 10px; border: 1px solid #ddd;">الرقم القومي</th>
-<th style="padding: 10px; border: 1px solid #ddd;">الهاتف</th>
-<th style="padding: 10px; border: 1px solid #ddd;">النوع</th>
-<th style="padding: 10px; border: 1px solid #ddd;">الحالة</th>
+<th style="padding: 8px; border: 1px solid #ddd;">#</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الكود</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الاسم</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الرقم القومي</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الهاتف</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الشاسيه</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الموتور</th>
+<th style="padding: 8px; border: 1px solid #ddd;">الحالة</th>
 </tr>
 </thead>
 <tbody>`;
 
 for (let i = 1; i < jsonData.length; i++) {
 const row = jsonData[i];
+if (!row || row.length === 0) continue;
 if (!row[columnMap.owner] || !row[columnMap.nationalId]) continue;
 
 const record = {
@@ -3376,18 +3427,23 @@ vType: row[columnMap.vType] || 'توكتوك',
 vYear: row[columnMap.vYear] || new Date().getFullYear(),
 vColor: row[columnMap.vColor] || '',
 address: row[columnMap.address] || '',
-vCode: row[columnMap.vCode] || ''
+vCode: row[columnMap.vCode] ? String(row[columnMap.vCode]).trim() : '',
+chassisNumber: row[columnMap.chassisNumber] ? String(row[columnMap.chassisNumber]).trim() : '',
+motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''
 };
 
 const isValid = record.owner && record.nationalId.length === 14 && (!record.phone || record.phone.length === 11);
 importedData.push(record);
 
 previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'};">
-<td style="padding: 8px; border: 1px solid #ddd;">${record.owner}</td>
-<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace;">${record.nationalId}</td>
-<td style="padding: 8px; border: 1px solid #ddd;">${record.phone || '-'}</td>
-<td style="padding: 8px; border: 1px solid #ddd;">${record.vType}</td>
-<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)' : 'var(--danger)'};">${isValid ? '✅ صحيح' : '❌ خطأ'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${i}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db' : '#999'};">${record.vCode || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd;">${record.owner}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">${record.nationalId}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace;">${record.phone || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.chassisNumber ? '#27ae60' : '#999'};">${record.chassisNumber || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.motorNumber ? '#27ae60' : '#999'};">${record.motorNumber || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)' : 'var(--danger)'};">${isValid ? '✅' : '❌'}</td>
 </tr>`;
 }
 
@@ -3395,7 +3451,7 @@ previewHTML += '</tbody></table>';
 preview.innerHTML = previewHTML;
 preview.style.display = 'block';
 
-alert(`✅ تم قراءة ${importedData.length} سجل من الملف\n🧠 تم اكتشاف الأعمدة تلقائياً`);
+alert(`✅ تم قراءة ${importedData.length} سجل من الملف\n${useFixedColumns ? '📍 تم استخدام الأعمدة الثابتة (B-H)' : '🧠 تم اكتشاف الأعمدة تلقائياً'}`);
 } catch (error) {
 alert('❌ خطأ في قراءة الملف: ' + error.message);
 console.error(error);
@@ -3457,8 +3513,11 @@ nationalId: record.nationalId,
 phone: record.phone || '',
 vType: record.vType,
 vYear: record.vYear,
+vColor: record.vColor || '',
 vDesc: `موديل ${record.vYear}${record.vColor ? ' - لون ' + record.vColor : ''}`,
 address: record.address || '',
+chassisNumber: record.chassisNumber || '',
+motorNumber: record.motorNumber || '',
 images: [],
 timestamp: Date.now(),
 codedAt: record.vCode ? Date.now() : null,
