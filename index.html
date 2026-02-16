@@ -860,8 +860,17 @@ height: 300px;
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
-<div style="flex: 1; position: relative;">
-<input type="text" id="searchInput" oninput="searchOrders()" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث بالاسم، الكود، الرقم القومي...">
+<div style="flex: 1; display: flex; gap: 10px;">
+<select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
+<option value="all">🔍 الكل</option>
+<option value="name">👤 الاسم</option>
+<option value="code">🔢 الكود</option>
+<option value="nationalId">🆔 الرقم القومي</option>
+<option value="phone">📱 الهاتف</option>
+<option value="chassis">� الشاسيه</option>
+<option value="motor">⚙️ الموتور</option>
+</select>
+<input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث هنا...">
 </div>
 <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
@@ -878,13 +887,13 @@ height: 300px;
 <!-- Pagination Controls -->
 <div id="paginationControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); border-radius: 15px; border: 2px solid #8e44ad;">
 <div style="display: flex; gap: 10px; align-items: center;">
-<button onclick="changePage(-1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">⏮️ السابق</button>
+<button onclick="window.changePage(-1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">⏮️ السابق</button>
 <span id="pageInfo" style="font-weight: bold; color: #8e44ad; font-size: 1.1rem;">صفحة 1 من 1</span>
-<button onclick="changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
+<button onclick="window.changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
 </div>
 <div style="display: flex; gap: 10px; align-items: center;">
 <label style="font-weight: 600; color: #555;">عدد السجلات في الصفحة:</label>
-<select id="recordsPerPage" onchange="changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
+<select id="recordsPerPage" onchange="window.changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
 <option value="50">50</option>
 <option value="100" selected>100</option>
 <option value="200">200</option>
@@ -3363,10 +3372,8 @@ XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('
 alert("✅ تم تصدير البيانات بنجاح");
 };
 
-// Search - استخدام نظام Pagination
-document.getElementById('searchInput').oninput = () => {
-searchOrders();
-};
+// Search - استخدام نظام Pagination الجديد
+// تم نقل دالة البحث إلى نظام Pagination
 
 // Make functions and variables global
 window.viewImages = viewImages;
@@ -3800,13 +3807,17 @@ let recordsPerPage = 100;
 let allOrdersData = [];
 let filteredOrdersData = [];
 
-function searchOrders() {
+window.searchOrders = function() {
 const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+const searchType = document.getElementById('searchType') ? document.getElementById('searchType').value : 'all';
+
 if (!searchTerm) {
 filteredOrdersData = allOrdersData;
 } else {
 filteredOrdersData = allOrdersData.filter(orderData => {
 const item = orderData.item;
+
+if (searchType === 'all') {
 return (
 (item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
 (item.name && item.name.toLowerCase().includes(searchTerm)) ||
@@ -3818,26 +3829,40 @@ return (
 (item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm)) ||
 (item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm))
 );
+} else if (searchType === 'name') {
+return (item.owner && item.owner.toLowerCase().includes(searchTerm)) || (item.name && item.name.toLowerCase().includes(searchTerm));
+} else if (searchType === 'code') {
+return item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm);
+} else if (searchType === 'nationalId') {
+return item.nationalId && item.nationalId.includes(searchTerm);
+} else if (searchType === 'phone') {
+return item.phone && item.phone.includes(searchTerm);
+} else if (searchType === 'chassis') {
+return item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm);
+} else if (searchType === 'motor') {
+return item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm);
+}
+return false;
 });
 }
 currentPage = 1;
 renderCurrentPage();
-console.log(`🔍 البحث عن: "${searchTerm}" - النتائج: ${filteredOrdersData.length} من ${allOrdersData.length}`);
-}
+console.log(`🔍 البحث (${searchType}) عن: "${searchTerm}" - النتائج: ${filteredOrdersData.length} من ${allOrdersData.length}`);
+};
 
-function changePage(direction) {
-const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage);
+window.changePage = function(direction) {
+const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1;
 currentPage += direction;
 if (currentPage < 1) currentPage = 1;
 if (currentPage > totalPages) currentPage = totalPages;
 renderCurrentPage();
-}
+};
 
-function changeRecordsPerPage() {
+window.changeRecordsPerPage = function() {
 recordsPerPage = parseInt(document.getElementById('recordsPerPage').value);
 currentPage = 1;
 renderCurrentPage();
-}
+};
 
 function renderCurrentPage() {
 const startIndex = (currentPage - 1) * recordsPerPage;
