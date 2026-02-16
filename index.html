@@ -3104,7 +3104,7 @@ renderIndex = endIndex;
 
 // Continue rendering if there are more rows
 if (renderIndex < allOrders.length) {
-setTimeout(renderNextBatch, 50); // 50ms delay to show progressive loading
+setTimeout(renderNextBatch, 200); // 200ms delay to show progressive loading visibly
 } else {
 // All rows rendered, now initialize pagination
 console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
