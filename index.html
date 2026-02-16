@@ -875,6 +875,25 @@ height: 300px;
 </p>
 </div>
 
+<!-- Pagination Controls -->
+<div id="paginationControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); border-radius: 15px; border: 2px solid #8e44ad;">
+<div style="display: flex; gap: 10px; align-items: center;">
+<button onclick="changePage(-1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">⏮️ السابق</button>
+<span id="pageInfo" style="font-weight: bold; color: #8e44ad; font-size: 1.1rem;">صفحة 1 من 1</span>
+<button onclick="changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
+</div>
+<div style="display: flex; gap: 10px; align-items: center;">
+<label style="font-weight: 600; color: #555;">عدد السجلات في الصفحة:</label>
+<select id="recordsPerPage" onchange="changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
+<option value="50">50</option>
+<option value="100" selected>100</option>
+<option value="200">200</option>
+<option value="500">500</option>
+</select>
+<span id="totalRecordsInfo" style="font-weight: bold; color: #27ae60; font-size: 1.1rem;">إجمالي: 0 سجل</span>
+</div>
+</div>
+
 <!-- Orders Table -->
 <div id="ordersTableContainer" style="overflow-x:auto;">
 <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
@@ -1252,17 +1271,10 @@ to { opacity: 1; }
 <div style="height: 8px; background: linear-gradient(90deg, #ce1126 0%, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #000000 66.66%, #000000 100%); box-shadow: 0 -2px 8px rgba(0,0,0,0.3);"></div>
 
 <!-- Footer -->
-<footer class="engineer-footer">
-<div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
-<img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
-style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; background: white; padding: 3px;" 
-alt="علم مصر">
-<span>تم التطوير والتحديث بواسطة م/ مهند التهامي - 01021102607 | نظام متطور بتقنيات حديثة</span>
-<img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
-style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; background: white; padding: 3px;" 
-alt="علم الشرقية">
+<!-- Fixed Developer Credit - Bottom Right Corner -->
+<div style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 15px; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.9); z-index: 9999; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+تطوير: م/ مهند التهامي
 </div>
-</footer>
 
 <!-- JavaScript -->
 <script>
@@ -2626,25 +2638,21 @@ if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
 adminDataUnsubscribe();
 }
 
-adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(150)), (snap) => {
-const tableBody = document.getElementById('dataTable');
-tableBody.innerHTML = '';
+adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(10000)), (snap) => {
+const ordersArray = [];
 let total = 0, coded = 0, pending = 0;
 
 snap.forEach(s => {
 const item = s.data();
 const id = s.id;
 total++;
-// حساب صحيح بناءً على الحالة الفعلية
 if (item.status === 'coded' || item.status === 'delivered') {
 coded++;
 } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
 pending++;
 }
 
-// Get status display
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
-
 const tr = document.createElement('tr');
 tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:700; color:var(--info);">${item.refNumber || 'N/A'}</td>
@@ -2814,12 +2822,15 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 }
 };
 
-tableBody.appendChild(tr);
+ordersArray.push({ element: tr, item: item, id: id });
 });
 
 document.getElementById('statTotal').innerText = total;
 document.getElementById('statCoded').innerText = coded;
 document.getElementById('statPending').innerText = pending;
+
+// Initialize pagination with all orders
+initializePagination(ordersArray);
 });
 }
 
@@ -3719,6 +3730,55 @@ header.appendChild(badge);
 console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (${userRole})`);
 }
 })();
+
+// ============================================
+// PAGINATION SYSTEM
+// ============================================
+let currentPage = 1;
+let recordsPerPage = 100;
+let allOrdersData = [];
+
+function changePage(direction) {
+const totalPages = Math.ceil(allOrdersData.length / recordsPerPage);
+currentPage += direction;
+if (currentPage < 1) currentPage = 1;
+if (currentPage > totalPages) currentPage = totalPages;
+renderCurrentPage();
+}
+
+function changeRecordsPerPage() {
+recordsPerPage = parseInt(document.getElementById('recordsPerPage').value);
+currentPage = 1;
+renderCurrentPage();
+}
+
+function renderCurrentPage() {
+const startIndex = (currentPage - 1) * recordsPerPage;
+const endIndex = startIndex + recordsPerPage;
+const pageData = allOrdersData.slice(startIndex, endIndex);
+const totalPages = Math.ceil(allOrdersData.length / recordsPerPage);
+
+document.getElementById('pageInfo').textContent = `صفحة ${currentPage} من ${totalPages}`;
+document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${allOrdersData.length} سجل`;
+
+const tableBody = document.getElementById('dataTable');
+tableBody.innerHTML = '';
+
+pageData.forEach(orderData => {
+const tr = orderData.element;
+tableBody.appendChild(tr);
+});
+
+console.log(`📄 عرض الصفحة ${currentPage}: السجلات ${startIndex + 1}-${Math.min(endIndex, allOrdersData.length)}`);
+}
+
+function initializePagination(ordersArray) {
+allOrdersData = ordersArray;
+currentPage = 1;
+renderCurrentPage();
+}
+
+console.log('✅ نظام Pagination جاهز');
 
 </script>
 
