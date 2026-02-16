@@ -4024,6 +4024,9 @@ const keepCodes = ['2300', '2301'];
 const ordersSnap = await getDocs(window.dbRef);
 let deletedOrders = 0;
 let skippedOrders = 0;
+
+// Collect IDs to delete
+const idsToDelete = [];
 for (const docSnap of ordersSnap.docs) {
 const orderData = docSnap.data();
 const vCode = orderData.vCode ? orderData.vCode.toString() : null;
@@ -4035,28 +4038,50 @@ console.log(`⏭️ تم تخطي الكود: ${vCode}`);
 continue;
 }
   
-try {
-await deleteDoc(doc(window.firebaseDb, "orders", docSnap.id));
+idsToDelete.push(docSnap.id);
+}
+
+console.log(`🗑️ سيتم حذف ${idsToDelete.length} سجل...`);
+
+// Delete in parallel batches of 50 for speed
+const batchSize = 50;
+for (let i = 0; i < idsToDelete.length; i += batchSize) {
+const batch = idsToDelete.slice(i, i + batchSize);
+const deletePromises = batch.map(id => 
+deleteDoc(doc(window.firebaseDb, "orders", id))
+.then(() => {
 deletedOrders++;
-console.log(`✅ تم حذف طلب: ${docSnap.id}`);
-} catch (e) {
-console.error(`❌ فشل حذف ${docSnap.id}:`, e);
+if (deletedOrders % 100 === 0) {
+console.log(`✅ تم حذف ${deletedOrders} من ${idsToDelete.length}...`);
 }
+})
+.catch(e => console.error(`❌ فشل حذف ${id}:`, e))
+);
+await Promise.all(deletePromises);
 }
+
+console.log(`✅ تم حذف ${deletedOrders} طلب`);
 
 // Step 2: Delete all complaints from Firebase
 const complaintsRef = collection(window.firebaseDb, "complaints");
 const complaintsSnap = await getDocs(complaintsRef);
 let deletedComplaints = 0;
-for (const docSnap of complaintsSnap.docs) {
-try {
-await deleteDoc(doc(window.firebaseDb, "complaints", docSnap.id));
-deletedComplaints++;
-console.log(`✅ تم حذف شكوى: ${docSnap.id}`);
-} catch (e) {
-console.error(`❌ فشل حذف شكوى ${docSnap.id}:`, e);
+
+const complaintIds = complaintsSnap.docs.map(d => d.id);
+console.log(`🗑️ سيتم حذف ${complaintIds.length} شكوى...`);
+
+// Delete complaints in parallel batches
+for (let i = 0; i < complaintIds.length; i += batchSize) {
+const batch = complaintIds.slice(i, i + batchSize);
+const deletePromises = batch.map(id => 
+deleteDoc(doc(window.firebaseDb, "complaints", id))
+.then(() => deletedComplaints++)
+.catch(e => console.error(`❌ فشل حذف شكوى ${id}:`, e))
+);
+await Promise.all(deletePromises);
 }
-}
+
+console.log(`✅ تم حذف ${deletedComplaints} شكوى`);
 
 // Step 3: Clear LocalStorage (except keepCodes)
 const existingOrders = JSON.parse(localStorage.getItem('vehicleOrders') || '[]');
