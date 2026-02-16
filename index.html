@@ -402,6 +402,29 @@ flex-wrap: wrap;
 .card {
 padding: 25px 15px;
 }
+
+/* Table Responsive Styles */
+table {
+font-size: 0.85rem;
+}
+
+table th, table td {
+white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+table {
+font-size: 0.75rem;
+}
+table th {
+padding: 6px 4px !important;
+font-size: 0.75rem !important;
+}
+table td {
+padding: 4px 2px !important;
+font-size: 0.7rem !important;
+}
+}
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -908,21 +931,21 @@ height: 300px;
 <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
 <thead>
 <tr>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم المرجعي</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">المالك</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم القومي</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموديل</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">اللون</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الشاسيه</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموتور</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العنوان</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الصور</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">المرجع</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">المالك</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الرقم القومي</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الهاتف</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">النوع</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الموديل</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">اللون</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الشاسيه</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الموتور</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">العنوان</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">التاريخ</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الحالة</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الكود</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الصور</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem;">الإجراءات</th>
 </tr>
 </thead>
 <tbody id="dataTable"></tbody>
@@ -2696,13 +2719,20 @@ images: item.images || []
 console.error('خطأ في قراءة LocalStorage:', e);
 }
 
-// Combine both sources (remove duplicates by nationalId)
+// Combine both sources (remove duplicates by nationalId AND refNumber)
 const allOrders = [...firebaseOrders];
 const existingNIDs = new Set(firebaseOrders.map(o => o.nationalId).filter(nid => nid));
+const existingRefs = new Set(firebaseOrders.map(o => o.refNumber).filter(ref => ref));
 
 localOrders.forEach(order => {
-if (!order.nationalId || !existingNIDs.has(order.nationalId)) {
+// Skip if duplicate by nationalId OR refNumber
+const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
+const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
+  
+if (!isDuplicateNID && !isDuplicateRef) {
 allOrders.push(order);
+if (order.nationalId) existingNIDs.add(order.nationalId);
+if (order.refNumber) existingRefs.add(order.refNumber);
 total++;
 if (order.status === 'coded' || order.status === 'delivered') {
 coded++;
@@ -2729,26 +2759,26 @@ const id = item.id;
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
 const tr = document.createElement('tr');
 tr.innerHTML = `
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:700; color:var(--info);">${item.refNumber || 'N/A'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">${item.owner}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600;">${item.nationalId}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vYear || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.9rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:600;">${item.chassisNumber || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.9rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:600;">${item.motorNumber || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); text-align:center;"><span style="display:inline-block; background:${statusInfo.color}; color:white; padding:14px 22px; border-radius:14px; font-weight:900; font-size:0.95rem; box-shadow:0 6px 18px rgba(0,0,0,0.2); white-space:nowrap; letter-spacing:0.5px; border:2px solid rgba(255,255,255,0.3); transition:all 0.3s ease;">${statusInfo.icon} ${statusInfo.text}</span></td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px; font-weight:bold;">🖼️ صور (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:10px 14px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">�</button>
-<button class="btn btn-edit" title="تعديل" style="padding:10px 14px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:10px 14px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white;">📋</button>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600; color:var(--info); font-size:0.8rem;">${item.refNumber || 'N/A'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.85rem;">${item.owner}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.8rem;">${item.nationalId}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.8rem;">${item.phone || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.75rem;">${item.vType}</span></td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.8rem;">${item.vYear || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.8rem;">${item.vColor || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.75rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.75rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.75rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-size:0.75rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); text-align:center;"><span style="display:inline-block; background:${statusInfo.color}; color:white; padding:6px 10px; border-radius:8px; font-weight:700; font-size:0.75rem; box-shadow:0 3px 10px rgba(0,0,0,0.15); white-space:nowrap; letter-spacing:0.3px;">${statusInfo.icon} ${statusInfo.text}</span></td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:6px 10px; font-weight:600; font-size:0.75rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); display:flex; gap:4px; flex-wrap:wrap;">
+<button class="btn btn-status" title="تغيير الحالة" style="padding:6px 8px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:6px 8px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">�</button>
+<button class="btn btn-edit" title="تعديل" style="padding:6px 8px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:6px 8px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.8rem;">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:6px 8px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.8rem;">📋</button>
 </td>
 `;
 
