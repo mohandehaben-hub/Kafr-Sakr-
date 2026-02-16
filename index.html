@@ -3335,40 +3335,47 @@ alert('❌ الملف فارغ أو لا يحتوي على بيانات');
 return;
 }
 
+console.log('📋 عدد الصفوف:', jsonData.length);
+console.log('📋 الصف الأول (Header):', jsonData[0]);
+console.log('📋 الصف الثاني:', jsonData[1]);
+
 // Try Fixed Columns First (B-H format)
 let useFixedColumns = false;
 const columnMap = {};
-
-// Check if data follows fixed column format (B=1, C=2, D=3, etc.)
-// Start from row 1 (skip row 0 which is header)
-let foundFixedFormat = false;
 let dataStartRow = 1; // Default: data starts from row 1
 
-// Check first few rows to find where actual data starts
+// الترتيب الثابت للأعمدة (نفس import_excel.html):
+// A=0 (رقم تسلسلي أو فاضي)
+// B=1 (الكود), C=2 (الاسم), D=3 (الرقم القومي), E=4 (العنوان), 
+// F=5 (الشاسيه), G=6 (الموتور), H=7 (رقم التليفون)
+
+// Check if data follows fixed column format
+// Look for actual data (skip header rows)
+let foundFixedFormat = false;
 for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
 if (jsonData[i] && jsonData[i].length >= 4) {
-const colB = jsonData[i][1]; // Column B
-const colC = jsonData[i][2]; // Column C
-const colD = jsonData[i][3]; // Column D
+const colC = jsonData[i][2]; // Column C - الاسم
+const colD = jsonData[i][3]; // Column D - الرقم القومي
 
-// Skip if row looks like header (contains text like "الكود", "الاسم", etc.)
-const colBStr = String(colB || '').trim();
+// Skip if row looks like header
 const colCStr = String(colC || '').trim();
 const colDStr = String(colD || '').trim();
 if (colCStr.includes('اسم') || colCStr.includes('الاسم') || 
-    colDStr.includes('قومي') || colDStr.includes('الرقم')) {
+    colDStr.includes('قومي') || colDStr.includes('الرقم') ||
+    colCStr.includes('name') || colDStr.includes('national')) {
 continue; // Skip header row
 }
 
-// Check if C has name (text) and D has national ID (14 digits)
+// Check if C has name and D has national ID
 if (colC && colD) {
 const nameStr = String(colC).trim();
 const nidStr = String(colD).replace(/[^0-9]/g, '');
 
-// If C looks like a name (has Arabic/English letters) and D is 14 digits
-if (nameStr.length > 2 && nidStr.length === 14) {
+// If C looks like a name (length > 2) and D has digits
+if (nameStr.length > 2 && nidStr.length >= 10) {
 foundFixedFormat = true;
 dataStartRow = i;
+console.log('📍 وجدت بيانات في الصف ' + (i + 1));
 break;
 }
 }
@@ -3382,6 +3389,7 @@ console.log('📍 استخدام الأعمدة الثابتة (B-H)، البي�
 
 if (useFixedColumns) {
 // Fixed columns: B=1, C=2, D=3, E=4, F=5, G=6, H=7
+// نفس الترتيب في import_excel.html
 columnMap.vCode = 1;        // B - الكود
 columnMap.owner = 2;        // C - الاسم
 columnMap.nationalId = 3;   // D - الرقم القومي
@@ -3389,6 +3397,7 @@ columnMap.address = 4;      // E - العنوان
 columnMap.chassisNumber = 5; // F - الشاسيه
 columnMap.motorNumber = 6;   // G - الموتور
 columnMap.phone = 7;         // H - رقم التليفون
+console.log('✅ تم تحديد الأعمدة الثابتة:', columnMap);
 } else {
 // Smart Column Detection
 const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
@@ -3452,6 +3461,12 @@ let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة ال�
 for (let i = startRow; i < jsonData.length; i++) {
 const row = jsonData[i];
 if (!row || row.length === 0) continue;
+
+// Skip empty rows (check if any cell has data)
+const hasData = row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== '');
+if (!hasData) continue;
+
+// Skip if no owner or national ID
 if (!row[columnMap.owner] || !row[columnMap.nationalId]) continue;
 
 const record = {
@@ -3467,7 +3482,8 @@ chassisNumber: row[columnMap.chassisNumber] ? String(row[columnMap.chassisNumber
 motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''
 };
 
-const isValid = record.owner && record.nationalId.length === 14 && (!record.phone || record.phone.length === 11);
+// Validation (more lenient like import_excel.html)
+const isValid = record.owner.length >= 3 && record.nationalId.length >= 10 && (!record.phone || record.phone.length === 11);
 importedData.push(record);
 
 const rowNumber = i - startRow + 1; // Calculate correct row number
