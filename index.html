@@ -2853,11 +2853,18 @@ console.log('📥 جاري تحميل البيانات...');
 
 // Show initial loading message
 const tbody = document.getElementById('dataTable');
+if (tbody) {
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
+}
 
 // Load only first 50 records for fast initial display
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(50)), (snap) => {
 // Clear loading message
+const tbody = document.getElementById('dataTable');
+if (!tbody) {
+console.error('❌ لم يتم العثور على عنصر dataTable');
+return;
+}
 tbody.innerHTML = '';
 
 const firebaseOrders = [];
@@ -2941,16 +2948,23 @@ const codeB = b.vCode ? parseInt(b.vCode) : 999999;
 return codeA - codeB;
 });
 
+// Clear table before progressive rendering
+const tbodyElement = document.getElementById('dataTable');
+if (tbodyElement) {
+tbodyElement.innerHTML = '';
+}
+
 // Build table rows and render progressively
 const ordersArray = [];
-const tbody = document.getElementById('dataTable');
-tbody.innerHTML = ''; // Clear existing rows
+// tbody already defined above, no need to redefine
 
 // Function to render rows in batches
 let renderIndex = 0;
 const batchSize = 10; // Render 10 rows at a time for faster display
 
 function renderNextBatch() {
+const tbody = document.getElementById('dataTable');
+if (!tbody) return;
 const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
 
 for (let i = renderIndex; i < endIndex; i++) {
