@@ -3340,13 +3340,44 @@ let useFixedColumns = false;
 const columnMap = {};
 
 // Check if data follows fixed column format (B=1, C=2, D=3, etc.)
-// If row has data in columns 1-7 (B-H), use fixed format
-if (jsonData[1] && jsonData[1].length >= 3) {
-const hasDataInFixedCols = jsonData[1][2] && jsonData[1][3]; // C and D columns
-if (hasDataInFixedCols) {
-useFixedColumns = true;
-console.log('📍 استخدام الأعمدة الثابتة (B-H)');
+// Start from row 1 (skip row 0 which is header)
+let foundFixedFormat = false;
+let dataStartRow = 1; // Default: data starts from row 1
+
+// Check first few rows to find where actual data starts
+for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
+if (jsonData[i] && jsonData[i].length >= 4) {
+const colB = jsonData[i][1]; // Column B
+const colC = jsonData[i][2]; // Column C
+const colD = jsonData[i][3]; // Column D
+
+// Skip if row looks like header (contains text like "الكود", "الاسم", etc.)
+const colBStr = String(colB || '').trim();
+const colCStr = String(colC || '').trim();
+const colDStr = String(colD || '').trim();
+if (colCStr.includes('اسم') || colCStr.includes('الاسم') || 
+    colDStr.includes('قومي') || colDStr.includes('الرقم')) {
+continue; // Skip header row
 }
+
+// Check if C has name (text) and D has national ID (14 digits)
+if (colC && colD) {
+const nameStr = String(colC).trim();
+const nidStr = String(colD).replace(/[^0-9]/g, '');
+
+// If C looks like a name (has Arabic/English letters) and D is 14 digits
+if (nameStr.length > 2 && nidStr.length === 14) {
+foundFixedFormat = true;
+dataStartRow = i;
+break;
+}
+}
+}
+}
+
+if (foundFixedFormat) {
+useFixedColumns = true;
+console.log('📍 استخدام الأعمدة الثابتة (B-H)، البيانات تبدأ من الصف ' + (dataStartRow + 1));
 }
 
 if (useFixedColumns) {
@@ -3397,7 +3428,11 @@ return;
 
 importedData = [];
 const preview = document.getElementById('importPreview');
-let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - 1} سجل):</h4>
+
+// Determine starting row for data processing
+const startRow = useFixedColumns ? dataStartRow : 1;
+
+let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
 <p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
 <thead>
@@ -3414,7 +3449,7 @@ let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة ال�
 </thead>
 <tbody>`;
 
-for (let i = 1; i < jsonData.length; i++) {
+for (let i = startRow; i < jsonData.length; i++) {
 const row = jsonData[i];
 if (!row || row.length === 0) continue;
 if (!row[columnMap.owner] || !row[columnMap.nationalId]) continue;
@@ -3435,8 +3470,9 @@ motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).tri
 const isValid = record.owner && record.nationalId.length === 14 && (!record.phone || record.phone.length === 11);
 importedData.push(record);
 
+const rowNumber = i - startRow + 1; // Calculate correct row number
 previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'};">
-<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${i}</td>
+<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${rowNumber}</td>
 <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db' : '#999'};">${record.vCode || '-'}</td>
 <td style="padding: 6px; border: 1px solid #ddd;">${record.owner}</td>
 <td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">${record.nationalId}</td>
