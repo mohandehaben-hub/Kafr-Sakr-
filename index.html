@@ -2853,18 +2853,13 @@ console.log('📥 جاري تحميل البيانات...');
 
 // Show initial loading message
 const tbody = document.getElementById('dataTable');
-if (tbody) {
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
-}
 
 // Load only first 50 records for fast initial display
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(50)), (snap) => {
+console.log('🔥 Firebase Snapshot received:', snap.size, 'records');
+
 // Clear loading message
-const tbody = document.getElementById('dataTable');
-if (!tbody) {
-console.error('❌ لم يتم العثور على عنصر dataTable');
-return;
-}
 tbody.innerHTML = '';
 
 const firebaseOrders = [];
@@ -2884,6 +2879,11 @@ pending++;
 });
 
 console.log(`⚡ تم تحميل أول ${firebaseOrders.length} سجل بسرعة!`);
+
+// Check if Firebase is empty
+if (firebaseOrders.length === 0) {
+console.warn('⚠️ لا توجد بيانات في Firebase');
+}
 
 // Load from LocalStorage
 let localOrders = [];
@@ -2956,15 +2956,13 @@ tbodyElement.innerHTML = '';
 
 // Build table rows and render progressively
 const ordersArray = [];
-// tbody already defined above, no need to redefine
+tbody.innerHTML = ''; // Clear existing rows
 
 // Function to render rows in batches
 let renderIndex = 0;
 const batchSize = 10; // Render 10 rows at a time for faster display
 
 function renderNextBatch() {
-const tbody = document.getElementById('dataTable');
-if (!tbody) return;
 const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
 
 for (let i = renderIndex; i < endIndex; i++) {
@@ -3652,9 +3650,13 @@ function showAllOrders() {
     filteredOrdersData = allOrdersData;
     currentPage = 1;
     renderCurrentPage();
-    document.getElementById('ordersTableContainer').style.display = 'block';
-    document.getElementById('complaintsTableContainer').style.display = 'none';
-    document.getElementById('adminLogsContainer').style.display = 'none';
+    const ordersContainer = document.getElementById('ordersTableContainer');
+    const complaintsContainer = document.getElementById('complaintsTableContainer');
+    const logsContainer = document.getElementById('adminLogsContainer');
+    
+    if (ordersContainer) ordersContainer.style.display = 'block';
+    if (complaintsContainer) complaintsContainer.style.display = 'none';
+    if (logsContainer) logsContainer.style.display = 'none';
 }
 
 function showAllOrdersInTable() {
