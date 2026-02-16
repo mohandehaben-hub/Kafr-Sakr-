@@ -360,48 +360,123 @@ letter-spacing: 0.5px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Responsive
+   Responsive - COMPRESSED UI
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+/* Header Mobile */
+header {
+padding: 4px 8px !important;
+}
+
+header img {
+width: 22px !important;
+height: 22px !important;
+}
+
+.header-title h1 {
+font-size: 0.65rem !important;
+}
+
+.header-title small {
+font-size: 0.5rem !important;
+}
+
+header button {
+padding: 4px 6px !important;
+font-size: 0.6rem !important;
+}
+
+/* Portal Mobile */
+.portal-container {
+grid-template-columns: 1fr;
+gap: 12px;
+}
+
+.portal-box {
+padding: 15px 12px;
+min-height: 140px;
+}
+
+.portal-box i {
+font-size: 40px !important;
+}
+
+.portal-box h2 {
+font-size: 0.9rem !important;
+}
+
+.portal-box p {
+font-size: 0.75rem !important;
+}
+
+/* Forms Mobile */
 .form-grid {
 grid-template-columns: 1fr;
 }
 
-.portal-container {
-grid-template-columns: 1fr;
-gap: 25px;
-padding: 0 5px;
+.card {
+padding: 12px 8px;
 }
 
-.portal-box {
-padding: 40px 25px;
-min-height: 280px;
+.btn {
+padding: 6px 10px !important;
+font-size: 0.7rem !important;
 }
 
-.portal-box i {
-font-size: 70px;
+.input-group input,
+.input-group select,
+.input-group textarea {
+padding: 8px !important;
+font-size: 0.8rem !important;
 }
 
-.portal-box h2 {
-font-size: 1.4rem;
+/* Table Mobile */
+table {
+font-size: 0.65rem !important;
 }
 
-.portal-box p {
-font-size: 0.95rem;
+table th, table td {
+padding: 4px 2px !important;
+font-size: 0.65rem !important;
+}
+}
+
+/* Desktop Compression */
+header {
+padding: 8px 3%;
+}
+
+header img {
+width: 35px;
+height: 35px;
 }
 
 .header-title h1 {
-font-size: 1.1rem;
+font-size: 0.9rem;
 }
 
-header {
-padding: 12px 3%;
-flex-wrap: wrap;
+.header-title small {
+font-size: 0.65rem;
 }
 
-.card {
-padding: 25px 15px;
+header button {
+padding: 6px 10px;
+font-size: 0.75rem;
 }
+
+.btn {
+padding: 8px 14px;
+font-size: 0.85rem;
+}
+
+table th {
+padding: 8px 6px;
+font-size: 0.85rem;
+}
+
+table td {
+padding: 6px 4px;
+font-size: 0.8rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -621,11 +696,6 @@ alt="علم الشرقية">
 <div class="input-group">
 <label>موديل المركبة (السنة)</label>
 <select id="vYear"><option value="">اختر السنة...</option></select>
-</div>
-
-<div class="input-group">
-<label>لون المركبة</label>
-<input type="text" id="vColor" placeholder="مثال: أحمر، أسود، أبيض...">
 </div>
 
 <div class="input-group" style="grid-column: 1 / -1;">
@@ -858,9 +928,19 @@ height: 300px;
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="cleanupDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">🧹 تنظيف التكرار</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
-<div style="flex: 1; position: relative;">
-<input type="text" id="searchInput" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث...">
+<div style="flex: 1; display: flex; gap: 10px;">
+<select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
+<option value="all">🔍 الكل</option>
+<option value="name">👤 الاسم</option>
+<option value="code">� الكود</option>
+<option value="nationalId">🆔 الرقم القومي</option>
+<option value="phone">📱 الهاتف</option>
+<option value="chassis">🔧 الشاسيه</option>
+<option value="motor">⚙️ الموتور</option>
+</select>
+<input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
 </div>
 <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
@@ -874,23 +954,43 @@ height: 300px;
 </p>
 </div>
 
+<!-- Pagination Controls -->
+<div id="paginationControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); border-radius: 15px; border: 2px solid #8e44ad;">
+<div style="display: flex; gap: 10px; align-items: center;">
+<button onclick="window.changePage(-1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">⏮️ السابق</button>
+<span id="pageInfo" style="font-weight: bold; color: #8e44ad; font-size: 1.1rem;">صفحة 1 من 1</span>
+<button onclick="window.changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+<button id="loadAllDataBtn" onclick="window.loadAllData()" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">📥 تحميل كل البيانات</button>
+<label style="font-weight: 600; color: #555;">عدد السجلات في الصفحة:</label>
+<select id="recordsPerPage" onchange="window.changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
+<option value="50">50</option>
+<option value="100" selected>100</option>
+<option value="200">200</option>
+<option value="500">500</option>
+</select>
+<span id="totalRecordsInfo" style="font-weight: bold; color: #27ae60; font-size: 1.1rem;">إجمالي: 0 سجل</span>
+<span id="loadingMoreInfo" style="font-weight: 600; color: #e67e22; font-size: 0.9rem; display: none;">⏳ جاري التحميل...</span>
+</div>
+</div>
+
 <!-- Orders Table -->
 <div id="ordersTableContainer" style="overflow-x:auto;">
 <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
 <thead>
 <tr>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم المرجعي</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">المالك</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم القومي</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموديل</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">اللون</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الشاسيه</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموتور</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العنوان</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الصور</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">📷 الصور</th>
 <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
 </tr>
 </thead>
@@ -1001,11 +1101,6 @@ height: 300px;
 <select id="editVYear"></select>
 </div>
 
-<div class="input-group">
-<label>لون المركبة</label>
-<input type="text" id="editVColor" placeholder="مثال: أحمر، أسود...">
-</div>
-
 <div class="input-group" style="grid-column: 1 / -1;">
 <label>العنوان</label>
 <textarea id="editAddress" rows="3" placeholder="أدخل العنوان بالتفصيل"></textarea>
@@ -1047,6 +1142,16 @@ height: 300px;
 </div>
 
 <div id="importPreview" style="display:none; margin: 25px 0; max-height: 300px; overflow-y: auto; background: white; padding: 20px; border-radius: 15px; border: 2px solid #ddd;"></div>
+
+<!-- Progress Bar -->
+<div id="importProgress" style="display:none; margin: 25px 0;">
+<div style="background: #f0f0f0; border-radius: 10px; overflow: hidden; height: 30px; position: relative;">
+<div id="progressBar" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); height: 100%; width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center;">
+<span id="progressText" style="color: white; font-weight: bold; font-size: 0.9rem; position: absolute; width: 100%; text-align: center; z-index: 1;">0%</span>
+</div>
+</div>
+<p id="progressStatus" style="text-align: center; margin-top: 10px; color: #666; font-weight: 600;">جاري المعالجة...</p>
+</div>
 
 <div style="display:flex; gap:15px; margin-top:35px;">
 <button id="confirmImportBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">✅ تأكيد الاستيراد</button>
@@ -1632,7 +1737,7 @@ console.log('✅ نظام الأمان جاهز ومدمج في الملف');
 <!-- Firebase Integration - SECURE VERSION -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Get encrypted configuration from global SecureConfig object
 const secureConfig = window.SecureConfig.getSecureConfig();
@@ -1745,11 +1850,31 @@ if (!checkSnap.empty) {
 // Check if birth date matches
 const existingData = checkSnap.docs[0].data();
 if (existingData.birthDate === birthDate) {
-alert("❌ هذا الرقم القومي مسجل مسبقاً في المنظومة!");
+alert("❌ هذا الرقم القومي مسجل مسبقاً في المنظومة (Firebase)!");
 return;
 } else {
 alert("⚠️ يوجد رقم قومي مشابه لكن تاريخ الميلاد مختلف. يرجى التحقق من البيانات.");
 return;
+}
+}
+
+// Check duplicate in LocalStorage
+const localKeys = Object.keys(localStorage);
+for (let key of localKeys) {
+if (key.startsWith('order_')) {
+try {
+const localItem = JSON.parse(localStorage.getItem(key));
+if (localItem.nationalId === nid) {
+alert("❌ هذا الرقم القومي مسجل مسبقاً في المنظومة (LocalStorage)!");
+return;
+}
+if (localItem.phone === phone) {
+alert("❌ رقم الهاتف هذا مسجل مسبقاً في المنظومة!");
+return;
+}
+} catch (e) {
+console.error('Error checking localStorage:', e);
+}
 }
 }
 
@@ -2230,7 +2355,7 @@ console.error(error);
 
 <!-- Admin Panel JavaScript -->
 <script type="module">
-import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Access Firebase instances from window (no redeclaration - using window directly)
 let currentEditId = "";
@@ -2364,6 +2489,11 @@ loadComplaints();
 if (userRole === 'VIEWER') {
 document.getElementById('bulkImportBtn').style.display = 'none';
 }
+
+// Show cleanup button only for SUPER admin
+if (userRole === 'SUPER') {
+document.getElementById('cleanupDuplicatesBtn').style.display = 'inline-flex';
+}
 };
 
 // View Images
@@ -2455,36 +2585,158 @@ thumbContainer.appendChild(container);
 modal.style.display = "block";
 }
 
-// Load Admin Data
+// Pagination & Progressive Loading Variables
+let ordersArray = [];
+let currentPage = 1;
+let recordsPerPage = 100;
+let allDataLoaded = false;
+
+// Load Admin Data with Progressive Loading (Firebase + LocalStorage)
 function loadAdminData() {
-onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
-const tableBody = document.getElementById('dataTable');
-tableBody.innerHTML = '';
+// Load first 100 records from Firebase
+const initialQuery = query(window.dbRef, orderBy("timestamp", "desc"), limit(100));
+  
+onSnapshot(initialQuery, async (snap) => {
+ordersArray = [];
 let total = 0, coded = 0, pending = 0;
 
+// 1. Load from Firebase
 snap.forEach(s => {
 const item = s.data();
 const id = s.id;
+ordersArray.push({ ...item, id, source: 'firebase' });
 total++;
 item.vCode ? coded++ : pending++;
+});
 
-// Get status display
+// 2. Load from LocalStorage
+const localKeys = Object.keys(localStorage);
+localKeys.forEach(key => {
+if (key.startsWith('order_')) {
+try {
+const item = JSON.parse(localStorage.getItem(key));
+ordersArray.push({ ...item, id: key, source: 'localStorage' });
+total++;
+item.vCode ? coded++ : pending++;
+} catch (e) {
+console.error('Error parsing localStorage item:', key, e);
+}
+}
+});
+
+// 3. Remove duplicates (keep first occurrence)
+const seenNIDs = new Set();
+const seenRefs = new Set();
+ordersArray = ordersArray.filter(item => {
+// Check by nationalId
+if (item.nationalId && seenNIDs.has(item.nationalId)) {
+return false; // Skip duplicate
+}
+// Check by refNumber
+if (item.refNumber && seenRefs.has(item.refNumber)) {
+return false; // Skip duplicate
+}
+// Mark as seen
+if (item.nationalId) seenNIDs.add(item.nationalId);
+if (item.refNumber) seenRefs.add(item.refNumber);
+return true; // Keep this record
+});
+
+// Check if there are more than 100 records in Firebase
+const countQuery = query(window.dbRef);
+const countSnap = await getDocs(countQuery);
+const totalFirebaseRecords = countSnap.size;
+
+// Show "Load All Data" button if more than 100 records
+if (totalFirebaseRecords > 100 && !allDataLoaded) {
+document.getElementById('loadAllDataBtn').style.display = 'inline-flex';
+} else {
+document.getElementById('loadAllDataBtn').style.display = 'none';
+}
+
+document.getElementById('totalRecordsInfo').innerText = `إجمالي: ${ordersArray.length} سجل`;
+document.getElementById('statTotal').innerText = ordersArray.length;
+document.getElementById('statCoded').innerText = coded;
+document.getElementById('statPending').innerText = pending;
+
+// Sort by vCode numerically
+ordersArray.sort((a, b) => {
+const codeA = parseInt(a.vCode) || 0;
+const codeB = parseInt(b.vCode) || 0;
+return codeB - codeA;
+});
+
+renderCurrentPage();
+initializePagination();
+});
+}
+
+// Load All Data Function
+window.loadAllData = async function() {
+document.getElementById('loadingMoreInfo').style.display = 'inline';
+document.getElementById('loadAllDataBtn').style.display = 'none';
+
+try {
+const allQuery = query(window.dbRef, orderBy("timestamp", "desc"));
+const allSnap = await getDocs(allQuery);
+
+ordersArray = [];
+allSnap.forEach(s => {
+const item = s.data();
+const id = s.id;
+ordersArray.push({ ...item, id });
+});
+
+// Sort by vCode
+ordersArray.sort((a, b) => {
+const codeA = parseInt(a.vCode) || 0;
+const codeB = parseInt(b.vCode) || 0;
+return codeB - codeA;
+});
+
+allDataLoaded = true;
+document.getElementById('totalRecordsInfo').innerText = `إجمالي: ${ordersArray.length} سجل`;
+document.getElementById('loadingMoreInfo').style.display = 'none';
+
+currentPage = 1;
+renderCurrentPage();
+initializePagination();
+
+alert(`✅ تم تحميل ${ordersArray.length} سجل بنجاح!`);
+} catch (error) {
+console.error('Error loading all data:', error);
+document.getElementById('loadingMoreInfo').style.display = 'none';
+document.getElementById('loadAllDataBtn').style.display = 'inline-flex';
+alert('❌ حدث خطأ أثناء تحميل البيانات');
+}
+};
+
+// Render Current Page
+function renderCurrentPage() {
+const tableBody = document.getElementById('dataTable');
+tableBody.innerHTML = '';
+
+const start = (currentPage - 1) * recordsPerPage;
+const end = start + recordsPerPage;
+const pageData = ordersArray.slice(start, end);
+
+pageData.forEach(item => {
+const id = item.id;
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
 
 const tr = document.createElement('tr');
 tr.innerHTML = `
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:700; color:var(--info);">${item.refNumber || 'N/A'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">${item.owner}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600;">${item.nationalId}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vYear || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.chassis || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.motor || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:${statusInfo.color}; color:white; padding:8px 14px; border-radius:10px; font-weight:bold; font-size:0.9rem;">${statusInfo.icon} ${statusInfo.text}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">�️ ${item.images ? item.images.length : 0}</button></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">🖼️ ${item.images ? item.images.length : 0}</button></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
 <button class="btn btn-status" title="تغيير الحالة" style="padding:10px 14px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔄</button>
 <button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔢</button>
@@ -2494,14 +2746,12 @@ tr.innerHTML = `
 </td>
 `;
 
+// Add event listeners (same as before)
 tr.querySelector('.btn-status').onclick = async () => {
-// Show status change modal
 document.getElementById('statusChangeModal').style.display = 'block';
 document.getElementById('newStatusSelect').value = item.status || 'pending';
 document.getElementById('statusNote').value = '';
 document.getElementById('sendWhatsAppStatus').checked = true;
-
-// Store current item data for use in confirm button
 window.currentStatusChangeItem = { item, id };
 };
 
@@ -2510,7 +2760,6 @@ if (item.vCode) {
 alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
 return;
 }
-
 const info = await getSmartNextCode();
 document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
 document.getElementById('manualCodeInput').value = info.next;
@@ -2522,7 +2771,6 @@ if (!newCode) {
 alert("❌ يرجى إدخال كود صحيح");
 return;
 }
-
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 vCode: newCode.toString(),
@@ -2535,68 +2783,46 @@ note: `تم التكويد برقم: ${newCode}`,
 by: userRole
 }]
 });
-
-// Log action
 await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
-
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('codeModal').style.display = 'none';
-
-// Send WhatsApp notification if checkbox is checked
 const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
 if (sendWhatsApp) {
-const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
-`👤 السيد/ة: ${item.owner}\n` +
-`🔢 كود المركبة: *${newCode}*\n` +
-`🚜 نوع المركبة: ${item.vType}\n` +
-`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-`✅ يمكنك الآن استلام المركبة من المقر\n\n` +
-`_رئاسة مركز ومدينة كفر صقر_`;
-
+const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n👤 السيد/ة: ${item.owner}\n🔢 كود المركبة: *${newCode}*\n🚜 نوع المركبة: ${item.vType}\n📋 الرقم المرجعي: ${item.refNumber}\n\n✅ يمكنك الآن استلام المركبة من المقر\n\n_رئاسة مركز ومدينة كفر صقر_`;
 if (item.phone && item.phone.length === 11) {
 const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
 window.open(whatsappUrl, '_blank');
 }
 }
-
 alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
 };
 };
 
 tr.querySelector('.btn-edit').onclick = async () => {
-// Fill the edit form with current data
 document.getElementById('editOwnerName').value = item.owner;
 document.getElementById('editPhone').value = item.phone || '';
 document.getElementById('editVType').value = item.vType;
 document.getElementById('editVYear').value = item.vYear || '';
-document.getElementById('editVColor').value = item.vColor || '';
 document.getElementById('editAddress').value = item.address || '';
-
-// Show modal
 document.getElementById('editModal').style.display = 'block';
 
-// Handle confirm button
 document.getElementById('confirmEditBtn').onclick = async () => {
 const newOwner = document.getElementById('editOwnerName').value.trim();
 const newPhone = document.getElementById('editPhone').value.trim();
 const newVType = document.getElementById('editVType').value;
 const newVYear = document.getElementById('editVYear').value;
-const newVColor = document.getElementById('editVColor').value.trim();
 const newAddress = document.getElementById('editAddress').value.trim();
-
 if (!newOwner || !newPhone || newPhone.length !== 11) {
 alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
 return;
 }
-
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 owner: newOwner,
 phone: newPhone,
 vType: newVType,
 vYear: newVYear,
-vColor: newVColor,
-vDesc: `موديل ${newVYear}${newVColor ? ' - لون ' + newVColor : ''}`,
+vDesc: `موديل ${newVYear}`,
 address: newAddress,
 statusHistory: [...(item.statusHistory || []), {
 status: item.status || 'pending',
@@ -2605,10 +2831,7 @@ note: "تم تعديل البيانات",
 by: userRole
 }]
 });
-
-// Log edit action
 await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('editModal').style.display = 'none';
 alert("✅ تم التعديل بنجاح!");
@@ -2617,12 +2840,19 @@ alert("✅ تم التعديل بنجاح!");
 
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
+// Check if record is from Firebase or LocalStorage
+if (item.source === 'localStorage') {
+// Delete from LocalStorage
+localStorage.removeItem(id);
+await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} من LocalStorage`);
+alert("✅ تم الحذف من LocalStorage بنجاح");
+} else {
+// Delete from Firebase
 await deleteDoc(doc(window.firebaseDb, "orders", id));
-
-// Log delete action
 await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-
-alert("✅ تم الحذف بنجاح");
+alert("✅ تم الحذف من Firebase بنجاح");
+}
+location.reload();
 }
 };
 
@@ -2640,12 +2870,32 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 
 tableBody.appendChild(tr);
 });
-
-document.getElementById('statTotal').innerText = total;
-document.getElementById('statCoded').innerText = coded;
-document.getElementById('statPending').innerText = pending;
-});
 }
+
+// Initialize Pagination
+function initializePagination() {
+const totalPages = Math.ceil(ordersArray.length / recordsPerPage);
+document.getElementById('pageInfo').innerText = `صفحة ${currentPage} من ${totalPages}`;
+}
+
+// Change Page
+window.changePage = function(direction) {
+const totalPages = Math.ceil(ordersArray.length / recordsPerPage);
+currentPage += direction;
+if (currentPage < 1) currentPage = 1;
+if (currentPage > totalPages) currentPage = totalPages;
+renderCurrentPage();
+initializePagination();
+window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Change Records Per Page
+window.changeRecordsPerPage = function() {
+recordsPerPage = parseInt(document.getElementById('recordsPerPage').value);
+currentPage = 1;
+renderCurrentPage();
+initializePagination();
+};
 
 // Load Complaints
 function loadComplaints() {
@@ -2740,6 +2990,107 @@ body.appendChild(tr);
 document.getElementById('statCompTotal').innerText = total;
 });
 }
+
+// Cleanup Duplicates Function (Firebase + LocalStorage)
+document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
+if (!confirm('⚠️ هل أنت متأكد من حذف السجلات المكررة؟\n\nسيتم حذف السجلات المكررة من:\n• Firebase\n• LocalStorage\n\nبناءً على:\n• الرقم القومي\n• رقم الهاتف\n\nسيتم الاحتفاظ بأول سجل فقط.')) {
+return;
+}
+
+document.getElementById('loadingSpinner').style.display = 'block';
+
+try {
+// 1. Get all records from Firebase
+const firebaseSnap = await getDocs(window.dbRef);
+const firebaseRecords = [];
+firebaseSnap.forEach(doc => {
+firebaseRecords.push({ id: doc.id, source: 'firebase', ...doc.data() });
+});
+
+// 2. Get all records from LocalStorage
+const localStorageRecords = [];
+const localKeys = Object.keys(localStorage);
+localKeys.forEach(key => {
+if (key.startsWith('order_')) {
+try {
+const data = JSON.parse(localStorage.getItem(key));
+localStorageRecords.push({ id: key, source: 'localStorage', ...data });
+} catch (e) {
+console.error('Error parsing localStorage item:', key, e);
+}
+}
+});
+
+// 3. Combine all records
+const allRecords = [...firebaseRecords, ...localStorageRecords];
+console.log(`📊 إجمالي السجلات: ${allRecords.length} (Firebase: ${firebaseRecords.length}, LocalStorage: ${localStorageRecords.length})`);
+
+// 4. Find duplicates
+const seen = new Map(); // key -> first record
+const duplicates = [];
+
+allRecords.forEach(record => {
+// Create unique key based on nationalId AND phone
+const nidKey = record.nationalId ? `nid_${record.nationalId}` : null;
+const phoneKey = record.phone ? `phone_${record.phone}` : null;
+
+let isDuplicate = false;
+
+// Check by nationalId
+if (nidKey && seen.has(nidKey)) {
+duplicates.push(record);
+isDuplicate = true;
+}
+
+// Check by phone
+if (phoneKey && seen.has(phoneKey)) {
+if (!isDuplicate) { // Don't add twice
+duplicates.push(record);
+isDuplicate = true;
+}
+}
+
+// If not duplicate, mark as seen
+if (!isDuplicate) {
+if (nidKey) seen.set(nidKey, record);
+if (phoneKey) seen.set(phoneKey, record);
+}
+});
+
+if (duplicates.length === 0) {
+document.getElementById('loadingSpinner').style.display = 'none';
+alert('✅ لا توجد سجلات مكررة!');
+return;
+}
+
+// 5. Delete duplicates
+let deletedFromFirebase = 0;
+let deletedFromLocalStorage = 0;
+
+for (const record of duplicates) {
+if (record.source === 'firebase') {
+await deleteDoc(doc(window.firebaseDb, "orders", record.id));
+deletedFromFirebase++;
+} else if (record.source === 'localStorage') {
+localStorage.removeItem(record.id);
+deletedFromLocalStorage++;
+}
+}
+
+// Log action
+await logAdminAction(currentUsername, 'تنظيف التكرار', `تم حذف ${duplicates.length} سجل مكرر (Firebase: ${deletedFromFirebase}, LocalStorage: ${deletedFromLocalStorage})`);
+
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`✅ تم تنظيف التكرار بنجاح!\n\n📊 الإحصائيات:\n• إجمالي السجلات: ${allRecords.length}\n• السجلات المكررة المحذوفة: ${duplicates.length}\n  - من Firebase: ${deletedFromFirebase}\n  - من LocalStorage: ${deletedFromLocalStorage}\n• السجلات المتبقية: ${allRecords.length - duplicates.length}`);
+
+// Reload data
+loadAdminData();
+} catch (error) {
+document.getElementById('loadingSpinner').style.display = 'none';
+alert('❌ حدث خطأ أثناء تنظيف التكرار: ' + error.message);
+console.error(error);
+}
+};
 
 // Show Orders/Complaints
 document.getElementById('showOrdersBtn').onclick = () => {
@@ -3094,20 +3445,58 @@ tableBody.appendChild(tr);
 });
 }
 
+// Advanced Search System
+let allOrdersData = []; // Store all orders for search
+
+window.searchOrders = function() {
+const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+const searchType = document.getElementById('searchType').value;
+const rows = document.querySelectorAll('#dataTable tr');
+
+if (!searchTerm) {
+rows.forEach(row => row.style.display = '');
+return;
+}
+
+rows.forEach(row => {
+const cells = row.querySelectorAll('td');
+if (cells.length === 0) return;
+
+let shouldShow = false;
+
+if (searchType === 'all') {
+// Search in all columns
+const text = row.innerText.toLowerCase();
+shouldShow = text.includes(searchTerm);
+} else if (searchType === 'name') {
+// Column 0: المالك
+shouldShow = cells[0]?.innerText.toLowerCase().includes(searchTerm);
+} else if (searchType === 'code') {
+// Column 9: الكود
+shouldShow = cells[9]?.innerText.toLowerCase().includes(searchTerm);
+} else if (searchType === 'nationalId') {
+// Column 1: الرقم القومي
+shouldShow = cells[1]?.innerText.toLowerCase().includes(searchTerm);
+} else if (searchType === 'phone') {
+// Column 2: الهاتف
+shouldShow = cells[2]?.innerText.toLowerCase().includes(searchTerm);
+} else if (searchType === 'chassis') {
+// Column 5: الشاسيه
+shouldShow = cells[5]?.innerText.toLowerCase().includes(searchTerm);
+} else if (searchType === 'motor') {
+// Column 6: الموتور
+shouldShow = cells[6]?.innerText.toLowerCase().includes(searchTerm);
+}
+
+row.style.display = shouldShow ? '' : 'none';
+});
+};
+
 // Export Excel
 document.getElementById('exportExcelBtn').onclick = () => {
 const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
 XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
 alert("✅ تم تصدير البيانات بنجاح");
-};
-
-// Search
-document.getElementById('searchInput').oninput = (e) => {
-const term = e.target.value.toLowerCase().trim();
-document.querySelectorAll('#dataTable tr').forEach(row => {
-const text = row.innerText.toLowerCase();
-row.style.display = text.includes(term) || term === '' ? '' : 'none';
-});
 };
 
 // Make functions and variables global
@@ -3251,24 +3640,58 @@ alert('❌ لا توجد بيانات للاستيراد');
 return;
 }
 
-if (!confirm(`هل أنت متأكد من استيراد ${importedData.length} سجل إلى قاعدة البيانات؟\n\n⚠️ سيتم إضافة السجلات الجديدة فقط (لن يتم تعديل السجلات الموجودة)`)) {
+if (!confirm(`هل أنت متأكد من استيراد ${importedData.length} سجل إلى قاعدة البيانات؟\n\n⚠️ سيتم إضافة السجلات الجديدة فقط (لن يتم تكرار السجلات الموجودة)`)) {
 return;
 }
 
-document.getElementById('loadingSpinner').style.display = 'block';
+// Show progress bar
+document.getElementById('importProgress').style.display = 'block';
+document.getElementById('confirmImportBtn').disabled = true;
+
 let successCount = 0;
 let errorCount = 0;
 let duplicateCount = 0;
 const errors = [];
 
 try {
+// Get existing records from Firebase to check duplicates
+const existingSnap = await getDocs(window.dbRef);
+const existingNIDs = new Set();
+const existingRefs = new Set();
+existingSnap.forEach(doc => {
+const data = doc.data();
+if (data.nationalId) existingNIDs.add(data.nationalId);
+if (data.refNumber) existingRefs.add(data.refNumber);
+});
+
+// Get existing records from LocalStorage to check duplicates
+const localKeys = Object.keys(localStorage);
+localKeys.forEach(key => {
+if (key.startsWith('order_')) {
+try {
+const localItem = JSON.parse(localStorage.getItem(key));
+if (localItem.nationalId) existingNIDs.add(localItem.nationalId);
+if (localItem.phone) existingRefs.add(localItem.phone);
+} catch (e) {
+console.error('Error parsing localStorage item:', key, e);
+}
+}
+});
+
 const codeInfo = await getSmartNextCode();
 let nextCode = codeInfo.next;
 
 for (let i = 0; i < importedData.length; i++) {
 const record = importedData[i];
 
-if (!record.owner || record.nationalId.length !== 14) {
+// Update progress
+const progress = Math.round(((i + 1) / importedData.length) * 100);
+document.getElementById('progressBar').style.width = progress + '%';
+document.getElementById('progressText').innerText = progress + '%';
+document.getElementById('progressStatus').innerText = `جاري معالجة السجل ${i + 1} من ${importedData.length}...`;
+
+// Validate data
+if (!record.owner || !record.nationalId || record.nationalId.length !== 14) {
 errorCount++;
 errors.push(`السجل ${i + 1}: بيانات غير صحيحة (الاسم أو الرقم القومي)`);
 continue;
@@ -3280,8 +3703,8 @@ errors.push(`السجل ${i + 1}: رقم الهاتف غير صحيح`);
 continue;
 }
 
-const checkSnap = await getDocs(query(window.dbRef, where("nationalId", "==", record.nationalId)));
-if (!checkSnap.empty) {
+// Check for duplicates
+if (existingNIDs.has(record.nationalId)) {
 duplicateCount++;
 continue;
 }
@@ -3291,20 +3714,22 @@ if (!record.vCode) nextCode++;
 
 const refNumber = 'KS-IMP-' + Date.now().toString().slice(-8) + '-' + i;
 
-await addDoc(dbRef, {
+await addDoc(window.dbRef, {
 owner: record.owner,
 nationalId: record.nationalId,
 phone: record.phone || '',
 vType: record.vType,
 vYear: record.vYear,
-vDesc: `موديل ${record.vYear}${record.vColor ? ' - لون ' + record.vColor : ''}`,
+vDesc: `موديل ${record.vYear}`,
 address: record.address || '',
+chassis: record.chassis || '',
+motor: record.motor || '',
 images: [],
 timestamp: Date.now(),
 codedAt: record.vCode ? Date.now() : null,
 vCode: finalCode,
 refNumber: refNumber,
-importedBy: 'admin',
+importedBy: currentUsername,
 importedAt: Date.now(),
 status: record.vCode ? "coded" : "pending",
 statusHistory: [{
@@ -3316,10 +3741,15 @@ by: userRole
 });
 
 successCount++;
+existingNIDs.add(record.nationalId);
 }
 
-document.getElementById('loadingSpinner').style.display = 'none';
+// Log import action
+await logAdminAction(currentUsername, 'استيراد من Excel', `تم استيراد ${successCount} سجل، تخطي ${duplicateCount} مكرر، فشل ${errorCount} سجل`);
+
+document.getElementById('importProgress').style.display = 'none';
 document.getElementById('bulkImportModal').style.display = 'none';
+document.getElementById('confirmImportBtn').disabled = false;
 
 let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}`;
 if (errors.length > 0 && errors.length <= 5) {
