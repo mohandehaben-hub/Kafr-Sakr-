@@ -3156,52 +3156,41 @@ loadAdminLogs();
 
 // Filter functions for stat cards
 function showAllOrders() {
-document.getElementById('ordersTableContainer').style.display = 'block';
-document.getElementById('complaintsTableContainer').style.display = 'none';
-document.getElementById('filterStatus').style.display = 'none';
-showAllOrdersInTable();
+    filteredOrdersData = allOrdersData;
+    currentPage = 1;
+    renderCurrentPage();
+    document.getElementById('ordersTableContainer').style.display = 'block';
+    document.getElementById('complaintsTableContainer').style.display = 'none';
+    document.getElementById('adminLogsContainer').style.display = 'none';
 }
 
 function showAllOrdersInTable() {
-document.querySelectorAll('#dataTable tr').forEach(row => {
-row.style.display = '';
-});
+    // OLD FUNCTION - Replaced by showAllOrders with Pagination
+    showAllOrders();
 }
 
 function showCodedOrders() {
-document.getElementById('ordersTableContainer').style.display = 'block';
-document.getElementById('complaintsTableContainer').style.display = 'none';
-document.getElementById('filterStatus').style.display = 'block';
-document.getElementById('filterStatusText').innerText = '✅ عرض المركبات المكودة فقط';
-let count = 0;
-document.querySelectorAll('#dataTable tr').forEach(row => {
-const statusCell = row.cells[9]; // Column index for status (الحالة)
-if (statusCell && (statusCell.innerText.includes('تم التكويد') || statusCell.innerText.includes('تم التسليم'))) {
-row.style.display = '';
-count++;
-} else {
-row.style.display = 'none';
-}
-});
-document.getElementById('filterStatusText').innerText = `✅ عرض المركبات المكودة فقط (${count} مركبة)`;
+    filteredOrdersData = allOrdersData.filter(orderData => {
+        const item = orderData.item;
+        return item.status === 'coded' || item.status === 'delivered';
+    });
+    currentPage = 1;
+    renderCurrentPage();
+    document.getElementById('ordersTableContainer').style.display = 'block';
+    document.getElementById('complaintsTableContainer').style.display = 'none';
+    document.getElementById('adminLogsContainer').style.display = 'none';
 }
 
 function showPendingOrders() {
-document.getElementById('ordersTableContainer').style.display = 'block';
-document.getElementById('complaintsTableContainer').style.display = 'none';
-document.getElementById('filterStatus').style.display = 'block';
-document.getElementById('filterStatusText').innerText = '⏳ عرض المركبات قيد الانتظار فقط';
-let count = 0;
-document.querySelectorAll('#dataTable tr').forEach(row => {
-const statusCell = row.cells[9]; // Column index for status (الحالة)
-if (statusCell && (statusCell.innerText.includes('قيد المراجعة') || statusCell.innerText.includes('تم القبول'))) {
-row.style.display = '';
-count++;
-} else {
-row.style.display = 'none';
-}
-});
-document.getElementById('filterStatusText').innerText = `⏳ عرض المركبات قيد الانتظار فقط (${count} مركبة)`;
+    filteredOrdersData = allOrdersData.filter(orderData => {
+        const item = orderData.item;
+        return item.status === 'pending' || item.status === 'approved' || !item.status;
+    });
+    currentPage = 1;
+    renderCurrentPage();
+    document.getElementById('ordersTableContainer').style.display = 'block';
+    document.getElementById('complaintsTableContainer').style.display = 'none';
+    document.getElementById('adminLogsContainer').style.display = 'none';
 }
 
 function showComplaintsTable() {
