@@ -982,14 +982,6 @@ height: 300px;
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
 </div>
 
-<!-- Search Info Message -->
-<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(26, 82, 118, 0.08) 100%); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--info); display: flex; align-items: center; gap: 10px;">
-<span style="font-size: 1.2rem;">ℹ️</span>
-<p style="margin: 0; color: #555; font-size: 0.85rem; font-weight: 500;">
-<strong style="color: var(--info);">نظام البحث الذكي:</strong> يتم تحميل كل البيانات في الخلفية، والبحث يعمل على جميع السجلات فوراً بدون الحاجة لتحميل إضافي
-</p>
-</div>
-
 <!-- Filter Status Message -->
 <div id="filterStatus" style="display:none; background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 15px 25px; border-radius: 15px; margin-bottom: 20px; border: 2px solid var(--info); text-align: center;">
 <p style="margin: 0; color: var(--info); font-weight: bold; font-size: 1.1rem;">
@@ -2739,6 +2731,130 @@ btn.innerText = '👁️ إظهار البيانات الكاملة';
 }
 
 window.toggleDataVisibility = toggleDataVisibility;
+
+// Process and display data (used for progressive loading)
+function processAndDisplayData(firebaseOrders, isFirstBatch = false, total = 0, coded = 0, pending = 0) {
+// Load from LocalStorage
+let localOrders = [];
+try {
+const stored = localStorage.getItem('vehicleOrders');
+if (stored) {
+const parsed = JSON.parse(stored);
+localOrders = parsed.map((item, index) => ({
+...item,
+id: item.id || `local-${index}`,
+source: 'localStorage',
+owner: item.owner || item.name || 'غير محدد',
+vType: item.vType || 'غير محدد',
+nationalId: item.nationalId || '',
+phone: item.phone || '',
+address: item.address || '',
+chassisNumber: item.chassisNumber || '',
+motorNumber: item.motorNumber || '',
+vCode: item.vCode || '',
+vYear: item.vYear || '',
+refNumber: item.refNumber || `REF-${Date.now()}-${index}`,
+timestamp: item.timestamp || Date.now(),
+status: item.status || 'pending',
+images: item.images || []
+}));
+}
+} catch (e) {
+console.error('خطأ في قراءة LocalStorage:', e);
+}
+
+// Combine both sources (remove duplicates)
+const allOrders = [...firebaseOrders];
+const existingNIDs = new Set(firebaseOrders.map(o => o.nationalId).filter(nid => nid));
+const existingRefs = new Set(firebaseOrders.map(o => o.refNumber).filter(ref => ref));
+
+if (!isFirstBatch) {
+total = firebaseOrders.length;
+coded = 0;
+pending = 0;
+firebaseOrders.forEach(item => {
+if (item.status === 'coded' || item.status === 'delivered') coded++;
+else pending++;
+});
+}
+
+localOrders.forEach(order => {
+const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
+const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
+  
+if (!isDuplicateNID && !isDuplicateRef) {
+allOrders.push(order);
+if (order.nationalId) existingNIDs.add(order.nationalId);
+if (order.refNumber) existingRefs.add(order.refNumber);
+if (!isFirstBatch) {
+total++;
+if (order.status === 'coded' || order.status === 'delivered') coded++;
+else pending++;
+}
+}
+});
+
+console.log(`✅ ${isFirstBatch ? 'عرض سريع' : 'تحميل كامل'}: ${allOrders.length} سجل`);
+
+// Sort by vCode
+allOrders.sort((a, b) => {
+const codeA = a.vCode ? parseInt(a.vCode) : 999999;
+const codeB = b.vCode ? parseInt(b.vCode) : 999999;
+return codeA - codeB;
+});
+
+// Build table rows
+const ordersArray = [];
+allOrders.forEach(item => {
+const id = item.id;
+const statusInfo = window.getStatusDisplay(item.status || 'pending');
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.85rem;">${item.owner}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.8rem;">${item.nationalId}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.8rem;">${item.phone || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.75rem;">${item.vType}</span></td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.8rem;">${item.vYear || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.75rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.75rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.75rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-size:0.75rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:6px 10px; font-weight:600; font-size:0.75rem;">📷 (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); display:flex; gap:4px; flex-wrap:wrap;">
+<button class="btn btn-status" title="تغيير الحالة" style="padding:6px 8px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:6px 8px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:6px 8px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.8rem;">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:6px 8px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.8rem;">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:6px 8px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.8rem;">📋</button>
+</td>
+`;
+
+// Add event handlers (keeping existing code)
+tr.querySelector('.btn-status').onclick = async () => {
+document.getElementById('statusChangeModal').style.display = 'block';
+document.getElementById('newStatusSelect').value = item.status || 'pending';
+document.getElementById('statusNote').value = '';
+document.getElementById('sendWhatsAppStatus').checked = true;
+window.currentStatusChangeItem = { item, id };
+};
+
+// ... rest of button handlers will be added by existing code
+ordersArray.push({ element: tr, item: item, id: id });
+});
+
+// Update stats
+if (!isFirstBatch) {
+document.getElementById('statTotal').innerText = total;
+document.getElementById('statCoded').innerText = coded;
+document.getElementById('statPending').innerText = pending;
+}
+
+// Initialize pagination
+initializePagination(ordersArray);
+console.log(`${isFirstBatch ? '⚡ عرض فوري' : '🔄 تحديث كامل'} - ${ordersArray.length} سجل جاهز`);
+}
+
 function loadAdminData() {
 // Unsubscribe from previous listener if exists
 if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
@@ -2756,8 +2872,22 @@ window.lastLoadTime = now;
 // Show loading message
 console.log('📥 جاري تحميل البيانات بشكل ذكي...');
 
+// Step 1: Load first 100 records FAST for immediate display
+const firstBatchQuery = query(window.dbRef, orderBy("timestamp", "desc"), limit(100));
+getDocs(firstBatchQuery).then(firstSnap => {
+const firstBatch = [];
+firstSnap.forEach(s => {
+const item = s.data();
+item.id = s.id;
+item.source = 'firebase';
+firstBatch.push(item);
+});
+console.log(`⚡ تم تحميل أول 100 سجل بسرعة!`);
+processAndDisplayData(firstBatch, true); // Display immediately
+});
+
+// Step 2: Load ALL data in background (for search)
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
-// Load ALL data from Firebase (for search functionality)
 const firebaseOrders = [];
 let total = 0, coded = 0, pending = 0;
 
@@ -2772,6 +2902,10 @@ coded++;
 } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
 pending++;
 }
+});
+
+console.log(`📊 تم تحميل كل البيانات: ${firebaseOrders.length} سجل`);
+processAndDisplayData(firebaseOrders, false, total, coded, pending);
 });
 
 console.log(`📊 تم تحميل ${firebaseOrders.length} سجل من Firebase`);
