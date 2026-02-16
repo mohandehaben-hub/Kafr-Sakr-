@@ -18,12 +18,10 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <title>منظومة تكويد المركبات - كفر صقر</title>
 
 <!-- External Libraries -->
@@ -75,7 +73,7 @@ background: linear-gradient(135deg, rgba(26, 82, 118, 0.98) 0%, rgba(21, 67, 96,
 backdrop-filter: blur(20px);
 -webkit-backdrop-filter: blur(20px);
 color: white;
-padding: 8px 3%;
+padding: 15px 5%;
 display: flex;
 justify-content: space-between;
 align-items: center;
@@ -85,17 +83,6 @@ position: sticky;
 top: 0;
 z-index: 1000;
 animation: slideDown 0.5s ease;
-}
-
-.header-title h1 {
-font-size: 1.1rem;
-margin: 0;
-line-height: 1.3;
-}
-
-.header-title small {
-font-size: 0.75rem;
-opacity: 0.9;
 }
 
 @keyframes slideDown {
@@ -376,261 +363,44 @@ letter-spacing: 0.5px;
    Responsive
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-/* Header Mobile Optimization */
-header {
-padding: 4px 8px !important;
-min-height: auto !important;
+.form-grid {
+grid-template-columns: 1fr;
 }
 
-header > div {
-gap: 4px !important;
-}
-
-header img {
-width: 22px !important;
-height: 22px !important;
-padding: 2px !important;
-}
-
-.header-title {
-min-width: 0 !important;
-flex: 1 !important;
-}
-
-.header-title h1 {
-font-size: 0.65rem !important;
-margin: 0 !important;
-line-height: 1.1 !important;
-}
-
-.header-title small {
-font-size: 0.5rem !important;
-display: block;
-}
-
-header button {
-padding: 4px 6px !important;
-font-size: 0.6rem !important;
-white-space: nowrap;
-min-width: auto !important;
-}
-
-/* Portal Section Mobile */
 .portal-container {
 grid-template-columns: 1fr;
-gap: 12px;
-padding: 0 8px;
+gap: 25px;
+padding: 0 5px;
 }
 
 .portal-box {
-padding: 15px 12px;
-min-height: 140px;
+padding: 40px 25px;
+min-height: 280px;
 }
 
 .portal-box i {
-font-size: 40px !important;
+font-size: 70px;
 }
 
 .portal-box h2 {
-font-size: 0.9rem !important;
-margin: 8px 0 !important;
+font-size: 1.4rem;
 }
 
 .portal-box p {
-font-size: 0.75rem !important;
-line-height: 1.3 !important;
+font-size: 0.95rem;
 }
 
-/* Form Grid Mobile */
-.form-grid {
-grid-template-columns: 1fr;
-gap: 10px;
+.header-title h1 {
+font-size: 1.1rem;
 }
 
-/* Cards Mobile */
+header {
+padding: 12px 3%;
+flex-wrap: wrap;
+}
+
 .card {
-padding: 12px 8px;
-margin-bottom: 12px;
-}
-
-/* Buttons Mobile */
-.btn {
-padding: 6px 10px !important;
-font-size: 0.7rem !important;
-white-space: nowrap;
-}
-
-/* Container Mobile */
-.container {
-padding: 8px !important;
-}
-
-/* Headings Mobile */
-h2 {
-font-size: 1rem !important;
-margin: 10px 0 !important;
-}
-
-/* Input Fields Mobile */
-.input-group input,
-.input-group select,
-.input-group textarea {
-padding: 8px !important;
-font-size: 0.8rem !important;
-}
-
-.input-group label {
-font-size: 0.75rem !important;
-}
-
-/* Stats Cards Mobile */
-.stat-card {
-padding: 10px !important;
-}
-
-.stat-card h3 {
-font-size: 1.2rem !important;
-}
-
-.stat-card p {
-font-size: 0.7rem !important;
-}
-
-/* Search Mobile */
-#searchInput {
-padding: 8px !important;
-font-size: 0.8rem !important;
-}
-
-#searchType {
-padding: 6px !important;
-font-size: 0.75rem !important;
-min-width: 80px !important;
-}
-
-/* Table Mobile - Horizontal Scroll */
-.table-container {
-overflow-x: auto !important;
--webkit-overflow-scrolling: touch;
-}
-
-table {
-font-size: 0.65rem !important;
-min-width: 100%;
-}
-
-table th {
-padding: 4px 2px !important;
-font-size: 0.65rem !important;
-white-space: nowrap;
-}
-
-table td {
-padding: 3px 2px !important;
-font-size: 0.6rem !important;
-white-space: nowrap;
-}
-
-table td button {
-padding: 4px 6px !important;
-font-size: 0.65rem !important;
-}
-
-/* Action Buttons in Table */
-table td:last-child {
-display: flex !important;
-gap: 2px !important;
-flex-wrap: nowrap !important;
-}
-
-/* Make buttons stack on mobile for control panel */
-.card > div:first-child {
-flex-direction: column !important;
-gap: 6px !important;
-}
-
-.card > div:first-child > div {
-width: 100% !important;
-flex-direction: column !important;
-gap: 6px !important;
-}
-
-.card > div:first-child button {
-width: 100% !important;
-}
-
-/* Pagination Mobile */
-#paginationControls {
-flex-direction: column !important;
-gap: 8px !important;
-align-items: stretch !important;
-}
-
-#paginationControls > div {
-width: 100% !important;
-justify-content: center !important;
-}
-
-#paginationControls button {
-padding: 6px 10px !important;
-font-size: 0.7rem !important;
-}
-
-#paginationControls select {
-padding: 6px !important;
-font-size: 0.7rem !important;
-}
-
-/* Modal Mobile */
-.modal-content {
-width: 95% !important;
-max-width: 95% !important;
-margin: 5% auto !important;
-padding: 15px !important;
-}
-
-.modal-content h3 {
-font-size: 1rem !important;
-}
-
-.modal-content button {
-padding: 8px 12px !important;
-font-size: 0.75rem !important;
-}
-
-/* Welcome Text Mobile */
-#portalSection h2 {
-font-size: 1.3rem !important;
-margin-top: 20px !important;
-margin-bottom: 10px !important;
-}
-
-#portalSection p {
-font-size: 0.85rem !important;
-margin-bottom: 20px !important;
-}
-}
-
-/* Table Responsive Styles */
-table {
-font-size: 0.85rem;
-}
-
-table th, table td {
-white-space: nowrap;
-}
-
-@media (max-width: 1024px) {
-table {
-font-size: 0.7rem;
-}
-table th {
-padding: 5px 3px !important;
-font-size: 0.7rem !important;
-}
-table td {
-padding: 4px 2px !important;
-font-size: 0.65rem !important;
+padding: 25px 15px;
 }
 }
 
@@ -708,23 +478,22 @@ box-shadow: 0 4px 15px rgba(39, 174, 96, 0.5);
 
 <!-- Header -->
 <header>
-<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%;">
-<div style="display: flex; align-items: center; gap: 6px;">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; width: 100%;">
+<div style="display: flex; align-items: center; gap: 15px;">
 <img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
-style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
+style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: white; padding: 5px; border: 2px solid rgba(255,255,255,0.5);" 
 alt="علم مصر">
 <img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
-style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
+style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: white; padding: 5px; border: 2px solid rgba(255,255,255,0.5);" 
 alt="علم الشرقية">
 </div>
-<div class="header-title" style="flex: 1; min-width: 150px;">
-<h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">🏛️ رئاسة مركز كفر صقر</h1>
-<small style="font-size: 0.65rem; opacity: 0.85;">د/ أحمد المقدم</small>
+<div class="header-title" style="flex: 1;">
+<h1>🏛️ رئاسة مركز ومدينة كفر صقر</h1>
+<small>د/ أحمد المقدم - رئيس المدينة</small>
 </div>
-<div style="display:flex; gap:6px; flex-wrap: wrap;">
-<button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="location.reload()">🏠 البوابة</button>
-<button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer; padding: 6px 10px; font-size: 0.75rem;" onclick="logoutAdmin()">🚪 خروج</button>
-<button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4); padding: 6px 10px; font-size: 0.75rem;">🔐 التحكم</button>
+<div style="display:flex; gap:12px; flex-wrap: wrap;">
+<button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none;" onclick="location.reload()">🏠 البوابة</button>
+<button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4);">🔐 لوحة التحكم</button>
 </div>
 </div>
 </header>
@@ -852,6 +621,11 @@ alt="علم الشرقية">
 <div class="input-group">
 <label>موديل المركبة (السنة)</label>
 <select id="vYear"><option value="">اختر السنة...</option></select>
+</div>
+
+<div class="input-group">
+<label>لون المركبة</label>
+<input type="text" id="vColor" placeholder="مثال: أحمر، أسود، أبيض...">
 </div>
 
 <div class="input-group" style="grid-column: 1 / -1;">
@@ -1079,23 +853,14 @@ height: 300px;
 <div class="card">
 <!-- Control Buttons -->
 <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
+<button id="toggleDataBtn" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white;" onclick="toggleDataVisibility()">�️ إظهار البيانات الكاملة</button>
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
-<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">� استيراد من Excel</button>
-<button id="cleanupDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🧹 تنظيف التكرار</button>
+<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
-<div style="flex: 1; display: flex; gap: 10px;">
-<select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
-<option value="all">🔍 الكل</option>
-<option value="name">👤 الاسم</option>
-<option value="code">🔢 الكود</option>
-<option value="nationalId">🆔 الرقم القومي</option>
-<option value="phone">📱 الهاتف</option>
-<option value="chassis">� الشاسيه</option>
-<option value="motor">⚙️ الموتور</option>
-</select>
-<input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
+<div style="flex: 1; position: relative;">
+<input type="text" id="searchInput" style="width: 100%; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 بحث...">
 </div>
 <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
 <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
@@ -1109,44 +874,24 @@ height: 300px;
 </p>
 </div>
 
-<!-- Pagination Controls -->
-<div id="paginationControls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); border-radius: 15px; border: 2px solid #8e44ad;">
-<div style="display: flex; gap: 10px; align-items: center;">
-<button onclick="window.changePage(-1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">⏮️ السابق</button>
-<span id="pageInfo" style="font-weight: bold; color: #8e44ad; font-size: 1.1rem;">صفحة 1 من 1</span>
-<button onclick="window.changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
-</div>
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-<button id="loadAllDataBtn" onclick="window.loadAllData()" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">📥 تحميل كل البيانات</button>
-<label style="font-weight: 600; color: #555;">عدد السجلات في الصفحة:</label>
-<select id="recordsPerPage" onchange="window.changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
-<option value="50">50</option>
-<option value="100" selected>100</option>
-<option value="200">200</option>
-<option value="500">500</option>
-</select>
-<span id="totalRecordsInfo" style="font-weight: bold; color: #27ae60; font-size: 1.1rem;">إجمالي: 0 سجل</span>
-<span id="loadingMoreInfo" style="font-weight: 600; color: #e67e22; font-size: 0.9rem; display: none;">⏳ جاري التحميل...</span>
-</div>
-</div>
-
 <!-- Orders Table -->
-<div id="ordersTableContainer" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
+<div id="ordersTableContainer" style="overflow-x:auto;">
 <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
 <thead>
 <tr>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">المالك</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الرقم القومي</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الهاتف</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">النوع</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموديل</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الشاسيه</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموتور</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">العنوان</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">التاريخ</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الكود</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">📷 الصور</th>
-<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الإجراءات</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم المرجعي</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">المالك</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الرقم القومي</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الهاتف</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">النوع</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الموديل</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">اللون</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">العنوان</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">التاريخ</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الحالة</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الكود</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الصور</th>
+<th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 20px; font-size: 1rem;">الإجراءات</th>
 </tr>
 </thead>
 <tbody id="dataTable"></tbody>
@@ -1256,6 +1001,11 @@ height: 300px;
 <select id="editVYear"></select>
 </div>
 
+<div class="input-group">
+<label>لون المركبة</label>
+<input type="text" id="editVColor" placeholder="مثال: أحمر، أسود...">
+</div>
+
 <div class="input-group" style="grid-column: 1 / -1;">
 <label>العنوان</label>
 <textarea id="editAddress" rows="3" placeholder="أدخل العنوان بالتفصيل"></textarea>
@@ -1277,31 +1027,17 @@ height: 300px;
 
 <div style="background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); padding: 25px; border-radius: 20px; margin: 25px 0; border: 2px solid rgba(142, 68, 173, 0.3);">
 <h4 style="color: #8e44ad; margin-top: 0;">📋 تنسيق الملف المطلوب:</h4>
-<p style="color: #666; line-height: 1.8; margin: 15px 0;">يدعم النظام طريقتين للاستيراد:</p>
-
-<div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
-<h5 style="color: #8e44ad; margin: 0 0 10px 0;">🧠 الطريقة الأولى: اكتشاف تلقائي (موصى به)</h5>
-<p style="color: #555; margin: 0; line-height: 1.6;">ضع أسماء الأعمدة في الصف الأول، وسيقوم النظام باكتشافها تلقائياً</p>
-<p style="color: #666; font-size: 0.9rem; margin: 5px 0 0 0;">مثال: "الاسم الرباعي" | "الرقم القومي" | "رقم الهاتف" | "نوع المركبة"</p>
-</div>
-
-<div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
-<h5 style="color: #8e44ad; margin: 0 0 10px 0;">📍 الطريقة الثانية: أعمدة ثابتة</h5>
-<p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">استخدم الترتيب التالي للأعمدة:</p>
-<ol style="color: #555; line-height: 1.8; font-weight: 600; margin: 0; padding-right: 20px;">
-<li><strong>العمود B:</strong> الكود (اختياري)</li>
-<li><strong>العمود C:</strong> الاسم الرباعي (إلزامي)</li>
-<li><strong>العمود D:</strong> الرقم القومي (14 رقم - إلزامي)</li>
-<li><strong>العمود E:</strong> العنوان</li>
-<li><strong>العمود F:</strong> رقم الشاسيه</li>
-<li><strong>العمود G:</strong> رقم الموتور</li>
-<li><strong>العمود H:</strong> رقم التليفون (11 رقم)</li>
+<p style="color: #666; line-height: 1.8; margin: 15px 0;">يجب أن يحتوي ملف Excel على الأعمدة التالية:</p>
+<ol style="color: #555; line-height: 2; font-weight: 600;">
+<li>الاسم الرباعي</li>
+<li>الرقم القومي (14 رقم)</li>
+<li>رقم الهاتف (11 رقم)</li>
+<li>نوع المركبة (توكتوك / موتوسيكل / تروسيكل / ميكروباص)</li>
+<li>موديل السنة</li>
+<li>اللون</li>
+<li>العنوان</li>
+<li>كود المركبة (اختياري - سيتم توليده تلقائياً إذا كان فارغاً)</li>
 </ol>
-<p style="color: #e74c3c; font-weight: 600; margin: 10px 0 0 0; font-size: 0.9rem;">
-⚠️ الصف الأول (Header) سيتم تجاهله تلقائياً
-</p>
-</div>
-
 <button id="downloadTemplateBtn" class="btn" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; margin-top: 15px;">📄 تحميل ملف نموذجي</button>
 </div>
 
@@ -1311,16 +1047,6 @@ height: 300px;
 </div>
 
 <div id="importPreview" style="display:none; margin: 25px 0; max-height: 300px; overflow-y: auto; background: white; padding: 20px; border-radius: 15px; border: 2px solid #ddd;"></div>
-
-<!-- Progress Bar -->
-<div id="importProgress" style="display:none; margin: 25px 0;">
-<div style="background: #f0f0f0; border-radius: 10px; overflow: hidden; height: 30px; position: relative;">
-<div id="progressBar" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); height: 100%; width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center;">
-<span id="progressText" style="color: white; font-weight: bold; font-size: 0.9rem; position: absolute; width: 100%; text-align: center; z-index: 1;">0%</span>
-</div>
-</div>
-<p id="progressStatus" style="text-align: center; margin-top: 10px; color: #666; font-weight: 600;">جاري المعالجة...</p>
-</div>
 
 <div style="display:flex; gap:15px; margin-top:35px;">
 <button id="confirmImportBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">✅ تأكيد الاستيراد</button>
@@ -1499,10 +1225,17 @@ to { opacity: 1; }
 <div style="height: 8px; background: linear-gradient(90deg, #ce1126 0%, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #000000 66.66%, #000000 100%); box-shadow: 0 -2px 8px rgba(0,0,0,0.3);"></div>
 
 <!-- Footer -->
-<!-- Fixed Developer Credit - Bottom Right Corner -->
-<div style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 15px; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.9); z-index: 9999; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-تطوير: م/ مهند التهامي
+<footer class="engineer-footer">
+<div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+<img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
+style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; background: white; padding: 3px;" 
+alt="علم مصر">
+<span>تم التطوير والتحديث بواسطة م/ مهند التهامي - 01021102607 | نظام متطور بتقنيات حديثة</span>
+<img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
+style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; background: white; padding: 3px;" 
+alt="علم الشرقية">
 </div>
+</footer>
 
 <!-- JavaScript -->
 <script>
@@ -1575,7 +1308,7 @@ const msgDiv = document.getElementById('nidValidation');
 if (nid.length === 0) {
 msgDiv.style.display = 'none';
 input.style.borderColor = 'var(--glass-border)';
-return false; // كان return بدون قيمة
+return;
 }
 
 if (nid.length !== 14) {
@@ -1709,7 +1442,7 @@ setTimeout(() => {
 const sections = ['portalSection', 'citizenPage', 'inquiryPage', 'complaintsPage', 'complaintInquiryPage'];
 sections.forEach(id => {
 const el = document.getElementById(id);
-console.log(el ? '✅ ' + id + ': موجود' : '❌ ' + id + ': مفقود');
+console.log(el ? `✅ ${id}: موجود` : `❌ ${id}: مفقود`);
 });
 }, 500);
 </script>
@@ -1847,13 +1580,13 @@ const isAuthenticated = () => { const session = getSession(); return session !==
 const ENCRYPTION_KEY = "KafrSakr@2026#SecureData";
 
 const encryptSensitiveData = (data) => {
-    if (data.nationalId && data.nationalId.length === 14) {
+    if (data.nationalId) {
         data.nationalId_encrypted = encrypt(data.nationalId, ENCRYPTION_KEY);
-        data.nationalId = data.nationalId.substring(0, 4) + "****" + data.nationalId.substring(10, 14);
+        data.nationalId = data.nationalId.substring(0, 4) + "****" + data.nationalId.substring(10);
     }
-    if (data.phone && data.phone.length === 11) {
+    if (data.phone) {
         data.phone_encrypted = encrypt(data.phone, ENCRYPTION_KEY);
-        data.phone_display = data.phone.substring(0, 3) + "****" + data.phone.substring(8, 11);
+        data.phone_display = data.phone.substring(0, 3) + "****" + data.phone.substring(8);
     }
     if (data.birthDate) {
         data.birthDate_encrypted = encrypt(data.birthDate, ENCRYPTION_KEY);
@@ -1984,24 +1717,10 @@ const owner = document.getElementById('ownerName').value.trim();
 const nid = document.getElementById('nationalId').value.trim();
 const phone = document.getElementById('phone').value.trim();
 const year = document.getElementById('vYear').value;
+const color = document.getElementById('vColor').value.trim();
 const address = document.getElementById('address').value.trim();
 const vType = document.getElementById('vType').value;
 const birthDate = document.getElementById('birthDate').value;
-
-// التحقق من حجم الصور ونوعها
-let totalSize = 0;
-for (let file of files) {
-  if (file.size > 5242880) { // 5MB
-    alert(`❌ حجم الصورة "${file.name}" يتجاوز 5MB\nيرجى اختيار صور أصغر`);
-    return;
-  }
-  totalSize += file.size;
-  // التحقق من نوع الملف
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-    alert(`❌ الملف "${file.name}" غير صورة صحيحة\nيرجى استخدام JPG أو PNG أو WebP فقط`);
-    return;
-  }
-}
 
 // Validate National ID
 if (!validateNationalId(document.getElementById('nationalId'))) {
@@ -2056,7 +1775,8 @@ phone,
 birthDate,
 vType,
 vYear: year,
-vDesc: `موديل ${year}`,
+vColor: color,
+vDesc: `موديل ${year} - لون ${color}`,
 address,
 images: imgUrls,
 timestamp: Date.now(),
@@ -2078,8 +1798,6 @@ dataToSave = window.encryptSensitiveData(dataToSave);
 await addDoc(dbRef, dataToSave);
 
 document.getElementById('loadingSpinner').style.display = 'none';
-btn.disabled = false;
-btn.innerText = '📋 تسجيل المركبة';
 
 // Send confirmation WhatsApp to citizen
 const confirmMessage = `✅ *تم تسجيل طلبك بنجاح!*\n\n` +
@@ -2121,76 +1839,6 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-// First, search in localStorage (imported data)
-let localData = null;
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) {
-const orders = JSON.parse(stored);
-localData = orders.find(o => 
-o.nationalId === nid && 
-o.owner === owner && 
-o.phone === phone
-);
-}
-} catch (e) {
-console.error('خطأ في قراءة LocalStorage:', e);
-}
-
-// If found in localStorage, display it
-if (localData) {
-const resultDiv = document.getElementById('inquiryResult');
-resultDiv.style.display = 'block';
-resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(46, 204, 113, 0.08) 100%)';
-resultDiv.style.border = '3px solid var(--secondary)';
-resultDiv.innerHTML = `
-<div style="text-align: center;">
-<i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;">✅</i>
-<h3 style="color: var(--secondary); margin-bottom: 25px; font-size: 2rem; font-weight: 900;">تم التكويد بنجاح!</h3>
-</div>
-
-<div style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); padding: 35px; border-radius: 25px; margin: 25px 0; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3); text-align: center;">
-<p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 12px; font-weight: 600;">🔢 كود المركبة الخاص بك</p>
-<h2 style="color: white; font-size: 4.5rem; font-weight: 900; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.2); letter-spacing: 3px;">${localData.vCode || 'غير محدد'}</h2>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${localData.vType}</p>
-</div>
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${localData.vYear || 'غير محدد'}</p>
-</div>
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">العنوان</p>
-<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0;">📍 ${localData.address || 'غير محدد'}</p>
-</div>
-</div>
-
-<div style="background: white; padding: 25px; border-radius: 20px; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-<h4 style="color: var(--primary); margin: 0 0 20px 0; font-size: 1.3rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">📋 بيانات المركبة</h4>
-<div style="display: grid; gap: 12px;">
-<p style="margin: 0; color: #555; font-size: 1rem;"><strong>المالك:</strong> ${localData.owner}</p>
-<p style="margin: 0; color: #555; font-size: 1rem;"><strong>الرقم القومي:</strong> ${localData.nationalId}</p>
-<p style="margin: 0; color: #555; font-size: 1rem;"><strong>الهاتف:</strong> ${localData.phone}</p>
-${localData.chassisNumber ? `<p style="margin: 0; color: #555; font-size: 1rem;"><strong>رقم الشاسيه:</strong> ${localData.chassisNumber}</p>` : ''}
-${localData.motorNumber ? `<p style="margin: 0; color: #555; font-size: 1rem;"><strong>رقم الموتور:</strong> ${localData.motorNumber}</p>` : ''}
-</div>
-</div>
-
-<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--info); text-align: center;">
-<p style="margin: 0; color: var(--info); font-size: 1rem; line-height: 1.8;">
-<strong>ℹ️ ملاحظة:</strong> هذه البيانات مستوردة من قاعدة البيانات المحلية
-</p>
-</div>
-`;
-document.getElementById('loadingSpinner').style.display = 'none';
-return;
-}
-
-// If not found in localStorage, search in Firebase
 const q = query(dbRef,
 where("nationalId", "==", nid),
 where("owner", "==", owner),
@@ -2283,7 +1931,10 @@ resultDiv.innerHTML = `
 <p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
 <p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
 </div>
-
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">اللون</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🎨 ${data.vColor || 'غير محدد'}</p>
+</div>
 </div>
 
 <div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
@@ -2332,7 +1983,10 @@ resultDiv.innerHTML = `
 <p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
 <p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
 </div>
-
+<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">اللون</p>
+<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🎨 ${data.vColor || 'غير محدد'}</p>
+</div>
 </div>
 
 <div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
@@ -2514,7 +2168,7 @@ complaintsHTML += `
 <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
 <p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details}</p>
 </div>
-<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.timestamp)}</p>
+<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${formatDateTime(data.timestamp)}</p>
 ${data.images ? `
 <div style="margin: 15px 0;">
 <button class="btn btn-view-inquiry-images" data-doc-id="${doc.id}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
@@ -2576,17 +2230,12 @@ console.error(error);
 
 <!-- Admin Panel JavaScript -->
 <script type="module">
-import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getDocs, query, orderBy, updateDoc, deleteDoc, doc, onSnapshot, addDoc, where, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Access Firebase instances from window (no redeclaration - using window directly)
 let currentEditId = "";
 let userRole = "";
 let currentUsername = "";
-
-// Store unsubscribe references for listeners
-let adminDataUnsubscribe = null;
-let complaintsUnsubscribe = null;
-let adminLogsUnsubscribe = null;
 
 // Create admin logs collection reference
 const adminLogsRef = collection(window.firebaseDb, "adminLogs");
@@ -2680,11 +2329,6 @@ const session = createSession(authResult.username, authResult.role);
 userRole = authResult.role;
 currentUsername = authResult.username;
 
-// Save to sessionStorage for session persistence
-sessionStorage.setItem('adminAuth', 'true');
-sessionStorage.setItem('adminRole', userRole);
-sessionStorage.setItem('adminUsername', currentUsername);
-
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
 
@@ -2702,8 +2346,6 @@ document.getElementById('complaintsPage').style.display = 'none';
 document.getElementById('complaintInquiryPage').style.display = 'none';
 document.getElementById('adminPage').style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
-document.getElementById('logoutBtn').style.display = 'inline-flex';
-document.getElementById('loginBtn').style.display = 'none';
 
 // Add role badge to header
 const header = document.querySelector('header');
@@ -2813,173 +2455,53 @@ thumbContainer.appendChild(container);
 modal.style.display = "block";
 }
 
-// Logout function
-window.logoutAdmin = function() {
-if (confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) {
-sessionStorage.removeItem('adminAuth');
-sessionStorage.removeItem('adminRole');
-sessionStorage.removeItem('adminUsername');
-document.getElementById('adminPage').style.display = 'none';
-document.getElementById('portalSection').style.display = 'block';
-document.getElementById('goPortalBtn').style.display = 'none';
-document.getElementById('logoutBtn').style.display = 'none';
-document.getElementById('loginBtn').style.display = 'inline-flex';
-const badge = document.getElementById('roleBadge');
-if (badge) badge.remove();
-location.reload();
-}
-};
-
+// Load Admin Data
 function loadAdminData() {
-// Unsubscribe from previous listener if exists
-if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
-adminDataUnsubscribe();
-}
-
-// Add debounce to prevent multiple simultaneous loads
-const now = Date.now();
-if (window.lastLoadTime && (now - window.lastLoadTime) < 2000) {
-console.log('⏳ تحميل قيد التنفيذ بالفعل، يرجى الانتظار...');
-return;
-}
-window.lastLoadTime = now;
-
-console.log('📥 جاري تحميل البيانات...');
-
-// Show initial loading message
-const tbody = document.getElementById('dataTable');
-tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
-
-// Load only first 100 records for fast initial display
-adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
-// Clear loading message
-tbody.innerHTML = '';
-
-const firebaseOrders = [];
+onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
+const tableBody = document.getElementById('dataTable');
+tableBody.innerHTML = '';
 let total = 0, coded = 0, pending = 0;
 
 snap.forEach(s => {
 const item = s.data();
-item.id = s.id;
-item.source = 'firebase';
-firebaseOrders.push(item);
+const id = s.id;
 total++;
-if (item.status === 'coded' || item.status === 'delivered') {
-coded++;
-} else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
-pending++;
-}
-});
+item.vCode ? coded++ : pending++;
 
-console.log(`⚡ تم تحميل أول ${firebaseOrders.length} سجل بسرعة!`);
-
-// Load from LocalStorage
-let localOrders = [];
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) {
-const parsed = JSON.parse(stored);
-localOrders = parsed.map((item, index) => ({
-...item,
-id: item.id || `local-${index}`,
-source: 'localStorage',
-// Ensure all required fields exist
-owner: item.owner || item.name || 'غير محدد',
-vType: item.vType || 'غير محدد',
-nationalId: item.nationalId || '',
-phone: item.phone || '',
-address: item.address || '',
-chassisNumber: item.chassisNumber || '',
-motorNumber: item.motorNumber || '',
-vCode: item.vCode || '',
-vYear: item.vYear || '',
-vColor: item.vColor || '',
-refNumber: item.refNumber || `REF-${Date.now()}-${index}`,
-timestamp: item.timestamp || Date.now(),
-status: item.status || 'pending',
-images: item.images || []
-}));
-}
-} catch (e) {
-console.error('خطأ في قراءة LocalStorage:', e);
-}
-
-// Combine both sources (remove duplicates by nationalId AND refNumber)
-const allOrders = [...firebaseOrders];
-const existingNIDs = new Set(firebaseOrders.map(o => o.nationalId).filter(nid => nid));
-const existingRefs = new Set(firebaseOrders.map(o => o.refNumber).filter(ref => ref));
-
-localOrders.forEach(order => {
-// Skip if duplicate by nationalId OR refNumber
-const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
-const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
-  
-if (!isDuplicateNID && !isDuplicateRef) {
-allOrders.push(order);
-if (order.nationalId) existingNIDs.add(order.nationalId);
-if (order.refNumber) existingRefs.add(order.refNumber);
-total++;
-if (order.status === 'coded' || order.status === 'delivered') {
-coded++;
-} else {
-pending++;
-}
-}
-});
-
-console.log(`📊 تم تحميل ${firebaseOrders.length} من Firebase و ${localOrders.length} من LocalStorage (إجمالي: ${allOrders.length} بعد إزالة التكرار)`);
-
-// Sort by vCode (numeric) - codes first, then non-coded at end
-allOrders.sort((a, b) => {
-const codeA = a.vCode ? parseInt(a.vCode) : 999999;
-const codeB = b.vCode ? parseInt(b.vCode) : 999999;
-return codeA - codeB;
-});
-
-// Build table rows and render progressively
-const ordersArray = [];
-const tbody = document.getElementById('dataTable');
-tbody.innerHTML = ''; // Clear existing rows
-
-// Function to render rows in batches
-let renderIndex = 0;
-const batchSize = 10; // Render 10 rows at a time for faster display
-
-function renderNextBatch() {
-const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
-
-for (let i = renderIndex; i < endIndex; i++) {
-const item = allOrders[i];
-const id = item.id;
-
+// Get status display
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
+
 const tr = document.createElement('tr');
 tr.innerHTML = `
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:700; color:var(--info);">${item.refNumber || 'N/A'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">${item.owner}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:600;">${item.nationalId}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600;">${item.phone || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:6px 12px; border-radius:10px; font-weight:bold;">${item.vType}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vYear || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color:#555;">${item.vColor || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background:${statusInfo.color}; color:white; padding:8px 14px; border-radius:10px; font-weight:bold; font-size:0.9rem;">${statusInfo.icon} ${statusInfo.text}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:1.2rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:10px 16px;">�️ ${item.images ? item.images.length : 0}</button></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
+<button class="btn btn-status" title="تغيير الحالة" style="padding:10px 14px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:10px 14px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:10px 14px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:10px 14px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white;">📋</button>
 </td>
 `;
 
 tr.querySelector('.btn-status').onclick = async () => {
+// Show status change modal
 document.getElementById('statusChangeModal').style.display = 'block';
 document.getElementById('newStatusSelect').value = item.status || 'pending';
 document.getElementById('statusNote').value = '';
 document.getElementById('sendWhatsAppStatus').checked = true;
+
+// Store current item data for use in confirm button
 window.currentStatusChangeItem = { item, id };
 };
 
@@ -2988,16 +2510,19 @@ if (item.vCode) {
 alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
 return;
 }
+
 const info = await getSmartNextCode();
 document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
 document.getElementById('manualCodeInput').value = info.next;
 document.getElementById('codeModal').style.display = 'block';
+
 document.getElementById('confirmCodeBtn').onclick = async () => {
 const newCode = document.getElementById('manualCodeInput').value;
 if (!newCode) {
 alert("❌ يرجى إدخال كود صحيح");
 return;
 }
+
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 vCode: newCode.toString(),
@@ -3010,9 +2535,14 @@ note: `تم التكويد برقم: ${newCode}`,
 by: userRole
 }]
 });
+
+// Log action
 await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
+
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('codeModal').style.display = 'none';
+
+// Send WhatsApp notification if checkbox is checked
 const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
 if (sendWhatsApp) {
 const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
@@ -3022,40 +2552,51 @@ const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
 `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
 `✅ يمكنك الآن استلام المركبة من المقر\n\n` +
 `_رئاسة مركز ومدينة كفر صقر_`;
+
 if (item.phone && item.phone.length === 11) {
 const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
 window.open(whatsappUrl, '_blank');
 }
 }
+
 alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-};
 };
 };
 
 tr.querySelector('.btn-edit').onclick = async () => {
+// Fill the edit form with current data
 document.getElementById('editOwnerName').value = item.owner;
 document.getElementById('editPhone').value = item.phone || '';
 document.getElementById('editVType').value = item.vType;
 document.getElementById('editVYear').value = item.vYear || '';
+document.getElementById('editVColor').value = item.vColor || '';
 document.getElementById('editAddress').value = item.address || '';
+
+// Show modal
 document.getElementById('editModal').style.display = 'block';
+
+// Handle confirm button
 document.getElementById('confirmEditBtn').onclick = async () => {
 const newOwner = document.getElementById('editOwnerName').value.trim();
 const newPhone = document.getElementById('editPhone').value.trim();
 const newVType = document.getElementById('editVType').value;
 const newVYear = document.getElementById('editVYear').value;
+const newVColor = document.getElementById('editVColor').value.trim();
 const newAddress = document.getElementById('editAddress').value.trim();
+
 if (!newOwner || !newPhone || newPhone.length !== 11) {
 alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
 return;
 }
+
 document.getElementById('loadingSpinner').style.display = 'block';
 await updateDoc(doc(window.firebaseDb, "orders", id), {
 owner: newOwner,
 phone: newPhone,
 vType: newVType,
 vYear: newVYear,
-vDesc: `موديل ${newVYear}`,
+vColor: newVColor,
+vDesc: `موديل ${newVYear}${newVColor ? ' - لون ' + newVColor : ''}`,
 address: newAddress,
 statusHistory: [...(item.statusHistory || []), {
 status: item.status || 'pending',
@@ -3064,7 +2605,10 @@ note: "تم تعديل البيانات",
 by: userRole
 }]
 });
+
+// Log edit action
 await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('editModal').style.display = 'none';
 alert("✅ تم التعديل بنجاح!");
@@ -3074,7 +2618,10 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 await deleteDoc(doc(window.firebaseDb, "orders", id));
+
+// Log delete action
 await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+
 alert("✅ تم الحذف بنجاح");
 }
 };
@@ -3091,306 +2638,18 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 }
 };
 
-// Add row to tbody immediately for progressive display
-tbody.appendChild(tr);
-ordersArray.push({ element: tr, item: item, id: id });
-}
-
-renderIndex = endIndex;
-
-// Continue rendering if there are more rows
-if (renderIndex < allOrders.length) {
-setTimeout(renderNextBatch, 0); // Use setTimeout to allow UI to update
-} else {
-// All rows rendered, now initialize pagination
-console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
-initializePagination(ordersArray);
-}
-}
-
-// Start progressive rendering
-console.log('🚀 بدء العرض التدريجي: ' + allOrders.length + ' سجل (' + batchSize + ' في المرة)');
-renderNextBatch();
-
-document.getElementById('statTotal').innerText = total;
-document.getElementById('statCoded').innerText = coded;
-document.getElementById('statPending').innerText = pending;
-
-console.log('✅ تم تحميل ' + allOrders.length + ' سجل (بعد إزالة التكرار)');
-console.log('🔍 البحث يعمل على كل الـ ' + allOrders.length + ' سجل');
-
-// Show "Load All Data" button if there might be more data
-if (firebaseOrders.length >= 100) {
-document.getElementById('loadAllDataBtn').style.display = 'inline-block';
-}
-});
-}
-
-// Load All Data function
-window.loadAllData = async function() {
-if (window.isLoadingAll) {
-console.log('⏳ التحميل قيد التنفيذ...');
-return;
-}
-window.isLoadingAll = true;
-
-document.getElementById('loadAllDataBtn').style.display = 'none';
-document.getElementById('loadingMoreInfo').style.display = 'inline-block';
-
-console.log('📥 جاري تحميل كل البيانات...');
-
-try {
-// Unsubscribe from limited listener
-if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
-adminDataUnsubscribe();
-}
-
-// Load ALL data without limit
-adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc")), (snap) => {
-const firebaseOrders = [];
-let total = 0, coded = 0, pending = 0;
-
-snap.forEach(s => {
-const item = s.data();
-item.id = s.id;
-item.source = 'firebase';
-firebaseOrders.push(item);
-total++;
-if (item.status === 'coded' || item.status === 'delivered') {
-coded++;
-} else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
-pending++;
-}
-});
-
-console.log(`✅ تم تحميل كل البيانات: ${firebaseOrders.length} سجل`);
-
-// Process data (same as loadAdminData)
-let localOrders = [];
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) {
-const parsed = JSON.parse(stored);
-localOrders = parsed.map((item, index) => ({
-...item,
-id: item.id || `local-${index}`,
-source: 'localStorage',
-owner: item.owner || item.name || 'غير محدد',
-vType: item.vType || 'غير محدد',
-nationalId: item.nationalId || '',
-phone: item.phone || '',
-address: item.address || '',
-chassisNumber: item.chassisNumber || '',
-motorNumber: item.motorNumber || '',
-vCode: item.vCode || '',
-vYear: item.vYear || '',
-refNumber: item.refNumber || `REF-${Date.now()}-${index}`,
-timestamp: item.timestamp || Date.now(),
-status: item.status || 'pending',
-images: item.images || []
-}));
-}
-} catch (e) {
-console.error('خطأ في قراءة LocalStorage:', e);
-}
-
-const allOrders = [...firebaseOrders];
-const existingNIDs = new Set(firebaseOrders.map(o => o.nationalId).filter(nid => nid));
-const existingRefs = new Set(firebaseOrders.map(o => o.refNumber).filter(ref => ref));
-
-localOrders.forEach(order => {
-const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
-const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
-  
-if (!isDuplicateNID && !isDuplicateRef) {
-allOrders.push(order);
-if (order.nationalId) existingNIDs.add(order.nationalId);
-if (order.refNumber) existingRefs.add(order.refNumber);
-total++;
-if (order.status === 'coded' || order.status === 'delivered') coded++;
-else pending++;
-}
-});
-
-allOrders.sort((a, b) => {
-const codeA = a.vCode ? parseInt(a.vCode) : 999999;
-const codeB = b.vCode ? parseInt(b.vCode) : 999999;
-return codeA - codeB;
-});
-
-// Rebuild table with all data
-const ordersArray = [];
-allOrders.forEach(item => {
-const id = item.id;
-const statusInfo = window.getStatusDisplay(item.status || 'pending');
-const tr = document.createElement('tr');
-tr.innerHTML = `
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
-</td>
-`;
-
-// Attach button handlers
-tr.querySelector('.btn-status').onclick = async () => {
-document.getElementById('statusChangeModal').style.display = 'block';
-document.getElementById('newStatusSelect').value = item.status || 'pending';
-document.getElementById('statusNote').value = '';
-document.getElementById('sendWhatsAppStatus').checked = true;
-window.currentStatusChangeItem = { item, id };
-};
-
-tr.querySelector('.btn-code').onclick = async () => {
-if (item.vCode) {
-alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
-return;
-}
-const info = await getSmartNextCode();
-document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
-document.getElementById('manualCodeInput').value = info.next;
-document.getElementById('codeModal').style.display = 'block';
-document.getElementById('confirmCodeBtn').onclick = async () => {
-const newCode = document.getElementById('manualCodeInput').value;
-if (!newCode) {
-alert("❌ يرجى إدخال كود صحيح");
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-await updateDoc(doc(window.firebaseDb, "orders", id), {
-vCode: newCode.toString(),
-codedAt: Date.now(),
-status: "coded",
-statusHistory: [...(item.statusHistory || []), {
-status: "coded",
-timestamp: Date.now(),
-note: `تم التكويد برقم: ${newCode}`,
-by: userRole
-}]
-});
-await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('codeModal').style.display = 'none';
-const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
-if (sendWhatsApp) {
-const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
-`👤 السيد/ة: ${item.owner}\n` +
-`🔢 كود المركبة: *${newCode}*\n` +
-`🚜 نوع المركبة: ${item.vType}\n` +
-`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-`✅ يمكنك الآن استلام المركبة من المقر\n\n` +
-`_رئاسة مركز ومدينة كفر صقر_`;
-if (item.phone && item.phone.length === 11) {
-const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
-window.open(whatsappUrl, '_blank');
-}
-}
-alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-};
-};
-
-tr.querySelector('.btn-edit').onclick = async () => {
-document.getElementById('editOwnerName').value = item.owner;
-document.getElementById('editPhone').value = item.phone || '';
-document.getElementById('editVType').value = item.vType;
-document.getElementById('editVYear').value = item.vYear || '';
-document.getElementById('editAddress').value = item.address || '';
-document.getElementById('editModal').style.display = 'block';
-document.getElementById('confirmEditBtn').onclick = async () => {
-const newOwner = document.getElementById('editOwnerName').value.trim();
-const newPhone = document.getElementById('editPhone').value.trim();
-const newVType = document.getElementById('editVType').value;
-const newVYear = document.getElementById('editVYear').value;
-const newAddress = document.getElementById('editAddress').value.trim();
-if (!newOwner || !newPhone || newPhone.length !== 11) {
-alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-await updateDoc(doc(window.firebaseDb, "orders", id), {
-owner: newOwner,
-phone: newPhone,
-vType: newVType,
-vYear: newVYear,
-vDesc: `موديل ${newVYear}`,
-address: newAddress,
-statusHistory: [...(item.statusHistory || []), {
-status: item.status || 'pending',
-timestamp: Date.now(),
-note: "تم تعديل البيانات",
-by: userRole
-}]
-});
-await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('editModal').style.display = 'none';
-alert("✅ تم التعديل بنجاح!");
-};
-};
-
-tr.querySelector('.btn-del').onclick = async () => {
-if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-await deleteDoc(doc(window.firebaseDb, "orders", id));
-await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-alert("✅ تم الحذف بنجاح");
-}
-};
-
-tr.querySelector('.btn-log').onclick = () => {
-showActivityLog(item);
-};
-
-tr.querySelector('.view-btn').onclick = () => {
-if (item.images && item.images.length > 0) {
-viewImages(item.images);
-} else {
-alert("⚠️ لا توجد صور متاحة للعرض");
-}
-};
-
-ordersArray.push({ element: tr, item: item, id: id });
+tableBody.appendChild(tr);
 });
 
 document.getElementById('statTotal').innerText = total;
 document.getElementById('statCoded').innerText = coded;
 document.getElementById('statPending').innerText = pending;
-document.getElementById('loadingMoreInfo').style.display = 'none';
-
-initializePagination(ordersArray);
-console.log(`🎉 تم تحميل كل البيانات بنجاح: ${allOrders.length} سجل`);
-window.isLoadingAll = false;
 });
-
-} catch (error) {
-console.error('❌ خطأ في تحميل البيانات:', error);
-document.getElementById('loadingMoreInfo').style.display = 'none';
-document.getElementById('loadAllDataBtn').style.display = 'inline-block';
-window.isLoadingAll = false;
-alert('حدث خطأ في تحميل البيانات');
 }
-};
 
 // Load Complaints
 function loadComplaints() {
-// Unsubscribe from previous listener if exists
-if (complaintsUnsubscribe && typeof complaintsUnsubscribe === 'function') {
-complaintsUnsubscribe();
-}
-
-complaintsUnsubscribe = onSnapshot(query(window.compRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
+onSnapshot(query(window.compRef, orderBy("timestamp", "desc")), (snap) => {
 const body = document.getElementById('compTableBody');
 body.innerHTML = '';
 let total = 0, pending = 0, replied = 0;
@@ -3429,7 +2688,7 @@ tr.innerHTML = `
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color:var(--accent); font-weight:bold;">${item.type}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); max-width: 300px;">${item.details}</td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85);">${imagesHTML}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); text-align:center;"><span style="display:inline-block; background: ${item.status === 'replied' ? 'var(--secondary)' : 'var(--warning)'}; color: white; padding: 14px 22px; border-radius: 14px; font-weight: 900; font-size: 0.95rem; box-shadow: 0 6px 18px rgba(0,0,0,0.2); white-space: nowrap; letter-spacing: 0.5px; border: 2px solid rgba(255,255,255,0.3);">${item.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة'}</span></td>
+<td style="padding: 18px; background: rgba(255, 255, 255, 0.85);"><span style="background: ${item.status === 'replied' ? 'var(--secondary)' : 'var(--warning)'}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${item.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة'}</span></td>
 <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); display:flex; gap:8px;">
 <button class="btn btn-reply" title="الرد" style="padding:10px 14px; background: var(--secondary); color: white;">💬</button>
 <button class="btn btn-del" title="حذف" style="padding:10px 14px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🗑️</button>
@@ -3631,41 +2890,52 @@ loadAdminLogs();
 
 // Filter functions for stat cards
 function showAllOrders() {
-    filteredOrdersData = allOrdersData;
-    currentPage = 1;
-    renderCurrentPage();
-    document.getElementById('ordersTableContainer').style.display = 'block';
-    document.getElementById('complaintsTableContainer').style.display = 'none';
-    document.getElementById('adminLogsContainer').style.display = 'none';
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'none';
+showAllOrdersInTable();
 }
 
 function showAllOrdersInTable() {
-    // OLD FUNCTION - Replaced by showAllOrders with Pagination
-    showAllOrders();
+document.querySelectorAll('#dataTable tr').forEach(row => {
+row.style.display = '';
+});
 }
 
 function showCodedOrders() {
-    filteredOrdersData = allOrdersData.filter(orderData => {
-        const item = orderData.item;
-        return item.status === 'coded' || item.status === 'delivered';
-    });
-    currentPage = 1;
-    renderCurrentPage();
-    document.getElementById('ordersTableContainer').style.display = 'block';
-    document.getElementById('complaintsTableContainer').style.display = 'none';
-    document.getElementById('adminLogsContainer').style.display = 'none';
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'block';
+document.getElementById('filterStatusText').innerText = '✅ عرض المركبات المكودة فقط';
+let count = 0;
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const codeCell = row.cells[6]; // Column index for code
+if (codeCell && codeCell.innerText.includes('⏳')) {
+row.style.display = 'none';
+} else {
+row.style.display = '';
+count++;
+}
+});
+document.getElementById('filterStatusText').innerText = `✅ عرض المركبات المكودة فقط (${count} مركبة)`;
 }
 
 function showPendingOrders() {
-    filteredOrdersData = allOrdersData.filter(orderData => {
-        const item = orderData.item;
-        return item.status === 'pending' || item.status === 'approved' || !item.status;
-    });
-    currentPage = 1;
-    renderCurrentPage();
-    document.getElementById('ordersTableContainer').style.display = 'block';
-    document.getElementById('complaintsTableContainer').style.display = 'none';
-    document.getElementById('adminLogsContainer').style.display = 'none';
+document.getElementById('ordersTableContainer').style.display = 'block';
+document.getElementById('complaintsTableContainer').style.display = 'none';
+document.getElementById('filterStatus').style.display = 'block';
+document.getElementById('filterStatusText').innerText = '⏳ عرض المركبات قيد الانتظار فقط';
+let count = 0;
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const codeCell = row.cells[6]; // Column index for code
+if (codeCell && codeCell.innerText.includes('⏳')) {
+row.style.display = '';
+count++;
+} else {
+row.style.display = 'none';
+}
+});
+document.getElementById('filterStatusText').innerText = `⏳ عرض المركبات قيد الانتظار فقط (${count} مركبة)`;
 }
 
 function showComplaintsTable() {
@@ -3792,12 +3062,7 @@ document.getElementById('filterStatusText').innerText = `📅 عرض الطلب�
 
 // Load Admin Logs
 function loadAdminLogs() {
-// Unsubscribe from previous listener if exists
-if (adminLogsUnsubscribe && typeof adminLogsUnsubscribe === 'function') {
-adminLogsUnsubscribe();
-}
-
-adminLogsUnsubscribe = onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc"), limit(200)), (snap) => {
+onSnapshot(query(adminLogsRef, orderBy("timestamp", "desc")), (snap) => {
 const tableBody = document.getElementById('adminLogsTableBody');
 tableBody.innerHTML = '';
 
@@ -3836,8 +3101,14 @@ XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('
 alert("✅ تم تصدير البيانات بنجاح");
 };
 
-// Search - استخدام نظام Pagination الجديد
-// تم نقل دالة البحث إلى نظام Pagination
+// Search
+document.getElementById('searchInput').oninput = (e) => {
+const term = e.target.value.toLowerCase().trim();
+document.querySelectorAll('#dataTable tr').forEach(row => {
+const text = row.innerText.toLowerCase();
+row.style.display = text.includes(term) || term === '' ? '' : 'none';
+});
+};
 
 // Make functions and variables global
 window.viewImages = viewImages;
@@ -3846,126 +3117,10 @@ window.getDocs = getDocs;
 window.query = query;
 window.where = where;
 
-// Bulk Import - Open Modal instead of new page
+// Bulk Import
 document.getElementById('bulkImportBtn').onclick = () => {
 document.getElementById('bulkImportModal').style.display = 'block';
-document.getElementById('bulkImportFile').value = '';
-document.getElementById('importPreview').style.display = 'none';
-document.getElementById('importPreview').innerHTML = '';
 };
-
-// Cleanup Duplicates Button Handler
-if (document.getElementById('cleanupDuplicatesBtn')) {
-document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
-if (!confirm('⚠️ هل أنت متأكد من تنظيف البيانات المتكررة؟\n\nسيتم:\n✅ حذف السجلات المتكررة من Firebase\n✅ حذف السجلات المتكررة من LocalStorage\n✅ الاحتفاظ بأول سجل فقط لكل رقم قومي\n\n⚠️ هذه العملية لا يمكن التراجع عنها!')) {
-return;
-}
-
-document.getElementById('loadingSpinner').style.display = 'block';
-
-try {
-console.log('🧹 بدء تنظيف البيانات المتكررة...');
-
-// Step 1: Load all data from Firebase
-const snapshot = await getDocs(dbRef);
-const allFirebaseOrders = [];
-snapshot.forEach(doc => {
-allFirebaseOrders.push({ id: doc.id, ...doc.data() });
-});
-
-console.log(`📊 تم تحميل ${allFirebaseOrders.length} سجل من Firebase`);
-
-// Step 2: Find duplicates by nationalId and refNumber
-const seenNIDs = new Map(); // nationalId -> first record
-const seenRefs = new Map(); // refNumber -> first record
-const duplicatesToDelete = [];
-
-allFirebaseOrders.forEach(order => {
-let isDuplicate = false;
-
-// Check nationalId duplicate
-if (order.nationalId) {
-if (seenNIDs.has(order.nationalId)) {
-isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم قومي مكرر: ${order.nationalId}` });
-} else {
-seenNIDs.set(order.nationalId, order);
-}
-}
-
-// Check refNumber duplicate (only if not already marked as duplicate)
-if (!isDuplicate && order.refNumber) {
-if (seenRefs.has(order.refNumber)) {
-isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم مرجعي مكرر: ${order.refNumber}` });
-} else {
-seenRefs.set(order.refNumber, order);
-}
-}
-});
-
-console.log(`🔍 تم العثور على ${duplicatesToDelete.length} سجل مكرر`);
-
-if (duplicatesToDelete.length === 0) {
-alert('✅ لا توجد بيانات متكررة!\n\nقاعدة البيانات نظيفة بالفعل.');
-document.getElementById('loadingSpinner').style.display = 'none';
-return;
-}
-
-// Step 3: Delete duplicates from Firebase
-let deletedCount = 0;
-for (const dup of duplicatesToDelete) {
-try {
-await deleteDoc(doc(window.firebaseDb, "orders", dup.id));
-deletedCount++;
-console.log(`✅ تم حذف: ${dup.reason}`);
-} catch (e) {
-console.error(`❌ فشل حذف ${dup.id}:`, e);
-}
-}
-
-// Step 4: Clean LocalStorage
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) {
-const localOrders = JSON.parse(stored);
-const cleanedLocal = [];
-const localSeenNIDs = new Set();
-const localSeenRefs = new Set();
-
-localOrders.forEach(order => {
-const isDupNID = order.nationalId && localSeenNIDs.has(order.nationalId);
-const isDupRef = order.refNumber && localSeenRefs.has(order.refNumber);
-
-if (!isDupNID && !isDupRef) {
-cleanedLocal.push(order);
-if (order.nationalId) localSeenNIDs.add(order.nationalId);
-if (order.refNumber) localSeenRefs.add(order.refNumber);
-}
-});
-
-const localDeletedCount = localOrders.length - cleanedLocal.length;
-localStorage.setItem('vehicleOrders', JSON.stringify(cleanedLocal));
-console.log(`🧹 تم حذف ${localDeletedCount} سجل مكرر من LocalStorage`);
-}
-} catch (e) {
-console.error('خطأ في تنظيف LocalStorage:', e);
-}
-
-// Step 5: Log the action
-await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من Firebase`);
-
-document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ تم تنظيف البيانات بنجاح!\n\n📊 الإحصائيات:\n🗑️ تم حذف ${deletedCount} سجل مكرر من Firebase\n💾 تم تنظيف LocalStorage\n\n🔄 سيتم تحديث الصفحة الآن...`);
-location.reload();
-
-} catch (error) {
-console.error('❌ خطأ في تنظيف البيانات:', error);
-document.getElementById('loadingSpinner').style.display = 'none';
-alert('❌ حدث خطأ أثناء تنظيف البيانات:\n' + error.message);
-}
-};
-}
 
 // Download Template
 document.getElementById('downloadTemplateBtn').onclick = () => {
@@ -4001,72 +3156,9 @@ alert('❌ الملف فارغ أو لا يحتوي على بيانات');
 return;
 }
 
-console.log('📋 عدد الصفوف:', jsonData.length);
-console.log('📋 الصف الأول (Header):', jsonData[0]);
-console.log('📋 الصف الثاني:', jsonData[1]);
-
-// Try Fixed Columns First (B-H format)
-let useFixedColumns = false;
-const columnMap = {};
-let dataStartRow = 1; // Default: data starts from row 1
-
-// الترتيب الثابت للأعمدة (نفس import_excel.html):
-// A=0 (رقم تسلسلي أو فاضي)
-// B=1 (الكود), C=2 (الاسم), D=3 (الرقم القومي), E=4 (العنوان), 
-// F=5 (الشاسيه), G=6 (الموتور), H=7 (رقم التليفون)
-
-// Check if data follows fixed column format
-// Look for actual data (skip header rows)
-let foundFixedFormat = false;
-for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
-if (jsonData[i] && jsonData[i].length >= 4) {
-const colC = jsonData[i][2]; // Column C - الاسم
-const colD = jsonData[i][3]; // Column D - الرقم القومي
-
-// Skip if row looks like header
-const colCStr = String(colC || '').trim();
-const colDStr = String(colD || '').trim();
-if (colCStr.includes('اسم') || colCStr.includes('الاسم') || 
-    colDStr.includes('قومي') || colDStr.includes('الرقم') ||
-    colCStr.includes('name') || colDStr.includes('national')) {
-continue; // Skip header row
-}
-
-// Check if C has name and D has national ID
-if (colC && colD) {
-const nameStr = String(colC).trim();
-const nidStr = String(colD).replace(/[^0-9]/g, '');
-
-// If C looks like a name (length > 2) and D has digits
-if (nameStr.length > 2 && nidStr.length >= 10) {
-foundFixedFormat = true;
-dataStartRow = i;
-console.log('📍 وجدت بيانات في الصف ' + (i + 1));
-break;
-}
-}
-}
-}
-
-if (foundFixedFormat) {
-useFixedColumns = true;
-console.log('📍 استخدام الأعمدة الثابتة (B-H)، البيانات تبدأ من الصف ' + (dataStartRow + 1));
-}
-
-if (useFixedColumns) {
-// Fixed columns: B=1, C=2, D=3, E=4, F=5, G=6, H=7
-// نفس الترتيب في import_excel.html
-columnMap.vCode = 1;        // B - الكود
-columnMap.owner = 2;        // C - الاسم
-columnMap.nationalId = 3;   // D - الرقم القومي
-columnMap.address = 4;      // E - العنوان
-columnMap.chassisNumber = 5; // F - الشاسيه
-columnMap.motorNumber = 6;   // G - الموتور
-columnMap.phone = 7;         // H - رقم التليفون
-console.log('✅ تم تحديد الأعمدة الثابتة:', columnMap);
-} else {
 // Smart Column Detection
 const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
+const columnMap = {};
 
 const patterns = {
 owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
@@ -4076,9 +3168,7 @@ vType: ['نوع', 'المركبة', 'type', 'vehicle'],
 vYear: ['موديل', 'سنة', 'year', 'model'],
 vColor: ['لون', 'color'],
 address: ['عنوان', 'address', 'العنوان'],
-vCode: ['كود', 'code', 'الكود'],
-chassisNumber: ['شاسيه', 'chassis', 'الشاسيه'],
-motorNumber: ['موتور', 'motor', 'الموتور']
+vCode: ['كود', 'code', 'الكود']
 };
 
 // Match columns automatically
@@ -4092,47 +3182,30 @@ break;
 }
 }
 
-console.log('🧠 استخدام الاكتشاف التلقائي');
-}
-
 // Check required columns
 if (columnMap.owner === undefined || columnMap.nationalId === undefined) {
-alert('❌ لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\n\nتأكد من:\n• استخدام الترتيب الصحيح للأعمدة (B-H)\n• أو وضع أسماء الأعمدة في الصف الأول');
+alert('❌ لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\nتأكد من وجود هذه الأعمدة في الملف');
 return;
 }
 
 importedData = [];
 const preview = document.getElementById('importPreview');
-
-// Determine starting row for data processing
-const startRow = useFixedColumns ? dataStartRow : 1;
-
-let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
-<p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
-<table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - 1} سجل):</h4>
+<p style="color: #666; margin-bottom: 15px;">✅ تم اكتشاف الأعمدة تلقائياً: ${Object.keys(columnMap).join(', ')}</p>
+<table style="width: 100%; border-collapse: collapse;">
 <thead>
 <tr style="background: #8e44ad; color: white;">
-<th style="padding: 8px; border: 1px solid #ddd;">#</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الكود</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الاسم</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الرقم القومي</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الهاتف</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الشاسيه</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الموتور</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الحالة</th>
+<th style="padding: 10px; border: 1px solid #ddd;">الاسم</th>
+<th style="padding: 10px; border: 1px solid #ddd;">الرقم القومي</th>
+<th style="padding: 10px; border: 1px solid #ddd;">الهاتف</th>
+<th style="padding: 10px; border: 1px solid #ddd;">النوع</th>
+<th style="padding: 10px; border: 1px solid #ddd;">الحالة</th>
 </tr>
 </thead>
 <tbody>`;
 
-for (let i = startRow; i < jsonData.length; i++) {
+for (let i = 1; i < jsonData.length; i++) {
 const row = jsonData[i];
-if (!row || row.length === 0) continue;
-
-// Skip empty rows (check if any cell has data)
-const hasData = row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== '');
-if (!hasData) continue;
-
-// Skip if no owner or national ID
 if (!row[columnMap.owner] || !row[columnMap.nationalId]) continue;
 
 const record = {
@@ -4143,25 +3216,18 @@ vType: row[columnMap.vType] || 'توكتوك',
 vYear: row[columnMap.vYear] || new Date().getFullYear(),
 vColor: row[columnMap.vColor] || '',
 address: row[columnMap.address] || '',
-vCode: row[columnMap.vCode] ? String(row[columnMap.vCode]).trim() : '',
-chassisNumber: row[columnMap.chassisNumber] ? String(row[columnMap.chassisNumber]).trim() : '',
-motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''
+vCode: row[columnMap.vCode] || ''
 };
 
-// Validation (more lenient like import_excel.html)
-const isValid = record.owner.length >= 3 && record.nationalId.length >= 10 && (!record.phone || record.phone.length === 11);
+const isValid = record.owner && record.nationalId.length === 14 && (!record.phone || record.phone.length === 11);
 importedData.push(record);
 
-const rowNumber = i - startRow + 1; // Calculate correct row number
 previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'};">
-<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${rowNumber}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db' : '#999'};">${record.vCode || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd;">${record.owner}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">${record.nationalId}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace;">${record.phone || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.chassisNumber ? '#27ae60' : '#999'};">${record.chassisNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.motorNumber ? '#27ae60' : '#999'};">${record.motorNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)' : 'var(--danger)'};">${isValid ? '✅' : '❌'}</td>
+<td style="padding: 8px; border: 1px solid #ddd;">${record.owner}</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace;">${record.nationalId}</td>
+<td style="padding: 8px; border: 1px solid #ddd;">${record.phone || '-'}</td>
+<td style="padding: 8px; border: 1px solid #ddd;">${record.vType}</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)' : 'var(--danger)'};">${isValid ? '✅ صحيح' : '❌ خطأ'}</td>
 </tr>`;
 }
 
@@ -4169,7 +3235,7 @@ previewHTML += '</tbody></table>';
 preview.innerHTML = previewHTML;
 preview.style.display = 'block';
 
-alert(`✅ تم قراءة ${importedData.length} سجل من الملف\n${useFixedColumns ? '📍 تم استخدام الأعمدة الثابتة (B-H)' : '🧠 تم اكتشاف الأعمدة تلقائياً'}`);
+alert(`✅ تم قراءة ${importedData.length} سجل من الملف\n🧠 تم اكتشاف الأعمدة تلقائياً`);
 } catch (error) {
 alert('❌ خطأ في قراءة الملف: ' + error.message);
 console.error(error);
@@ -4190,68 +3256,32 @@ return;
 }
 
 document.getElementById('loadingSpinner').style.display = 'block';
-document.getElementById('importProgress').style.display = 'block';
-document.getElementById('confirmImportBtn').disabled = true;
-
 let successCount = 0;
 let errorCount = 0;
 let duplicateCount = 0;
 const errors = [];
 
-// Helper function to update progress
-const updateProgress = (current, total, status) => {
-const percent = Math.round((current / total) * 100);
-document.getElementById('progressBar').style.width = percent + '%';
-document.getElementById('progressText').textContent = percent + '%';
-document.getElementById('progressStatus').textContent = status;
-};
-
 try {
-// Get existing data from localStorage for faster duplicate check
-updateProgress(0, 100, '⏳ جاري تحميل البيانات الحالية...');
-let existingOrders = [];
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) existingOrders = JSON.parse(stored);
-} catch (e) {
-console.error('خطأ في قراءة LocalStorage:', e);
-}
-
-// Create a Set of existing national IDs for fast lookup
-const existingNIDs = new Set(existingOrders.map(o => o.nationalId));
-
-updateProgress(10, 100, '⏳ جاري معالجة البيانات...');
 const codeInfo = await getSmartNextCode();
 let nextCode = codeInfo.next;
 
-// Process all records
-const recordsToAdd = [];
-const totalRecords = importedData.length;
-
-for (let i = 0; i < totalRecords; i++) {
+for (let i = 0; i < importedData.length; i++) {
 const record = importedData[i];
 
-// Update progress every 10 records
-if (i % 10 === 0) {
-const progress = 10 + Math.round((i / totalRecords) * 40); // 10-50%
-updateProgress(progress, 100, `⏳ معالجة السجل ${i + 1} من ${totalRecords}...`);
-}
-
-// More lenient validation (like import_excel.html)
-if (!record.owner || record.owner.length < 3) {
+if (!record.owner || record.nationalId.length !== 14) {
 errorCount++;
-errors.push(`السجل ${i + 1}: اسم غير صحيح`);
+errors.push(`السجل ${i + 1}: بيانات غير صحيحة (الاسم أو الرقم القومي)`);
 continue;
 }
 
-if (!record.nationalId || record.nationalId.length < 10) {
+if (record.phone && record.phone.length !== 11) {
 errorCount++;
-errors.push(`السجل ${i + 1}: رقم قومي غير صحيح`);
+errors.push(`السجل ${i + 1}: رقم الهاتف غير صحيح`);
 continue;
 }
 
-// Check duplicate in localStorage (much faster)
-if (existingNIDs.has(record.nationalId)) {
+const checkSnap = await getDocs(query(window.dbRef, where("nationalId", "==", record.nationalId)));
+if (!checkSnap.empty) {
 duplicateCount++;
 continue;
 }
@@ -4261,17 +3291,14 @@ if (!record.vCode) nextCode++;
 
 const refNumber = 'KS-IMP-' + Date.now().toString().slice(-8) + '-' + i;
 
-const newRecord = {
+await addDoc(dbRef, {
 owner: record.owner,
 nationalId: record.nationalId,
 phone: record.phone || '',
 vType: record.vType,
 vYear: record.vYear,
-vColor: record.vColor || '',
 vDesc: `موديل ${record.vYear}${record.vColor ? ' - لون ' + record.vColor : ''}`,
 address: record.address || '',
-chassisNumber: record.chassisNumber || '',
-motorNumber: record.motorNumber || '',
 images: [],
 timestamp: Date.now(),
 codedAt: record.vCode ? Date.now() : null,
@@ -4286,45 +3313,12 @@ timestamp: Date.now(),
 note: record.vCode ? `استيراد مع كود: ${finalCode}` : "استيراد من Excel",
 by: userRole
 }]
-};
+});
 
-recordsToAdd.push(newRecord);
-existingNIDs.add(record.nationalId); // Add to set to prevent duplicates within import
 successCount++;
 }
 
-// Save all to localStorage first (fast)
-updateProgress(50, 100, '💾 جاري الحفظ في LocalStorage...');
-existingOrders.push(...recordsToAdd);
-localStorage.setItem('vehicleOrders', JSON.stringify(existingOrders));
-console.log(`✅ تم حفظ ${recordsToAdd.length} سجل في LocalStorage`);
-
-// Then save to Firebase in batches (slower but in background)
-updateProgress(60, 100, '☁️ جاري الحفظ في Firebase...');
-console.log('⏳ جاري الحفظ في Firebase...');
-const batchSize = 50; // Firebase batch limit is 500, we use 50 for safety
-for (let i = 0; i < recordsToAdd.length; i += batchSize) {
-const batch = recordsToAdd.slice(i, i + batchSize);
-
-// Update progress
-const progress = 60 + Math.round((i / recordsToAdd.length) * 35); // 60-95%
-updateProgress(progress, 100, `☁️ حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Firebase...`);
-
-// Save batch to Firebase
-for (const record of batch) {
-try {
-await addDoc(dbRef, record);
-} catch (e) {
-console.error('خطأ في حفظ السجل:', e);
-}
-}
-
-console.log(`✅ تم حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Firebase`);
-}
-
-updateProgress(100, 100, '✅ اكتمل الاستيراد!');
 document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('importProgress').style.display = 'none';
 document.getElementById('bulkImportModal').style.display = 'none';
 
 let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}`;
@@ -4339,143 +3333,10 @@ location.reload();
 
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('importProgress').style.display = 'none';
-document.getElementById('confirmImportBtn').disabled = false;
 alert('❌ حدث خطأ أثناء الاستيراد: ' + error.message);
-console.error('Import error:', error);
 }
 };
-
-// On page load - check for existing admin session
-(function() {
-const savedAuth = sessionStorage.getItem('adminAuth');
-const savedRole = sessionStorage.getItem('adminRole');
-const savedUsername = sessionStorage.getItem('adminUsername');
-
-if (savedAuth === 'true' && savedRole && savedUsername) {
-// Auto-restore admin session
-userRole = savedRole;
-currentUsername = savedUsername;
-document.getElementById('portalSection').style.display = 'none';
-document.getElementById('adminPage').style.display = 'block';
-document.getElementById('goPortalBtn').style.display = 'inline-flex';
-document.getElementById('logoutBtn').style.display = 'inline-flex';
-document.getElementById('loginBtn').style.display = 'none';
-
-// Restore badge
-const header = document.querySelector('header');
-const roleBadge = userRole === 'SUPER' ? '👑 مدير عام' : userRole === 'ADMIN' ? '🔧 مشرف' : '👁️ عرض فقط';
-const roleColor = userRole === 'SUPER' ? '#e74c3c' : userRole === 'ADMIN' ? '#3498db' : '#95a5a6';
-const badge = document.createElement('div');
-badge.id = 'roleBadge';
-badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
-badge.innerText = roleBadge;
-header.appendChild(badge);
-
-console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (${userRole})`);
-}
-})();
-
-// ============================================
-// PAGINATION SYSTEM
-// ============================================
-let currentPage = 1;
-let recordsPerPage = 100;
-let allOrdersData = [];
-let filteredOrdersData = [];
-
-window.searchOrders = function() {
-const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-const searchType = document.getElementById('searchType') ? document.getElementById('searchType').value : 'all';
-
-if (!searchTerm) {
-filteredOrdersData = allOrdersData;
-} else {
-filteredOrdersData = allOrdersData.filter(orderData => {
-const item = orderData.item;
-
-if (searchType === 'all') {
-return (
-(item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
-(item.name && item.name.toLowerCase().includes(searchTerm)) ||
-(item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) ||
-(item.nationalId && item.nationalId.toLowerCase().includes(searchTerm)) ||
-(item.phone && item.phone.includes(searchTerm)) ||
-(item.refNumber && item.refNumber.toLowerCase().includes(searchTerm)) ||
-(item.address && item.address.toLowerCase().includes(searchTerm)) ||
-(item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm)) ||
-(item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm))
-);
-} else if (searchType === 'name') {
-return (item.owner && item.owner.toLowerCase().includes(searchTerm)) || (item.name && item.name.toLowerCase().includes(searchTerm));
-} else if (searchType === 'code') {
-return item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm);
-} else if (searchType === 'nationalId') {
-return item.nationalId && item.nationalId.includes(searchTerm);
-} else if (searchType === 'phone') {
-return item.phone && item.phone.includes(searchTerm);
-} else if (searchType === 'chassis') {
-return item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm);
-} else if (searchType === 'motor') {
-return item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm);
-}
-return false;
-});
-}
-currentPage = 1;
-renderCurrentPage();
-const resultMsg = filteredOrdersData.length === allOrdersData.length ? 
-`🔍 عرض كل السجلات: ${allOrdersData.length}` : 
-`🔍 البحث (${searchType}) عن: "${searchTerm}" - النتائج: ${filteredOrdersData.length} من ${allOrdersData.length}`;
-console.log(resultMsg);
-};
-
-window.changePage = function(direction) {
-const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1;
-currentPage += direction;
-if (currentPage < 1) currentPage = 1;
-if (currentPage > totalPages) currentPage = totalPages;
-renderCurrentPage();
-};
-
-window.changeRecordsPerPage = function() {
-recordsPerPage = parseInt(document.getElementById('recordsPerPage').value);
-currentPage = 1;
-renderCurrentPage();
-};
-
-function renderCurrentPage() {
-const startIndex = (currentPage - 1) * recordsPerPage;
-const endIndex = startIndex + recordsPerPage;
-const pageData = filteredOrdersData.slice(startIndex, endIndex);
-const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1;
-
-document.getElementById('pageInfo').textContent = `صفحة ${currentPage} من ${totalPages}`;
-document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${filteredOrdersData.length} سجل`;
-
-const tableBody = document.getElementById('dataTable');
-tableBody.innerHTML = '';
-
-pageData.forEach(orderData => {
-const tr = orderData.element;
-tableBody.appendChild(tr);
-});
-
-const actualEnd = Math.min(endIndex, filteredOrdersData.length);
-console.log(`📄 عرض الصفحة ${currentPage}/${totalPages}: السجلات ${startIndex + 1}-${actualEnd} من ${filteredOrdersData.length}`);
-}
-
-function initializePagination(ordersArray) {
-allOrdersData = ordersArray;
-filteredOrdersData = ordersArray;
-currentPage = 1;
-renderCurrentPage();
-}
-
-console.log('✅ نظام Pagination جاهز');
-
 </script>
 
 </body>
 </html>
-
