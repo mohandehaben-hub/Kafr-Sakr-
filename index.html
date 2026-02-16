@@ -2955,23 +2955,23 @@ const id = item.id;
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
 const tr = document.createElement('tr');
 tr.innerHTML = `
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.75rem;">${item.owner}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.7rem;">${item.nationalId}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.7rem;">${item.phone || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:3px 6px; border-radius:5px; font-weight:600; font-size:0.7rem;">${item.vType}</span></td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.7rem;">${item.vYear || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.65rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.65rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.75rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.65rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.9rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:4px 8px; font-weight:600; font-size:0.65rem;">📷 (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); display:flex; gap:3px; flex-wrap:wrap;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:4px 6px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:4px 6px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:4px 6px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:4px 6px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.7rem;">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:4px 6px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.7rem;">📋</button>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+<button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
 </td>
 `;
 
@@ -3103,21 +3103,21 @@ if (renderIndex < allOrders.length) {
 setTimeout(renderNextBatch, 0); // Use setTimeout to allow UI to update
 } else {
 // All rows rendered, now initialize pagination
-console.log(`✅ تم عرض كل الـ ${allOrders.length} سجل`);
+console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
 initializePagination(ordersArray);
 }
 }
 
 // Start progressive rendering
-console.log(`🚀 بدء العرض التدريجي: ${allOrders.length} سجل (${batchSize} في المرة)`);
+console.log('🚀 بدء العرض التدريجي: ' + allOrders.length + ' سجل (' + batchSize + ' في المرة)');
 renderNextBatch();
 
 document.getElementById('statTotal').innerText = total;
 document.getElementById('statCoded').innerText = coded;
 document.getElementById('statPending').innerText = pending;
 
-console.log(`✅ تم تحميل ${allOrders.length} سجل (بعد إزالة التكرار)`);
-console.log(`🔍 البحث يعمل على كل الـ ${allOrders.length} سجل`);
+console.log('✅ تم تحميل ' + allOrders.length + ' سجل (بعد إزالة التكرار)');
+console.log('🔍 البحث يعمل على كل الـ ' + allOrders.length + ' سجل');
 
 // Show "Load All Data" button if there might be more data
 if (firebaseOrders.length >= 100) {
@@ -3225,23 +3225,23 @@ const id = item.id;
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
 const tr = document.createElement('tr');
 tr.innerHTML = `
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.75rem;">${item.owner}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.7rem;">${item.nationalId}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.7rem;">${item.phone || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:3px 6px; border-radius:5px; font-weight:600; font-size:0.7rem;">${item.vType}</span></td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.7rem;">${item.vYear || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.65rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.65rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.75rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 4px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.65rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.9rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:4px 8px; font-weight:600; font-size:0.65rem;">📷 (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 6px 4px; background: rgba(255, 255, 255, 0.85); display:flex; gap:3px; flex-wrap:wrap;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:4px 6px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:4px 6px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:4px 6px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.7rem;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:4px 6px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.7rem;">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:4px 6px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.7rem;">📋</button>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+<button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
+<button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
+<button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
+<button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+<button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
 </td>
 `;
 
