@@ -18,10 +18,12 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>منظومة تكويد المركبات - كفر صقر</title>
 
 <!-- External Libraries -->
@@ -73,7 +75,7 @@ background: linear-gradient(135deg, rgba(26, 82, 118, 0.98) 0%, rgba(21, 67, 96,
 backdrop-filter: blur(20px);
 -webkit-backdrop-filter: blur(20px);
 color: white;
-padding: 15px 5%;
+padding: 8px 3%;
 display: flex;
 justify-content: space-between;
 align-items: center;
@@ -83,6 +85,17 @@ position: sticky;
 top: 0;
 z-index: 1000;
 animation: slideDown 0.5s ease;
+}
+
+.header-title h1 {
+font-size: 1.1rem;
+margin: 0;
+line-height: 1.3;
+}
+
+.header-title small {
+font-size: 0.75rem;
+opacity: 0.9;
 }
 
 @keyframes slideDown {
@@ -369,38 +382,112 @@ grid-template-columns: 1fr;
 
 .portal-container {
 grid-template-columns: 1fr;
-gap: 25px;
-padding: 0 5px;
+gap: 15px;
+padding: 0 10px;
 }
 
 .portal-box {
-padding: 40px 25px;
-min-height: 280px;
+padding: 20px 15px;
+min-height: 180px;
 }
 
 .portal-box i {
-font-size: 70px;
+font-size: 45px !important;
 }
 
 .portal-box h2 {
-font-size: 1.4rem;
+font-size: 1rem !important;
 }
 
 .portal-box p {
-font-size: 0.95rem;
+font-size: 0.8rem !important;
 }
 
 .header-title h1 {
-font-size: 1.1rem;
+font-size: 0.75rem !important;
+}
+
+.header-title small {
+font-size: 0.6rem !important;
 }
 
 header {
-padding: 12px 3%;
-flex-wrap: wrap;
+padding: 6px 2% !important;
+}
+
+header img {
+width: 28px !important;
+height: 28px !important;
+}
+
+header button {
+padding: 5px 8px !important;
+font-size: 0.7rem !important;
 }
 
 .card {
-padding: 25px 15px;
+padding: 15px 10px;
+}
+
+.btn {
+padding: 8px 12px !important;
+font-size: 0.8rem !important;
+white-space: nowrap;
+}
+
+.container {
+padding: 10px !important;
+}
+
+h2 {
+font-size: 1.2rem !important;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+padding: 10px !important;
+font-size: 0.85rem !important;
+}
+
+.stat-card {
+padding: 15px !important;
+}
+
+.stat-card h3 {
+font-size: 1.5rem !important;
+}
+
+.stat-card p {
+font-size: 0.8rem !important;
+}
+
+#searchInput {
+padding: 10px !important;
+font-size: 0.85rem !important;
+}
+
+#searchType {
+padding: 8px !important;
+font-size: 0.8rem !important;
+min-width: 100px !important;
+}
+
+/* Make buttons stack on mobile */
+.card > div:first-child {
+flex-direction: column !important;
+gap: 8px !important;
+}
+
+.card > div:first-child > div {
+width: 100% !important;
+flex-direction: column !important;
+}
+
+.card > div:first-child button {
+width: 100% !important;
+}
+}
 }
 
 /* Table Responsive Styles */
@@ -501,23 +588,23 @@ box-shadow: 0 4px 15px rgba(39, 174, 96, 0.5);
 
 <!-- Header -->
 <header>
-<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; width: 100%;">
-<div style="display: flex; align-items: center; gap: 15px;">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%;">
+<div style="display: flex; align-items: center; gap: 6px;">
 <img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
-style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: white; padding: 5px; border: 2px solid rgba(255,255,255,0.5);" 
+style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
 alt="علم مصر">
 <img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
-style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: white; padding: 5px; border: 2px solid rgba(255,255,255,0.5);" 
+style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
 alt="علم الشرقية">
 </div>
-<div class="header-title" style="flex: 1;">
-<h1>🏛️ رئاسة مركز ومدينة كفر صقر</h1>
-<small>د/ أحمد المقدم - رئيس المدينة</small>
+<div class="header-title" style="flex: 1; min-width: 150px;">
+<h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">🏛️ رئاسة مركز كفر صقر</h1>
+<small style="font-size: 0.65rem; opacity: 0.85;">د/ أحمد المقدم</small>
 </div>
-<div style="display:flex; gap:12px; flex-wrap: wrap;">
-<button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none;" onclick="location.reload()">🏠 البوابة</button>
-<button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer;" onclick="logoutAdmin()">🚪 تسجيل خروج</button>
-<button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4);">🔐 لوحة التحكم</button>
+<div style="display:flex; gap:6px; flex-wrap: wrap;">
+<button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="location.reload()">🏠 البوابة</button>
+<button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer; padding: 6px 10px; font-size: 0.75rem;" onclick="logoutAdmin()">🚪 خروج</button>
+<button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4); padding: 6px 10px; font-size: 0.75rem;">🔐 التحكم</button>
 </div>
 </div>
 </header>
@@ -882,6 +969,7 @@ height: 300px;
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="cleanupDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🧹 تنظيف التكرار</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; display: flex; gap: 10px;">
 <select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
@@ -2670,6 +2758,14 @@ if (adminDataUnsubscribe && typeof adminDataUnsubscribe === 'function') {
 adminDataUnsubscribe();
 }
 
+// Add debounce to prevent multiple simultaneous loads
+const now = Date.now();
+if (window.lastLoadTime && (now - window.lastLoadTime) < 2000) {
+console.log('⏳ تحميل قيد التنفيذ بالفعل، يرجى الانتظار...');
+return;
+}
+window.lastLoadTime = now;
+
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(10000)), (snap) => {
 // Load from Firebase
 const firebaseOrders = [];
@@ -3408,6 +3504,119 @@ document.getElementById('bulkImportFile').value = '';
 document.getElementById('importPreview').style.display = 'none';
 document.getElementById('importPreview').innerHTML = '';
 };
+
+// Cleanup Duplicates Button Handler
+if (document.getElementById('cleanupDuplicatesBtn')) {
+document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
+if (!confirm('⚠️ هل أنت متأكد من تنظيف البيانات المتكررة؟\n\nسيتم:\n✅ حذف السجلات المتكررة من Firebase\n✅ حذف السجلات المتكررة من LocalStorage\n✅ الاحتفاظ بأول سجل فقط لكل رقم قومي\n\n⚠️ هذه العملية لا يمكن التراجع عنها!')) {
+return;
+}
+
+document.getElementById('loadingSpinner').style.display = 'block';
+
+try {
+console.log('🧹 بدء تنظيف البيانات المتكررة...');
+
+// Step 1: Load all data from Firebase
+const snapshot = await getDocs(dbRef);
+const allFirebaseOrders = [];
+snapshot.forEach(doc => {
+allFirebaseOrders.push({ id: doc.id, ...doc.data() });
+});
+
+console.log(`📊 تم تحميل ${allFirebaseOrders.length} سجل من Firebase`);
+
+// Step 2: Find duplicates by nationalId and refNumber
+const seenNIDs = new Map(); // nationalId -> first record
+const seenRefs = new Map(); // refNumber -> first record
+const duplicatesToDelete = [];
+
+allFirebaseOrders.forEach(order => {
+let isDuplicate = false;
+
+// Check nationalId duplicate
+if (order.nationalId) {
+if (seenNIDs.has(order.nationalId)) {
+isDuplicate = true;
+duplicatesToDelete.push({ id: order.id, reason: `رقم قومي مكرر: ${order.nationalId}` });
+} else {
+seenNIDs.set(order.nationalId, order);
+}
+}
+
+// Check refNumber duplicate (only if not already marked as duplicate)
+if (!isDuplicate && order.refNumber) {
+if (seenRefs.has(order.refNumber)) {
+isDuplicate = true;
+duplicatesToDelete.push({ id: order.id, reason: `رقم مرجعي مكرر: ${order.refNumber}` });
+} else {
+seenRefs.set(order.refNumber, order);
+}
+}
+});
+
+console.log(`🔍 تم العثور على ${duplicatesToDelete.length} سجل مكرر`);
+
+if (duplicatesToDelete.length === 0) {
+alert('✅ لا توجد بيانات متكررة!\n\nقاعدة البيانات نظيفة بالفعل.');
+document.getElementById('loadingSpinner').style.display = 'none';
+return;
+}
+
+// Step 3: Delete duplicates from Firebase
+let deletedCount = 0;
+for (const dup of duplicatesToDelete) {
+try {
+await deleteDoc(doc(window.firebaseDb, "orders", dup.id));
+deletedCount++;
+console.log(`✅ تم حذف: ${dup.reason}`);
+} catch (e) {
+console.error(`❌ فشل حذف ${dup.id}:`, e);
+}
+}
+
+// Step 4: Clean LocalStorage
+try {
+const stored = localStorage.getItem('vehicleOrders');
+if (stored) {
+const localOrders = JSON.parse(stored);
+const cleanedLocal = [];
+const localSeenNIDs = new Set();
+const localSeenRefs = new Set();
+
+localOrders.forEach(order => {
+const isDupNID = order.nationalId && localSeenNIDs.has(order.nationalId);
+const isDupRef = order.refNumber && localSeenRefs.has(order.refNumber);
+
+if (!isDupNID && !isDupRef) {
+cleanedLocal.push(order);
+if (order.nationalId) localSeenNIDs.add(order.nationalId);
+if (order.refNumber) localSeenRefs.add(order.refNumber);
+}
+});
+
+const localDeletedCount = localOrders.length - cleanedLocal.length;
+localStorage.setItem('vehicleOrders', JSON.stringify(cleanedLocal));
+console.log(`🧹 تم حذف ${localDeletedCount} سجل مكرر من LocalStorage`);
+}
+} catch (e) {
+console.error('خطأ في تنظيف LocalStorage:', e);
+}
+
+// Step 5: Log the action
+await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من Firebase`);
+
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`✅ تم تنظيف البيانات بنجاح!\n\n📊 الإحصائيات:\n🗑️ تم حذف ${deletedCount} سجل مكرر من Firebase\n💾 تم تنظيف LocalStorage\n\n🔄 سيتم تحديث الصفحة الآن...`);
+location.reload();
+
+} catch (error) {
+console.error('❌ خطأ في تنظيف البيانات:', error);
+document.getElementById('loadingSpinner').style.display = 'none';
+alert('❌ حدث خطأ أثناء تنظيف البيانات:\n' + error.message);
+}
+};
+}
 
 // Download Template
 document.getElementById('downloadTemplateBtn').onclick = () => {
