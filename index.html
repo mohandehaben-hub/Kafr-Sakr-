@@ -2899,7 +2899,7 @@ tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; 
 
 // Load only first 50 records for fast initial display
 const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-const recordLimit = isMobileDevice ? 2500 : 50; // Load all on mobile
+const recordLimit = 50; // Always 50 for fast loading
 adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(recordLimit)), (snap) => {
 console.log('🔥 Firebase Snapshot received:', snap.size, 'records');
 
@@ -2985,6 +2985,30 @@ pending++;
 
 console.log(`📊 تم تحميل ${firebaseOrders.length} من Firebase و ${localOrders.length} من LocalStorage (إجمالي: ${allOrders.length} بعد إزالة التكرار)`);
 
+// Save all data to LocalStorage for faster loading next time
+try {
+const dataToSave = allOrders.map(order => ({
+id: order.id,
+owner: order.owner,
+nationalId: order.nationalId,
+phone: order.phone,
+address: order.address,
+vType: order.vType,
+vCode: order.vCode,
+vYear: order.vYear,
+chassisNumber: order.chassisNumber,
+motorNumber: order.motorNumber,
+refNumber: order.refNumber,
+timestamp: order.timestamp,
+status: order.status,
+images: order.images || []
+}));
+localStorage.setItem('vehicleOrders', JSON.stringify(dataToSave));
+console.log(`💾 تم حفظ ${dataToSave.length} سجل في LocalStorage للتحميل السريع`);
+} catch (e) {
+console.warn('⚠️ لم يتم الحفظ في LocalStorage:', e);
+}
+
 // Sort by vCode (numeric) - codes first, then non-coded at end
 allOrders.sort((a, b) => {
 const codeA = a.vCode ? parseInt(a.vCode) : 999999;
@@ -3005,25 +3029,16 @@ tbody.innerHTML = ''; // Clear existing rows
 // Detect mobile device
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-// On mobile: render all at once (no progressive rendering to avoid Safari issues)
+// On mobile: render progressively (show first 10 immediately, then load more)
 if (isMobile) {
-console.log('📱 وضع الموبايل: عرض مباشر بدون تأخير');
-const fragment = document.createDocumentFragment();
-let processedCount = 0;
-const maxMobileRows = Math.min(allOrders.length, 150); // Limit to 150 on mobile
+console.log('📱 وضع الموبايل: عرض تدريجي سريع');
 
-console.log(`🔢 إجمالي السجلات: ${allOrders.length}`);
-console.log(`📊 سيتم عرض: ${maxMobileRows} سجل`);
+// Show first 10 rows IMMEDIATELY
+const quickShowCount = Math.min(10, allOrders.length);
+const quickFragment = document.createDocumentFragment();
 
-for (let i = 0; i < maxMobileRows; i++) {
+for (let i = 0; i < quickShowCount; i++) {
 const item = allOrders[i];
-const id = item.id;
-
-// Log every 10 rows to track progress
-if (i % 10 === 0) {
-console.log(`✅ معالجة السجل رقم: ${i}`);
-}
-
 const tr = document.createElement('tr');
 tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
@@ -3039,32 +3054,62 @@ tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
 `;
-
-// NO event listeners on mobile - just display
-fragment.appendChild(tr);
-ordersArray.push({ element: tr, item: item, id: id });
-processedCount++;
+quickFragment.appendChild(tr);
+ordersArray.push({ element: tr, item: item, id: item.id });
 }
 
-console.log(`🎯 تم إنشاء ${processedCount} صف - الآن سيتم إضافتهم للجدول`);
-tbody.appendChild(fragment);
-console.log(`✅ تم عرض ${processedCount} سجل على الموبايل`);
+tbody.appendChild(quickFragment);
+console.log(`⚡ تم عرض أول ${quickShowCount} صف فوراً`);
 
-// Show message on screen (not alert)
-const messageDiv = document.createElement('div');
-messageDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; border: 3px solid red; border-radius: 10px; z-index: 9999; font-size: 1.2rem; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5);';
-messageDiv.innerHTML = `
-<div style="color: red; font-weight: bold; margin-bottom: 10px;">📊 معلومات التحميل</div>
-<div>إجمالي السجلات: <strong>${allOrders.length}</strong></div>
-<div>تم عرض: <strong>${processedCount}</strong></div>
-<button onclick="this.parentElement.remove()" style="margin-top: 15px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; font-size: 1rem;">إغلاق</button>
-`;
-document.body.appendChild(messageDiv);
+// Now load the rest progressively (10 at a time)
+let currentIndex = quickShowCount;
+const batchSize = 10;
+const maxRows = Math.min(allOrders.length, 200); // Limit to 200 on mobile
 
-if (allOrders.length > 150) {
-console.log(`⚠️ يوجد ${allOrders.length} سجل - تم عرض ${processedCount} فقط`);
-}
+function loadNextBatch() {
+if (currentIndex >= maxRows) {
+console.log(`✅ تم عرض ${currentIndex} سجل`);
 initializePagination(ordersArray);
+return;
+}
+
+const endIndex = Math.min(currentIndex + batchSize, maxRows);
+const fragment = document.createDocumentFragment();
+
+for (let i = currentIndex; i < endIndex; i++) {
+const item = allOrders[i];
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
+`;
+fragment.appendChild(tr);
+ordersArray.push({ element: tr, item: item, id: item.id });
+}
+
+tbody.appendChild(fragment);
+currentIndex = endIndex;
+
+if (currentIndex % 50 === 0) {
+console.log(`📊 تم عرض ${currentIndex} من ${maxRows} سجل`);
+}
+
+// Continue loading
+setTimeout(loadNextBatch, 100); // Load next batch after 100ms
+}
+
+// Start loading more after showing first 10
+setTimeout(loadNextBatch, 100);
 
 } else {
 // Desktop: Progressive rendering
@@ -4017,33 +4062,37 @@ return;
 }
 
 const orders = JSON.parse(localData);
-alert(`📊 تم العثور على ${orders.length} سجل في LocalStorage\n\nسيتم رفعهم الآن...`);
+alert(`📊 تم العثور على ${orders.length} سجل\n\nسيتم الرفع بسرعة...`);
 
 document.getElementById('loadingSpinner').style.display = 'block';
 let uploaded = 0;
 let skipped = 0;
+const batchSize = 200; // Upload 200 at a time for maximum speed
 
-for (let i = 0; i < orders.length; i += 50) {
-const batch = orders.slice(i, Math.min(i + 50, orders.length));
+console.log(`🚀 بدء الرفع السريع: ${orders.length} سجل`);
+
+for (let i = 0; i < orders.length; i += batchSize) {
+const batch = orders.slice(i, Math.min(i + batchSize, orders.length));
+
+// Upload without checking duplicates (faster!)
 const promises = batch.map(async (order) => {
 try {
-const q = query(window.dbRef, where('nationalId', '==', order.nationalId), limit(1));
-const snap = await getDocs(q);
-if (snap.empty) {
 await addDoc(window.dbRef, order);
 uploaded++;
-} else {
-skipped++;
+if (uploaded % 100 === 0) {
+console.log(`✅ تم رفع ${uploaded} من ${orders.length}`);
 }
 } catch (err) {
 console.error('خطأ:', err);
+skipped++;
 }
 });
+
 await Promise.all(promises);
 }
 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ تم الرفع!\n\n📤 رفع: ${uploaded}\n⏭️ تخطي: ${skipped}`);
+alert(`✅ تم الرفع بنجاح!\n\n📤 تم رفع: ${uploaded} سجل\n❌ فشل: ${skipped} سجل\n\nافتح الموقع من التلفون الآن!`);
 };
 
 // Cleanup Duplicates Button Handler
