@@ -455,30 +455,9 @@ margin-bottom: 12px;
 
 /* Buttons Mobile */
 .btn {
-padding: 8px 12px !important;
-font-size: 0.75rem !important;
+padding: 6px 10px !important;
+font-size: 0.7rem !important;
 white-space: nowrap;
-}
-
-/* Control Buttons - Stack vertically on mobile */
-#adminPanel > div:nth-of-type(2) {
-flex-direction: column !important;
-gap: 10px !important;
-}
-
-#adminPanel > div:nth-of-type(2) > button {
-width: 100% !important;
-justify-content: center !important;
-}
-
-/* Search container - Stack vertically */
-#adminPanel > div:nth-of-type(2) > div {
-width: 100% !important;
-flex-direction: column !important;
-}
-
-#searchType, #searchInput {
-width: 100% !important;
 }
 
 /* Container Mobile */
@@ -506,30 +485,15 @@ font-size: 0.75rem !important;
 
 /* Stats Cards Mobile */
 .stat-card {
-padding: 8px !important;
-border-radius: 12px !important;
+padding: 10px !important;
 }
 
 .stat-card h3 {
 font-size: 1.2rem !important;
-margin: 5px 0 !important;
 }
 
 .stat-card p {
 font-size: 0.7rem !important;
-margin: 0 !important;
-}
-
-.stat-card small {
-font-size: 0.65rem !important;
-display: none !important; /* Hide "اضغط للعرض" on mobile */
-}
-
-/* Make stats grid 2 columns on mobile (compact) */
-#adminPanel > div:first-of-type {
-grid-template-columns: 1fr 1fr !important;
-gap: 8px !important;
-margin-bottom: 15px !important;
 }
 
 /* Search Mobile */
@@ -544,22 +508,20 @@ font-size: 0.75rem !important;
 min-width: 80px !important;
 }
 
-/* Table Mobile - No Horizontal Scroll */
+/* Table Mobile - Horizontal Scroll */
 .table-container {
-overflow-x: hidden !important;
-width: 100% !important;
+overflow-x: auto !important;
+-webkit-overflow-scrolling: touch;
 }
 
 table {
-font-size: 0.55rem !important;
-width: 100% !important;
-table-layout: fixed !important;
+font-size: 0.65rem !important;
+min-width: 100%;
 }
 
 table th {
-padding: 3px 1px !important;
-font-size: 0.55rem !important;
-word-wrap: break-word !important;
+padding: 4px 2px !important;
+font-size: 0.65rem !important;
 white-space: nowrap;
 }
 
@@ -1120,7 +1082,7 @@ height: 300px;
 <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
-<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">� استيراد من Excel</button>
 <button id="cleanupDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">🧹 تنظيف التكرار</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; display: flex; gap: 10px;">
@@ -1887,11 +1849,11 @@ const ENCRYPTION_KEY = "KafrSakr@2026#SecureData";
 const encryptSensitiveData = (data) => {
     if (data.nationalId && data.nationalId.length === 14) {
         data.nationalId_encrypted = encrypt(data.nationalId, ENCRYPTION_KEY);
-        // Show full national ID (encryption removed)
+        data.nationalId = data.nationalId.substring(0, 4) + "****" + data.nationalId.substring(10, 14);
     }
     if (data.phone && data.phone.length === 11) {
         data.phone_encrypted = encrypt(data.phone, ENCRYPTION_KEY);
-        // Show full phone number (encryption removed)
+        data.phone_display = data.phone.substring(0, 3) + "****" + data.phone.substring(8, 11);
     }
     if (data.birthDate) {
         data.birthDate_encrypted = encrypt(data.birthDate, ENCRYPTION_KEY);
@@ -2891,10 +2853,8 @@ console.log('📥 جاري تحميل البيانات...');
 const tbody = document.getElementById('dataTable');
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
 
-// Load only first 50 records for fast initial display
-adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(50)), (snap) => {
-console.log('🔥 Firebase Snapshot received:', snap.size, 'records');
-
+// Load only first 100 records for fast initial display
+adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(100)), (snap) => {
 // Clear loading message
 tbody.innerHTML = '';
 
@@ -2915,11 +2875,6 @@ pending++;
 });
 
 console.log(`⚡ تم تحميل أول ${firebaseOrders.length} سجل بسرعة!`);
-
-// Check if Firebase is empty
-if (firebaseOrders.length === 0) {
-console.warn('⚠️ لا توجد بيانات في Firebase');
-}
 
 // Load from LocalStorage
 let localOrders = [];
@@ -2984,75 +2939,17 @@ const codeB = b.vCode ? parseInt(b.vCode) : 999999;
 return codeA - codeB;
 });
 
-// Clear table before progressive rendering
-const tbodyElement = document.getElementById('dataTable');
-if (tbodyElement) {
-tbodyElement.innerHTML = '';
-}
-
 // Build table rows and render progressively
 const ordersArray = [];
+const tbody = document.getElementById('dataTable');
 tbody.innerHTML = ''; // Clear existing rows
-
-// Detect mobile device
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-
-// On mobile: render all at once (no progressive rendering to avoid Safari issues)
-if (isMobile) {
-console.log('📱 وضع الموبايل: عرض مباشر بدون تأخير');
-const fragment = document.createDocumentFragment();
-let processedCount = 0;
-const maxMobileRows = Math.min(allOrders.length, 150); // Limit to 150 on mobile
-
-for (let i = 0; i < maxMobileRows; i++) {
-const item = allOrders[i];
-const id = item.id;
-
-const tr = document.createElement('tr');
-tr.innerHTML = `
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
-`;
-
-// NO event listeners on mobile - just display
-fragment.appendChild(tr);
-ordersArray.push({ element: tr, item: item, id: id });
-processedCount++;
-}
-
-tbody.appendChild(fragment);
-console.log(`✅ تم عرض ${processedCount} سجل على الموبايل`);
-if (allOrders.length > 150) {
-alert(`⚠️ يوجد ${allOrders.length} سجل - تم عرض ${processedCount} فقط\nاستخدم الكمبيوتر لعرض الكل`);
-}
-initializePagination(ordersArray);
-
-} else {
-// Desktop: Progressive rendering
-console.log('💻 وضع الكمبيوتر: عرض تدريجي');
 
 // Function to render rows in batches
 let renderIndex = 0;
-const batchSize = 10;
-const renderDelay = 200;
-const maxInitialRows = allOrders.length;
+const batchSize = 10; // Render 10 rows at a time for faster display
 
 function renderNextBatch() {
-try {
-// On mobile, stop at 100 rows initially
-const maxIndex = Math.min(maxInitialRows, allOrders.length);
-const endIndex = Math.min(renderIndex + batchSize, maxIndex);
-const fragment = document.createDocumentFragment();
+const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
 
 for (let i = renderIndex; i < endIndex; i++) {
 const item = allOrders[i];
@@ -3071,7 +2968,7 @@ tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
 <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
 <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
@@ -3196,38 +3093,26 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 }
 };
 
-fragment.appendChild(tr);
+// Add row to tbody immediately for progressive display
+tbody.appendChild(tr);
 ordersArray.push({ element: tr, item: item, id: id });
 }
 
-// Add batch to DOM
-tbody.appendChild(fragment);
 renderIndex = endIndex;
 
-// Progress update
-if (renderIndex % 100 === 0 || renderIndex === maxIndex) {
-console.log(`📊 تم عرض ${renderIndex} من ${maxIndex} سجل`);
-}
-
-// Continue rendering
-if (renderIndex < maxIndex) {
-setTimeout(renderNextBatch, renderDelay);
+// Continue rendering if there are more rows
+if (renderIndex < allOrders.length) {
+setTimeout(renderNextBatch, 0); // Use setTimeout to allow UI to update
 } else {
-console.log('✅ تم عرض ' + renderIndex + ' سجل');
+// All rows rendered, now initialize pagination
+console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
 initializePagination(ordersArray);
-}
-} catch (error) {
-console.error('❌ خطأ في عرض السجلات:', error);
-if (renderIndex < maxIndex) {
-setTimeout(renderNextBatch, 500);
-}
 }
 }
 
 // Start progressive rendering
-console.log('🚀 بدء العرض التدريجي: ' + allOrders.length + ' سجل');
+console.log('🚀 بدء العرض التدريجي: ' + allOrders.length + ' سجل - ' + batchSize + ' في المرة');
 renderNextBatch();
-}
 
 document.getElementById('statTotal').innerText = total;
 document.getElementById('statCoded').innerText = coded;
@@ -3237,7 +3122,7 @@ console.log('✅ تم تحميل ' + allOrders.length + ' سجل بعد إزال
 console.log('🔍 البحث يعمل على كل الـ ' + allOrders.length + ' سجل');
 
 // Show "Load All Data" button if there might be more data
-if (firebaseOrders.length >= 50) {
+if (firebaseOrders.length >= 100) {
 document.getElementById('loadAllDataBtn').style.display = 'inline-block';
 }
 });
@@ -3352,7 +3237,7 @@ tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">📷 (${item.images ? item.images.length : 0})</button></td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
 <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
 <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
@@ -3751,13 +3636,9 @@ function showAllOrders() {
     filteredOrdersData = allOrdersData;
     currentPage = 1;
     renderCurrentPage();
-    const ordersContainer = document.getElementById('ordersTableContainer');
-    const complaintsContainer = document.getElementById('complaintsTableContainer');
-    const logsContainer = document.getElementById('adminLogsContainer');
-    
-    if (ordersContainer) ordersContainer.style.display = 'block';
-    if (complaintsContainer) complaintsContainer.style.display = 'none';
-    if (logsContainer) logsContainer.style.display = 'none';
+    document.getElementById('ordersTableContainer').style.display = 'block';
+    document.getElementById('complaintsTableContainer').style.display = 'none';
+    document.getElementById('adminLogsContainer').style.display = 'none';
 }
 
 function showAllOrdersInTable() {
@@ -4377,8 +4258,8 @@ duplicateCount++;
 continue;
 }
 
-// Only use code if it exists in Excel, don't auto-generate
-const finalCode = record.vCode || null;
+const finalCode = record.vCode || nextCode.toString();
+if (!record.vCode) nextCode++;
 
 const refNumber = 'KS-IMP-' + Date.now().toString().slice(-8) + '-' + i;
 
@@ -4404,7 +4285,7 @@ status: record.vCode ? "coded" : "pending",
 statusHistory: [{
 status: record.vCode ? "coded" : "pending",
 timestamp: Date.now(),
-note: record.vCode ? `استيراد مع كود: ${finalCode}` : "استيراد من Excel - بانتظار التكويد",
+note: record.vCode ? `استيراد مع كود: ${finalCode}` : "استيراد من Excel",
 by: userRole
 }]
 };
@@ -4431,14 +4312,14 @@ const batch = recordsToAdd.slice(i, i + batchSize);
 const progress = 60 + Math.round((i / recordsToAdd.length) * 35); // 60-95%
 updateProgress(progress, 100, `☁️ حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Firebase...`);
 
-// Save batch to Firebase in parallel (much faster!)
-const savePromises = batch.map(record => 
-addDoc(dbRef, record).catch(e => {
+// Save batch to Firebase
+for (const record of batch) {
+try {
+await addDoc(dbRef, record);
+} catch (e) {
 console.error('خطأ في حفظ السجل:', e);
-return null;
-})
-);
-await Promise.all(savePromises);
+}
+}
 
 console.log(`✅ تم حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Firebase`);
 }
