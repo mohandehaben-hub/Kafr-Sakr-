@@ -455,9 +455,30 @@ margin-bottom: 12px;
 
 /* Buttons Mobile */
 .btn {
-padding: 6px 10px !important;
-font-size: 0.7rem !important;
+padding: 8px 12px !important;
+font-size: 0.75rem !important;
 white-space: nowrap;
+}
+
+/* Control Buttons - Stack vertically on mobile */
+#adminPanel > div:nth-of-type(2) {
+flex-direction: column !important;
+gap: 10px !important;
+}
+
+#adminPanel > div:nth-of-type(2) > button {
+width: 100% !important;
+justify-content: center !important;
+}
+
+/* Search container - Stack vertically */
+#adminPanel > div:nth-of-type(2) > div {
+width: 100% !important;
+flex-direction: column !important;
+}
+
+#searchType, #searchInput {
+width: 100% !important;
 }
 
 /* Container Mobile */
@@ -485,15 +506,30 @@ font-size: 0.75rem !important;
 
 /* Stats Cards Mobile */
 .stat-card {
-padding: 10px !important;
+padding: 8px !important;
+border-radius: 12px !important;
 }
 
 .stat-card h3 {
 font-size: 1.2rem !important;
+margin: 5px 0 !important;
 }
 
 .stat-card p {
 font-size: 0.7rem !important;
+margin: 0 !important;
+}
+
+.stat-card small {
+font-size: 0.65rem !important;
+display: none !important; /* Hide "اضغط للعرض" on mobile */
+}
+
+/* Make stats grid 2 columns on mobile (compact) */
+#adminPanel > div:first-of-type {
+grid-template-columns: 1fr 1fr !important;
+gap: 8px !important;
+margin-bottom: 15px !important;
 }
 
 /* Search Mobile */
