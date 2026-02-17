@@ -2995,6 +2995,8 @@ tbody.innerHTML = ''; // Clear existing rows
 // Function to render rows in batches
 let renderIndex = 0;
 const batchSize = 10; // Render 10 rows at a time for faster display
+const isMobile = window.innerWidth <= 768;
+const renderDelay = isMobile ? 50 : 200; // Faster on mobile
 
 function renderNextBatch() {
 const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
@@ -3150,7 +3152,10 @@ renderIndex = endIndex;
 
 // Continue rendering if there are more rows
 if (renderIndex < allOrders.length) {
-setTimeout(renderNextBatch, 200); // 200ms delay to show progressive loading visibly
+if (renderIndex % 100 === 0) {
+console.log(`📊 تم عرض ${renderIndex} من ${allOrders.length} سجل...`);
+}
+setTimeout(renderNextBatch, renderDelay); // Faster on mobile (50ms), slower on desktop (200ms)
 } else {
 // All rows rendered, now initialize pagination
 console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
