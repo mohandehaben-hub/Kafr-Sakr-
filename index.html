@@ -3000,6 +3000,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 // On mobile: render all at once (no progressive rendering to avoid Safari issues)
 if (isMobile) {
 console.log('📱 وضع الموبايل: عرض مباشر بدون تأخير');
+alert('📱 وضع الموبايل: سيتم عرض 150 سجل فقط'); // Test message
 const fragment = document.createDocumentFragment();
 let processedCount = 0;
 const maxMobileRows = Math.min(allOrders.length, 150); // Limit to 150 on mobile
