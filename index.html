@@ -3004,9 +3004,17 @@ const fragment = document.createDocumentFragment();
 let processedCount = 0;
 const maxMobileRows = Math.min(allOrders.length, 150); // Limit to 150 on mobile
 
+console.log(`🔢 إجمالي السجلات: ${allOrders.length}`);
+console.log(`📊 سيتم عرض: ${maxMobileRows} سجل`);
+
 for (let i = 0; i < maxMobileRows; i++) {
 const item = allOrders[i];
 const id = item.id;
+
+// Log every 10 rows to track progress
+if (i % 10 === 0) {
+console.log(`✅ معالجة السجل رقم: ${i}`);
+}
 
 const tr = document.createElement('tr');
 tr.innerHTML = `
@@ -3030,6 +3038,7 @@ ordersArray.push({ element: tr, item: item, id: id });
 processedCount++;
 }
 
+console.log(`🎯 تم إنشاء ${processedCount} صف - الآن سيتم إضافتهم للجدول`);
 tbody.appendChild(fragment);
 console.log(`✅ تم عرض ${processedCount} سجل على الموبايل`);
 if (allOrders.length > 150) {
