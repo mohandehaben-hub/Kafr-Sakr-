@@ -3041,8 +3041,20 @@ processedCount++;
 console.log(`🎯 تم إنشاء ${processedCount} صف - الآن سيتم إضافتهم للجدول`);
 tbody.appendChild(fragment);
 console.log(`✅ تم عرض ${processedCount} سجل على الموبايل`);
+
+// Show message on screen (not alert)
+const messageDiv = document.createElement('div');
+messageDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; border: 3px solid red; border-radius: 10px; z-index: 9999; font-size: 1.2rem; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5);';
+messageDiv.innerHTML = `
+<div style="color: red; font-weight: bold; margin-bottom: 10px;">📊 معلومات التحميل</div>
+<div>إجمالي السجلات: <strong>${allOrders.length}</strong></div>
+<div>تم عرض: <strong>${processedCount}</strong></div>
+<button onclick="this.parentElement.remove()" style="margin-top: 15px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; font-size: 1rem;">إغلاق</button>
+`;
+document.body.appendChild(messageDiv);
+
 if (allOrders.length > 150) {
-alert(`⚠️ يوجد ${allOrders.length} سجل - تم عرض ${processedCount} فقط\nاستخدم الكمبيوتر لعرض الكل`);
+console.log(`⚠️ يوجد ${allOrders.length} سجل - تم عرض ${processedCount} فقط`);
 }
 initializePagination(ordersArray);
 
