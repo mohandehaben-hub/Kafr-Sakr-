@@ -2994,6 +2994,9 @@ tbodyElement.innerHTML = '';
 const ordersArray = [];
 tbody.innerHTML = ''; // Clear existing rows
 
+// Detect mobile device
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
 // Function to render rows in batches
 let renderIndex = 0;
 const batchSize = isMobile ? 50 : 10; // Bigger batches on mobile
