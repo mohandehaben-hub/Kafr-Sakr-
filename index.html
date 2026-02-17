@@ -1978,15 +1978,19 @@ console.log('✅ نظام الأمان جاهز ومدمج في الملف');
 <!-- Supabase Authentication SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Initialize Supabase
-const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIlPublishable';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-console.log('🔐 Supabase Authentication initialized');
-
-// Store in window for global access
-window.supabaseClient = supabase;
+// Wait for Supabase SDK to load
+window.addEventListener('load', function() {
+    // Initialize Supabase
+    const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIlPublishable';
+    
+    if (window.supabase && window.supabase.createClient) {
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log('🔐 Supabase Authentication initialized');
+    } else {
+        console.error('❌ Supabase SDK failed to load');
+    }
+});
 </script>
 
 <!-- Firebase Integration - SECURE VERSION -->
