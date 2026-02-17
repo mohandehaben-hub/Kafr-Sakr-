@@ -3000,7 +3000,6 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 // On mobile: render all at once (no progressive rendering to avoid Safari issues)
 if (isMobile) {
 console.log('📱 وضع الموبايل: عرض مباشر بدون تأخير');
-alert('📱 وضع الموبايل: سيتم عرض 150 سجل فقط'); // Test message
 const fragment = document.createDocumentFragment();
 let processedCount = 0;
 const maxMobileRows = Math.min(allOrders.length, 150); // Limit to 150 on mobile
@@ -3021,37 +3020,11 @@ tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
-<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-<button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-<button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-<button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-<button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-<button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
-</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
+<td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
 `;
 
-// Simplified event listeners for mobile
-const btnStatus = tr.querySelector('.btn-status');
-const btnCode = tr.querySelector('.btn-code');
-const btnEdit = tr.querySelector('.btn-edit');
-const btnDel = tr.querySelector('.btn-del');
-const btnLog = tr.querySelector('.btn-log');
-const btnView = tr.querySelector('.view-btn');
-
-if (btnStatus) btnStatus.onclick = () => { alert('استخدم الكمبيوتر لتغيير الحالة'); };
-if (btnCode) btnCode.onclick = () => { alert('استخدم الكمبيوتر للتكويد'); };
-if (btnEdit) btnEdit.onclick = () => { alert('استخدم الكمبيوتر للتعديل'); };
-if (btnDel) btnDel.onclick = () => { alert('استخدم الكمبيوتر للحذف'); };
-if (btnLog) btnLog.onclick = () => { alert('استخدم الكمبيوتر لعرض السجل'); };
-if (btnView) btnView.onclick = () => { 
-if (item.images && item.images.length > 0) {
-viewImages(item.images);
-} else {
-alert("⚠️ لا توجد صور");
-}
-};
-
+// NO event listeners on mobile - just display
 fragment.appendChild(tr);
 ordersArray.push({ element: tr, item: item, id: id });
 processedCount++;
@@ -3060,7 +3033,7 @@ processedCount++;
 tbody.appendChild(fragment);
 console.log(`✅ تم عرض ${processedCount} سجل على الموبايل`);
 if (allOrders.length > 150) {
-console.log(`⚠️ يوجد ${allOrders.length - 150} سجل إضافي - استخدم الكمبيوتر لعرض الكل`);
+alert(`⚠️ يوجد ${allOrders.length} سجل - تم عرض ${processedCount} فقط\nاستخدم الكمبيوتر لعرض الكل`);
 }
 initializePagination(ordersArray);
 
