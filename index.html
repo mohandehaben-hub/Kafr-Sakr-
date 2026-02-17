@@ -2892,7 +2892,9 @@ const tbody = document.getElementById('dataTable');
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
 
 // Load only first 50 records for fast initial display
-adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(50)), (snap) => {
+const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+const recordLimit = isMobileDevice ? 2500 : 50; // Load all on mobile
+adminDataUnsubscribe = onSnapshot(query(window.dbRef, orderBy("timestamp", "desc"), limit(recordLimit)), (snap) => {
 console.log('🔥 Firebase Snapshot received:', snap.size, 'records');
 
 // Clear loading message
