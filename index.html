@@ -1121,6 +1121,7 @@ height: 300px;
 <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
 <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
 <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+<button id="uploadLocalToFirebaseBtn" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; display: none;">☁️ رفع البيانات المحلية</button>
 <button id="cleanupDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">🧹 تنظيف التكرار</button>
 <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
 <div style="flex: 1; display: flex; gap: 10px;">
@@ -2743,6 +2744,11 @@ document.getElementById('goPortalBtn').style.display = 'inline-flex';
 document.getElementById('logoutBtn').style.display = 'inline-flex';
 document.getElementById('loginBtn').style.display = 'none';
 
+// Show upload button for SUPER admin only
+if (userRole === 'SUPER') {
+document.getElementById('uploadLocalToFirebaseBtn').style.display = 'inline-block';
+}
+
 // Add role badge to header
 const header = document.querySelector('header');
 const existingBadge = document.getElementById('roleBadge');
@@ -3996,6 +4002,48 @@ document.getElementById('bulkImportModal').style.display = 'block';
 document.getElementById('bulkImportFile').value = '';
 document.getElementById('importPreview').style.display = 'none';
 document.getElementById('importPreview').innerHTML = '';
+};
+
+// Upload LocalStorage to Firebase
+document.getElementById('uploadLocalToFirebaseBtn').onclick = async () => {
+if (!confirm('⚠️ هل تريد رفع كل البيانات المحلية إلى Firebase؟\n\nهذا سيضمن ظهور كل البيانات على جميع الأجهزة.')) {
+return;
+}
+
+const localData = localStorage.getItem('vehicleOrders');
+if (!localData) {
+alert('❌ لا توجد بيانات محلية!');
+return;
+}
+
+const orders = JSON.parse(localData);
+alert(`📊 تم العثور على ${orders.length} سجل في LocalStorage\n\nسيتم رفعهم الآن...`);
+
+document.getElementById('loadingSpinner').style.display = 'block';
+let uploaded = 0;
+let skipped = 0;
+
+for (let i = 0; i < orders.length; i += 50) {
+const batch = orders.slice(i, Math.min(i + 50, orders.length));
+const promises = batch.map(async (order) => {
+try {
+const q = query(window.dbRef, where('nationalId', '==', order.nationalId), limit(1));
+const snap = await getDocs(q);
+if (snap.empty) {
+await addDoc(window.dbRef, order);
+uploaded++;
+} else {
+skipped++;
+}
+} catch (err) {
+console.error('خطأ:', err);
+}
+});
+await Promise.all(promises);
+}
+
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`✅ تم الرفع!\n\n📤 رفع: ${uploaded}\n⏭️ تخطي: ${skipped}`);
 };
 
 // Cleanup Duplicates Button Handler
