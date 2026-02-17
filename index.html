@@ -544,20 +544,22 @@ font-size: 0.75rem !important;
 min-width: 80px !important;
 }
 
-/* Table Mobile - Horizontal Scroll */
+/* Table Mobile - No Horizontal Scroll */
 .table-container {
-overflow-x: auto !important;
--webkit-overflow-scrolling: touch;
+overflow-x: hidden !important;
+width: 100% !important;
 }
 
 table {
-font-size: 0.65rem !important;
-min-width: 100%;
+font-size: 0.55rem !important;
+width: 100% !important;
+table-layout: fixed !important;
 }
 
 table th {
-padding: 4px 2px !important;
-font-size: 0.65rem !important;
+padding: 3px 1px !important;
+font-size: 0.55rem !important;
+word-wrap: break-word !important;
 white-space: nowrap;
 }
 
@@ -2994,12 +2996,13 @@ tbody.innerHTML = ''; // Clear existing rows
 
 // Function to render rows in batches
 let renderIndex = 0;
-const batchSize = 10; // Render 10 rows at a time for faster display
-const isMobile = window.innerWidth <= 768;
-const renderDelay = isMobile ? 50 : 200; // Faster on mobile
+const batchSize = isMobile ? 50 : 10; // Bigger batches on mobile
+const renderDelay = isMobile ? 100 : 200; // Controlled delay
 
 function renderNextBatch() {
+try {
 const endIndex = Math.min(renderIndex + batchSize, allOrders.length);
+const fragment = document.createDocumentFragment();
 
 for (let i = renderIndex; i < endIndex; i++) {
 const item = allOrders[i];
@@ -3143,23 +3146,33 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 }
 };
 
-// Add row to tbody immediately for progressive display
-tbody.appendChild(tr);
+fragment.appendChild(tr);
 ordersArray.push({ element: tr, item: item, id: id });
 }
 
+// Add batch to DOM
+tbody.appendChild(fragment);
 renderIndex = endIndex;
 
-// Continue rendering if there are more rows
-if (renderIndex < allOrders.length) {
-if (renderIndex % 100 === 0) {
-console.log(`📊 تم عرض ${renderIndex} من ${allOrders.length} سجل...`);
+// Progress update
+if (renderIndex % 200 === 0 || renderIndex === allOrders.length) {
+console.log(`📊 تم عرض ${renderIndex} من ${allOrders.length} سجل`);
 }
-setTimeout(renderNextBatch, renderDelay); // Faster on mobile (50ms), slower on desktop (200ms)
+
+// Continue rendering
+if (renderIndex < allOrders.length) {
+// Use setTimeout with controlled delay for Safari stability
+setTimeout(renderNextBatch, renderDelay);
 } else {
-// All rows rendered, now initialize pagination
 console.log('✅ تم عرض كل الـ ' + allOrders.length + ' سجل');
 initializePagination(ordersArray);
+}
+} catch (error) {
+console.error('❌ خطأ في عرض السجلات:', error);
+// Try to recover and continue
+if (renderIndex < allOrders.length) {
+setTimeout(renderNextBatch, 500);
+}
 }
 }
 
