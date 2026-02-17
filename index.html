@@ -1432,8 +1432,8 @@ alt="علم الشرقية">
 
 <!-- Login Form -->
 <div class="input-group">
-<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">👤 اسم المستخدم</label>
-<input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+<label style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">� البريد الإلكتروني</label>
+<input type="email" id="loginUsername" placeholder="أدخل البريد الإلكتروني" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
 </div>
 
 <div class="input-group">
@@ -1973,6 +1973,20 @@ window.SecureConfig = {
 };
 
 console.log('✅ نظام الأمان جاهز ومدمج في الملف');
+</script>
+
+<!-- Supabase Authentication SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Initialize Supabase
+const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIlPublishable';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+console.log('🔐 Supabase Authentication initialized');
+
+// Store in window for global access
+window.supabaseClient = supabase;
 </script>
 
 <!-- Firebase Integration - SECURE VERSION -->
@@ -2728,11 +2742,11 @@ document.getElementById('loginUsername').focus();
 };
 
 document.getElementById('confirmLoginBtn').onclick = async () => {
-const u = document.getElementById('loginUsername').value.trim();
-const p = document.getElementById('loginPassword').value;
+const email = document.getElementById('loginUsername').value.trim();
+const password = document.getElementById('loginPassword').value;
 
-if (!u || !p) {
-alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
+if (!email || !password) {
+alert("❌ يرجى إدخال البريد الإلكتروني وكلمة المرور");
 return;
 }
 
@@ -2742,25 +2756,28 @@ const originalText = btn.innerText;
 btn.innerText = '⏳ جاري التحقق...';
 btn.disabled = true;
 
-// Use SHA-256 authentication (async)
-const authResult = await authenticateAdmin(u, p);
+try {
+// Sign in with Supabase
+const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+email: email,
+password: password
+});
 
-if (!authResult.success) {
-alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
+if (error) {
+alert("❌ البريد الإلكتروني أو كلمة المرور غير صحيحة");
 btn.innerText = originalText;
 btn.disabled = false;
-// Log failed login attempt
-await logAdminAction('Unknown', 'محاولة دخول فاشلة', `محاولة دخول باسم: ${u}`);
+console.error('Supabase login error:', error);
 return;
 }
 
-// Create secure session
-const session = createSession(authResult.username, authResult.role);
-userRole = authResult.role;
-currentUsername = authResult.username;
+// Successful login
+const user = data.user;
+userRole = 'SUPER'; // All users are SUPER
+currentUsername = user.email.split('@')[0];
 
-// Save to sessionStorage for session persistence
-sessionStorage.setItem('adminAuth', 'true');
+// Save session
+sessionStorage.setItem('supabaseSession', JSON.stringify(data.session));
 sessionStorage.setItem('adminRole', userRole);
 sessionStorage.setItem('adminUsername', currentUsername);
 
@@ -2768,7 +2785,7 @@ sessionStorage.setItem('adminUsername', currentUsername);
 document.getElementById('loginModal').style.display = 'none';
 
 // Log admin login
-await logAdminAction(currentUsername, 'تسجيل دخول', `دخول إلى لوحة التحكم بصلاحية: ${userRole}`);
+await logAdminAction(currentUsername, 'تسجيل دخول', `دخول آمن عبر Supabase`);
 
 // Show role badge
 const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
@@ -2814,6 +2831,12 @@ document.getElementById('bulkImportBtn').style.display = 'none';
 }
 if (userRole === 'SUPER') {
 document.getElementById('cleanupDuplicatesBtn').style.display = 'inline-flex';
+}
+} catch (error) {
+console.error('❌ خطأ في تسجيل الدخول:', error);
+alert("❌ حدث خطأ في تسجيل الدخول");
+btn.innerText = originalText;
+btn.disabled = false;
 }
 };
 
@@ -2907,9 +2930,12 @@ modal.style.display = "block";
 }
 
 // Logout function
-window.logoutAdmin = function() {
+window.logoutAdmin = async function() {
 if (confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) {
-sessionStorage.removeItem('adminAuth');
+// Sign out from Supabase
+await window.supabaseClient.auth.signOut();
+  
+sessionStorage.removeItem('supabaseSession');
 sessionStorage.removeItem('adminRole');
 sessionStorage.removeItem('adminUsername');
 document.getElementById('adminPage').style.display = 'none';
@@ -2919,6 +2945,8 @@ document.getElementById('logoutBtn').style.display = 'none';
 document.getElementById('loginBtn').style.display = 'inline-flex';
 const badge = document.getElementById('roleBadge');
 if (badge) badge.remove();
+  
+console.log('✅ تم تسجيل الخروج من Supabase');
 location.reload();
 }
 };
