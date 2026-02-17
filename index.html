@@ -1978,19 +1978,29 @@ console.log('✅ نظام الأمان جاهز ومدمج في الملف');
 <!-- Supabase Authentication SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Wait for Supabase SDK to load
-window.addEventListener('load', function() {
-    // Initialize Supabase
+// Initialize Supabase Client
+(function() {
     const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIlPublishable';
     
-    if (window.supabase && window.supabase.createClient) {
-        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        console.log('🔐 Supabase Authentication initialized');
+    // Wait for DOM and Supabase SDK to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSupabase);
     } else {
-        console.error('❌ Supabase SDK failed to load');
+        initSupabase();
     }
-});
+    
+    function initSupabase() {
+        // Check if Supabase SDK is loaded
+        if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('🔐 Supabase Authentication initialized');
+        } else {
+            // Retry after a short delay if SDK not loaded yet
+            setTimeout(initSupabase, 100);
+        }
+    }
+})();
 </script>
 
 <!-- Firebase Integration - SECURE VERSION -->
