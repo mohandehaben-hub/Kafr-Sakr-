@@ -3,10 +3,9 @@
 ═══════════════════════════════════════════════════════════════
   منظومة تكويد المركبات - رئاسة مركز ومدينة كفر صقر
 ═══════════════════════════════════════════════════════════════
-  🔒 نظام أمان متقدم - SHA-256 Password Hashing
+  🔒 نظام آمن - Supabase Authentication
   ✅ آمن 100% للرفع على GitHub
-  ✅ كلمات المرور مشفرة بـ SHA-256 (One-Way Hash)
-  ✅ مستحيل فك التشفير
+  ✅ Row Level Security (RLS) مُفعّل
   
   م/ مهند التهامي - 01021102607
 ═══════════════════════════════════════════════════════════════
@@ -1589,7 +1588,7 @@ transform: scale(1.05);
 <script>
 console.log('═'.repeat(60));
 console.log('✅ منظومة تكويد المركبات - كفر صقر');
-console.log('🔒 نظام أمان متقدم - SHA-256 Password Hashing');
+console.log('🔒 نظام آمن - Supabase Authentication + RLS');
 console.log('✅ آمن 100% للرفع على GitHub');
 console.log('═'.repeat(60));
 
@@ -1835,44 +1834,8 @@ const getSecureConfig = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// SECURE AUTHENTICATION - SHA-256 Password Hashing
+// SESSION MANAGEMENT
 // ═══════════════════════════════════════════════════════════════
-// Email and Password are hashed using SHA-256
-// ⚠️ These are ONE-WAY hashes - CANNOT be reversed!
-// ═══════════════════════════════════════════════════════════════
-
-const STORED_HASHES = {
-    usernameHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", // SHA-256 hash of admin email
-    passwordHash: "a7e5464e053f294fdf2722bac2440aa90e1296fc28a1d8a66eb635238c3b5f95"  // SHA-256 hash of password
-};
-
-// SHA-256 Hash Function (Browser Native)
-async function hashString(str) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(str);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// Authenticate Admin (Async - uses SHA-256)
-const authenticateAdmin = async (username, password) => {
-    try {
-        const usernameHash = await hashString(username);
-        const passwordHash = await hashString(password);
-        
-        if (usernameHash === STORED_HASHES.usernameHash && 
-            passwordHash === STORED_HASHES.passwordHash) {
-            return { success: true, role: "SUPER", username: username };
-        }
-        
-        console.warn('⚠️ محاولة دخول فاشلة');
-        return { success: false, role: null, username: null };
-    } catch (error) {
-        console.error('❌ خطأ في التحقق:', error);
-        return { success: false, role: null, username: null };
-    }
-};
 
 const SESSION_KEY = 'ks_admin_session';
 const SESSION_TIMEOUT = 4 * 60 * 60 * 1000;
