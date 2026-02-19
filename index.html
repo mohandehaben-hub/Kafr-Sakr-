@@ -1366,6 +1366,8 @@ height: 300px;
 </div>
 
 <button id="downloadTemplateBtn" class="btn" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; margin-top: 15px;">📄 تحميل ملف نموذجي</button>
+
+<button id="cleanDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; margin-top: 15px;">🧹 تنظيف السجلات المكررة</button>
 </div>
 
 <div class="input-group">
@@ -2908,12 +2910,11 @@ const tbody = document.getElementById('dataTable');
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
 
 try {
-// Load from Supabase
+// Load ALL data from Supabase (no limit)
 const { data: orders, error } = await window.supabaseClient
 .from('orders')
 .select('*')
-.order('submitted_at', { ascending: false })
-.limit(100);
+.order('submitted_at', { ascending: false });
 
 if (error) throw error;
 
@@ -4185,6 +4186,118 @@ XLSX.utils.book_append_sheet(wb, ws, 'نموذج البيانات');
 XLSX.writeFile(wb, 'نموذج_استيراد_المركبات.xlsx');
 };
 
+// Clean Duplicates Button
+document.getElementById('cleanDuplicatesBtn').onclick = async () => {
+if (!confirm('🧹 هل تريد تنظيف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من Supabase\n✅ حذف التكرار من LocalStorage\n✅ الاحتفاظ بأحدث سجل فقط')) {
+return;
+}
+
+const loadingDiv = document.createElement('div');
+loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
+loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">🧹</div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تنظيف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
+document.body.appendChild(loadingDiv);
+
+try {
+// 1. Load all data from Supabase
+console.log('📥 جاري تحميل كل البيانات من Supabase...');
+const { data: allOrders, error: loadError } = await window.supabaseClient
+.from('orders')
+.select('*')
+.order('submitted_at', { ascending: false });
+
+if (loadError) throw loadError;
+
+console.log(`📊 تم تحميل ${allOrders.length} سجل من Supabase`);
+
+// 2. Find duplicates by national_id
+const seenNIDs = new Map(); // national_id -> latest record
+const duplicateIds = []; // IDs to delete
+
+allOrders.forEach(order => {
+if (!order.national_id) return; // Skip records without national_id
+
+if (seenNIDs.has(order.national_id)) {
+// Found duplicate - keep the newer one
+const existing = seenNIDs.get(order.national_id);
+const existingDate = new Date(existing.submitted_at || 0);
+const currentDate = new Date(order.submitted_at || 0);
+
+if (currentDate > existingDate) {
+// Current is newer - delete existing, keep current
+duplicateIds.push(existing.id);
+seenNIDs.set(order.national_id, order);
+} else {
+// Existing is newer - delete current
+duplicateIds.push(order.id);
+}
+} else {
+// First occurrence - keep it
+seenNIDs.set(order.national_id, order);
+}
+});
+
+console.log(`🔍 وجدت ${duplicateIds.length} سجل مكرر`);
+
+if (duplicateIds.length === 0) {
+loadingDiv.remove();
+alert('✅ لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
+return;
+}
+
+// 3. Delete duplicates from Supabase in batches
+console.log('🗑️ جاري حذف السجلات المكررة من Supabase...');
+const batchSize = 50;
+let deletedCount = 0;
+
+for (let i = 0; i < duplicateIds.length; i += batchSize) {
+const batch = duplicateIds.slice(i, i + batchSize);
+const { error: deleteError } = await window.supabaseClient
+.from('orders')
+.delete()
+.in('id', batch);
+
+if (deleteError) {
+console.error('خطأ في حذف دفعة:', deleteError);
+} else {
+deletedCount += batch.length;
+console.log(`✅ تم حذف ${deletedCount} من ${duplicateIds.length}`);
+}
+}
+
+// 4. Clean LocalStorage
+console.log('🧹 جاري تنظيف LocalStorage...');
+const uniqueOrders = Array.from(seenNIDs.values()).map(order => ({
+id: order.id,
+owner: order.owner_name,
+nationalId: order.national_id,
+phone: order.phone,
+address: order.address,
+vType: order.vehicle_type,
+vCode: order.code || '',
+vYear: order.vehicle_year,
+chassisNumber: order.chassis_number,
+motorNumber: order.motor_number,
+refNumber: order.ref_number,
+timestamp: order.submitted_at,
+status: order.status,
+images: order.images || []
+}));
+
+localStorage.setItem('vehicleOrders', JSON.stringify(uniqueOrders));
+console.log(`💾 تم حفظ ${uniqueOrders.length} سجل فريد في LocalStorage`);
+
+// 5. Reload data
+loadingDiv.remove();
+alert(`✅ تم تنظيف السجلات المكررة بنجاح!\n\n📊 الإحصائيات:\n• تم حذف: ${deletedCount} سجل مكرر\n• المتبقي: ${uniqueOrders.length} سجل فريد\n\nسيتم تحديث الجدول الآن...`);
+await loadAdminData();
+
+} catch (error) {
+loadingDiv.remove();
+console.error('❌ خطأ في تنظيف السجلات:', error);
+alert(`❌ حدث خطأ أثناء تنظيف السجلات:\n\n${error.message}`);
+}
+};
+
 let importedData = [];
 
 // Read Excel File
@@ -4410,18 +4523,25 @@ document.getElementById('progressStatus').textContent = status;
 };
 
 try {
-// Get existing data from localStorage for faster duplicate check
-updateProgress(0, 100, '⏳ جاري تحميل البيانات الحالية...');
-let existingOrders = [];
-try {
-const stored = localStorage.getItem('vehicleOrders');
-if (stored) existingOrders = JSON.parse(stored);
-} catch (e) {
-console.error('خطأ في قراءة LocalStorage:', e);
+// Load existing data from Supabase (not LocalStorage) for accurate duplicate check
+updateProgress(0, 100, '⏳ جاري تحميل البيانات من Supabase...');
+console.log('📥 جاري تحميل البيانات من Supabase للتحقق من التكرار...');
+
+const { data: existingOrders, error: loadError } = await window.supabaseClient
+.from('orders')
+.select('national_id')
+.not('national_id', 'is', null);
+
+if (loadError) {
+console.error('خطأ في تحميل البيانات:', loadError);
+throw loadError;
 }
 
+console.log(`✅ تم تحميل ${existingOrders.length} سجل من Supabase`);
+
 // Create a Set of existing national IDs for fast lookup
-const existingNIDs = new Set(existingOrders.map(o => o.nationalId));
+const existingNIDs = new Set(existingOrders.map(o => o.national_id));
+console.log(`🔍 عدد الأرقام القومية الموجودة: ${existingNIDs.size}`);
 
 updateProgress(10, 100, '⏳ جاري معالجة البيانات...');
 const codeInfo = await getSmartNextCode();
@@ -4496,14 +4616,8 @@ existingNIDs.add(record.nationalId); // Add to set to prevent duplicates within 
 successCount++;
 }
 
-// Save all to localStorage first (fast)
-updateProgress(50, 100, '💾 جاري الحفظ في LocalStorage...');
-existingOrders.push(...recordsToAdd);
-localStorage.setItem('vehicleOrders', JSON.stringify(existingOrders));
-console.log(`✅ تم حفظ ${recordsToAdd.length} سجل في LocalStorage`);
-
-// Then save to Supabase in batches (slower but in background)
-updateProgress(60, 100, '☁️ جاري الحفظ في Supabase...');
+// Save to Supabase first (primary storage)
+updateProgress(50, 100, '☁️ جاري الحفظ في Supabase...');
 console.log('⏳ جاري الحفظ في Supabase...');
 const batchSize = 50; // Supabase batchis 500, we use 50 for safety
 for (let i = 0; i < recordsToAdd.length; i += batchSize) {
@@ -4546,12 +4660,16 @@ await Promise.all(savePromises);
 console.log(`✅ تم حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Supabase`);
 }
 
+// Update LocalStorage cache after successful Supabase save
+updateProgress(95, 100, '💾 جاري تحديث الذاكرة المحلية...');
+await loadAdminData(); // Reload from Supabase to update LocalStorage
+
 updateProgress(100, 100, '✅ اكتمل الاستيراد!');
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('importProgress').style.display = 'none';
 document.getElementById('bulkImportModal').style.display = 'none';
 
-let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}`;
+let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في Supabase بنجاح`;
 if (errors.length > 0 && errors.length <= 5) {
 resultMsg += '\n\n❌ الأخطاء:\n' + errors.slice(0, 5).join('\n');
 if (errors.length > 5) {
@@ -4559,7 +4677,6 @@ resultMsg += `\n... و ${errors.length - 5} أخطاء أخرى`;
 }
 }
 alert(resultMsg);
-location.reload();
 
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
