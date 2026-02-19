@@ -3077,7 +3077,7 @@ const quickShowCount = Math.min(10, combinedOrders.length);
 const quickFragment = document.createDocumentFragment();
 
 for (let i = 0; i < quickShowCount; i++) {
-const item = allOrders[i];
+const item = combinedOrders[i];
 const tr = document.createElement('tr');
 tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
@@ -3116,7 +3116,7 @@ const endIndex = Math.min(currentIndex + batchSize, maxRows);
 const fragment = document.createDocumentFragment();
 
 for (let i = currentIndex; i < endIndex; i++) {
-const item = allOrders[i];
+const item = combinedOrders[i];
 const tr = document.createElement('tr');
 tr.innerHTML = `
 <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
@@ -3168,7 +3168,7 @@ const endIndex = Math.min(renderIndex + batchSize, maxIndex);
 const fragment = document.createDocumentFragment();
 
 for (let i = renderIndex; i < endIndex; i++) {
-const item = allOrders[i];
+const item = combinedOrders[i];
 const id = item.id;
 
 const statusInfo = window.getStatusDisplay(item.status || 'pending');
