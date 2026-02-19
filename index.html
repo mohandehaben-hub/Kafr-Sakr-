@@ -3217,7 +3217,21 @@ if (!newCode) {
 alert("❌ يرجى إدخال كود صحيح");
 return;
 }
+
+// Check if code already exists
 document.getElementById('loadingSpinner').style.display = 'block';
+const { data: existingCode, error: checkError } = await window.supabaseClient
+.from('orders')
+.select('id, owner_name, code')
+.eq('code', newCode.toString())
+.single();
+
+if (existingCode) {
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
+return;
+}
+
 const { error } = await window.supabaseClient
 .from('orders')
 .update({
@@ -3521,7 +3535,21 @@ if (!newCode) {
 alert("❌ يرجى إدخال كود صحيح");
 return;
 }
+
+// Check if code already exists
 document.getElementById('loadingSpinner').style.display = 'block';
+const { data: existingCode, error: checkError } = await window.supabaseClient
+.from('orders')
+.select('id, owner_name, code')
+.eq('code', newCode.toString())
+.single();
+
+if (existingCode) {
+document.getElementById('loadingSpinner').style.display = 'none';
+alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
+return;
+}
+
 const { error: codeError2 } = await window.supabaseClient
 .from('orders')
 .update({
@@ -4303,11 +4331,11 @@ return;
 
 // 3. Delete duplicates from Supabase in batches
 console.log('🗑️ جاري حذف السجلات المكررة من Supabase...');
-const batchSize = 50;
+const deleteBatchSize = 50;
 let deletedCount = 0;
 
-for (let i = 0; i < duplicateIds.length; i += batchSize) {
-const batch = duplicateIds.slice(i, i + batchSize);
+for (let i = 0; i < duplicateIds.length; i += deleteBatchSize) {
+const batch = duplicateIds.slice(i, i + deleteBatchSize);
 const { error: deleteError } = await window.supabaseClient
 .from('orders')
 .delete()
@@ -4580,18 +4608,31 @@ document.getElementById('progressStatus').textContent = status;
 };
 
 try {
-// Load existing data from Supabase (not LocalStorage) for accurate duplicate check
+// Load existing data from Supabase (with pagination for accurate duplicate check)
 updateProgress(0, 100, '⏳ جاري تحميل البيانات من Supabase...');
 console.log('📥 جاري تحميل البيانات من Supabase للتحقق من التكرار...');
 
-const { data: existingOrders, error: loadError } = await window.supabaseClient
+let existingOrders = [];
+let from = 0;
+const loadBatchSize = 1000;
+let hasMore = true;
+
+while (hasMore) {
+const { data: batch, error } = await window.supabaseClient
 .from('orders')
 .select('national_id')
-.not('national_id', 'is', null);
+.not('national_id', 'is', null)
+.range(from, from + loadBatchSize - 1);
 
-if (loadError) {
-console.error('خطأ في تحميل البيانات:', loadError);
-throw loadError;
+if (error) throw error;
+
+if (batch && batch.length > 0) {
+existingOrders = existingOrders.concat(batch);
+from += loadBatchSize;
+hasMore = batch.length === loadBatchSize;
+} else {
+hasMore = false;
+}
 }
 
 console.log(`✅ تم تحميل ${existingOrders.length} سجل من Supabase`);
@@ -4740,7 +4781,7 @@ document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('importProgress').style.display = 'none';
 document.getElementById('bulkImportModal').style.display = 'none';
 
-let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في Supabase بنجاح`;
+let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في Supabase: ${successCount} سجل\n💾 تم الحفظ في لوحة التحكم: ${successCount} سجل`;
 if (errors.length > 0 && errors.length <= 5) {
 resultMsg += '\n\n❌ الأخطاء:\n' + errors.slice(0, 5).join('\n');
 if (errors.length > 5) {
