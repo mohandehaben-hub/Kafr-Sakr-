@@ -2910,14 +2910,31 @@ const tbody = document.getElementById('dataTable');
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
 
 try {
-// Load ALL data from Supabase (no limit)
-const { data: orders, error } = await window.supabaseClient
+// Load ALL data from Supabase (handle pagination for large datasets)
+let allOrders = [];
+let from = 0;
+const batchSize = 1000;
+let hasMore = true;
+
+while (hasMore) {
+const { data: batch, error } = await window.supabaseClient
 .from('orders')
 .select('*')
-.order('submitted_at', { ascending: false });
+.order('submitted_at', { ascending: false })
+.range(from, from + batchSize - 1);
 
 if (error) throw error;
 
+if (batch && batch.length > 0) {
+allOrders = allOrders.concat(batch);
+from += batchSize;
+hasMore = batch.length === batchSize;
+} else {
+hasMore = false;
+}
+}
+
+const orders = allOrders;
 console.log(`✅ تم تحميل ${orders ? orders.length : 0} سجل من Supabase`);
 
 let total = 0, coded = 0, pending = 0;
@@ -2983,7 +3000,7 @@ console.error('خطأ في قراءة LocalStorage:', e);
 }
 
 // Combine both sources (remove duplicates by nationalId AND refNumber)
-const allOrders = [...supabaseOrders];
+const combinedOrders = [...supabaseOrders];
 const existingNIDs = new Set(supabaseOrders.map(o => o.nationalId).filter(nid => nid));
 const existingRefs = new Set(supabaseOrders.map(o => o.refNumber).filter(ref => ref));
 
@@ -2993,7 +3010,7 @@ const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
 const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
   
 if (!isDuplicateNID && !isDuplicateRef) {
-allOrders.push(order);
+combinedOrders.push(order);
 if (order.nationalId) existingNIDs.add(order.nationalId);
 if (order.refNumber) existingRefs.add(order.refNumber);
 total++;
@@ -3005,11 +3022,11 @@ pending++;
 }
 });
 
-console.log(`📊 تم تحميل ${supabaseOrders.length} من Supabase و ${localOrders.length} من LocalStorage (إجمالي: ${allOrders.length} بعد إزالة التكرار)`);
+console.log(`📊 تم تحميل ${supabaseOrders.length} من Supabase و ${localOrders.length} من LocalStorage (إجمالي: ${combinedOrders.length} بعد إزالة التكرار)`);
 
 // Save all data to LocalStorage for faster loading next time
 try {
-const dataToSave = allOrders.map(order => ({
+const dataToSave = combinedOrders.map(order => ({
 id: order.id,
 owner: order.owner,
 nationalId: order.nationalId,
@@ -3032,7 +3049,7 @@ console.warn('⚠️ لم يتم الحفظ في LocalStorage:', e);
 }
 
 // Sort by vCode (numeric) - codes first, then non-coded at end
-allOrders.sort((a, b) => {
+combinedOrders.sort((a, b) => {
 const codeA = a.vCode ? parseInt(a.vCode) : 999999;
 const codeB = b.vCode ? parseInt(b.vCode) : 999999;
 return codeA - codeB;
@@ -3056,7 +3073,7 @@ if (isMobile) {
 console.log('📱 وضع الموبايل: عرض تدريجي سريع');
 
 // Show first 10 rows IMMEDIATELY
-const quickShowCount = Math.min(10, allOrders.length);
+const quickShowCount = Math.min(10, combinedOrders.length);
 const quickFragment = document.createDocumentFragment();
 
 for (let i = 0; i < quickShowCount; i++) {
@@ -3086,7 +3103,7 @@ console.log(`⚡ تم عرض أول ${quickShowCount} صف فوراً`);
 // Now load the rest progressively (10 at a time)
 let currentIndex = quickShowCount;
 const batchSize = 10;
-const maxRows = Math.min(allOrders.length, 200); // Limit to 200 on mobile
+const maxRows = Math.min(combinedOrders.length, 200); // Limit to 200 on mobile
 
 function loadNextBatch() {
 if (currentIndex >= maxRows) {
@@ -3141,8 +3158,8 @@ console.log('💻 وضع الكمبيوتر: عرض تدريجي');
 let renderIndex = 0;
 const batchSize = 10;
 const renderDelay = 200;
-const maxInitialRows = allOrders.length;
-const maxIndex = Math.min(maxInitialRows, allOrders.length);
+const maxInitialRows = combinedOrders.length;
+const maxIndex = Math.min(maxInitialRows, combinedOrders.length);
 
 function renderNextBatch() {
 try {
@@ -3340,15 +3357,15 @@ setTimeout(renderNextBatch, 500);
 }
 
 // Start progressive rendering
-console.log('🚀 بدء العرض التدريجي: ' + allOrders.length + ' سجل');
+console.log('🚀 بدء العرض التدريجي: ' + combinedOrders.length + ' سجل');
 renderNextBatch();
 }; 
 document.getElementById('statTotal').innerText = total; 
 document.getElementById('statCoded').innerText = coded; 
 document.getElementById('statPending').innerText = pending;
 
-console.log('✅ تم تحميل ' + allOrders.length + ' سجل بعد إزالة التكرار');
-console.log('🔍 البحث يعمل على كل الـ ' + allOrders.length + ' سجل');
+console.log('✅ تم تحميل ' + combinedOrders.length + ' سجل بعد إزالة التكرار');
+console.log('🔍 البحث يعمل على كل الـ ' + combinedOrders.length + ' سجل');
 
 // Show "Load All Data" button if there might be more data
 if (supabaseOrders.length >= 50) {document.getElementById('loadAllDataBtn').style.display = 'inline-block';
@@ -3372,9 +3389,32 @@ document.getElementById('loadingMoreInfo').style.display = 'inline-block';
 console.log('📥 جاري تحميل كل البيانات...');
 
 try {
+// Load ALL data from Supabase without limit (handle pagination)
+let allSupabaseOrders = [];
+let from = 0;
+const batchSize = 1000;
+let hasMore = true;
 
-// Load ALL data without
+while (hasMore) {
+const { data: batch, error } = await window.supabaseClient
+.from('orders')
+.select('*')
+.order('submitted_at', { ascending: false })
+.range(from, from + batchSize - 1);
 
+if (error) throw error;
+
+if (batch && batch.length > 0) {
+allSupabaseOrders = allSupabaseOrders.concat(batch);
+from += batchSize;
+hasMore = batch.length === batchSize;
+console.log(`📥 تم تحميل ${allSupabaseOrders.length} سجل...`);
+} else {
+hasMore = false;
+}
+}
+
+const supabaseOrders = allSupabaseOrders;
 console.log(`✅ تم تحميل كل البيانات: ${supabaseOrders.length} سجل`);
 
 // Process data (same as loadAdminData)
