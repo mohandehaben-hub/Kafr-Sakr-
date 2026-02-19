@@ -4642,16 +4642,30 @@ address: record.address,
 chassis_number: record.chassisNumber,
 motor_number: record.motorNumber,
 images: record.images || [],
-submitted_at: record.timestamp,
+submitted_at: record.timestamp, // ✅ REQUIRED FIELD
 ref_number: record.refNumber,
 status: record.status,
-code: record.vCode || '',
-coded_at: record.codedAt
+code: record.vCode || null
 }]);
 if (error) throw error;
 return true;
 } catch (e) {
-console.error('خطأ في حفظ السجل:', e);
+console.error('❌ خطأ في حفظ السجل:', {
+message: e.message,
+details: e.details,
+hint: e.hint,
+code: e.code,
+fullError: e,
+recordData: {
+owner_name: record.owner,
+national_id: record.nationalId,
+phone: record.phone,
+vehicle_type: record.vType,
+vehicle_year: record.vYear
+}
+});
+errorCount++;
+errors.push(`خطأ: ${e.message || e.toString()}`);
 return null;
 }
 });
