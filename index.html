@@ -4238,14 +4238,31 @@ loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">🧹</di
 document.body.appendChild(loadingDiv);
 
 try {
-// 1. Load all data from Supabase
+// 1. Load all data from Supabase (with pagination for large datasets)
 console.log('📥 جاري تحميل كل البيانات من Supabase...');
-const { data: allOrders, error: loadError } = await window.supabaseClient
+let allOrders = [];
+let from = 0;
+const batchSize = 1000;
+let hasMore = true;
+
+while (hasMore) {
+const { data: batch, error } = await window.supabaseClient
 .from('orders')
 .select('*')
-.order('submitted_at', { ascending: false });
+.order('submitted_at', { ascending: false })
+.range(from, from + batchSize - 1);
 
-if (loadError) throw loadError;
+if (error) throw error;
+
+if (batch && batch.length > 0) {
+allOrders = allOrders.concat(batch);
+from += batchSize;
+hasMore = batch.length === batchSize;
+console.log(`📥 تم تحميل ${allOrders.length} سجل...`);
+} else {
+hasMore = false;
+}
+}
 
 console.log(`📊 تم تحميل ${allOrders.length} سجل من Supabase`);
 
