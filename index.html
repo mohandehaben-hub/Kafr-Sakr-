@@ -1799,127 +1799,7 @@ console.log(el ? '✅ ' + id + ': موجود' : '❌ ' + id + ': مفقود');
 // Secure Configuration - مدمج في الملف
 // ═══════════════════════════════════════════════════════════════
 
-const xorCipher = (str, key) => {
-    let result = '';
-    for (let i = 0; i < str.length; i++) {
-        result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-    }
-    return result;
-};
-
-const b64Encode = (str) => btoa(unescape(encodeURIComponent(str)));
-const b64Decode = (str) => decodeURIComponent(escape(atob(str)));
-
-const encrypt = (data, key) => {
-    const xored = xorCipher(data, key);
-    return b64Encode(xored);
-};
-
-const decrypt = (encrypted, key) => {
-    const decoded = b64Decode(encrypted);
-    return xorCipher(decoded, key);
-};
-
-const getSecureConfig = () => {
-    const encryptedCloudinary = {
-        n: "ZGczdTNmMjJu",
-        p: "V09SS1NBUVI="
-    };
-    return {
-        cloudinary: {
-            cloudName: atob(encryptedCloudinary.n),
-            uploadPreset: atob(encryptedCloudinary.p)
-        }
-    };
-};
-
-// ═══════════════════════════════════════════════════════════════
-// SESSION MANAGEMENT
-// ═══════════════════════════════════════════════════════════════
-
-const SESSION_KEY = 'ks_admin_session';
-const SESSION_TIMEOUT = 4 * 60 * 60 * 1000;
-
-const createSession = (username, role) => {
-    const session = { username: username, role: role, timestamp: Date.now(), token: btoa(username + Date.now() + Math.random()) };
-    const encrypted = encrypt(JSON.stringify(session), username + "KafrSakr");
-    sessionStorage.setItem(SESSION_KEY, encrypted);
-    return session;
-};
-
-const getSession = () => {
-    try {
-        const encrypted = sessionStorage.getItem(SESSION_KEY);
-        if (!encrypted) return null;
-        const possibleUsers = ['admin', 'supervisor'];
-        for (let user of possibleUsers) {
-            try {
-                const decrypted = decrypt(encrypted, user + "KafrSakr");
-                const session = JSON.parse(decrypted);
-                if (Date.now() - session.timestamp > SESSION_TIMEOUT) {
-                    clearSession();
-                    return null;
-                }
-                return session;
-            } catch (e) { continue; }
-        }
-        return null;
-    } catch (e) { return null; }
-};
-
-const clearSession = () => { sessionStorage.removeItem(SESSION_KEY); };
-const isAuthenticated = () => { const session = getSession(); return session !== null; };
-
-const ENCRYPTION_KEY = "KafrSakr@2026#SecureData";
-
-const encryptSensitiveData = (data) => {
-    if (data.nationalId && data.nationalId.length === 14) {
-        data.nationalId_encrypted = encrypt(data.nationalId, ENCRYPTION_KEY);
-        // Show full national ID (encryption removed)
-    }
-    if (data.phone && data.phone.length === 11) {
-        data.phone_encrypted = encrypt(data.phone, ENCRYPTION_KEY);
-        // Show full phone number (encryption removed)
-    }
-    if (data.birthDate) {
-        data.birthDate_encrypted = encrypt(data.birthDate, ENCRYPTION_KEY);
-    }
-    return data;
-};
-
-const decryptSensitiveData = (data) => {
-    if (data.nationalId_encrypted) {
-        data.nationalId = decrypt(data.nationalId_encrypted, ENCRYPTION_KEY);
-    }
-    if (data.phone_encrypted) {
-        data.phone = decrypt(data.phone_encrypted, ENCRYPTION_KEY);
-    }
-    if (data.birthDate_encrypted) {
-        data.birthDate = decrypt(data.birthDate_encrypted, ENCRYPTION_KEY);
-    }
-    return data;
-};
-
-const setupAdminCredentials = (credentials) => {
-    localStorage.setItem('admin_credentials', JSON.stringify(credentials));
-    console.log('✅ تم حفظ بيانات الدخول');
-};
-
-window.SecureConfig = {
-    getSecureConfig,
-    authenticateAdmin,
-    createSession,
-    getSession,
-    clearSession,
-    isAuthenticated,
-    encryptSensitiveData,
-    decryptSensitiveData,
-    encrypt,
-    decrypt,
-    setupAdminCredentials
-};
-
-console.log('✅ نظام الأمان جاهز ومدمج في الملف');
+console.log('✅ نظام الأمان جاهز - Supabase Authentication');
 </script>
 
 <!-- Supabase Authentication SDK -->
@@ -2711,8 +2591,6 @@ let currentEditId = "";
 let userRole = "";
 let currentUsername = "";
 
-// Removed Firebase unsubscribe references (using Supabase now)
-
 // Log Admin Action to Supabase
 async function logAdminAction(username, action, details) {
 try {
@@ -3493,7 +3371,6 @@ document.getElementById('loadingMoreInfo').style.display = 'inline-block';
 console.log('📥 جاري تحميل كل البيانات...');
 
 try {
-// Removed Firebase unsubscribe (using Supabase now)
 
 // Load ALL data without
 
@@ -3736,7 +3613,6 @@ alert('حدث خطأ في تحميل البيانات');
 
 // Load Complaints
 function loadComplaints() {
-// تم إزالة Firebase listener - البيانات تُحمل من Supabase
 }
 
 // Show Orders/Complaints
