@@ -3675,7 +3675,7 @@ document.getElementById('statPending').innerText = pending;
 document.getElementById('loadingMoreInfo').style.display = 'none';
 
 initializePagination(ordersArray);
-console.log(`🎉 تم تحميل كل البيانات بنجاح: ${allOrders.length} سجل`);
+console.log(`🎉 تم تحميل كل البيانات بنجاح: ${supabaseOrders.length} سجل من Supabase`);
 window.isLoadingAll = false;
 
 } catch (error) {
