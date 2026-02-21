@@ -3469,6 +3469,8 @@ const allOrders = [...supabaseOrders];
 const existingNIDs = new Set(supabaseOrders.map(o => o.nationalId).filter(nid => nid));
 const existingRefs = new Set(supabaseOrders.map(o => o.refNumber).filter(ref => ref));
 
+let total = 0, coded = 0, pending = 0;
+
 localOrders.forEach(order => {
 const isDuplicateNID = order.nationalId && existingNIDs.has(order.nationalId);
 const isDuplicateRef = order.refNumber && existingRefs.has(order.refNumber);
