@@ -805,9 +805,16 @@
     <h2 style="text-align: center; color: white; margin-top: 50px; margin-bottom: 15px; font-size: 2.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
     أهلاً بك في بوابة الخدمات الرقمية المتطورة
     </h2>
-    <p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 50px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    <p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 20px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">
     يرجى اختيار القسم الذي ترغب في الدخول إليه
     </p>
+
+    <!-- Back to Admin Panel Button (shown only when logged in) -->
+    <div style="text-align: center; margin-bottom: 30px;">
+    <button id="backToAdminBtn" onclick="backToAdminPanel()" style="display: none; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; padding: 15px 35px; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(26, 82, 118, 0.3); transition: all 0.3s;">
+    🎛️ العودة للوحة التحكم
+    </button>
+    </div>
 
     <div class="portal-container">
     <!-- Tuk Tuk Coding Portal -->
@@ -2866,6 +2873,7 @@
     document.getElementById('goPortalBtn').style.display = 'none';
     document.getElementById('logoutBtn').style.display = 'none';
     document.getElementById('loginBtn').style.display = 'inline-flex';
+    document.getElementById('backToAdminBtn').style.display = 'none'; // Hide back button
     const badge = document.getElementById('roleBadge');
     if (badge) badge.remove();
     
@@ -2883,7 +2891,27 @@
     document.getElementById('complaintInquiryPage').style.display = 'none';
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
+    
+    // Show "Back to Admin Panel" button if logged in
+    const backToAdminBtn = document.getElementById('backToAdminBtn');
+    if (backToAdminBtn && userRole) {
+    backToAdminBtn.style.display = 'inline-flex';
+    }
+    
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
+    };
+
+    // Back to Admin Panel function
+    window.backToAdminPanel = function() {
+    document.getElementById('portalSection').style.display = 'none';
+    document.getElementById('citizenPage').style.display = 'none';
+    document.getElementById('inquiryPage').style.display = 'none';
+    document.getElementById('complaintsPage').style.display = 'none';
+    document.getElementById('complaintInquiryPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'block';
+    document.getElementById('goPortalBtn').style.display = 'inline-flex';
+    document.getElementById('backToAdminBtn').style.display = 'none';
+    console.log('🎛️ العودة للوحة التحكم');
     };
 
     async function loadAdminData() {
