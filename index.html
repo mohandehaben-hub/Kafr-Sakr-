@@ -2169,7 +2169,25 @@
 
     if (error) throw error;
 
-    const data = orders && orders.length > 0 ? orders[0] : null;
+    const rawData = orders && orders.length > 0 ? orders[0] : null;
+    
+    // Convert Supabase data to expected format
+    const data = rawData ? {
+    id: rawData.id,
+    owner: rawData.owner_name,
+    nationalId: rawData.national_id,
+    phone: rawData.phone,
+    vType: rawData.vehicle_type,
+    vYear: rawData.vehicle_year,
+    address: rawData.address,
+    vCode: rawData.code,
+    refNumber: rawData.ref_number,
+    timestamp: rawData.submitted_at,
+    codedAt: rawData.coded_at,
+    status: rawData.status,
+    statusHistory: rawData.status_history || [],
+    images: rawData.images || []
+    } : null;
 
     const resultDiv = document.getElementById('inquiryResult');
 
@@ -3577,7 +3595,85 @@
     };
 
     // Load Complaints
-    function loadComplaints() {
+    async function loadComplaints() {
+    console.log('📥 جاري تحميل الشكاوى...');
+    
+    try {
+    const { data: complaints, error } = await window.supabaseClient
+    .from('complaints')
+    .select('*')
+    .order('submitted_at', { ascending: false });
+
+    if (error) throw error;
+
+    const tableBody = document.getElementById('compTableBody');
+    tableBody.innerHTML = '';
+
+    // Update complaints count
+    document.getElementById('statCompTotal').innerText = complaints ? complaints.length : 0;
+
+    if (!complaints || complaints.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">لا توجد شكاوى</td></tr>';
+    return;
+    }
+
+    complaints.forEach((complaint) => {
+    const statusColor = complaint.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
+    const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
+    
+    const tr = document.createElement('tr');
+    tr.style.background = 'rgba(255, 255, 255, 0.85)';
+    
+    tr.innerHTML = `
+    <td style="padding: 18px; font-weight: 600;">${complaint.owner_name || 'غير محدد'}</td>
+    <td style="padding: 18px; font-family: monospace;">${complaint.phone || '-'}</td>
+    <td style="padding: 18px;"><span style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 6px 12px; border-radius: 8px; font-weight: 600;">${complaint.complaint_type || 'غير محدد'}</span></td>
+    <td style="padding: 18px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${complaint.details || '-'}">${complaint.details || '-'}</td>
+    <td style="padding: 18px; text-align: center;">
+    <button class="btn btn-view-complaint-images" style="background: rgba(26, 82, 118, 0.12); color: var(--primary); padding: 8px 16px; font-weight: 600;">🖼️ عرض الصور</button>
+    </td>
+    <td style="padding: 18px;"><span style="background: ${statusColor}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${statusText}</span></td>
+    <td style="padding: 18px;">
+    <button class="btn btn-reply-complaint" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white; padding: 8px 16px; font-weight: 600; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">💬 رد</button>
+    </td>
+    `;
+
+    // View images button
+    tr.querySelector('.btn-view-complaint-images').onclick = () => {
+    if (complaint.images) {
+    if (typeof complaint.images === 'object' && !Array.isArray(complaint.images)) {
+    showCategorizedImages(complaint.images);
+    } else if (Array.isArray(complaint.images)) {
+    viewImages(complaint.images);
+    }
+    } else {
+    alert("⚠️ لا توجد صور متاحة للعرض");
+    }
+    };
+
+    // Reply button
+    tr.querySelector('.btn-reply-complaint').onclick = () => {
+    document.getElementById('complaintReplyModal').style.display = 'block';
+    document.getElementById('complaintReplyText').value = complaint.reply || '';
+    document.getElementById('sendWhatsAppReply').checked = true;
+    window.currentComplaintReply = { 
+    item: {
+    ownerName: complaint.owner_name,
+    phone: complaint.phone,
+    type: complaint.complaint_type
+    }, 
+    id: complaint.id 
+    };
+    };
+
+    tableBody.appendChild(tr);
+    });
+
+    console.log(`✅ تم تحميل ${complaints.length} شكوى`);
+    } catch (error) {
+    console.error('❌ خطأ في تحميل الشكاوى:', error);
+    document.getElementById('compTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">❌ حدث خطأ في تحميل الشكاوى</td></tr>';
+    }
     }
 
     // Show Orders/Complaints
@@ -3915,23 +4011,27 @@
     }
 
     // Load Admin Logs
-    function loadAdminLogs() {
-    // Unsubscribe from previous listener if exists
-    if (adminLogsUnsubscribe && typeof adminLogsUnsubscribe === 'function') {
-    adminLogsUnsubscribe();
-    }
+    async function loadAdminLogs() {
+    console.log('📥 جاري تحميل سجل المشرفين...');
+    
+    try {
+    const { data: logs, error } = await window.supabaseClient
+    .from('admin_logs')
+    .select('*')
+    .order('logged_at', { ascending: false })
+    .limit(200);
 
-    adminLogsUnsubscribe =((adminLogsRef("timestamp", "desc")(200)), (snap) => {
+    if (error) throw error;
+
     const tableBody = document.getElementById('adminLogsTableBody');
     tableBody.innerHTML = '';
 
-    if (snap.empty) {
+    if (!logs || logs.length === 0) {
     tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">لا يوجد سجل عمليات</td></tr>';
     return;
     }
 
-    snap.forEach(s => {
-    const item = s.data();
+    logs.forEach(item => {
     const roleIcon = item.role === 'SUPER' ? '👑' : item.role === 'ADMIN' ? '🔧' : '👁️';
     const roleText = item.role === 'SUPER' ? 'مدير عام' : item.role === 'ADMIN' ? 'مشرف' : 'عرض فقط';
 
@@ -3945,12 +4045,17 @@
     </td>
     <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color: var(--primary);">${item.action}</td>
     <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color: #555;">${item.details}</td>
-    <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family: monospace; color: #999;">${item.ipAddress || 'N/A'}</td>
+    <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.logged_at)}</td>
+    <td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family: monospace; color: #999;">${item.ip_address || 'N/A'}</td>
     `;
     tableBody.appendChild(tr);
     });
-    });
+
+    console.log(`✅ تم تحميل ${logs.length} سجل`);
+    } catch (error) {
+    console.error('❌ خطأ في تحميل سجل المشرفين:', error);
+    document.getElementById('adminLogsTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">❌ حدث خطأ في تحميل السجل</td></tr>';
+    }
     }
 
     // Export Excel
