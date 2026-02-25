@@ -783,7 +783,7 @@
     alt="علم الشرقية">
     </div>
     <div class="header-title" style="flex: 1; min-width: 150px;">
-    <h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
+    <h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">� رئاسة مركز ومدينة كفر صقر</h1>>
     <small style="font-size: 0.65rem; opacity: 0.85;">د/ أحمد المقدم</small>
     </div>
     <div style="display:flex; gap:6px; flex-wrap: wrap;">
@@ -3651,8 +3651,9 @@
     <button class="btn btn-view-complaint-images" style="background: rgba(26, 82, 118, 0.12); color: var(--primary); padding: 8px 16px; font-weight: 600;">🖼️ عرض الصور</button>
     </td>
     <td style="padding: 18px;"><span style="background: ${statusColor}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${statusText}</span></td>
-    <td style="padding: 18px;">
+    <td style="padding: 18px; display: flex; gap: 8px; flex-wrap: wrap;">
     <button class="btn btn-reply-complaint" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white; padding: 8px 16px; font-weight: 600; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'};">💬 رد</button>
+    <button class="btn btn-delete-complaint" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; padding: 8px 16px; font-weight: 600; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'};">🗑️ حذف</button>
     </td>
     `;
 
@@ -3683,6 +3684,44 @@
     id: complaint.id 
     };
     };
+
+    // Delete button (SUPER only)
+    const deleteBtn = tr.querySelector('.btn-delete-complaint');
+    if (deleteBtn) {
+    deleteBtn.onclick = async () => {
+    if (!confirm(`⚠️ هل أنت متأكد من حذف هذه الشكوى؟\n\nالمقدم من: ${complaint.owner_name}\nالنوع: ${complaint.complaint_type}\n\n⚠️ هذا الإجراء لا يمكن التراجع عنه!`)) {
+    return;
+    }
+
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+    const { error } = await window.supabaseClient
+    .from('complaints')
+    .delete()
+    .eq('id', complaint.id);
+
+    if (error) {
+    console.error('❌ خطأ في حذف الشكوى:', error);
+    throw error;
+    }
+
+    // Log delete action
+    await logAdminAction(currentUsername, 'حذف شكوى', `تم حذف شكوى من نوع: ${complaint.complaint_type} للمواطن: ${complaint.owner_name}`);
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    alert("✅ تم حذف الشكوى بنجاح!");
+
+    // Reload complaints
+    await loadComplaints();
+
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ في حذف الشكوى:', error);
+    alert(`❌ حدث خطأ أثناء حذف الشكوى:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    }
+    };
+    }
 
     tableBody.appendChild(tr);
     });
