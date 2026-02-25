@@ -1158,9 +1158,8 @@
     <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
     <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
-    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
+    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none;">📜 سجل المشرفين</button>
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
-    <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
     <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">👁️ إظهار/إخفاء الأعمدة</button>
     <div style="flex: 1; display: flex; gap: 10px;">
     <select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
@@ -1470,29 +1469,6 @@
     to { opacity: 1; }
     }
     </style>
-    </div>
-    </div>
-
-    <!-- Modal for Date Filter -->
-    <div id="dateFilterModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
-    <div style="background: white; margin: 10% auto; padding: 45px; width: 92%; max-width: 500px; border-radius: 35px; position: relative;">
-    <span onclick="document.getElementById('dateFilterModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
-    <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📅 فلترة حسب التاريخ</h3>
-
-    <div class="input-group">
-    <label>من تاريخ:</label>
-    <input type="date" id="filterFromDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
-    </div>
-
-    <div class="input-group">
-    <label>إلى تاريخ:</label>
-    <input type="date" id="filterToDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
-    </div>
-
-    <div style="display:flex; gap:15px; margin-top:35px;">
-    <button id="applyDateFilterBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">✅ تطبيق الفلتر</button>
-    <button onclick="clearDateFilter()" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">🔄 إعادة تعيين</button>
-    </div>
     </div>
     </div>
 
@@ -2734,6 +2710,12 @@
     bulkImportBtn.style.display = 'none';
     }
 
+    // Show admin logs button only for SUPER
+    const adminLogsBtn = document.getElementById('showAdminLogsBtn');
+    if (userRole === 'SUPER' && adminLogsBtn) {
+    adminLogsBtn.style.display = 'inline-flex';
+    }
+
     // Hide cleanup button for non-SUPER users
     const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
     const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
@@ -3734,11 +3716,12 @@
     }
 
     // Show Orders/Complaints
-    document.getElementById('showOrdersBtn').onclick = () => {
+    document.getElementById('showOrdersBtn').onclick = async () => {
     document.getElementById('ordersTableContainer').style.display = 'block';
     document.getElementById('complaintsTableContainer').style.display = 'none';
     document.getElementById('adminLogsTableContainer').style.display = 'none';
     showAllOrdersInTable();
+    await logAdminAction(currentUsername, 'عرض جدول المركبات', 'قام بعرض جدول المركبات');
     };
 
     // Status Change Modal Handler
@@ -3848,11 +3831,12 @@
     }
     };
 
-    document.getElementById('showComplaintsBtn').onclick = () => {
+    document.getElementById('showComplaintsBtn').onclick = async () => {
     document.getElementById('ordersTableContainer').style.display = 'none';
     document.getElementById('complaintsTableContainer').style.display = 'block';
     document.getElementById('adminLogsTableContainer').style.display = 'none';
     loadComplaints();
+    await logAdminAction(currentUsername, 'عرض قائمة الشكاوى', 'قام بعرض قائمة الشكاوى');
     };
 
     // Complaint Reply Modal Handler
@@ -3920,11 +3904,12 @@
     }
     };
 
-    document.getElementById('showAdminLogsBtn').onclick = () => {
+    document.getElementById('showAdminLogsBtn').onclick = async () => {
     document.getElementById('ordersTableContainer').style.display = 'none';
     document.getElementById('complaintsTableContainer').style.display = 'none';
     document.getElementById('adminLogsTableContainer').style.display = 'block';
     loadAdminLogs();
+    await logAdminAction(currentUsername, 'عرض سجل المشرفين', 'قام بعرض سجل المشرفين');
     };
 
     // Filter functions for stat cards
@@ -4038,13 +4023,6 @@
 
     window.showActivityLog = showActivityLog;
 
-    // Date Filter
-    let dateFilterActive = false;
-    let filterFromTimestamp = null;
-    let filterToTimestamp = null; 
-    document.getElementById('dateFilterBtn').onclick = () => {document.getElementById('dateFilterModal').style.display = 'block';
-    };
-
     // Toggle columns button (mobile only)
     document.getElementById('toggleColumnsBtn').onclick = () => {
     const table = document.querySelector('#dataTable').parentElement.parentElement.querySelector('table');
@@ -4056,59 +4034,6 @@
     document.getElementById('toggleColumnsBtn').innerHTML = '👁️ إخفاء الأعمدة الزيادة';
     }
     };
-
-    document.getElementById('applyDateFilterBtn').onclick = () => {
-    const fromDate = document.getElementById('filterFromDate').value;
-    const toDate = document.getElementById('filterToDate').value;
-
-    if (!fromDate || !toDate) {
-    alert("❌ يرجى اختيار التاريخ من والى");
-    return;
-    }
-
-    filterFromTimestamp = new Date(fromDate).setHours(0, 0, 0, 0);
-    filterToTimestamp = new Date(toDate).setHours(23, 59, 59, 999);
-    dateFilterActive = true;
-    document.getElementById('dateFilterModal').style.display = 'none';
-    document.getElementById('filterStatus').style.display = 'block';
-    document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات من ${fromDate} إلى ${toDate}`;
-
-    applyDateFilter();
-    };
-
-    function clearDateFilter() {
-    dateFilterActive = false;
-    filterFromTimestamp = null;
-    filterToTimestamp = null; 
-    document.getElementById('filterFromDate').value = ''; 
-    document.getElementById('filterToDate').value = ''; 
-    document.getElementById('dateFilterModal').style.display = 'none'; 
-    document.getElementById('filterStatus').style.display = 'none';
-    showAllOrdersInTable();
-    }
-
-    window.clearDateFilter = clearDateFilter;
-
-    function applyDateFilter() {
-    let count = 0;
-    document.querySelectorAll('#dataTable tr').forEach(row => {
-    const timestampCell = row.cells[5]; // Date column
-    if (timestampCell) {
-    const dateText = timestampCell.innerText;
-    // Try to parse the date - this is approximate
-    const rowDate = new Date(dateText.split(' ')[0].split('/').reverse().join('-'));
-    const rowTimestamp = rowDate.getTime();
-
-    if (rowTimestamp >= filterFromTimestamp && rowTimestamp <= filterToTimestamp) {
-    row.style.display = '';
-    count++;
-    } else {
-    row.style.display = 'none';
-    }
-    }
-    }); 
-    document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات المفلترة (${count} طلب)`;
-    }
 
     // Load Admin Logs
     async function loadAdminLogs() {
@@ -4216,29 +4141,21 @@
     // Create workbook
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Statistics
-    const statsData = [
-    ['📊 إحصائيات منظومة كفر صقر'],
-    [''],
-    ['📋 بيانات المركبات'],
-    ['إجمالي الطلبات', totalVehicles],
-    ['✅ تم التكويد', codedVehicles],
-    ['⏳ قيد الانتظار', pendingVehicles],
-    [''],
-    ['⚖️ بيانات الشكاوى'],
-    ['إجمالي الشكاوى', totalComplaints],
-    ['✅ تم الرد', repliedComplaints],
-    ['⏳ قيد المراجعة', pendingComplaints],
-    [''],
-    ['📅 تاريخ التصدير', new Date().toLocaleString('ar-EG')]
-    ];
-    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
-    statsSheet['!cols'] = [{ wch: 25 }, { wch: 15 }];
-    XLSX.utils.book_append_sheet(wb, statsSheet, 'الإحصائيات');
-
-    // Sheet 2: Vehicles Data
+    // Sheet 1: Vehicles Data with Statistics Header
     console.log('📝 جاري تجهيز بيانات المركبات...');
+    
+    // Create statistics section as table header
     const vehiclesData = [
+    ['📊 إحصائيات منظومة كفر صقر', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['📋 بيانات المركبات', '', '⚖️ بيانات الشكاوى', '', '', '', '', ''],
+    ['إجمالي الطلبات', totalVehicles, 'إجمالي الشكاوى', totalComplaints, '', '', '', ''],
+    ['✅ تم التكويد', codedVehicles, '✅ تم الرد', repliedComplaints, '', '', '', ''],
+    ['⏳ قيد الانتظار', pendingVehicles, '⏳ قيد المراجعة', pendingComplaints, '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['📅 تاريخ التصدير: ' + new Date().toLocaleString('ar-EG'), '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
     ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
     ];
 
@@ -4251,18 +4168,20 @@
     const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
     
     vehiclesData.push([
-    vehicle.owner_name || '-',
-    "'" + (vehicle.national_id || '-'), // Add ' prefix to prevent scientific notation
-    "'" + (vehicle.phone || '-'), // Add ' prefix
-    vehicle.vehicle_type || '-',
-    vehicle.plate_number || '-',
-    vehicle.code || '-',
+    vehicle.owner_name || '',
+    vehicle.national_id || '',
+    vehicle.phone || '',
+    vehicle.vehicle_type || '',
+    vehicle.plate_number || '',
+    vehicle.code || '',
     statusText,
     formattedDate
     ]);
     });
 
     const vehiclesSheet = XLSX.utils.aoa_to_sheet(vehiclesData);
+    
+    // Set column widths
     vehiclesSheet['!cols'] = [
     { wch: 20 }, // اسم المالك
     { wch: 18 }, // الرقم القومي
@@ -4273,9 +4192,35 @@
     { wch: 15 }, // الحالة
     { wch: 25 }  // تاريخ التقديم
     ];
+
+    // Format cells as text for national_id and phone (starting from row 11 - after header)
+    const range = XLSX.utils.decode_range(vehiclesSheet['!ref']);
+    for (let R = 11; R <= range.e.r; ++R) {
+    // National ID column (B)
+    const cellRefB = XLSX.utils.encode_cell({ r: R, c: 1 });
+    if (vehiclesSheet[cellRefB]) {
+    vehiclesSheet[cellRefB].t = 's'; // Set type to string
+    vehiclesSheet[cellRefB].z = '@'; // Set format to text
+    }
+    // Phone column (C)
+    const cellRefC = XLSX.utils.encode_cell({ r: R, c: 2 });
+    if (vehiclesSheet[cellRefC]) {
+    vehiclesSheet[cellRefC].t = 's'; // Set type to string
+    vehiclesSheet[cellRefC].z = '@'; // Set format to text
+    }
+    }
+
+    // Merge cells for statistics header
+    vehiclesSheet['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }, // Title row
+    { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } }, // بيانات المركبات
+    { s: { r: 2, c: 2 }, e: { r: 2, c: 4 } }, // بيانات الشكاوى
+    { s: { r: 7, c: 0 }, e: { r: 7, c: 7 } }  // Date row
+    ];
+
     XLSX.utils.book_append_sheet(wb, vehiclesSheet, 'بيانات المركبات');
 
-    // Sheet 3: Complaints Data
+    // Sheet 2: Complaints Data
     if (allComplaints && allComplaints.length > 0) {
     console.log('📝 جاري تجهيز بيانات الشكاوى...');
     const complaintsData = [
@@ -4291,12 +4236,12 @@
     const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
     
     complaintsData.push([
-    complaint.owner_name || '-',
-    "'" + (complaint.phone || '-'), // Add ' prefix
-    complaint.complaint_type || '-',
-    complaint.details || '-',
+    complaint.owner_name || '',
+    complaint.phone || '',
+    complaint.complaint_type || '',
+    complaint.details || '',
     statusText,
-    complaint.reply || '-',
+    complaint.reply || '',
     formattedDate
     ]);
     });
@@ -4311,6 +4256,18 @@
     { wch: 40 }, // الرد
     { wch: 25 }  // تاريخ التقديم
     ];
+    
+    // Format phone column as text
+    const compRange = XLSX.utils.decode_range(complaintsSheet['!ref']);
+    for (let R = 1; R <= compRange.e.r; ++R) {
+    // Phone column (B)
+    const cellRefB = XLSX.utils.encode_cell({ r: R, c: 1 });
+    if (complaintsSheet[cellRefB]) {
+    complaintsSheet[cellRefB].t = 's'; // Set type to string
+    complaintsSheet[cellRefB].z = '@'; // Set format to text
+    }
+    }
+    
     XLSX.utils.book_append_sheet(wb, complaintsSheet, 'الشكاوى');
     }
 
@@ -4757,13 +4714,38 @@
     }
 
     console.log('📋 عدد الصفوف:', jsonData.length);
-    console.log('📋 الصف الأول (Header):', jsonData[0]);
-    console.log('📋 الصف الثاني:', jsonData[1]);
+
+    // Skip statistics rows - find the header row with "اسم المالك"
+    let headerRowIndex = -1;
+    for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
+    const row = jsonData[i];
+    if (row && row.length > 0) {
+    const firstCell = String(row[0] || '').trim();
+    // Check if this row contains "اسم المالك" or "الاسم" or "name"
+    if (firstCell.includes('اسم المالك') || firstCell.includes('اسم') || 
+        firstCell.toLowerCase().includes('name') || firstCell.toLowerCase().includes('owner')) {
+    headerRowIndex = i;
+    console.log('📍 وجدت صف العناوين في الصف ' + (i + 1));
+    break;
+    }
+    }
+    }
+
+    if (headerRowIndex === -1) {
+    // No header found, assume old format (data starts from row 1)
+    headerRowIndex = 0;
+    console.log('📍 لم يتم العثور على صف العناوين، استخدام الصف الأول');
+    }
+
+    console.log('📋 الصف الأول (Header):', jsonData[headerRowIndex]);
+    if (jsonData[headerRowIndex + 1]) {
+    console.log('📋 الصف الثاني:', jsonData[headerRowIndex + 1]);
+    }
 
     // Try Fixed Columns First (B-H format)
     let useFixedColumns = false;
     const columnMap = {};
-    let dataStartRow = 1; // Default: data starts from row 1
+    let dataStartRow = headerRowIndex + 1; // Data starts after header
 
     // الترتيب الثابت للأعمدة (نفس import_excel.html):
     // A=0 (رقم تسلسلي أو فاضي)
@@ -4773,7 +4755,7 @@
     // Check if data follows fixed column format
     // Look for actual data (skip header rows)
     let foundFixedFormat = false;
-    for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
+    for (let i = dataStartRow; i < Math.min(jsonData.length, dataStartRow + 5); i++) {
     if (jsonData[i] && jsonData[i].length >= 4) {
     const colC = jsonData[i][2]; // Column C - الاسم
     const colD = jsonData[i][3]; // Column D - الرقم القومي
@@ -4820,8 +4802,8 @@
     columnMap.phone = 7;         // H - رقم التليفون
     console.log('✅ تم تحديد الأعمدة الثابتة:', columnMap);
     } else {
-    // Smart Column Detection
-    const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
+    // Smart Column Detection from header row
+    const headers = jsonData[headerRowIndex].map(h => String(h).toLowerCase().trim());
 
     const patterns = {
     owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
@@ -4860,7 +4842,7 @@
     const preview = document.getElementById('importPreview');
 
     // Determine starting row for data processing
-    const startRow = useFixedColumns ? dataStartRow : 1;
+    const startRow = useFixedColumns ? dataStartRow : (headerRowIndex + 1);
 
     let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
     <p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
@@ -5192,11 +5174,16 @@
 
     window.searchOrders = function() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const searchType = document.getElementById('searchType') ?document.getElementById('searchType').value : 'all';
+    const searchType = document.getElementById('searchType') ? document.getElementById('searchType').value : 'all';
 
     if (!searchTerm) {
     filteredOrdersData = allOrdersData;
     } else {
+    // Log search if term is 3+ characters (to avoid logging every keystroke)
+    if (searchTerm.length >= 3) {
+    logAdminAction(currentUsername, 'بحث في المركبات', `بحث عن: "${searchTerm}" في: ${searchType === 'all' ? 'كل الحقول' : searchType}`).catch(err => console.error('خطأ في تسجيل البحث:', err));
+    }
+    
     filteredOrdersData = allOrdersData.filter(orderData => {
     const item = orderData.item;
 
