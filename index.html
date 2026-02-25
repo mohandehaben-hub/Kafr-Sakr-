@@ -1854,7 +1854,7 @@
         }
         
         async function checkExistingSession() {
-            const savedSession = sessionStorage.getItem('userSession');
+            const savedSession = sessionStorage.getItem('supabaseSession');
             const savedRole = sessionStorage.getItem('adminRole');
             const savedUsername = sessionStorage.getItem('adminUsername');
             
@@ -3142,10 +3142,10 @@
     const { error } = await window.supabaseClient
     .from('orders')
     .update({
-    vCode: newCode.toString(),
-    codedAt: Date.now(),
+    code: newCode.toString(),
+    coded_at: Date.now(),
     status: "coded",
-    statusHistory: [...(item.statusHistory || []), {
+    status_history: [...(item.statusHistory || []), {
     status: "coded",
     timestamp: Date.now(),
     note: `تم التكويد برقم: ${newCode}`,
@@ -3196,13 +3196,12 @@
     const { error: editError2 } = await window.supabaseClient
     .from('orders')
     .update({
-    owner: newOwner,
+    owner_name: newOwner,
     phone: newPhone,
-    vType: newVType,
-    vYear: newVYear,
-    vDesc: `موديل ${newVYear}`,
+    vehicle_type: newVType,
+    vehicle_year: newVYear,
     address: newAddress,
-    statusHistory: [...(item.statusHistory || []), {
+    status_history: [...(item.statusHistory || []), {
     status: item.status || 'pending',
     timestamp: Date.now(),
     note: "تم تعديل البيانات",
@@ -3447,10 +3446,10 @@
     const { error: codeError2 } = await window.supabaseClient
     .from('orders')
     .update({
-    vCode: newCode.toString(),
-    codedAt: Date.now(),
+    code: newCode.toString(),
+    coded_at: Date.now(),
     status: "coded",
-    statusHistory: [...(item.statusHistory || []), {
+    status_history: [...(item.statusHistory || []), {
     status: "coded",
     timestamp: Date.now(),
     note: `تم التكويد برقم: ${newCode}`,
@@ -3501,13 +3500,12 @@
     const { error: editError3 } = await window.supabaseClient
     .from('orders')
     .update({
-    owner: newOwner,
+    owner_name: newOwner,
     phone: newPhone,
-    vType: newVType,
-    vYear: newVYear,
-    vDesc: `موديل ${newVYear}`,
+    vehicle_type: newVType,
+    vehicle_year: newVYear,
     address: newAddress,
-    statusHistory: [...(item.statusHistory || []), {
+    status_history: [...(item.statusHistory || []), {
     status: item.status || 'pending',
     timestamp: Date.now(),
     note: "تم تعديل البيانات",
@@ -3611,7 +3609,7 @@
     .from('orders')
     .update({
     status: newStatus,
-    statusHistory: [...(item.statusHistory || []), {
+    status_history: [...(item.statusHistory || []), {
     status: newStatus,
     timestamp: Date.now(),
     note: note || "",
@@ -3701,7 +3699,7 @@
     .update({
     reply: reply,
     status: 'replied',
-    repliedAt: Date.now()
+    replied_at: Date.now()
     })
     .eq('id', id);
     if (error) throw error;
