@@ -3342,10 +3342,36 @@
     const supabaseOrders = allSupabaseOrders;
     console.log(`✅ تم تحميل كل البيانات: ${supabaseOrders.length} سجل`);
 
-    // Use Database data only
-    const allOrders = [...supabaseOrders];
+    // Convert Supabase data to match expected format
+    const allOrders = supabaseOrders.map(item => ({
+    id: item.id,
+    owner: item.owner_name || 'غير محدد',
+    nationalId: item.national_id || '',
+    phone: item.phone || '',
+    vType: item.vehicle_type || 'غير محدد',
+    vYear: item.vehicle_year || '',
+    chassisNumber: item.chassis_number || '',
+    motorNumber: item.motor_number || '',
+    address: item.address || '',
+    vCode: item.code || '',
+    refNumber: item.ref_number || '',
+    timestamp: item.submitted_at || Date.now(),
+    status: item.status || 'pending',
+    statusHistory: item.status_history || [],
+    images: item.images || [],
+    source: 'supabase'
+    }));
 
     let total = 0, coded = 0, pending = 0;
+
+    allOrders.forEach(item => {
+    total++;
+    if (item.status === 'coded' || item.status === 'delivered') {
+    coded++;
+    } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
+    pending++;
+    }
+    });
 
     allOrders.sort((a, b) => {
     const codeA = a.vCode ? parseInt(a.vCode) : 999999;
