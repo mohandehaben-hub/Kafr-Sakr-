@@ -3842,8 +3842,7 @@
     .from('complaints')
     .update({
     reply: reply,
-    status: 'replied',
-    replied_at: Date.now()
+    status: 'replied'
     })
     .eq('id', id);
 
