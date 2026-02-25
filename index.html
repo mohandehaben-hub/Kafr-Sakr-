@@ -2431,13 +2431,20 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-const q =(compRef("nationalId", "==", nid)("ownerName", "==", owner)("phone", "==", phone)("timestamp", "desc")
-);
+// Search in Supabase
+const { data: complaints, error } = await window.supabaseClient
+.from('complaints')
+.select('*')
+.eq('national_id', nid)
+.eq('owner_name', owner)
+.eq('phone', phone)
+.order('submitted_at', { ascending: false });
 
-const snapshot = await(q);
+if (error) throw error;
+
 const resultDiv = document.getElementById('complaintInquiryResult');
 
-if (snapshot.empty) {
+if (!complaints || complaints.length === 0) {
 resultDiv.style.display = 'block';
 resultDiv.innerHTML = `
 <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); padding: 40px; border-radius: 25px; text-align: center; border: 3px solid var(--danger);">
@@ -2448,8 +2455,7 @@ resultDiv.innerHTML = `
 `;
 } else {
 let complaintsHTML = '';
-snapshot.forEach((doc) => {
-const data = doc.data();
+complaints.forEach((data) => {
 const statusColor = data.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
 const statusText = data.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
 const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.15)' : 'rgba(243, 156, 18, 0.15)';
@@ -2457,16 +2463,16 @@ const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.15)' : 'rgba(2
 complaintsHTML += `
 <div style="background: linear-gradient(135deg, ${statusBg} 0%, ${statusBg} 100%); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 3px solid ${statusColor};">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-<h3 style="color: ${statusColor}; margin: 0; font-size: 1.5rem;">${data.type}</h3>
+<h3 style="color: ${statusColor}; margin: 0; font-size: 1.5rem;">${data.complaint_type || 'شكوى'}</h3>
 <span style="background: ${statusColor}; color: white; padding: 8px 16px; border-radius: 10px; font-weight: bold;">${statusText}</span>
 </div>
 <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
-<p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details}</p>
+<p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${data.details || 'لا توجد تفاصيل'}</p>
 </div>
-<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.timestamp)}</p>
+<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.submitted_at)}</p>
 ${data.images ? `
 <div style="margin: 15px 0;">
-<button class="btn btn-view-inquiry-images" data-id="${doc.id}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
+<button class="btn btn-view-inquiry-images" data-id="${data.id}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
 </div>
 ` : ''}
 ${data.status === 'replied' && data.reply ? `
@@ -2485,20 +2491,20 @@ ${data.status === 'replied' && data.reply ? `
 
 resultDiv.style.display = 'block';
 resultDiv.innerHTML = `
-<h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${snapshot.size})</h3>
+<h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${complaints.length})</h3>
 ${complaintsHTML}
 `;
 
 // Add event listeners for image viewing buttons
 const complaintsData = {};
-snapshot.forEach((doc) => {
-complaintsData[doc.id] = doc.data();
+complaints.forEach((data) => {
+complaintsData[data.id] = data;
 });
 
 resultDiv.querySelectorAll('.btn-view-inquiry-images').forEach(btn => {
 btn.onclick = () => {
-constId = btn.getAttribute('data--id');
-const data = complaintsData[Id];
+const compId = btn.getAttribute('data-id');
+const data = complaintsData[compId];
 if (data && data.images) {
 if (typeof data.images === 'object' && !Array.isArray(data.images)) {
 // New format: categorized images
@@ -3187,7 +3193,11 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 try {
-console.log("DEL:",id);if(!id||id.toString().startsWith("local-")){const s=localStorage.getItem("vehicleOrders");if(s){localStorage.setItem("vehicleOrders",JSON.stringify(JSON.parse(s).filter(x=>x.nationalId!==item.nationalId)));}alert("تم الحذف");await loadAdminData();return;}const s2=localStorage.getItem("vehicleOrders");if(s2){localStorage.setItem("vehicleOrders",JSON.stringify(JSON.parse(s2).filter(x=>x.nationalId!==item.nationalId)));}const{error}=await window.supabaseClient.from("orders").delete().eq("id",id);
+// Delete from Supabase only (localStorage removed for security)
+const { error } = await window.supabaseClient
+.from("orders")
+.delete()
+.eq("id", id);
 if (error) {
 console.error('❌ خطأ في الحذف:', error);
 alert("❌ فشل الحذف: " + error.message);
@@ -3463,7 +3473,11 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 try {
-console.log("DEL:",id);if(!id||id.toString().startsWith("local-")){const s=localStorage.getItem("vehicleOrders");if(s){localStorage.setItem("vehicleOrders",JSON.stringify(JSON.parse(s).filter(x=>x.nationalId!==item.nationalId)));}alert("تم الحذف");await loadAdminData();return;}const s2=localStorage.getItem("vehicleOrders");if(s2){localStorage.setItem("vehicleOrders",JSON.stringify(JSON.parse(s2).filter(x=>x.nationalId!==item.nationalId)));}const{error}=await window.supabaseClient.from("orders").delete().eq("id",id);
+// Delete from Supabase only (localStorage removed for security)
+const { error } = await window.supabaseClient
+.from("orders")
+.delete()
+.eq("id", id);
 if (error) {
 console.error('❌ خطأ في الحذف:', error);
 alert("❌ فشل الحذف: " + error.message);
