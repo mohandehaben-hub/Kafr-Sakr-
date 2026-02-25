@@ -929,7 +929,8 @@ alt="علم الشرقية">
 <div class="input-group" style="grid-column: 1 / -1;">
 <label>رفع الصور والمستندات</label>
 <input type="file" id="multiFiles" multiple accept="image/*" style="padding: 30px; border: 3px dashed var(--primary);">
-<small style="color: #666; margin-top: 10px; display: block;">✓ يمكنك رفع عدة صور</small>
+<small style="color: #666; margin-top: 10px; display: block;">✓ يمكنك رفع عدة صور (حد أقصى 10MB لكل صورة)</small>
+<small style="color: var(--secondary); margin-top: 5px; display: block; font-weight: 600;">📸 سيتم ضغط الصور تلقائياً للحفاظ على الجودة وتسريع الرفع</small>
 </div>
 </div>
 
@@ -1015,7 +1016,7 @@ alt="علم الشرقية">
 <div class="input-group" style="grid-column: 1 / -1;">
 <label style="color: var(--accent); font-size: 1.1rem;">📸 صورة سيلفي (إثبات الهوية)</label>
 <input type="file" id="compSelfie" accept="image/*" capture="user" style="padding: 20px; border: 3px dashed var(--accent); background: rgba(211, 84, 0, 0.05);">
-<small style="color: #666; margin-top: 10px; display: block;">✓ التقط صورة سيلفي واضحة لوجهك</small>
+<small style="color: #666; margin-top: 10px; display: block;">✓ التقط صورة سيلفي واضحة لوجهك (حد أقصى 10MB)</small>
 </div>
 
 <!-- صورة البطاقة -->
@@ -1928,7 +1929,7 @@ const img = new Image();
 img.src = e.target.result;
 img.onload = async () => {
 const canvas = document.createElement('canvas');
-const maxWidth = 800;
+const maxWidth = 1200; // زيادة الجودة
 const scale = img.width > maxWidth ? maxWidth / img.width : 1;
 canvas.width = img.width * scale;
 canvas.height = img.height * scale;
@@ -1958,7 +1959,7 @@ resolve(filePath);
 } catch (error) {
 reject(new Error(`خطأ في الرفع: ${error.message}`));
 }
-}, 'image/jpeg', 0.70);
+}, 'image/jpeg', 0.80); // زيادة الجودة من 0.70 إلى 0.80
 };
 };
 });
@@ -2028,13 +2029,13 @@ const birthDate = document.getElementById('birthDate').value;
 // التحقق من حجم الصور ونوعها
 let totalSize = 0;
 for (let file of files) {
-  if (file.size > 5242880) { // 5MB
-    alert(`❌ حجم الصورة "${file.name}" يتجاوز 5MB\nيرجى اختيار صور أصغر`);
+  if (file.size > 10485760) { // 10MB
+    alert(`❌ حجم الصورة "${file.name}" يتجاوز 10MB\nيرجى اختيار صور أصغر`);
     return;
   }
   totalSize += file.size;
   // التحقق من نوع الملف
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type)) {
     alert(`❌ الملف "${file.name}" غير صورة صحيحة\nيرجى استخدام JPG أو PNG أو WebP فقط`);
     return;
   }
