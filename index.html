@@ -4158,11 +4158,175 @@
     }
     }
 
-    // Export Excel
-    document.getElementById('exportExcelBtn').onclick = () => {
-    const wb = XLSX.utils.table_to_book(document.getElementById("excelTable"));
-    XLSX.writeFile(wb, `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
-    alert("✅ تم تصدير البيانات بنجاح");
+    // Export Excel - Enhanced Version
+    document.getElementById('exportExcelBtn').onclick = async () => {
+    if (!confirm('📊 هل تريد تصدير كل البيانات إلى Excel؟\n\n✅ سيتم تصدير:\n• الإحصائيات الكاملة\n• جميع بيانات المركبات (بدون صور)\n• جميع الشكاوى (بدون صور)\n\nقد يستغرق الأمر بضع ثوانٍ...')) {
+    return;
+    }
+
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
+    loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">📊</div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تصدير البيانات...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
+    document.body.appendChild(loadingDiv);
+
+    try {
+    // Load all vehicles data from Supabase
+    console.log('📥 جاري تحميل بيانات المركبات...');
+    let allVehicles = [];
+    let from = 0;
+    const batchSize = 1000;
+    let hasMore = true;
+
+    while (hasMore) {
+    const { data: batch, error } = await window.supabaseClient
+    .from('orders')
+    .select('*')
+    .order('submitted_at', { ascending: false })
+    .range(from, from + batchSize - 1);
+
+    if (error) throw error;
+
+    if (batch && batch.length > 0) {
+    allVehicles = allVehicles.concat(batch);
+    from += batchSize;
+    hasMore = batch.length === batchSize;
+    console.log(`📥 تم تحميل ${allVehicles.length} مركبة...`);
+    } else {
+    hasMore = false;
+    }
+    }
+
+    // Load all complaints data
+    console.log('📥 جاري تحميل بيانات الشكاوى...');
+    const { data: allComplaints, error: compError } = await window.supabaseClient
+    .from('complaints')
+    .select('*')
+    .order('submitted_at', { ascending: false });
+
+    if (compError) throw compError;
+
+    // Calculate statistics
+    const totalVehicles = allVehicles.length;
+    const codedVehicles = allVehicles.filter(v => v.status === 'coded').length;
+    const pendingVehicles = allVehicles.filter(v => v.status === 'pending').length;
+    const totalComplaints = allComplaints ? allComplaints.length : 0;
+    const repliedComplaints = allComplaints ? allComplaints.filter(c => c.status === 'replied').length : 0;
+    const pendingComplaints = allComplaints ? allComplaints.filter(c => c.status === 'pending').length : 0;
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Statistics
+    const statsData = [
+    ['📊 إحصائيات منظومة كفر صقر'],
+    [''],
+    ['📋 بيانات المركبات'],
+    ['إجمالي الطلبات', totalVehicles],
+    ['✅ تم التكويد', codedVehicles],
+    ['⏳ قيد الانتظار', pendingVehicles],
+    [''],
+    ['⚖️ بيانات الشكاوى'],
+    ['إجمالي الشكاوى', totalComplaints],
+    ['✅ تم الرد', repliedComplaints],
+    ['⏳ قيد المراجعة', pendingComplaints],
+    [''],
+    ['📅 تاريخ التصدير', new Date().toLocaleString('ar-EG')]
+    ];
+    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
+    statsSheet['!cols'] = [{ wch: 25 }, { wch: 15 }];
+    XLSX.utils.book_append_sheet(wb, statsSheet, 'الإحصائيات');
+
+    // Sheet 2: Vehicles Data
+    console.log('📝 جاري تجهيز بيانات المركبات...');
+    const vehiclesData = [
+    ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
+    ];
+
+    allVehicles.forEach(vehicle => {
+    // Format date
+    const date = new Date(vehicle.submitted_at);
+    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
+    
+    // Status text
+    const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
+    
+    vehiclesData.push([
+    vehicle.owner_name || '-',
+    "'" + (vehicle.national_id || '-'), // Add ' prefix to prevent scientific notation
+    "'" + (vehicle.phone || '-'), // Add ' prefix
+    vehicle.vehicle_type || '-',
+    vehicle.plate_number || '-',
+    vehicle.code || '-',
+    statusText,
+    formattedDate
+    ]);
+    });
+
+    const vehiclesSheet = XLSX.utils.aoa_to_sheet(vehiclesData);
+    vehiclesSheet['!cols'] = [
+    { wch: 20 }, // اسم المالك
+    { wch: 18 }, // الرقم القومي
+    { wch: 15 }, // رقم الهاتف
+    { wch: 15 }, // نوع المركبة
+    { wch: 15 }, // رقم اللوحة
+    { wch: 12 }, // الكود
+    { wch: 15 }, // الحالة
+    { wch: 25 }  // تاريخ التقديم
+    ];
+    XLSX.utils.book_append_sheet(wb, vehiclesSheet, 'بيانات المركبات');
+
+    // Sheet 3: Complaints Data
+    if (allComplaints && allComplaints.length > 0) {
+    console.log('📝 جاري تجهيز بيانات الشكاوى...');
+    const complaintsData = [
+    ['اسم المقدم', 'رقم الهاتف', 'نوع الشكوى', 'التفاصيل', 'الحالة', 'الرد', 'تاريخ التقديم']
+    ];
+
+    allComplaints.forEach(complaint => {
+    // Format date
+    const date = new Date(complaint.submitted_at);
+    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
+    
+    // Status text
+    const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
+    
+    complaintsData.push([
+    complaint.owner_name || '-',
+    "'" + (complaint.phone || '-'), // Add ' prefix
+    complaint.complaint_type || '-',
+    complaint.details || '-',
+    statusText,
+    complaint.reply || '-',
+    formattedDate
+    ]);
+    });
+
+    const complaintsSheet = XLSX.utils.aoa_to_sheet(complaintsData);
+    complaintsSheet['!cols'] = [
+    { wch: 20 }, // اسم المقدم
+    { wch: 15 }, // رقم الهاتف
+    { wch: 15 }, // نوع الشكوى
+    { wch: 40 }, // التفاصيل
+    { wch: 15 }, // الحالة
+    { wch: 40 }, // الرد
+    { wch: 25 }  // تاريخ التقديم
+    ];
+    XLSX.utils.book_append_sheet(wb, complaintsSheet, 'الشكاوى');
+    }
+
+    // Write file
+    const fileName = `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+
+    document.body.removeChild(loadingDiv);
+    alert(`✅ تم تصدير البيانات بنجاح!\n\n📊 الإحصائيات:\n• ${totalVehicles} مركبة\n• ${totalComplaints} شكوى\n\n📁 الملف: ${fileName}`);
+    console.log('✅ تم تصدير البيانات بنجاح');
+
+    } catch (error) {
+    document.body.removeChild(loadingDiv);
+    console.error('❌ خطأ في التصدير:', error);
+    alert('❌ حدث خطأ أثناء تصدير البيانات: ' + error.message);
+    }
     };
 
     // Clean Duplicates Main Button (same as cleanDuplicatesBtn)
