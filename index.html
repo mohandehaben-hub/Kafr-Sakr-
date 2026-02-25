@@ -3145,6 +3145,8 @@
 
     // Check if code already exists
     document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
     const { data: existingCode, error: checkError } = await window.supabaseClient
     .from('orders')
     .select('id, owner_name, code')
@@ -3171,10 +3173,16 @@
     }]
     })
     .eq('id', id);
-    if (error) throw error;
+
+    if (error) {
+    console.error('❌ خطأ في تكويد المركبة:', error);
+    throw error;
+    }
+
     await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
     document.getElementById('loadingSpinner').style.display = 'none';
     document.getElementById('codeModal').style.display = 'none';
+
     const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
     if (sendWhatsApp) {
     const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
@@ -3189,7 +3197,17 @@
     window.open(whatsappUrl, '_blank');
     }
     }
+
     alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
+
+    // Reload data to show updated record
+    await loadAdminData();
+
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ في عملية التكويد:', error);
+    alert(`❌ حدث خطأ أثناء التكويد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    }
     };
     };
 
@@ -3699,8 +3717,16 @@
     "coded": "تم التكويد",
     "delivered": "تم التسليم"
     };
+
+    if (!id) {
+    alert("❌ خطأ: معرف الطلب غير موجود");
+    console.error('Missing order ID:', window.currentStatusChangeItem);
+    return;
+    }
+
     document.getElementById('loadingSpinner').style.display = 'block';
 
+    try {
     const { error: statusError } = await window.supabaseClient
     .from('orders')
     .update({
@@ -3713,7 +3739,11 @@
     }]
     })
     .eq('id', id);
-    if (statusError) throw statusError;
+
+    if (statusError) {
+    console.error('❌ خطأ في تغيير الحالة:', statusError);
+    throw statusError;
+    }
 
     // Log status change action
     await logAdminAction(currentUsername, 'تغيير حالة', `تم تغيير حالة مركبة ${item.vType} للمالك: ${item.owner} إلى: ${statusNames[newStatus]} (الرقم المرجعي: ${item.refNumber})`);
@@ -3727,7 +3757,7 @@
     message = `✅ *تم قبول طلبك!*\n\n` +
     `👤 السيد/ة: ${item.owner}\n` +
     `🚜 نوع المركبة: ${item.vType}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+    ` الرقم المرجعي: ${item.refNumber}\n\n` +
     `✅ الحالة: ${statusName}\n` +
     `⏳ طلبك قيد التكويد، سيتم التواصل معك قريباً\n\n` +
     `_رئاسة مركز ومدينة كفر صقر_`;
@@ -3764,9 +3794,19 @@
     window.open(whatsappUrl, '_blank');
     }
     }
+
     document.getElementById('loadingSpinner').style.display = 'none';
     document.getElementById('statusChangeModal').style.display = 'none';
     alert("✅ تم تحديث الحالة بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
+
+    // Reload data to show updated record
+    await loadAdminData();
+
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ في تغيير الحالة:', error);
+    alert(`❌ حدث خطأ أثناء تغيير الحالة:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    }
     };
 
     document.getElementById('showComplaintsBtn').onclick = () => {
@@ -3788,8 +3828,16 @@
     alert("❌ يرجى كتابة نص الرد");
     return;
     }
+
+    if (!id) {
+    alert("❌ خطأ: معرف الشكوى غير موجود");
+    console.error('Missing complaint ID:', window.currentComplaintReply);
+    return;
+    }
+
     document.getElementById('loadingSpinner').style.display = 'block';
 
+    try {
     const { error } = await window.supabaseClient
     .from('complaints')
     .update({
@@ -3798,7 +3846,11 @@
     replied_at: Date.now()
     })
     .eq('id', id);
-    if (error) throw error;
+
+    if (error) {
+    console.error('❌ خطأ في تحديث الشكوى:', error);
+    throw error;
+    }
 
     // Log complaint reply action
     await logAdminAction(currentUsername, 'الرد على شكوى', `تم الرد على شكوى من نوع: ${item.type} للمواطن: ${item.ownerName}`);
@@ -3815,9 +3867,19 @@
     const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
     }
+
     document.getElementById('loadingSpinner').style.display = 'none';
     document.getElementById('complaintReplyModal').style.display = 'none';
     alert("✅ تم حفظ الرد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الرد" : ""));
+
+    // Reload complaints to show updated data
+    await loadComplaints();
+
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ في الرد على الشكوى:', error);
+    alert(`❌ حدث خطأ أثناء حفظ الرد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    }
     };
 
     document.getElementById('showAdminLogsBtn').onclick = () => {
