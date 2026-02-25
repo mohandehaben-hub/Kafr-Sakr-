@@ -810,11 +810,11 @@ alt="علم الشرقية">
 </p>
 
 <div class="portal-container">
-<!-- Vehicle Coding Portal -->
+<!-- Tuk Tuk Coding Portal -->
 <div class="portal-box" onclick="openService('citizenPage')" style="border-bottom: 6px solid var(--primary);">
 <i style="font-style: normal; font-size: 85px;">🚜</i>
-<h2 style="color: var(--primary);">قسم تكويد المركبات</h2>
-<p>تسجيل بيانات التوكتوك والموتوسيكل والتروسيكل والميكروباص بالمنظومة الذكية</p>
+<h2 style="color: var(--primary);">تكويد التوكتوك</h2>
+<p>تسجيل بيانات التوكتوك بالمنظومة الذكية</p>
 </div>
 
 <!-- Inquiry Portal -->
@@ -857,47 +857,17 @@ alt="علم الشرقية">
 </p>
 </div>
 
-<!-- Citizen Page (Vehicle Registration) -->
+<!-- Citizen Page (Tuk Tuk Registration) -->
 <div id="citizenPage" style="display:none;">
 <div class="card">
-<h2 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 2rem;">📝 تسجيل مركبة جديدة</h2>
-
-<!-- Vehicle Type Selection -->
-<div id="vehicleTypeSelection" style="margin-bottom: 40px;">
-<h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.4rem;">اختر نوع المركبة:</h3>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-<div class="vehicle-card" data-type="توكتوك" onclick="selectVehicleType('توكتوك')">
-<div style="margin-bottom: 10px;"><img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" style="width: 100px; height: 80px; object-fit: contain; border-radius: 10px;"></div>
-<h4 style="color: var(--primary); margin: 10px 0; font-size: 1.2rem;">توكتوك</h4>
-<p style="color: #666; font-size: 0.9rem;">مركبة ثلاثية العجلات</p>
-</div>
-<div class="vehicle-card" data-type="موتوسيكل" onclick="selectVehicleType('موتوسيكل')">
-<div style="margin-bottom: 10px;"><img src="https://i.postimg.cc/zfKYfM7K/hwjn-4-2.jpg" style="width: 100px; height: 80px; object-fit: contain; border-radius: 10px;"></div>
-<h4 style="color: var(--primary); margin: 10px 0; font-size: 1.2rem;">موتوسيكل</h4>
-<p style="color: #666; font-size: 0.9rem;">دراجة نارية</p>
-</div>
-<div class="vehicle-card" data-type="تروسيكل" onclick="selectVehicleType('تروسيكل')">
-<div style="margin-bottom: 10px;"><img src="https://i.postimg.cc/HnSfKCYf/images-(2).jpg" style="width: 100px; height: 80px; object-fit: contain; border-radius: 10px;"></div>
-<h4 style="color: var(--primary); margin: 10px 0; font-size: 1.2rem;">تروسيكل</h4>
-<p style="color: #666; font-size: 0.9rem;">دراجة ثلاثية</p>
-</div>
-<div class="vehicle-card" data-type="ميكروباص" onclick="selectVehicleType('ميكروباص')">
-<div style="margin-bottom: 10px;"><img src="https://i.postimg.cc/HkjpTBFt/images.jpg" style="width: 100px; height: 80px; object-fit: contain; border-radius: 10px;"></div>
-<h4 style="color: var(--primary); margin: 10px 0; font-size: 1.2rem;">ميكروباص</h4>
-<p style="color: #666; font-size: 0.9rem;">حافلة صغيرة</p>
-</div>
-</div>
-</div>
+<h2 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 2rem;">� تسجيل توكتوك جديد</h2>
 
 <!-- Registration Form -->
-<div id="registrationForm" style="display:none;">
+<div id="registrationForm">
 <div style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%); padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 2px solid var(--primary);">
-<p style="margin: 0; color: var(--primary); font-size: 1.1rem; font-weight: 600;">
-نوع المركبة المختار: <span id="selectedVehicleType" style="font-size: 1.3rem; color: var(--secondary);"></span>
+<p style="margin: 0; color: var(--primary); font-size: 1.3rem; font-weight: 700;">
+🚜 تسجيل توكتوك
 </p>
-<button onclick="resetVehicleSelection()" class="btn" style="background: rgba(231, 76, 60, 0.1); color: var(--danger); padding: 8px 20px; margin-top: 10px; font-size: 0.9rem;">
-🔄 تغيير نوع المركبة
-</button>
 </div>
 
 <div class="form-grid">
@@ -1327,12 +1297,7 @@ height: 300px;
 
 <div class="input-group">
 <label>نوع المركبة</label>
-<select id="editVType">
-<option value="توكتوك">توكتوك</option>
-<option value="موتوسيكل">موتوسيكل</option>
-<option value="تروسيكل">تروسيكل</option>
-<option value="ميكروباص">ميكروباص</option>
-</select>
+<input type="text" id="editVType" value="توكتوك" readonly style="background: rgba(39, 174, 96, 0.1); border: 2px solid var(--secondary); font-weight: 700; color: var(--secondary); cursor: not-allowed;">
 </div>
 
 <div class="input-group">
@@ -1604,6 +1569,11 @@ console.log('🔄 فتح القسم:', serviceId);
 document.getElementById('portalSection').style.display = 'none';
 document.getElementById(serviceId).style.display = 'block';
 document.getElementById('goPortalBtn').style.display = 'inline-flex';
+
+// Auto-open registration form for Tuk Tuk (no vehicle selection needed)
+if (serviceId === 'citizenPage') {
+document.getElementById('vType').value = 'توكتوك';
+}
 }
 
 // Fill Years
@@ -1631,26 +1601,6 @@ select.appendChild(opt);
 }
 }
 fillEditYears();
-
-// Vehicle Type Selection
-function selectVehicleType(type) {
-document.querySelectorAll('.vehicle-card').forEach(card => {
-card.classList.remove('selected');
-});
-document.querySelector(`.vehicle-card[data-type="${type}"]`).classList.add('selected');
-document.getElementById('vType').value = type;
-document.getElementById('selectedVehicleType').innerText = type;
-document.getElementById('vehicleTypeSelection').style.display = 'none';
-document.getElementById('registrationForm').style.display = 'block';
-}
-
-function resetVehicleSelection() {
-document.getElementById('vehicleTypeSelection').style.display = 'block';
-document.getElementById('registrationForm').style.display = 'none';
-document.querySelectorAll('.vehicle-card').forEach(card => {
-card.classList.remove('selected');
-});
-}
 
 // Validate National ID
 function validateNationalId(input) {
