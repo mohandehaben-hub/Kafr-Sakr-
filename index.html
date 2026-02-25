@@ -884,11 +884,34 @@ alt="علم الشرقية">
 </div>
 
 <div class="input-group">
-<label>تاريخ الميلاد (أدخله يدوياً للتحقق)</label>
+<label>تاريخ الميلاد (للتحقق من الرقم القومي)</label>
 <small style="color: #666; font-size: 0.85rem; display: block; margin-bottom: 8px; line-height: 1.5;">
-⚠️ أدخل تاريخ ميلادك يدوياً للتأكد من صحة الرقم القومي ومنع التكرار
+⚠️ اختر تاريخ ميلادك للتأكد من صحة الرقم القومي ومنع التكرار
 </small>
-<input type="date" id="birthDate" onchange="verifyBirthDate()" placeholder="اختر تاريخ ميلادك">
+<div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px;">
+<select id="birthDay" onchange="verifyBirthDate()" style="padding: 12px; border: 2px solid var(--glass-border); border-radius: 12px; font-size: 1rem; font-weight: 600;">
+<option value="">اليوم</option>
+</select>
+<select id="birthMonth" onchange="verifyBirthDate()" style="padding: 12px; border: 2px solid var(--glass-border); border-radius: 12px; font-size: 1rem; font-weight: 600;">
+<option value="">الشهر</option>
+<option value="01">يناير</option>
+<option value="02">فبراير</option>
+<option value="03">مارس</option>
+<option value="04">أبريل</option>
+<option value="05">مايو</option>
+<option value="06">يونيو</option>
+<option value="07">يوليو</option>
+<option value="08">أغسطس</option>
+<option value="09">سبتمبر</option>
+<option value="10">أكتوبر</option>
+<option value="11">نوفمبر</option>
+<option value="12">ديسمبر</option>
+</select>
+<select id="birthYear" onchange="verifyBirthDate()" style="padding: 12px; border: 2px solid var(--glass-border); border-radius: 12px; font-size: 1rem; font-weight: 600;">
+<option value="">السنة</option>
+</select>
+</div>
+<input type="hidden" id="birthDate">
 <div id="birthValidation" style="font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; font-weight: 600;"></div>
 </div>
 
@@ -1590,6 +1613,32 @@ select.appendChild(opt);
 }
 fillYears();
 
+// Fill Birth Days (1-31)
+function fillBirthDays() {
+const select = document.getElementById('birthDay');
+if (!select) return;
+for (let day = 1; day <= 31; day++) {
+let opt = document.createElement('option');
+opt.value = day < 10 ? '0' + day : day.toString();
+opt.innerText = day;
+select.appendChild(opt);
+}
+}
+fillBirthDays();
+
+// Fill Birth Years (1950-2200)
+function fillBirthYears() {
+const select = document.getElementById('birthYear');
+if (!select) return;
+for (let year = 2200; year >= 1950; year--) {
+let opt = document.createElement('option');
+opt.value = year;
+opt.innerText = year;
+select.appendChild(opt);
+}
+}
+fillBirthYears();
+
 // Fill Years for Edit Modal
 function fillEditYears() {
 const select = document.getElementById('editVYear');
@@ -1663,35 +1712,53 @@ return true;
 // Verify Birth Date
 function verifyBirthDate() {
 const nid = document.getElementById('nationalId').value;
-const birthInput = document.getElementById('birthDate').value;
+const day = document.getElementById('birthDay').value;
+const month = document.getElementById('birthMonth').value;
+const year = document.getElementById('birthYear').value;
 const msgDiv = document.getElementById('birthValidation');
 
-if (!nid || nid.length !== 14 || !birthInput) {
+// Update hidden field
+const birthDateHidden = document.getElementById('birthDate');
+if (day && month && year) {
+birthDateHidden.value = `${year}-${month}-${day}`;
+} else {
+birthDateHidden.value = '';
+}
+
+if (!nid || nid.length !== 14 || !day || !month || !year) {
 msgDiv.style.display = 'none';
-document.getElementById('birthDate').style.borderColor = 'var(--glass-border)';
+document.getElementById('birthDay').style.borderColor = 'var(--glass-border)';
+document.getElementById('birthMonth').style.borderColor = 'var(--glass-border)';
+document.getElementById('birthYear').style.borderColor = 'var(--glass-border)';
 return;
 }
 
 const century = nid[0];
-const year = parseInt((century === '2' ? '19' : '20') + nid.substring(1, 3));
-const month = parseInt(nid.substring(3, 5));
-const day = parseInt(nid.substring(5, 7));
+const nidYear = parseInt((century === '2' ? '19' : '20') + nid.substring(1, 3));
+const nidMonth = parseInt(nid.substring(3, 5));
+const nidDay = parseInt(nid.substring(5, 7));
 
-const nidDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+const selectedYear = parseInt(year);
+const selectedMonth = parseInt(month);
+const selectedDay = parseInt(day);
 
-if (birthInput === nidDate) {
+if (selectedYear === nidYear && selectedMonth === nidMonth && selectedDay === nidDay) {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(39, 174, 96, 0.1)';
 msgDiv.style.color = 'var(--secondary)';
 msgDiv.innerText = '✅ تاريخ الميلاد مطابق للرقم القومي - البيانات صحيحة';
-document.getElementById('birthDate').style.borderColor = 'var(--secondary)';
+document.getElementById('birthDay').style.borderColor = 'var(--secondary)';
+document.getElementById('birthMonth').style.borderColor = 'var(--secondary)';
+document.getElementById('birthYear').style.borderColor = 'var(--secondary)';
 return true;
 } else {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(231, 76, 60, 0.1)';
 msgDiv.style.color = 'var(--danger)';
 msgDiv.innerText = '❌ تاريخ الميلاد غير مطابق للرقم القومي - تأكد من البيانات'; 
-document.getElementById('birthDate').style.borderColor = 'var(--danger)';
+document.getElementById('birthDay').style.borderColor = 'var(--danger)';
+document.getElementById('birthMonth').style.borderColor = 'var(--danger)';
+document.getElementById('birthYear').style.borderColor = 'var(--danger)';
 return false;
 }
 }
