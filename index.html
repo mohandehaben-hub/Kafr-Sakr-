@@ -2622,10 +2622,10 @@ return;
 const user = data.user;
 
 // Determine role based on email
-const email = user.email.toLowerCase();
-if (email.includes('super') || email === 'admin@kafrsaqr.com') {
+const userEmail = user.email.toLowerCase();
+if (userEmail.includes('super') || userEmail === 'admin@kafrsaqr.com') {
     userRole = 'SUPER'; // مدير عام
-} else if (email.includes('admin')) {
+} else if (userEmail.includes('admin')) {
     userRole = 'ADMIN'; // مشرف
 } else {
     userRole = 'VIEWER'; // عرض فقط
