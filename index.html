@@ -3,9 +3,7 @@
 ═══════════════════════════════════════════════════════════════
   منظومة تكويد المركبات - رئاسة مركز ومدينة كفر صقر
 ═══════════════════════════════════════════════════════════════
-  🔒 نظام آمن - Supabase Authentication
-  ✅ آمن 100% للرفع على GitHub
-  ✅ Row Level Security (RLS) مُفعّل
+  🔒 نظام آمن ومحمي بالكامل
   
   م/ مهند التهامي - 01021102607
 ═══════════════════════════════════════════════════════════════
@@ -1442,14 +1440,6 @@ alt="علم الشرقية">
 <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" style="padding: 18px; border: 3px solid var(--glass-border); border-radius: 15px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s;" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 5px rgba(26, 82, 118, 0.1)'" onblur="this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'" onkeypress="if(event.key==='Enter')document.getElementById('confirmLoginBtn').click()">
 </div>
 
-<!-- Login Credentials Info -->
-<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); padding: 15px; border-radius: 12px; margin: 20px 0; border: 2px solid rgba(52, 152, 219, 0.3); text-align: center;">
-<p style="margin: 0; color: var(--info); font-size: 0.95rem; font-weight: 600; line-height: 1.6;">
-🔐 تسجيل الدخول عبر Supabase<br>
-<span style="font-size: 0.9rem;">يرجى إدخال بيانات الدخول المسجلة في النظام</span>
-</p>
-</div>
-
 <!-- Login Button -->
 <button id="confirmLoginBtn" class="btn" style="width: 100%; padding: 20px; font-size: 1.3rem; margin-top: 25px; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(26, 82, 118, 0.4); position: relative; overflow: hidden; transition: all 0.3s;">
 <span style="position: relative; z-index: 1;">دخول 🚀</span>
@@ -1474,14 +1464,6 @@ from { opacity: 0; }
 to { opacity: 1; }
 }
 </style>
-
-<!-- Info Box -->
-<div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(26, 82, 118, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(52, 152, 219, 0.3);">
-<p style="margin: 0; color: #555; font-size: 0.9rem; text-align: center; line-height: 1.8;">
-<strong style="color: var(--primary);">ℹ️ ملاحظة:</strong><br>
-للدخول كمشرف، استخدم بيانات الاعتماد الخاصة بك
-</p>
-</div>
 </div>
 </div>
 
@@ -1596,8 +1578,7 @@ transform: scale(1.05);
 <script>
 console.log('═'.repeat(60));
 console.log('✅ منظومة تكويد المركبات - كفر صقر');
-console.log('🔒 نظام آمن - Supabase Authentication + RLS');
-console.log('✅ آمن 100% للرفع على GitHub');
+console.log('🔒 نظام آمن ومحمي');
 console.log('═'.repeat(60));
 
 // Navigation Function
@@ -1807,18 +1788,18 @@ console.log(el ? '✅ ' + id + ': موجود' : '❌ ' + id + ': مفقود');
 // Secure Configuration - مدمج في الملف
 // ═══════════════════════════════════════════════════════════════
 
-console.log('✅ نظام الأمان جاهز - Supabase Authentication');
+console.log('✅ نظام الأمان جاهز');
 </script>
 
-<!-- Supabase Authentication SDK -->
+<!-- System Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Initialize Supabase Client
+// Initialize Database Client
 (function() {
     const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsaWVzd2F2ampncXNuY3plc2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDY3ODMsImV4cCI6MjA4NjkyMjc4M30.B5UvhsGQ80h86pOTFa9Yd9YOjK1DaY-8KPN1mtLBRbk';
     
-    // Wait for DOM and Supabase SDK to be ready
+    // Wait for DOM and system to be ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initSupabase);
     } else {
@@ -1826,21 +1807,21 @@ console.log('✅ نظام الأمان جاهز - Supabase Authentication');
     }
     
     function initSupabase() {
-        // Check if Supabase SDK is loaded
+        // Check if system is loaded
         if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
             window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('🔐 Supabase Authentication initialized');
+            console.log('🔐 نظام المصادقة جاهز');
             
             // Check for existing session on page load
             checkExistingSession();
         } else {
-            // Retry after a short delay if SDK not loaded yet
+            // Retry after a short delay if not loaded yet
             setTimeout(initSupabase, 100);
         }
     }
     
     async function checkExistingSession() {
-        const savedSession = sessionStorage.getItem('supabaseSession');
+        const savedSession = sessionStorage.getItem('userSession');
         const savedRole = sessionStorage.getItem('adminRole');
         const savedUsername = sessionStorage.getItem('adminUsername');
         
@@ -1917,9 +1898,9 @@ console.log('✅ نظام الأمان جاهز - Supabase Authentication');
 })();
 </script>
 
-<!-- Supabase Storage Upload Function -->
+<!-- Storage Upload Function -->
 <script type="module">
-// Upload to Supabase Storage (Private)
+// Upload to Cloud Storage (Private)
 const uploadToSupabaseStorage = async (file) => {
 return new Promise((resolve, reject) => {
 const reader = new FileReader();
@@ -1976,10 +1957,10 @@ return d.toLocaleDateString('ar-EG') + " " + d.toLocaleTimeString('ar-EG', {hour
 window.formatDateTime = formatDateTime;
 
 // ═══════════════════════════════════════════════════════════════
-// Supabase Helper Functions
+// Database Helper Functions
 // ═══════════════════════════════════════════════════════════════
 
-// Add Order to Supabase
+// Add Order to Database
 async function addOrderToSupabase(orderData) {
 const { data, error } = await window.supabaseClient
 .from('orders')
@@ -1989,7 +1970,7 @@ if (error) throw error;
 return data[0];
 }
 
-// Add Complaint to Supabase
+// Add Complaint to Database
 async function addComplaintToSupabase(complaintData) {
 const { data, error } = await window.supabaseClient
 .from('complaints')
@@ -1999,7 +1980,7 @@ if (error) throw error;
 return data[0];
 }
 
-// Add Admin Log to Supabase
+// Add Admin Log to Database
 async function logAdminActionToSupabase(username, role, action, details) {
 const { data, error } = await window.supabaseClient
 .from('admin_logs')
@@ -2100,7 +2081,7 @@ status: "pending",
 code: ""
 };
 
-// Save to Supabase
+// Save to Database
 await addOrderToSupabase(dataToSave); 
 document.getElementById('loadingSpinner').style.display = 'none';
 btn.disabled = false;
@@ -2145,7 +2126,7 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-// Search in Supabase only (LocalStorage removed for security)
+// Search in Database
 const { data: orders, error } = await window.supabaseClient
 .from('orders')
 .select('*')
@@ -2432,7 +2413,7 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-// Search in Supabase
+// Search in Database
 const { data: complaints, error } = await window.supabaseClient
 .from('complaints')
 .select('*')
@@ -2573,7 +2554,7 @@ return false;
 
 window.sendWhatsAppNotification = sendWhatsAppNotification;
 
-// Get Smart Next Code from Supabase
+// Get Smart Next Code from Database
 async function getSmartNextCode() {
 try {
 const { data, error } = await window.supabaseClient
@@ -2623,7 +2604,7 @@ btn.innerText = '⏳ جاري التحقق...';
 btn.disabled = true;
 
 try {
-// Sign in with Supabase Authentication
+// Sign in with secure authentication
 const { data, error } = await window.supabaseClient.auth.signInWithPassword({
 email: email,
 password: password
@@ -2639,7 +2620,17 @@ return;
 
 // Successful login
 const user = data.user;
-userRole = 'SUPER'; // All authenticated users are SUPER
+
+// Determine role based on email
+const email = user.email.toLowerCase();
+if (email.includes('super') || email === 'admin@kafrsaqr.com') {
+    userRole = 'SUPER'; // مدير عام
+} else if (email.includes('admin')) {
+    userRole = 'ADMIN'; // مشرف
+} else {
+    userRole = 'VIEWER'; // عرض فقط
+}
+
 currentUsername = user.email.split('@')[0];
 
 // Save session
@@ -2651,7 +2642,7 @@ sessionStorage.setItem('adminUsername', currentUsername);
 document.getElementById('loginModal').style.display = 'none';
 
 // Log admin login
-await logAdminAction(currentUsername, 'تسجيل دخول', `دخول آمن عبر Supabase Authentication`);
+await logAdminAction(currentUsername, 'تسجيل دخول', `دخول آمن إلى النظام`);
 
 // Show role badge
 const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
@@ -2691,9 +2682,13 @@ const bulkImportBtn = document.getElementById('bulkImportBtn');
 if (userRole === 'VIEWER' && bulkImportBtn) {
 bulkImportBtn.style.display = 'none';
 }
+
+// Hide cleanup button for non-SUPER users
 const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
-if (userRole === 'SUPER' && cleanupBtn) {
-cleanupBtn.style.display = 'inline-flex';
+const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
+if (userRole !== 'SUPER') {
+if (cleanupBtn) cleanupBtn.style.display = 'none';
+if (cleanupMainBtn) cleanupMainBtn.style.display = 'none';
 }
 } catch (error) {
 console.error('❌ خطأ في تسجيل الدخول:', error);
@@ -2827,7 +2822,7 @@ modal.style.display = "block";
 // Logout function
 window.logoutAdmin = async function() {
 if (confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) {
-// Sign out from Supabase
+// Sign out from system
 await window.supabaseClient.auth.signOut();
   
 sessionStorage.removeItem('supabaseSession');
@@ -2841,7 +2836,7 @@ document.getElementById('loginBtn').style.display = 'inline-flex';
 const badge = document.getElementById('roleBadge');
 if (badge) badge.remove();
   
-console.log('✅ تم تسجيل الخروج من Supabase');
+console.log('✅ تم تسجيل الخروج من قاعدة البيانات');
 location.reload();
 }
 };
@@ -2859,13 +2854,13 @@ console.log('🏠 العودة للبوابة (لا يزال مسجل الدخو
 };
 
 async function loadAdminData() {
-console.log('📥 جاري تحميل البيانات من Supabase...');
+console.log('📥 جاري تحميل البيانات من قاعدة البيانات...');
 
 const tbody = document.getElementById('dataTable');
 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; font-size:1rem; color:#666;">⏳ جاري تحميل البيانات...</td></tr>';
 
 try {
-// Load ALL data from Supabase (handle pagination for large datasets)
+// Load ALL data from Database (handle pagination for large datasets)
 let allOrders = [];
 let from = 0;
 const batchSize = 1000;
@@ -2890,7 +2885,7 @@ hasMore = false;
 }
 
 const orders = allOrders;
-console.log(`✅ تم تحميل ${orders ? orders.length : 0} سجل من Supabase`);
+console.log(`✅ تم تحميل ${orders ? orders.length : 0} سجل من قاعدة البيانات`);
 
 let total = 0, coded = 0, pending = 0;
 
@@ -2926,7 +2921,7 @@ source: 'supabase'
 
 const combinedOrders = [...supabaseOrders];
 
-console.log(`📊 تم تحميل ${supabaseOrders.length} سجل من Supabase`);
+console.log(`📊 تم تحميل ${supabaseOrders.length} سجل من قاعدة البيانات`);
 
 // Sort by vCode (numeric) - codes first, then non-coded at end
 combinedOrders.sort((a, b) => {
@@ -3194,7 +3189,7 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 try {
-// Delete from Supabase only (localStorage removed for security)
+// Delete from Database
 const { error } = await window.supabaseClient
 .from("orders")
 .delete()
@@ -3315,7 +3310,7 @@ hasMore = false;
 const supabaseOrders = allSupabaseOrders;
 console.log(`✅ تم تحميل كل البيانات: ${supabaseOrders.length} سجل`);
 
-// Use only Supabase data (LocalStorage removed for security)
+// Use Database data only
 const allOrders = [...supabaseOrders];
 
 let total = 0, coded = 0, pending = 0;
@@ -3474,7 +3469,7 @@ alert("✅ تم التعديل بنجاح!");
 tr.querySelector('.btn-del').onclick = async () => {
 if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
 try {
-// Delete from Supabase only (localStorage removed for security)
+// Delete from Database
 const { error } = await window.supabaseClient
 .from("orders")
 .delete()
@@ -3514,7 +3509,7 @@ document.getElementById('statPending').innerText = pending;
 document.getElementById('loadingMoreInfo').style.display = 'none';
 
 initializePagination(ordersArray);
-console.log(`🎉 تم تحميل كل البيانات بنجاح: ${supabaseOrders.length} سجل من Supabase`);
+console.log(`🎉 تم تحميل كل البيانات بنجاح: ${supabaseOrders.length} سجل من قاعدة البيانات`);
 window.isLoadingAll = false;
 
 } catch (error) {
@@ -3912,7 +3907,7 @@ alert("✅ تم تصدير البيانات بنجاح");
 
 // Clean Duplicates Main Button (same as cleanDuplicatesBtn)
 document.getElementById('cleanDuplicatesMainBtn').onclick = async () => {
-if (!confirm('🧹 هل تريد حذف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من Supabase\n✅ حذف التكرار من لوحة التحكم\n✅ الاحتفاظ بأحدث سجل فقط')) {
+if (!confirm('🧹 هل تريد حذف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من قاعدة البيانات\n✅ حذف التكرار من لوحة التحكم\n✅ الاحتفاظ بأحدث سجل فقط')) {
 return;
 }
 
@@ -3923,7 +3918,7 @@ document.body.appendChild(loadingDiv);
 
 try {
 // Load all data from Supabase (with pagination)
-console.log('📥 جاري تحميل كل البيانات من Supabase...');
+console.log('📥 جاري تحميل كل البيانات من قاعدة البيانات...');
 let allOrders = [];
 let from = 0;
 const batchSize = 1000;
@@ -3948,7 +3943,7 @@ hasMore = false;
 }
 }
 
-console.log(`📊 تم تحميل ${allOrders.length} سجل من Supabase`);
+console.log(`📊 تم تحميل ${allOrders.length} سجل من قاعدة البيانات`);
 
 // Find duplicates by national_id
 const seenNIDs = new Map();
@@ -3982,7 +3977,7 @@ return;
 }
 
 // Delete duplicates from Supabase
-console.log('🗑️ جاري حذف السجلات المكررة من Supabase...');
+console.log('🗑️ جاري حذف السجلات المكررة من قاعدة البيانات...');
 const deleteBatchSize = 50;
 let deletedCount = 0;
 
@@ -4020,11 +4015,11 @@ status: order.status,
 images: order.images || []
 }));
 
-// LocalStorage removed for security - data is in Supabase only
-console.log(`✅ تم حفظ ${uniqueOrders.length} سجل فريد في Supabase`);
+// Data stored securely in Database
+console.log(`✅ تم حفظ ${uniqueOrders.length} سجل فريد في قاعدة البيانات`);
 
 loadingDiv.remove();
-alert(`✅ تم حذف السجلات المكررة بنجاح!\n\n🗑️ تم حذف: ${deletedCount} سجل مكرر\n✅ تم الاحتفاظ بـ: ${uniqueOrders.length} سجل فريد\n\n☁️ تم التنظيف من Supabase`);
+alert(`✅ تم حذف السجلات المكررة بنجاح!\n\n🗑️ تم حذف: ${deletedCount} سجل مكرر\n✅ تم الاحتفاظ بـ: ${uniqueOrders.length} سجل فريد\n\n☁️ تم التنظيف من قاعدة البيانات`);
 
 // Reload data
 await loadAdminData();
@@ -4053,12 +4048,12 @@ document.getElementById('importPreview').innerHTML = '';
 const uploadBtn = document.getElementById('uploadLocalToSupabaseBtn');
 if (uploadBtn) {
 uploadBtn.onclick = async () => {
-if (!confirm('⚠️ هل تريد رفع كل البيانات إلى Supabase؟\n\nملاحظة: LocalStorage تم إزالته للأمان، البيانات موجودة في Supabase فقط.')) {
+if (!confirm('⚠️ هل تريد رفع كل البيانات إلى Supabase؟\n\nملاحظة: LocalStorage تم إزالته للأمان، البيانات موجودة في قاعدة البيانات فقط.')) {
 return;
 }
 
 // LocalStorage removed - data is only in Supabase now
-alert('ℹ️ البيانات موجودة في Supabase فقط.\n\nاستخدم "تحميل كل البيانات" لعرض جميع السجلات.');
+alert('ℹ️ البيانات موجودة في قاعدة البيانات فقط.\n\nاستخدم "تحميل كل البيانات" لعرض جميع السجلات.');
 return;
 
 console.log(`🚀 بدء الرفع السريع: ${orders.length} سجل`);
@@ -4090,7 +4085,7 @@ alert(`✅ تم الرفع بنجاح!\n\n📤 تم رفع: ${uploaded} سجل\n
 // Cleanup Duplicates Button Handler
 if (document.getElementById('cleanupDuplicatesBtn')) {
 document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
-if (!confirm('⚠️ هل أنت متأكد من تنظيف البيانات المتكررة؟\n\nسيتم:\n✅ حذف السجلات المتكررة من Supabase\n✅ حذف السجلات المتكررة من LocalStorage\n✅ الاحتفاظ بأول سجل فقط لكل رقم قومي\n\n⚠️ هذه العملية لا يمكن التراجع عنها!')) {
+if (!confirm('⚠️ هل أنت متأكد من تنظيف البيانات المتكررة؟\n\nسيتم:\n✅ حذف السجلات المتكررة من قاعدة البيانات\n✅ حذف السجلات المتكررة من LocalStorage\n✅ الاحتفاظ بأول سجل فقط لكل رقم قومي\n\n⚠️ هذه العملية لا يمكن التراجع عنها!')) {
 return;
 }
 document.getElementById('loadingSpinner').style.display = 'block';
@@ -4105,7 +4100,7 @@ const { data: allSupabaseOrders, error: loadError } = await window.supabaseClien
 
 if (loadError) throw loadError;
 
-console.log(`📊 تم تحميل ${allSupabaseOrders.length} سجل من Supabase`);
+console.log(`📊 تم تحميل ${allSupabaseOrders.length} سجل من قاعدة البيانات`);
 
 // Step 2: Find duplicates by nationalId and refNumber
 const seenNIDs = new Map(); // nationalId -> first record
@@ -4144,7 +4139,7 @@ document.getElementById('loadingSpinner').style.display = 'none';
 return;
 }
 
-// Step 3: Delete duplicates from Supabase only (LocalStorage removed for security)
+// Step 3: Delete duplicates from Database
 let deletedCount = 0;
 for (const dup of duplicatesToDelete) {
 try {
@@ -4161,9 +4156,9 @@ console.error(`❌ فشل حذف ${dup.id}:`, e);
 }
 
 // Step 4: Log the action
-await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من Supabase`); 
+await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات`); 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ تم تنظيف البيانات بنجاح!\n\n📊 الإحصائيات:\n🗑️ تم حذف ${deletedCount} سجل مكرر من Supabase\n💾 تم تنظيف LocalStorage\n\n🔄 سيتم تحديث الصفحة الآن...`);
+alert(`✅ تم تنظيف البيانات بنجاح!\n\n📊 الإحصائيات:\n🗑️ تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات\n💾 تم تنظيف LocalStorage\n\n🔄 سيتم تحديث الصفحة الآن...`);
 location.reload();
 
 } catch (error) {
@@ -4190,7 +4185,7 @@ XLSX.writeFile(wb, 'نموذج_استيراد_المركبات.xlsx');
 
 // Clean Duplicates Button
 document.getElementById('cleanDuplicatesBtn').onclick = async () => {
-if (!confirm('🧹 هل تريد تنظيف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من Supabase\n✅ حذف التكرار من LocalStorage\n✅ الاحتفاظ بأحدث سجل فقط')) {
+if (!confirm('🧹 هل تريد تنظيف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من قاعدة البيانات\n✅ حذف التكرار من LocalStorage\n✅ الاحتفاظ بأحدث سجل فقط')) {
 return;
 }
 
@@ -4201,7 +4196,7 @@ document.body.appendChild(loadingDiv);
 
 try {
 // 1. Load all data from Supabase (with pagination for large datasets)
-console.log('📥 جاري تحميل كل البيانات من Supabase...');
+console.log('📥 جاري تحميل كل البيانات من قاعدة البيانات...');
 let allOrders = [];
 let from = 0;
 const batchSize = 1000;
@@ -4226,7 +4221,7 @@ hasMore = false;
 }
 }
 
-console.log(`📊 تم تحميل ${allOrders.length} سجل من Supabase`);
+console.log(`📊 تم تحميل ${allOrders.length} سجل من قاعدة البيانات`);
 
 // 2. Find duplicates by national_id
 const seenNIDs = new Map(); // national_id -> latest record
@@ -4264,7 +4259,7 @@ return;
 }
 
 // 3. Delete duplicates from Supabase in batches
-console.log('🗑️ جاري حذف السجلات المكررة من Supabase...');
+console.log('🗑️ جاري حذف السجلات المكررة من قاعدة البيانات...');
 const deleteBatchSize = 50;
 let deletedCount = 0;
 
@@ -4302,8 +4297,8 @@ status: order.status,
 images: order.images || []
 }));
 
-// LocalStorage removed for security - data is in Supabase only
-console.log(`✅ تم حفظ ${uniqueOrders.length} سجل فريد في Supabase`);
+// Data stored securely in Database
+console.log(`✅ تم حفظ ${uniqueOrders.length} سجل فريد في قاعدة البيانات`);
 
 // 5. Reload data
 loadingDiv.remove();
@@ -4543,8 +4538,8 @@ document.getElementById('progressStatus').textContent = status;
 
 try {
 // Load existing data from Supabase (with pagination for accurate duplicate check)
-updateProgress(0, 100, '⏳ جاري تحميل البيانات من Supabase...');
-console.log('📥 جاري تحميل البيانات من Supabase للتحقق من التكرار...');
+updateProgress(0, 100, '⏳ جاري تحميل البيانات من قاعدة البيانات...');
+console.log('📥 جاري تحميل البيانات من قاعدة البيانات للتحقق من التكرار...');
 
 let existingOrders = [];
 let from = 0;
@@ -4569,7 +4564,7 @@ hasMore = false;
 }
 }
 
-console.log(`✅ تم تحميل ${existingOrders.length} سجل من Supabase`);
+console.log(`✅ تم تحميل ${existingOrders.length} سجل من قاعدة البيانات`);
 
 // Create a Set of existing national IDs for fast lookup
 const existingNIDs = new Set(existingOrders.map(o => o.national_id));
@@ -4649,15 +4644,15 @@ successCount++;
 }
 
 // Save to Supabase first (primary storage)
-updateProgress(50, 100, '☁️ جاري الحفظ في Supabase...');
-console.log('⏳ جاري الحفظ في Supabase...');
+updateProgress(50, 100, '☁️ جاري الحفظ في قاعدة البيانات...');
+console.log('⏳ جاري الحفظ في قاعدة البيانات...');
 const batchSize = 50; // Supabase batchis 500, we use 50 for safety
 for (let i = 0; i < recordsToAdd.length; i += batchSize) {
 const batch = recordsToAdd.slice(i, i + batchSize);
 
 // Update progress
 const progress = 60 + Math.round((i / recordsToAdd.length) * 35); // 60-95%
-updateProgress(progress, 100, `☁️ حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Supabase...`);
+updateProgress(progress, 100, `☁️ حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في قاعدة البيانات...`);
 
 // Save batch to Supabase in parallel (much faster!)
 const savePromises = batch.map(async (record) => {
@@ -4703,7 +4698,7 @@ return null;
 });
 await Promise.all(savePromises);
 
-console.log(`✅ تم حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في Supabase`);
+console.log(`✅ تم حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في قاعدة البيانات`);
 }
 
 // Update LocalStorage cache after successful Supabase save
@@ -4715,7 +4710,7 @@ document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('importProgress').style.display = 'none';
 document.getElementById('bulkImportModal').style.display = 'none';
 
-let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في Supabase: ${successCount} سجل\n💾 تم الحفظ في لوحة التحكم: ${successCount} سجل`;
+let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في قاعدة البيانات: ${successCount} سجل\n💾 تم الحفظ في لوحة التحكم: ${successCount} سجل`;
 if (errors.length > 0 && errors.length <= 5) {
 resultMsg += '\n\n❌ الأخطاء:\n' + errors.slice(0, 5).join('\n');
 if (errors.length > 5) {
