@@ -788,6 +788,7 @@
     </div>
     <div style="display:flex; gap:6px; flex-wrap: wrap;">
     <button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="goToPortal()">🏠 البوابة</button>
+    <button id="goAdminBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="goToAdmin()">⚙️ لوحة التحكم</button>
     <button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer; padding: 6px 10px; font-size: 0.75rem;" onclick="logoutAdmin()">🚪 خروج</button>
     <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4); padding: 6px 10px; font-size: 0.75rem;">🔐 التحكم</button>
     </div>
@@ -1157,8 +1158,7 @@
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
     <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none;">📜 سجل المشرفين</button>
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
-    <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
-    <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">👁️ إظهار/إخفاء الأعمدة</button>
+    <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">�️ إظهار/إخفاء الأعمدة</button>
     <div style="flex: 1; display: flex; gap: 10px;">
     <select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
     <option value="all">🔍 الكل</option>
@@ -1171,7 +1171,7 @@
     </select>
     <input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
     </div>
-    <button id="supervisorLogBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color:white; display:none;">�E سجل المشرفين</button>
+    <button id="supervisorLogBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color:white; display:none;">📋 سجل المشرفين</button>
     <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
     <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">🧹 حذف المكرر</button>
     <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
@@ -2904,7 +2904,21 @@
     document.getElementById('complaintInquiryPage').style.display = 'none';
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
+    document.getElementById('goAdminBtn').style.display = 'inline-flex';
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
+    };
+
+    // Go to Admin Panel function
+    window.goToAdmin = function() {
+    document.getElementById('portalSection').style.display = 'none';
+    document.getElementById('citizenPage').style.display = 'none';
+    document.getElementById('inquiryPage').style.display = 'none';
+    document.getElementById('complaintsPage').style.display = 'none';
+    document.getElementById('complaintInquiryPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'block';
+    document.getElementById('goAdminBtn').style.display = 'none';
+    document.getElementById('goPortalBtn').style.display = 'inline-flex';
+    console.log('⚙️ العودة للوحة التحكم');
     };
 
     async function loadAdminData() {
