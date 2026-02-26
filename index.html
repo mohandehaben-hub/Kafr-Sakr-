@@ -5177,6 +5177,20 @@
     document.getElementById('logoutBtn').style.display = 'inline-flex'; 
     document.getElementById('loginBtn').style.display = 'none';
 
+    // Show/hide supervisor log button based on role
+    const supervisorLogBtn = document.getElementById('supervisorLogBtn');
+    if (supervisorLogBtn) {
+    supervisorLogBtn.style.display = userRole === 'SUPER' ? 'inline-block' : 'none';
+    }
+
+    // Show/hide cleanup buttons based on role
+    const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
+    const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
+    if (userRole !== 'SUPER') {
+    if (cleanupBtn) cleanupBtn.style.display = 'none';
+    if (cleanupMainBtn) cleanupMainBtn.style.display = 'none';
+    }
+
     // Restore badge
     const header = document.querySelector('header');
     const roleBadge = userRole === 'SUPER' ? '👑 مدير عام' : userRole === 'ADMIN' ? '🔧 مشرف' : '👁️ عرض فقط';
