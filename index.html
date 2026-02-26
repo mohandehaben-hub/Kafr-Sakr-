@@ -1172,7 +1172,7 @@
     <input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
     </div>
     <button id="supervisorLogBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color:white; display:none;">📋 سجل المشرفين</button>
-    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white;">📊 تصدير Excel</button>
+    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none;">📊 تصدير Excel</button>
     <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">🧹 حذف المكرر</button>
     <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
     </div>
@@ -2735,14 +2735,17 @@
     const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
     const supervisorLogBtn = document.getElementById('supervisorLogBtn');
     const showAdminLogsBtn = document.getElementById('showAdminLogsBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
     if (userRole !== 'SUPER') {
     if (cleanupBtn) cleanupBtn.style.display = 'none';
     if (cleanupMainBtn) cleanupMainBtn.style.display = 'none';
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'none';
     if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'none';
+    if (exportExcelBtn) exportExcelBtn.style.display = 'none';
     } else {
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'inline-block';
     if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'inline-block';
+    if (exportExcelBtn) exportExcelBtn.style.display = 'inline-block';
     }
     } catch (error) {
     console.error('❌ خطأ في تسجيل الدخول:', error);
@@ -5197,12 +5200,15 @@
     // Show/hide supervisor log button based on role
     const supervisorLogBtn = document.getElementById('supervisorLogBtn');
     const showAdminLogsBtn = document.getElementById('showAdminLogsBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
     if (userRole === 'SUPER') {
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'inline-block';
     if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'inline-block';
+    if (exportExcelBtn) exportExcelBtn.style.display = 'inline-block';
     } else {
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'none';
     if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'none';
+    if (exportExcelBtn) exportExcelBtn.style.display = 'none';
     }
 
     // Show/hide cleanup buttons based on role
@@ -5242,6 +5248,17 @@
     if (!searchTerm) {
     filteredOrdersData = allOrdersData;
     } else {
+    // Log search operation
+    const searchTypeText = searchType === 'all' ? 'الكل' : 
+                          searchType === 'name' ? 'الاسم' :
+                          searchType === 'code' ? 'الكود' :
+                          searchType === 'nationalId' ? 'الرقم القومي' :
+                          searchType === 'phone' ? 'الهاتف' :
+                          searchType === 'chassis' ? 'الشاسيه' :
+                          searchType === 'motor' ? 'الموتور' : searchType;
+    
+    window.logSupervisorAction('بحث في البيانات', `بحث في (${searchTypeText}) عن: "${searchTerm}"`);
+    
     filteredOrdersData = allOrdersData.filter(orderData => {
     const item = orderData.item;
 
@@ -5389,6 +5406,7 @@
     html += '<th style="padding: 12px; border: 1px solid #ddd;">الصلاحية</th>';
     html += '<th style="padding: 12px; border: 1px solid #ddd;">العملية</th>';
     html += '<th style="padding: 12px; border: 1px solid #ddd;">التفاصيل</th>';
+    html += '<th style="padding: 12px; border: 1px solid #ddd;">حذف</th>';
     html += '</tr></thead><tbody>';
     
     logs.forEach(log => {
@@ -5402,6 +5420,7 @@
     html += `<td style="padding: 10px; border: 1px solid #ddd;">${roleText}</td>`;
     html += `<td style="padding: 10px; border: 1px solid #ddd; font-weight: 600;">${log.action}</td>`;
     html += `<td style="padding: 10px; border: 1px solid #ddd; font-size: 0.9rem;">${log.details}</td>`;
+    html += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center;"><button class="btn" onclick="deleteSupervisorLog(${log.id})" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 5px 10px; font-size: 0.8rem;">🗑️</button></td>`;
     html += '</tr>';
     });
     
@@ -5411,6 +5430,34 @@
     } catch (e) {
     console.error('❌ خطأ في تحميل السجل:', e);
     document.getElementById('supervisorLogContent').innerHTML = '<p style="text-align: center; color: #e74c3c;">حدث خطأ في تحميل السجل</p>';
+    }
+    };
+
+    // Delete single supervisor log entry
+    window.deleteSupervisorLog = async function(logId) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا السجل؟')) {
+    return;
+    }
+    
+    try {
+    document.getElementById('loadingSpinner').style.display = 'block';
+    
+    const { error } = await window.supabaseClient
+    .from('supervisor_logs')
+    .delete()
+    .eq('id', logId);
+    
+    if (error) throw error;
+    
+    document.getElementById('loadingSpinner').style.display = 'none';
+    
+    // Reload the log
+    document.getElementById('supervisorLogBtn').click();
+    
+    } catch (e) {
+    console.error('❌ خطأ في حذف السجل:', e);
+    document.getElementById('loadingSpinner').style.display = 'none';
+    alert('❌ حدث خطأ في حذف السجل');
     }
     };
 
