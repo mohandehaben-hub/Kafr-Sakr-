@@ -1973,9 +1973,9 @@
     </script>
 
     <!-- Storage Upload Function -->
-    <script type="module">
+    <script>
     // Upload to Cloud Storage (Private)
-    const uploadToSupabaseStorage = async (file) => {
+    window.uploadToSupabaseStorage = async (file) => {
     return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -2133,7 +2133,7 @@
     const imgUrls = [];
     btn.innerText = "جاري رفع الصور...";
     for (let i = 0; i < files.length; i++) {
-    const url = await uploadToSupabaseStorage(files[i]);
+    const url = await window.uploadToSupabaseStorage(files[i]);
     imgUrls.push(url);
     btn.innerText = `جاري رفع الصورة ${i + 1} من ${files.length}...`;
     }
@@ -2434,21 +2434,21 @@
 
     // Upload selfie
     btn.innerText = "جاري رفع صورة السيلفي...";
-    imgUrls.selfie = await uploadToSupabaseStorage(selfie);
+    imgUrls.selfie = await window.uploadToSupabaseStorage(selfie);
 
     // Upload ID card
     btn.innerText = "جاري رفع صورة البطاقة...";
-    imgUrls.idCard = await uploadToSupabaseStorage(idCard);
+    imgUrls.idCard = await window.uploadToSupabaseStorage(idCard);
 
     // Upload vehicle image
     btn.innerText = "جاري رفع صورة المركبة...";
-    imgUrls.vehicleImage = await uploadToSupabaseStorage(vehicleImage);
+    imgUrls.vehicleImage = await window.uploadToSupabaseStorage(vehicleImage);
 
     // Upload problem images
     if (problemImages.length > 0) {
     for (let i = 0; i < problemImages.length; i++) {
     btn.innerText = `جاري رفع صورة المشكلة ${i + 1} من ${problemImages.length}...`;
-    const url = await uploadToSupabaseStorage(problemImages[i]);
+    const url = await window.uploadToSupabaseStorage(problemImages[i]);
     imgUrls.problemImages.push(url);
     }
     }
