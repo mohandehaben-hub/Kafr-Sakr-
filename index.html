@@ -4060,7 +4060,7 @@
 
     // Export Excel - Enhanced Version
     document.getElementById('exportExcelBtn').onclick = async () => {
-    if (!confirm('📊 هل تريد تصدير كل البيانات إلى Excel؟\n\n✅ سيتم تصدير:\n• الإحصائيات الكاملة\n• جميع بيانات المركبات (بدون صور)\n• جميع الشكاوى (بدون صور)\n\nقد يستغرق الأمر بضع ثوانٍ...')) {
+    if (!confirm('📊 هل تريد تصدير كل البيانات إلى Excel؟\n\n✅ سيتم تصدير جميع بيانات المركبات (بدون صور)\n✅ البيانات مرتبة حسب الكود (1، 2، 3...)\n\nقد يستغرق الأمر بضع ثوانٍ...')) {
     return;
     }
 
@@ -4096,130 +4096,57 @@
     }
     }
 
-    // Load all complaints data
-    console.log('📥 جاري تحميل بيانات الشكاوى...');
-    const { data: allComplaints, error: compError } = await window.supabaseClient
-    .from('complaints')
-    .select('*')
-    .order('submitted_at', { ascending: false });
-
-    if (compError) throw compError;
-
-    // Calculate statistics
-    const totalVehicles = allVehicles.length;
-    const codedVehicles = allVehicles.filter(v => v.status === 'coded').length;
-    const pendingVehicles = allVehicles.filter(v => v.status === 'pending').length;
-    const totalComplaints = allComplaints ? allComplaints.length : 0;
-    const repliedComplaints = allComplaints ? allComplaints.filter(c => c.status === 'replied').length : 0;
-    const pendingComplaints = allComplaints ? allComplaints.filter(c => c.status === 'pending').length : 0;
-
     // Create workbook
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Statistics
-    const statsData = [
-    ['📊 إحصائيات منظومة كفر صقر'],
-    [''],
-    ['📋 بيانات المركبات'],
-    ['إجمالي الطلبات', totalVehicles],
-    ['✅ تم التكويد', codedVehicles],
-    ['⏳ قيد الانتظار', pendingVehicles],
-    [''],
-    ['⚖️ بيانات الشكاوى'],
-    ['إجمالي الشكاوى', totalComplaints],
-    ['✅ تم الرد', repliedComplaints],
-    ['⏳ قيد المراجعة', pendingComplaints],
-    [''],
-    ['📅 تاريخ التصدير', new Date().toLocaleString('ar-EG')]
-    ];
-    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
-    statsSheet['!cols'] = [{ wch: 25 }, { wch: 15 }];
-    XLSX.utils.book_append_sheet(wb, statsSheet, 'الإحصائيات');
-
-    // Sheet 2: Vehicles Data
-    console.log('📝 جاري تجهيز بيانات المركبات...');
+    // Vehicles Data - sorted by code
+    console.log('� جاري تجهيز بيانات المركبات...');
+    
+    // Sort by code (ascending: 1, 2, 3...)
+    const sortedVehicles = allVehicles.sort((a, b) => {
+    const codeA = parseInt(a.code) || 999999;
+    const codeB = parseInt(b.code) || 999999;
+    return codeA - codeB;
+    });
+    
     const vehiclesData = [
-    ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
+    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود']
     ];
 
-    allVehicles.forEach(vehicle => {
-    // Format date
-    const date = new Date(vehicle.submitted_at);
-    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
-    
-    // Status text
-    const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
-    
+    sortedVehicles.forEach(vehicle => {
     vehiclesData.push([
     vehicle.owner_name || '-',
-    "'" + (vehicle.national_id || '-'), // Add ' prefix to prevent scientific notation
-    "'" + (vehicle.phone || '-'), // Add ' prefix
+    "'" + (vehicle.national_id || '-'),
+    "'" + (vehicle.phone || '-'),
     vehicle.vehicle_type || '-',
-    vehicle.plate_number || '-',
-    vehicle.code || '-',
-    statusText,
-    formattedDate
+    vehicle.vehicle_year || '-',
+    vehicle.chassis || '-',
+    vehicle.motor || '-',
+    vehicle.address || '-',
+    vehicle.code || '-'
     ]);
     });
 
     const vehiclesSheet = XLSX.utils.aoa_to_sheet(vehiclesData);
     vehiclesSheet['!cols'] = [
-    { wch: 20 }, // اسم المالك
-    { wch: 18 }, // الرقم القومي
-    { wch: 15 }, // رقم الهاتف
-    { wch: 15 }, // نوع المركبة
-    { wch: 15 }, // رقم اللوحة
-    { wch: 12 }, // الكود
-    { wch: 15 }, // الحالة
-    { wch: 25 }  // تاريخ التقديم
+    { wch: 20 }, // الاسم
+    { wch: 15 }, // الرقم القومي
+    { wch: 12 }, // الهاتف
+    { wch: 10 }, // النوع
+    { wch: 8 },  // الموديل
+    { wch: 15 }, // الشاسيه
+    { wch: 15 }, // الموتور
+    { wch: 25 }, // العنوان
+    { wch: 8 }   // الكود
     ];
     XLSX.utils.book_append_sheet(wb, vehiclesSheet, 'بيانات المركبات');
 
-    // Sheet 3: Complaints Data
-    if (allComplaints && allComplaints.length > 0) {
-    console.log('📝 جاري تجهيز بيانات الشكاوى...');
-    const complaintsData = [
-    ['اسم المقدم', 'رقم الهاتف', 'نوع الشكوى', 'التفاصيل', 'الحالة', 'الرد', 'تاريخ التقديم']
-    ];
-
-    allComplaints.forEach(complaint => {
-    // Format date
-    const date = new Date(complaint.submitted_at);
-    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
-    
-    // Status text
-    const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
-    
-    complaintsData.push([
-    complaint.owner_name || '-',
-    "'" + (complaint.phone || '-'), // Add ' prefix
-    complaint.complaint_type || '-',
-    complaint.details || '-',
-    statusText,
-    complaint.reply || '-',
-    formattedDate
-    ]);
-    });
-
-    const complaintsSheet = XLSX.utils.aoa_to_sheet(complaintsData);
-    complaintsSheet['!cols'] = [
-    { wch: 20 }, // اسم المقدم
-    { wch: 15 }, // رقم الهاتف
-    { wch: 15 }, // نوع الشكوى
-    { wch: 40 }, // التفاصيل
-    { wch: 15 }, // الحالة
-    { wch: 40 }, // الرد
-    { wch: 25 }  // تاريخ التقديم
-    ];
-    XLSX.utils.book_append_sheet(wb, complaintsSheet, 'الشكاوى');
-    }
-
     // Write file
-    const fileName = `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`;
+    const fileName = `بيانات_المركبات_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`;
     XLSX.writeFile(wb, fileName);
 
     document.body.removeChild(loadingDiv);
-    alert(`✅ تم تصدير البيانات بنجاح!\n\n📊 الإحصائيات:\n• ${totalVehicles} مركبة\n• ${totalComplaints} شكوى\n\n📁 الملف: ${fileName}`);
+    alert(`✅ تم تصدير البيانات بنجاح!\n\n📊 عدد المركبات: ${allVehicles.length}\n📁 الملف: ${fileName}`);
     console.log('✅ تم تصدير البيانات بنجاح');
 
     } catch (error) {
