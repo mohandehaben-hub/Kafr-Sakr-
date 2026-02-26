@@ -3121,18 +3121,15 @@
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
+    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">�</button>
     <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    <button class="btn btn-copy" title="نسخ البيانات" style="padding:3px 5px; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; font-size:0.65rem;">📋</button>
+    <button class="btn btn-download-all" title="تحميل الكل" style="padding:3px 5px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; font-size:0.65rem;">�</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">�️</button>
     </td>
     `;
 
-    tr.querySelector('.btn-status').onclick = async () => {
-    document.getElementById('statusChangeModal').style.display = 'block';
-    document.getElementById('newStatusSelect').value = item.status || 'pending';
-    document.getElementById('statusNote').value = '';
+    tr.querySelector('.btn-code').onclick = async () => {
     document.getElementById('sendWhatsAppStatus').checked = true;
     window.currentStatusChangeItem = { item, id };
     };
@@ -3286,8 +3283,78 @@
     }
     };
 
-    tr.querySelector('.btn-log').onclick = () => {
-    showActivityLog(item);
+    tr.querySelector('.btn-copy').onclick = () => {
+    const data = `الاسم: ${item.owner}\nالرقم القومي: ${item.nationalId}\nالهاتف: ${item.phone}\nالنوع: ${item.vType}\nالموديل: ${item.vYear}\nالشاسيه: ${item.chassisNumber || '-'}\nالموتور: ${item.motorNumber || '-'}\nالعنوان: ${item.address}\nالكود: ${item.vCode || '-'}`;
+    navigator.clipboard.writeText(data).then(() => {
+    alert('✅ تم نسخ البيانات');
+    }).catch(() => {
+    alert('❌ فشل النسخ');
+    });
+    };
+
+    tr.querySelector('.btn-download-all').onclick = async () => {
+    const imageCount = item.images ? item.images.length : 0;
+    if (!confirm(`📥 تحميل بيانات المواطن\n\n👤 ${item.owner}\n🖼️ عدد الصور: ${imageCount}\n\nسيتم تحميل ملف ZIP يحتوي على:\n• ملف Excel بالبيانات\n• جميع الصور المرفوعة\n\nهل تريد المتابعة؟`)) {
+    return;
+    }
+
+    try {
+    document.getElementById('loadingSpinner').style.display = 'block';
+    const zip = new JSZip();
+
+    // Create Excel file with vehicle data
+    const wb = XLSX.utils.book_new();
+    const vehicleData = [
+    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود'],
+    [
+    item.owner || '',
+    item.nationalId || '',
+    item.phone || '',
+    item.vType || '',
+    item.vYear || '',
+    item.chassisNumber || '',
+    item.motorNumber || '',
+    item.address || '',
+    item.vCode || ''
+    ]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(vehicleData);
+    ws['!cols'] = [
+    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
+    { wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 12 }
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, 'بيانات المركبة');
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    zip.file('بيانات_المواطن.xlsx', excelBuffer);
+
+    // Add images if available
+    if (item.images && item.images.length > 0) {
+    const imagesFolder = zip.folder('الصور');
+    for (let i = 0; i < item.images.length; i++) {
+    const imgUrl = item.images[i];
+    try {
+    const response = await fetch(imgUrl);
+    const blob = await response.blob();
+    const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+    imagesFolder.file(`صورة_${i + 1}.${ext}`, blob);
+    } catch (err) {
+    console.error('خطأ في تحميل الصورة:', err);
+    }
+    }
+    }
+
+    // Generate and download ZIP
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const fileName = `مواطن_${item.vCode || item.refNumber}_كامل.zip`;
+    saveAs(zipBlob, fileName);
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    alert(`✅ تم تحميل البيانات بنجاح!\n\n📦 الملف: ${fileName}`);
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('خطأ في التحميل:', error);
+    alert('❌ حدث خطأ أثناء تحميل البيانات');
+    }
     };
 
     tr.querySelector('.view-btn').onclick = () => {
@@ -3442,23 +3509,15 @@
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
+    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">�</button>
     <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    <button class="btn btn-copy" title="نسخ البيانات" style="padding:3px 5px; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; font-size:0.65rem;">📋</button>
+    <button class="btn btn-download-all" title="تحميل الكل" style="padding:3px 5px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; font-size:0.65rem;">�</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">�️</button>
     </td>
     `;
 
     // Attach button handlers
-    tr.querySelector('.btn-status').onclick = async () => {
-    document.getElementById('statusChangeModal').style.display = 'block';
-    document.getElementById('newStatusSelect').value = item.status || 'pending';
-    document.getElementById('statusNote').value = '';
-    document.getElementById('sendWhatsAppStatus').checked = true;
-    window.currentStatusChangeItem = { item, id };
-    };
-
     tr.querySelector('.btn-code').onclick = async () => {
     if (item.vCode) {
     alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
@@ -3590,8 +3649,78 @@
     }
     };
 
-    tr.querySelector('.btn-log').onclick = () => {
-    showActivityLog(item);
+    tr.querySelector('.btn-copy').onclick = () => {
+    const data = `الاسم: ${item.owner}\nالرقم القومي: ${item.nationalId}\nالهاتف: ${item.phone}\nالنوع: ${item.vType}\nالموديل: ${item.vYear}\nالشاسيه: ${item.chassisNumber || '-'}\nالموتور: ${item.motorNumber || '-'}\nالعنوان: ${item.address}\nالكود: ${item.vCode || '-'}`;
+    navigator.clipboard.writeText(data).then(() => {
+    alert('✅ تم نسخ البيانات');
+    }).catch(() => {
+    alert('❌ فشل النسخ');
+    });
+    };
+
+    tr.querySelector('.btn-download-all').onclick = async () => {
+    const imageCount = item.images ? item.images.length : 0;
+    if (!confirm(`📥 تحميل بيانات المواطن\n\n👤 ${item.owner}\n🖼️ عدد الصور: ${imageCount}\n\nسيتم تحميل ملف ZIP يحتوي على:\n• ملف Excel بالبيانات\n• جميع الصور المرفوعة\n\nهل تريد المتابعة؟`)) {
+    return;
+    }
+
+    try {
+    document.getElementById('loadingSpinner').style.display = 'block';
+    const zip = new JSZip();
+
+    // Create Excel file with vehicle data
+    const wb = XLSX.utils.book_new();
+    const vehicleData = [
+    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود'],
+    [
+    item.owner || '',
+    item.nationalId || '',
+    item.phone || '',
+    item.vType || '',
+    item.vYear || '',
+    item.chassisNumber || '',
+    item.motorNumber || '',
+    item.address || '',
+    item.vCode || ''
+    ]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(vehicleData);
+    ws['!cols'] = [
+    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
+    { wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 12 }
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, 'بيانات المركبة');
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    zip.file('بيانات_المواطن.xlsx', excelBuffer);
+
+    // Add images if available
+    if (item.images && item.images.length > 0) {
+    const imagesFolder = zip.folder('الصور');
+    for (let i = 0; i < item.images.length; i++) {
+    const imgUrl = item.images[i];
+    try {
+    const response = await fetch(imgUrl);
+    const blob = await response.blob();
+    const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+    imagesFolder.file(`صورة_${i + 1}.${ext}`, blob);
+    } catch (err) {
+    console.error('خطأ في تحميل الصورة:', err);
+    }
+    }
+    }
+
+    // Generate and download ZIP
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const fileName = `مواطن_${item.vCode || item.refNumber}_كامل.zip`;
+    saveAs(zipBlob, fileName);
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    alert(`✅ تم تحميل البيانات بنجاح!\n\n📦 الملف: ${fileName}`);
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('خطأ في التحميل:', error);
+    alert('❌ حدث خطأ أثناء تحميل البيانات');
+    }
     };
 
     tr.querySelector('.view-btn').onclick = () => {
