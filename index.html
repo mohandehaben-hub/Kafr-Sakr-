@@ -3949,8 +3949,8 @@
 
     // Filter functions for stat cards
     function showAllOrders() {
-        filteredOrdersData = allOrdersData;
-        currentPage = 1;
+        window.filteredOrdersData = window.allOrdersData;
+        window.currentPage = 1;
         renderCurrentPage();
         const ordersContainer = document.getElementById('ordersTableContainer');
         const complaintsContainer = document.getElementById('complaintsTableContainer');
@@ -3967,11 +3967,11 @@
     }
 
     function showCodedOrders() {
-        filteredOrdersData = allOrdersData.filter(orderData => {
+        window.filteredOrdersData = window.allOrdersData.filter(orderData => {
             const item = orderData.item;
             return item.status === 'coded' || item.status === 'delivered';
         });
-        currentPage = 1;
+        window.currentPage = 1;
         renderCurrentPage();
         const ordersContainer = document.getElementById('ordersTableContainer');
         const complaintsContainer = document.getElementById('complaintsTableContainer');
@@ -3982,11 +3982,11 @@
     }
 
     function showPendingOrders() {
-        filteredOrdersData = allOrdersData.filter(orderData => {
+        window.filteredOrdersData = window.allOrdersData.filter(orderData => {
             const item = orderData.item;
             return item.status === 'pending' || item.status === 'approved' || !item.status;
         });
-        currentPage = 1;
+        window.currentPage = 1;
         renderCurrentPage();
         const ordersContainer = document.getElementById('ordersTableContainer');
         const complaintsContainer = document.getElementById('complaintsTableContainer');
@@ -5236,17 +5236,17 @@
     // ============================================
     // PAGINATION SYSTEM
     // ============================================
-    let currentPage = 1;
-    let recordsPerPage = 100;
-    let allOrdersData = [];
-    let filteredOrdersData = [];
+    window.currentPage = 1;
+    window.recordsPerPage = 100;
+    window.allOrdersData = [];
+    window.filteredOrdersData = [];
 
     window.searchOrders = function() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     const searchType = document.getElementById('searchType') ?document.getElementById('searchType').value : 'all';
 
     if (!searchTerm) {
-    filteredOrdersData = allOrdersData;
+    window.filteredOrdersData = window.allOrdersData;
     } else {
     // Log search operation
     const searchTypeText = searchType === 'all' ? 'الكل' : 
@@ -5259,7 +5259,7 @@
     
     window.logSupervisorAction('بحث في البيانات', `بحث في (${searchTypeText}) عن: "${searchTerm}"`);
     
-    filteredOrdersData = allOrdersData.filter(orderData => {
+    window.filteredOrdersData = window.allOrdersData.filter(orderData => {
     const item = orderData.item;
 
     if (searchType === 'all') {
@@ -5290,40 +5290,40 @@
     return false;
     });
     }
-    currentPage = 1;
+    window.currentPage = 1;
     renderCurrentPage();
-    const resultMsg = filteredOrdersData.length === allOrdersData.length ? 
-    `🔍 عرض كل السجلات: ${allOrdersData.length}` : 
-    `🔍 البحث (${searchType}) عن: "${searchTerm}" - النتائج: ${filteredOrdersData.length} من ${allOrdersData.length}`;
+    const resultMsg = window.filteredOrdersData.length === window.allOrdersData.length ? 
+    `🔍 عرض كل السجلات: ${window.allOrdersData.length}` : 
+    `🔍 البحث (${searchType}) عن: "${searchTerm}" - النتائج: ${window.filteredOrdersData.length} من ${window.allOrdersData.length}`;
     console.log(resultMsg);
     };
 
     window.changePage = function(direction) {
-    const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1;
-    currentPage += direction;
-    if (currentPage < 1) currentPage = 1;
-    if (currentPage > totalPages) currentPage = totalPages;
+    const totalPages = Math.ceil(window.filteredOrdersData.length / window.recordsPerPage) || 1;
+    window.currentPage += direction;
+    if (window.currentPage < 1) window.currentPage = 1;
+    if (window.currentPage > totalPages) window.currentPage = totalPages;
     renderCurrentPage();
     };
 
     window.changeRecordsPerPage = function() {
     const selectedValue = document.getElementById('recordsPerPage').value;
     if (selectedValue === 'all') {
-    recordsPerPage = filteredOrdersData.length; // Show all records
+    window.recordsPerPage = window.filteredOrdersData.length; // Show all records
     } else {
-    recordsPerPage = parseInt(selectedValue);
+    window.recordsPerPage = parseInt(selectedValue);
     }
-    currentPage = 1;
+    window.currentPage = 1;
     renderCurrentPage();
     };
 
     function renderCurrentPage() {
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-    const pageData = filteredOrdersData.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filteredOrdersData.length / recordsPerPage) || 1; 
-    document.getElementById('pageInfo').textContent = `صفحة ${currentPage} من ${totalPages}`; 
-    document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${filteredOrdersData.length} سجل`;
+    const startIndex = (window.currentPage - 1) * window.recordsPerPage;
+    const endIndex = startIndex + window.recordsPerPage;
+    const pageData = window.filteredOrdersData.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(window.filteredOrdersData.length / window.recordsPerPage) || 1; 
+    document.getElementById('pageInfo').textContent = `صفحة ${window.currentPage} من ${totalPages}`; 
+    document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${window.filteredOrdersData.length} سجل`;
 
     const tableBody = document.getElementById('dataTable');
     tableBody.innerHTML = '';
@@ -5333,16 +5333,19 @@
     tableBody.appendChild(tr);
     });
 
-    const actualEnd = Math.min(endIndex, filteredOrdersData.length);
-    console.log(`📄 عرض الصفحة ${currentPage}/${totalPages}: السجلات ${startIndex + 1}-${actualEnd} من ${filteredOrdersData.length}`);
+    const actualEnd = Math.min(endIndex, window.filteredOrdersData.length);
+    console.log(`📄 عرض الصفحة ${window.currentPage}/${totalPages}: السجلات ${startIndex + 1}-${actualEnd} من ${window.filteredOrdersData.length}`);
     }
 
     function initializePagination(ordersArray) {
-    allOrdersData = ordersArray;
-    filteredOrdersData = ordersArray;
-    currentPage = 1;
+    window.allOrdersData = ordersArray;
+    window.filteredOrdersData = ordersArray;
+    window.currentPage = 1;
     renderCurrentPage();
     }
+    
+    // Make it global
+    window.initializePagination = initializePagination;
 
     console.log('✅ نظام Pagination جاهز');
 
