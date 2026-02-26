@@ -885,9 +885,6 @@
 
     <div class="input-group">
     <label>تاريخ الميلاد (للتحقق من الرقم القومي)</label>
-    <small style="color: #666; font-size: 0.85rem; display: block; margin-bottom: 8px; line-height: 1.5;">
-    ⚠️ اختر تاريخ ميلادك للتأكد من صحة الرقم القومي ومنع التكرار
-    </small>
     <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px;">
     <select id="birthDay" onchange="verifyBirthDate()" style="padding: 12px; border: 2px solid var(--glass-border); border-radius: 12px; font-size: 1rem; font-weight: 600;">
     <option value="">اليوم</option>
@@ -1370,9 +1367,6 @@
     <li><strong>العمود G:</strong> رقم الموتور</li>
     <li><strong>العمود H:</strong> رقم التليفون (11 رقم)</li>
     </ol>
-    <p style="color: #e74c3c; font-weight: 600; margin: 10px 0 0 0; font-size: 0.9rem;">
-    ⚠️ الصف الأول (Header) سيتم تجاهله تلقائياً
-    </p>
     </div>
 
     <button id="downloadTemplateBtn" class="btn" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; margin-top: 15px;">📄 تحميل ملف نموذجي</button>
@@ -2125,7 +2119,6 @@
     `👤 السيد/ة: ${owner}\n` +
     `🚜 نوع المركبة: ${vType}\n` +
     `📋 الرقم المرجعي: *${refNumber}*\n\n` +
-    `⚠️ احتفظ بهذا الرقم للاستعلام عن حالة طلبك\n\n` +
     `⏳ سيتم مراجعة طلبك والتواصل معك قريباً\n\n` +
     `📞 للاستفسار: 01021102607\n\n` +
     `_رئاسة مركز ومدينة كفر صقر_`;
@@ -2136,7 +2129,7 @@
     window.open(whatsappUrl, '_blank');
     }
 
-    alert(`✅ تم تسجيل بياناتك بنجاح!\n\n📋 رقمك المرجعي: ${refNumber}\n\n⚠️ احتفظ بهذا الرقم للاستعلام عن حالة طلبك\n\n📱 سيتم فتح واتساب لإرسال تأكيد الاستلام`);
+    alert(`✅ تم تسجيل بياناتك بنجاح!\n\n📋 رقمك المرجعي: ${refNumber}\n\n📱 سيتم فتح واتساب لإرسال تأكيد الاستلام`);
     location.reload();
     } catch (e) {
     document.getElementById('loadingSpinner').style.display = 'none';
@@ -4205,38 +4198,17 @@
 
     if (compError) throw compError;
 
-    // Calculate statistics
-    const totalVehicles = allVehicles.length;
-    const codedVehicles = allVehicles.filter(v => v.status === 'coded').length;
-    const pendingVehicles = allVehicles.filter(v => v.status === 'pending').length;
-    const totalComplaints = allComplaints ? allComplaints.length : 0;
-    const repliedComplaints = allComplaints ? allComplaints.filter(c => c.status === 'replied').length : 0;
-    const pendingComplaints = allComplaints ? allComplaints.filter(c => c.status === 'pending').length : 0;
-
     // Create workbook
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Statistics
-    const statsData = [
-    ['📊 إحصائيات منظومة كفر صقر'],
-    [''],
-    ['📋 بيانات المركبات'],
-    ['إجمالي الطلبات', totalVehicles],
-    ['✅ تم التكويد', codedVehicles],
-    ['⏳ قيد الانتظار', pendingVehicles],
-    [''],
-    ['⚖️ بيانات الشكاوى'],
-    ['إجمالي الشكاوى', totalComplaints],
-    ['✅ تم الرد', repliedComplaints],
-    ['⏳ قيد المراجعة', pendingComplaints],
-    [''],
-    ['📅 تاريخ التصدير', new Date().toLocaleString('ar-EG')]
-    ];
-    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
-    statsSheet['!cols'] = [{ wch: 25 }, { wch: 15 }];
-    XLSX.utils.book_append_sheet(wb, statsSheet, 'الإحصائيات');
+    // Sort vehicles by code (ascending)
+    allVehicles.sort((a, b) => {
+    const codeA = parseInt(a.code) || 999999;
+    const codeB = parseInt(b.code) || 999999;
+    return codeA - codeB;
+    });
 
-    // Sheet 2: Vehicles Data
+    // Sheet 1: Vehicles Data
     console.log('📝 جاري تجهيز بيانات المركبات...');
     const vehiclesData = [
     ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
@@ -4263,6 +4235,24 @@
     });
 
     const vehiclesSheet = XLSX.utils.aoa_to_sheet(vehiclesData);
+    
+    // Format phone and national_id columns as text to prevent Excel from adding dots
+    const range = XLSX.utils.decode_range(vehiclesSheet['!ref']);
+    for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+    // Column B (index 1) = الرقم القومي
+    const nationalIdCell = XLSX.utils.encode_cell({ r: R, c: 1 });
+    if (vehiclesSheet[nationalIdCell]) {
+    vehiclesSheet[nationalIdCell].t = 's'; // Set as string
+    vehiclesSheet[nationalIdCell].z = '@'; // Text format
+    }
+    // Column C (index 2) = رقم الهاتف
+    const phoneCell = XLSX.utils.encode_cell({ r: R, c: 2 });
+    if (vehiclesSheet[phoneCell]) {
+    vehiclesSheet[phoneCell].t = 's'; // Set as string
+    vehiclesSheet[phoneCell].z = '@'; // Text format
+    }
+    }
+    
     vehiclesSheet['!cols'] = [
     { wch: 20 }, // اسم المالك
     { wch: 18 }, // الرقم القومي
@@ -4302,6 +4292,18 @@
     });
 
     const complaintsSheet = XLSX.utils.aoa_to_sheet(complaintsData);
+    
+    // Format phone column as text to prevent Excel from adding dots
+    const compRange = XLSX.utils.decode_range(complaintsSheet['!ref']);
+    for (let R = compRange.s.r + 1; R <= compRange.e.r; ++R) {
+    // Column B (index 1) = رقم الهاتف
+    const phoneCell = XLSX.utils.encode_cell({ r: R, c: 1 });
+    if (complaintsSheet[phoneCell]) {
+    complaintsSheet[phoneCell].t = 's'; // Set as string
+    complaintsSheet[phoneCell].z = '@'; // Text format
+    }
+    }
+    
     complaintsSheet['!cols'] = [
     { wch: 20 }, // اسم المقدم
     { wch: 15 }, // رقم الهاتف
