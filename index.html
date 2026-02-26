@@ -2573,8 +2573,12 @@
     <script>
     // Admin Panel - Supabase Only
     let currentEditId = "";
-    let userRole = "";
-    let currentUsername = "";
+    window.userRole = "";
+    window.currentUsername = "";
+
+    // Make them accessible locally too
+    let userRole = window.userRole;
+    let currentUsername = window.currentUsername;
 
     // Log Admin Action to Supabase
     async function logAdminAction(username, action, details) {
@@ -2671,13 +2675,17 @@
     // Determine role based on email
     const userEmail = user.email.toLowerCase();
     if (userEmail.includes('super') || userEmail === 'admin@kafrsaqr.com') {
-        userRole = 'SUPER'; // مدير عام
+        window.userRole = 'SUPER'; // مدير عام
+        userRole = 'SUPER';
     } else if (userEmail.includes('admin')) {
-        userRole = 'ADMIN'; // مشرف
+        window.userRole = 'ADMIN'; // مشرف
+        userRole = 'ADMIN';
     } else {
-        userRole = 'VIEWER'; // عرض فقط
+        window.userRole = 'VIEWER'; // عرض فقط
+        userRole = 'VIEWER';
     }
 
+    window.currentUsername = user.email.split('@')[0];
     currentUsername = user.email.split('@')[0];
 
     // Save session
@@ -5189,6 +5197,8 @@
 
     if (savedAuth === 'true' && savedRole && savedUsername) {
     // Auto-restore admin session
+    window.userRole = savedRole;
+    window.currentUsername = savedUsername;
     userRole = savedRole;
     currentUsername = savedUsername; 
     document.getElementById('portalSection').style.display = 'none'; 
