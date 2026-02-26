@@ -25,8 +25,6 @@
 
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
 
     <style>
@@ -807,16 +805,9 @@
     <h2 style="text-align: center; color: white; margin-top: 50px; margin-bottom: 15px; font-size: 2.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
     أهلاً بك في بوابة الخدمات الرقمية المتطورة
     </h2>
-    <p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 20px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    <p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 50px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">
     يرجى اختيار القسم الذي ترغب في الدخول إليه
     </p>
-
-    <!-- Back to Admin Panel Button (shown only when logged in) -->
-    <div style="text-align: center; margin-bottom: 30px;">
-    <button id="backToAdminBtn" onclick="backToAdminPanel()" style="display: none; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; padding: 15px 35px; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(26, 82, 118, 0.3); transition: all 0.3s;">
-    🎛️ العودة للوحة التحكم
-    </button>
-    </div>
 
     <div class="portal-container">
     <!-- Tuk Tuk Coding Portal -->
@@ -1167,8 +1158,9 @@
     <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
     <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
-    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none;">📜 سجل المشرفين</button>
+    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
+    <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
     <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">👁️ إظهار/إخفاء الأعمدة</button>
     <div style="flex: 1; display: flex; gap: 10px;">
     <select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
@@ -1412,6 +1404,15 @@
     </div>
     </div>
 
+    <!-- Modal for Activity Log -->
+    <div id="activityLogModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+    <div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 800px; border-radius: 35px; position: relative;">
+    <span onclick="document.getElementById('activityLogModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+    <h3 style="color: #34495e; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📋 سجل العمليات</h3>
+    <div id="activityLogContent" style="max-height: 500px; overflow-y: auto;"></div>
+    </div>
+    </div>
+
     <!-- Modal for Login -->
     <div id="loginModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); backdrop-filter: blur(20px); overflow-y: auto;">
     <div style="background: white; margin: 5% auto; padding: 50px; width: 92%; max-width: 500px; border-radius: 35px; position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.4);">
@@ -1469,6 +1470,66 @@
     to { opacity: 1; }
     }
     </style>
+    </div>
+    </div>
+
+    <!-- Modal for Date Filter -->
+    <div id="dateFilterModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+    <div style="background: white; margin: 10% auto; padding: 45px; width: 92%; max-width: 500px; border-radius: 35px; position: relative;">
+    <span onclick="document.getElementById('dateFilterModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+    <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📅 فلترة حسب التاريخ</h3>
+
+    <div class="input-group">
+    <label>من تاريخ:</label>
+    <input type="date" id="filterFromDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
+    </div>
+
+    <div class="input-group">
+    <label>إلى تاريخ:</label>
+    <input type="date" id="filterToDate" style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%;">
+    </div>
+
+    <div style="display:flex; gap:15px; margin-top:35px;">
+    <button id="applyDateFilterBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">✅ تطبيق الفلتر</button>
+    <button onclick="clearDateFilter()" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white;">🔄 إعادة تعيين</button>
+    </div>
+    </div>
+    </div>
+
+    <!-- Modal for Status Change -->
+    <div id="statusChangeModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+    <div style="background: white; margin: 5% auto; padding: 45px; width: 92%; max-width: 550px; border-radius: 35px; position: relative;">
+    <span onclick="document.getElementById('statusChangeModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
+    <h3 style="color: #8e44ad; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">🔄 تغيير حالة الطلب</h3>
+
+    <div class="input-group">
+    <label style="font-size: 1.1rem; color: #8e44ad;">اختر الحالة الجديدة:</label>
+    <select id="newStatusSelect" style="padding: 18px; border-radius: 12px; border: 3px solid #8e44ad; width: 100%; font-size: 1.1rem; font-weight: 700; color: #8e44ad;">
+    <option value="pending">⏳ قيد المراجعة</option>
+    <option value="approved">✓ تم القبول</option>
+    <option value="coded">✅ تم التكويد</option>
+    <option value="delivered">🎉 تم التسليم</option>
+    </select>
+    </div>
+
+    <div class="input-group">
+    <label style="font-size: 1.1rem; color: #8e44ad;">ملاحظة (اختياري):</label>
+    <textarea id="statusNote" rows="3" placeholder="أضف ملاحظة..." style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%; font-size: 1rem;"></textarea>
+    </div>
+
+    <!-- WhatsApp Notification Checkbox -->
+    <div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%); padding: 20px; border-radius: 15px; margin: 25px 0; border: 2px solid rgba(37, 211, 102, 0.3);">
+    <label style="display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; font-size: 1.1rem; color: #16a34a; font-weight: 700;">
+    <input type="checkbox" id="sendWhatsAppStatus" checked style="width: 24px; height: 24px; cursor: pointer; accent-color: #16a34a;">
+    <span>📱 إرسال إشعار واتساب للمواطن</span>
+    </label>
+    <small style="display: block; text-align: center; color: #666; margin-top: 10px; font-size: 0.9rem;">سيتم إرسال تحديث الحالة</small>
+    </div>
+
+    <div style="display:flex; gap:15px; margin-top:35px;">
+    <button id="confirmStatusChangeBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">✅ تأكيد التغيير</button>
+    <button onclick="document.getElementById('statusChangeModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
+    </div>
     </div>
     </div>
 
@@ -2673,12 +2734,6 @@
     bulkImportBtn.style.display = 'none';
     }
 
-    // Show admin logs button only for SUPER
-    const adminLogsBtn = document.getElementById('showAdminLogsBtn');
-    if (userRole === 'SUPER' && adminLogsBtn) {
-    adminLogsBtn.style.display = 'inline-flex';
-    }
-
     // Hide cleanup button for non-SUPER users
     const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
     const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
@@ -2829,7 +2884,6 @@
     document.getElementById('goPortalBtn').style.display = 'none';
     document.getElementById('logoutBtn').style.display = 'none';
     document.getElementById('loginBtn').style.display = 'inline-flex';
-    document.getElementById('backToAdminBtn').style.display = 'none'; // Hide back button
     const badge = document.getElementById('roleBadge');
     if (badge) badge.remove();
     
@@ -2847,27 +2901,7 @@
     document.getElementById('complaintInquiryPage').style.display = 'none';
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
-    
-    // Show "Back to Admin Panel" button if logged in
-    const backToAdminBtn = document.getElementById('backToAdminBtn');
-    if (backToAdminBtn && userRole) {
-    backToAdminBtn.style.display = 'inline-flex';
-    }
-    
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
-    };
-
-    // Back to Admin Panel function
-    window.backToAdminPanel = function() {
-    document.getElementById('portalSection').style.display = 'none';
-    document.getElementById('citizenPage').style.display = 'none';
-    document.getElementById('inquiryPage').style.display = 'none';
-    document.getElementById('complaintsPage').style.display = 'none';
-    document.getElementById('complaintInquiryPage').style.display = 'none';
-    document.getElementById('adminPage').style.display = 'block';
-    document.getElementById('goPortalBtn').style.display = 'inline-flex';
-    document.getElementById('backToAdminBtn').style.display = 'none';
-    console.log('🎛️ العودة للوحة التحكم');
     };
 
     async function loadAdminData() {
@@ -3077,13 +3111,21 @@
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
     <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
     <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-copy" title="نسخ البيانات" style="padding:3px 5px; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; font-size:0.65rem;">📋</button>
-    <button class="btn btn-download-all" title="تحميل الكل" style="padding:3px 5px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; font-size:0.65rem;">�</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">�️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
     </td>
     `;
+
+    tr.querySelector('.btn-status').onclick = async () => {
+    document.getElementById('statusChangeModal').style.display = 'block';
+    document.getElementById('newStatusSelect').value = item.status || 'pending';
+    document.getElementById('statusNote').value = '';
+    document.getElementById('sendWhatsAppStatus').checked = true;
+    window.currentStatusChangeItem = { item, id };
+    };
 
     tr.querySelector('.btn-code').onclick = async () => {
     if (item.vCode) {
@@ -3234,78 +3276,8 @@
     }
     };
 
-    tr.querySelector('.btn-copy').onclick = () => {
-    const data = `الاسم: ${item.owner}\nالرقم القومي: ${item.nationalId}\nالهاتف: ${item.phone}\nالنوع: ${item.vType}\nالموديل: ${item.vYear}\nالشاسيه: ${item.chassisNumber || '-'}\nالموتور: ${item.motorNumber || '-'}\nالعنوان: ${item.address}\nالكود: ${item.vCode || '-'}`;
-    navigator.clipboard.writeText(data).then(() => {
-    alert('✅ تم نسخ البيانات');
-    }).catch(() => {
-    alert('❌ فشل النسخ');
-    });
-    };
-
-    tr.querySelector('.btn-download-all').onclick = async () => {
-    const imageCount = item.images ? item.images.length : 0;
-    if (!confirm(`📥 تحميل بيانات المواطن\n\n👤 ${item.owner}\n🖼️ عدد الصور: ${imageCount}\n\nسيتم تحميل ملف ZIP يحتوي على:\n• ملف Excel بالبيانات\n• جميع الصور المرفوعة\n\nهل تريد المتابعة؟`)) {
-    return;
-    }
-
-    try {
-    document.getElementById('loadingSpinner').style.display = 'block';
-    const zip = new JSZip();
-
-    // Create Excel file with vehicle data
-    const wb = XLSX.utils.book_new();
-    const vehicleData = [
-    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود'],
-    [
-    item.owner || '',
-    item.nationalId || '',
-    item.phone || '',
-    item.vType || '',
-    item.vYear || '',
-    item.chassisNumber || '',
-    item.motorNumber || '',
-    item.address || '',
-    item.vCode || ''
-    ]
-    ];
-    const ws = XLSX.utils.aoa_to_sheet(vehicleData);
-    ws['!cols'] = [
-    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
-    { wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 12 }
-    ];
-    XLSX.utils.book_append_sheet(wb, ws, 'بيانات المركبة');
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    zip.file('بيانات_المواطن.xlsx', excelBuffer);
-
-    // Add images if available
-    if (item.images && item.images.length > 0) {
-    const imagesFolder = zip.folder('الصور');
-    for (let i = 0; i < item.images.length; i++) {
-    const imgUrl = item.images[i];
-    try {
-    const response = await fetch(imgUrl);
-    const blob = await response.blob();
-    const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
-    imagesFolder.file(`صورة_${i + 1}.${ext}`, blob);
-    } catch (err) {
-    console.error('خطأ في تحميل الصورة:', err);
-    }
-    }
-    }
-
-    // Generate and download ZIP
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const fileName = `مواطن_${item.vCode || item.refNumber}_كامل.zip`;
-    saveAs(zipBlob, fileName);
-
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`✅ تم تحميل البيانات بنجاح!\n\n📦 الملف: ${fileName}`);
-    } catch (error) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    console.error('خطأ في التحميل:', error);
-    alert('❌ حدث خطأ أثناء تحميل البيانات');
-    }
+    tr.querySelector('.btn-log').onclick = () => {
+    showActivityLog(item);
     };
 
     tr.querySelector('.view-btn').onclick = () => {
@@ -3460,15 +3432,23 @@
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
     <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
     <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-copy" title="نسخ البيانات" style="padding:3px 5px; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; font-size:0.65rem;">📋</button>
-    <button class="btn btn-download-all" title="تحميل الكل" style="padding:3px 5px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; font-size:0.65rem;">�</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">�️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
     </td>
     `;
 
     // Attach button handlers
+    tr.querySelector('.btn-status').onclick = async () => {
+    document.getElementById('statusChangeModal').style.display = 'block';
+    document.getElementById('newStatusSelect').value = item.status || 'pending';
+    document.getElementById('statusNote').value = '';
+    document.getElementById('sendWhatsAppStatus').checked = true;
+    window.currentStatusChangeItem = { item, id };
+    };
+
     tr.querySelector('.btn-code').onclick = async () => {
     if (item.vCode) {
     alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
@@ -3600,78 +3580,8 @@
     }
     };
 
-    tr.querySelector('.btn-copy').onclick = () => {
-    const data = `الاسم: ${item.owner}\nالرقم القومي: ${item.nationalId}\nالهاتف: ${item.phone}\nالنوع: ${item.vType}\nالموديل: ${item.vYear}\nالشاسيه: ${item.chassisNumber || '-'}\nالموتور: ${item.motorNumber || '-'}\nالعنوان: ${item.address}\nالكود: ${item.vCode || '-'}`;
-    navigator.clipboard.writeText(data).then(() => {
-    alert('✅ تم نسخ البيانات');
-    }).catch(() => {
-    alert('❌ فشل النسخ');
-    });
-    };
-
-    tr.querySelector('.btn-download-all').onclick = async () => {
-    const imageCount = item.images ? item.images.length : 0;
-    if (!confirm(`📥 تحميل بيانات المواطن\n\n👤 ${item.owner}\n🖼️ عدد الصور: ${imageCount}\n\nسيتم تحميل ملف ZIP يحتوي على:\n• ملف Excel بالبيانات\n• جميع الصور المرفوعة\n\nهل تريد المتابعة؟`)) {
-    return;
-    }
-
-    try {
-    document.getElementById('loadingSpinner').style.display = 'block';
-    const zip = new JSZip();
-
-    // Create Excel file with vehicle data
-    const wb = XLSX.utils.book_new();
-    const vehicleData = [
-    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود'],
-    [
-    item.owner || '',
-    item.nationalId || '',
-    item.phone || '',
-    item.vType || '',
-    item.vYear || '',
-    item.chassisNumber || '',
-    item.motorNumber || '',
-    item.address || '',
-    item.vCode || ''
-    ]
-    ];
-    const ws = XLSX.utils.aoa_to_sheet(vehicleData);
-    ws['!cols'] = [
-    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
-    { wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 12 }
-    ];
-    XLSX.utils.book_append_sheet(wb, ws, 'بيانات المركبة');
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    zip.file('بيانات_المواطن.xlsx', excelBuffer);
-
-    // Add images if available
-    if (item.images && item.images.length > 0) {
-    const imagesFolder = zip.folder('الصور');
-    for (let i = 0; i < item.images.length; i++) {
-    const imgUrl = item.images[i];
-    try {
-    const response = await fetch(imgUrl);
-    const blob = await response.blob();
-    const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
-    imagesFolder.file(`صورة_${i + 1}.${ext}`, blob);
-    } catch (err) {
-    console.error('خطأ في تحميل الصورة:', err);
-    }
-    }
-    }
-
-    // Generate and download ZIP
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const fileName = `مواطن_${item.vCode || item.refNumber}_كامل.zip`;
-    saveAs(zipBlob, fileName);
-
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`✅ تم تحميل البيانات بنجاح!\n\n📦 الملف: ${fileName}`);
-    } catch (error) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    console.error('خطأ في التحميل:', error);
-    alert('❌ حدث خطأ أثناء تحميل البيانات');
-    }
+    tr.querySelector('.btn-log').onclick = () => {
+    showActivityLog(item);
     };
 
     tr.querySelector('.view-btn').onclick = () => {
@@ -3824,12 +3734,11 @@
     }
 
     // Show Orders/Complaints
-    document.getElementById('showOrdersBtn').onclick = async () => {
+    document.getElementById('showOrdersBtn').onclick = () => {
     document.getElementById('ordersTableContainer').style.display = 'block';
     document.getElementById('complaintsTableContainer').style.display = 'none';
     document.getElementById('adminLogsTableContainer').style.display = 'none';
     showAllOrdersInTable();
-    await logAdminAction(currentUsername, 'عرض جدول المركبات', 'قام بعرض جدول المركبات');
     };
 
     // Status Change Modal Handler
@@ -3939,12 +3848,11 @@
     }
     };
 
-    document.getElementById('showComplaintsBtn').onclick = async () => {
+    document.getElementById('showComplaintsBtn').onclick = () => {
     document.getElementById('ordersTableContainer').style.display = 'none';
     document.getElementById('complaintsTableContainer').style.display = 'block';
     document.getElementById('adminLogsTableContainer').style.display = 'none';
     loadComplaints();
-    await logAdminAction(currentUsername, 'عرض قائمة الشكاوى', 'قام بعرض قائمة الشكاوى');
     };
 
     // Complaint Reply Modal Handler
@@ -4012,12 +3920,11 @@
     }
     };
 
-    document.getElementById('showAdminLogsBtn').onclick = async () => {
+    document.getElementById('showAdminLogsBtn').onclick = () => {
     document.getElementById('ordersTableContainer').style.display = 'none';
     document.getElementById('complaintsTableContainer').style.display = 'none';
     document.getElementById('adminLogsTableContainer').style.display = 'block';
     loadAdminLogs();
-    await logAdminAction(currentUsername, 'عرض سجل المشرفين', 'قام بعرض سجل المشرفين');
     };
 
     // Filter functions for stat cards
@@ -4085,6 +3992,59 @@
     window.showPendingOrders = showPendingOrders;
     window.showComplaintsTable = showComplaintsTable;
 
+    // Show Activity Log
+    function showActivityLog(item) {
+    const modal = document.getElementById('activityLogModal');
+    const content = document.getElementById('activityLogContent');
+    const history = item.statusHistory || [];
+
+    let html = `
+    <div style="background: linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #34495e;">
+    <h4 style="color: #34495e; margin: 0 0 10px 0;">معلومات الطلب:</h4>
+    <p style="margin: 5px 0;"><strong>المالك:</strong> ${item.owner}</p>
+    <p style="margin: 5px 0;"><strong>الرقم المرجعي:</strong> ${item.refNumber || 'N/A'}</p>
+    <p style="margin: 5px 0;"><strong>نوع المركبة:</strong> ${item.vType}</p>
+    </div>
+    `;
+
+    if (history.length === 0) {
+    html += '<p style="text-align: center; color: #999; padding: 40px;">لا يوجد سجل عمليات</p>';
+    } else {
+    html += '<div style="position: relative; padding-right: 30px;">';
+    history.forEach((log, index) => {
+    const statusInfo = window.getStatusDisplay(log.status);
+    const isLast = index === history.length - 1;
+    html += `
+    <div style="position: relative; margin-bottom: 25px;">
+    <div style="position: absolute; right: -30px; top: 0; width: 20px; height: 20px; background: ${statusInfo.color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+    ${!isLast ? '<div style="position: absolute; right: -21px; top: 20px; width: 2px; height: calc(100% + 25px); background: #ddd;"></div>' : ''}
+    <div style="background: white; padding: 20px; border-radius: 15px; border: 2px solid ${statusInfo.color}; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <span style="background: ${statusInfo.color}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">${statusInfo.icon} ${statusInfo.text}</span>
+    <span style="color: #999; font-size: 0.85rem;">${window.formatDateTime(log.timestamp)}</span>
+    </div>
+    ${log.note ? `<p style="margin: 10px 0 0 0; color: #555; line-height: 1.6;">${log.note}</p>` : ''}
+    ${log.by ? `<p style="margin: 10px 0 0 0; color: #999; font-size: 0.85rem;">بواسطة: ${log.by === 'SUPER' ? '👑 مدير عام' : log.by === 'ADMIN' ? '🔧 مشرف' : log.by}</p>` : ''}
+    </div>
+    </div>
+    `;
+    });
+    html += '</div>';
+    }
+
+    content.innerHTML = html;
+    modal.style.display = 'block';
+    }
+
+    window.showActivityLog = showActivityLog;
+
+    // Date Filter
+    let dateFilterActive = false;
+    let filterFromTimestamp = null;
+    let filterToTimestamp = null; 
+    document.getElementById('dateFilterBtn').onclick = () => {document.getElementById('dateFilterModal').style.display = 'block';
+    };
+
     // Toggle columns button (mobile only)
     document.getElementById('toggleColumnsBtn').onclick = () => {
     const table = document.querySelector('#dataTable').parentElement.parentElement.querySelector('table');
@@ -4096,6 +4056,59 @@
     document.getElementById('toggleColumnsBtn').innerHTML = '👁️ إخفاء الأعمدة الزيادة';
     }
     };
+
+    document.getElementById('applyDateFilterBtn').onclick = () => {
+    const fromDate = document.getElementById('filterFromDate').value;
+    const toDate = document.getElementById('filterToDate').value;
+
+    if (!fromDate || !toDate) {
+    alert("❌ يرجى اختيار التاريخ من والى");
+    return;
+    }
+
+    filterFromTimestamp = new Date(fromDate).setHours(0, 0, 0, 0);
+    filterToTimestamp = new Date(toDate).setHours(23, 59, 59, 999);
+    dateFilterActive = true;
+    document.getElementById('dateFilterModal').style.display = 'none';
+    document.getElementById('filterStatus').style.display = 'block';
+    document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات من ${fromDate} إلى ${toDate}`;
+
+    applyDateFilter();
+    };
+
+    function clearDateFilter() {
+    dateFilterActive = false;
+    filterFromTimestamp = null;
+    filterToTimestamp = null; 
+    document.getElementById('filterFromDate').value = ''; 
+    document.getElementById('filterToDate').value = ''; 
+    document.getElementById('dateFilterModal').style.display = 'none'; 
+    document.getElementById('filterStatus').style.display = 'none';
+    showAllOrdersInTable();
+    }
+
+    window.clearDateFilter = clearDateFilter;
+
+    function applyDateFilter() {
+    let count = 0;
+    document.querySelectorAll('#dataTable tr').forEach(row => {
+    const timestampCell = row.cells[5]; // Date column
+    if (timestampCell) {
+    const dateText = timestampCell.innerText;
+    // Try to parse the date - this is approximate
+    const rowDate = new Date(dateText.split(' ')[0].split('/').reverse().join('-'));
+    const rowTimestamp = rowDate.getTime();
+
+    if (rowTimestamp >= filterFromTimestamp && rowTimestamp <= filterToTimestamp) {
+    row.style.display = '';
+    count++;
+    } else {
+    row.style.display = 'none';
+    }
+    }
+    }); 
+    document.getElementById('filterStatusText').innerText = `📅 عرض الطلبات المفلترة (${count} طلب)`;
+    }
 
     // Load Admin Logs
     async function loadAdminLogs() {
@@ -4203,99 +4216,66 @@
     // Create workbook
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Vehicles Data with Statistics Header
+    // Sheet 1: Statistics
+    const statsData = [
+    ['📊 إحصائيات منظومة كفر صقر'],
+    [''],
+    ['📋 بيانات المركبات'],
+    ['إجمالي الطلبات', totalVehicles],
+    ['✅ تم التكويد', codedVehicles],
+    ['⏳ قيد الانتظار', pendingVehicles],
+    [''],
+    ['⚖️ بيانات الشكاوى'],
+    ['إجمالي الشكاوى', totalComplaints],
+    ['✅ تم الرد', repliedComplaints],
+    ['⏳ قيد المراجعة', pendingComplaints],
+    [''],
+    ['📅 تاريخ التصدير', new Date().toLocaleString('ar-EG')]
+    ];
+    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
+    statsSheet['!cols'] = [{ wch: 25 }, { wch: 15 }];
+    XLSX.utils.book_append_sheet(wb, statsSheet, 'الإحصائيات');
+
+    // Sheet 2: Vehicles Data
     console.log('📝 جاري تجهيز بيانات المركبات...');
-    
-    // Create data array with new column structure
     const vehiclesData = [
-    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود']
+    ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
     ];
 
-    // Sort vehicles by code (ascending order)
-    allVehicles.sort((a, b) => {
-    const codeA = a.code ? parseInt(a.code) : 999999;
-    const codeB = b.code ? parseInt(b.code) : 999999;
-    return codeA - codeB;
-    });
-
     allVehicles.forEach(vehicle => {
+    // Format date
+    const date = new Date(vehicle.submitted_at);
+    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
+    
+    // Status text
+    const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
+    
     vehiclesData.push([
-    vehicle.owner_name || '',        // الاسم
-    vehicle.national_id || '',       // الرقم القومي
-    vehicle.phone || '',             // الهاتف
-    vehicle.vehicle_type || '',      // النوع
-    vehicle.vehicle_year || '',      // الموديل
-    vehicle.chassis_number || '',    // الشاسيه
-    vehicle.motor_number || '',      // الموتور
-    vehicle.address || '',           // العنوان
-    vehicle.code || ''               // الكود
+    vehicle.owner_name || '-',
+    "'" + (vehicle.national_id || '-'), // Add ' prefix to prevent scientific notation
+    "'" + (vehicle.phone || '-'), // Add ' prefix
+    vehicle.vehicle_type || '-',
+    vehicle.plate_number || '-',
+    vehicle.code || '-',
+    statusText,
+    formattedDate
     ]);
     });
 
     const vehiclesSheet = XLSX.utils.aoa_to_sheet(vehiclesData);
-    
-    // Set column widths
     vehiclesSheet['!cols'] = [
-    { wch: 20 }, // الاسم
+    { wch: 20 }, // اسم المالك
     { wch: 18 }, // الرقم القومي
-    { wch: 15 }, // الهاتف
-    { wch: 15 }, // النوع
-    { wch: 12 }, // الموديل
-    { wch: 18 }, // الشاسيه
-    { wch: 18 }, // الموتور
-    { wch: 20 }, // العنوان
-    { wch: 12 }  // الكود
+    { wch: 15 }, // رقم الهاتف
+    { wch: 15 }, // نوع المركبة
+    { wch: 15 }, // رقم اللوحة
+    { wch: 12 }, // الكود
+    { wch: 15 }, // الحالة
+    { wch: 25 }  // تاريخ التقديم
     ];
-
-    // Format cells as text for national_id, phone, chassis, motor (starting from row 1 - after header)
-    const range = XLSX.utils.decode_range(vehiclesSheet['!ref']);
-    for (let R = 1; R <= range.e.r; ++R) {
-    // National ID column (B)
-    const cellRefB = XLSX.utils.encode_cell({ r: R, c: 1 });
-    if (vehiclesSheet[cellRefB]) {
-    vehiclesSheet[cellRefB].t = 's';
-    vehiclesSheet[cellRefB].z = '@';
-    }
-    // Phone column (C)
-    const cellRefC = XLSX.utils.encode_cell({ r: R, c: 2 });
-    if (vehiclesSheet[cellRefC]) {
-    vehiclesSheet[cellRefC].t = 's';
-    vehiclesSheet[cellRefC].z = '@';
-    }
-    // Chassis column (F)
-    const cellRefF = XLSX.utils.encode_cell({ r: R, c: 5 });
-    if (vehiclesSheet[cellRefF]) {
-    vehiclesSheet[cellRefF].t = 's';
-    vehiclesSheet[cellRefF].z = '@';
-    }
-    // Motor column (G)
-    const cellRefG = XLSX.utils.encode_cell({ r: R, c: 6 });
-    if (vehiclesSheet[cellRefG]) {
-    vehiclesSheet[cellRefG].t = 's';
-    vehiclesSheet[cellRefG].z = '@';
-    }
-    }
-
-    // Style header row
-    for (let C = 0; C <= 8; C++) {
-    const cellRef = XLSX.utils.encode_cell({ r: 0, c: C });
-    if (!vehiclesSheet[cellRef]) vehiclesSheet[cellRef] = { t: 's', v: '' };
-    vehiclesSheet[cellRef].s = {
-    fill: { fgColor: { rgb: "1A5276" } },
-    font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12 },
-    alignment: { horizontal: "center", vertical: "center" },
-    border: {
-    top: { style: "medium", color: { rgb: "000000" } },
-    bottom: { style: "medium", color: { rgb: "000000" } },
-    left: { style: "thin", color: { rgb: "000000" } },
-    right: { style: "thin", color: { rgb: "000000" } }
-    }
-    };
-    }
-
     XLSX.utils.book_append_sheet(wb, vehiclesSheet, 'بيانات المركبات');
 
-    // Sheet 2: Complaints Data
+    // Sheet 3: Complaints Data
     if (allComplaints && allComplaints.length > 0) {
     console.log('📝 جاري تجهيز بيانات الشكاوى...');
     const complaintsData = [
@@ -4311,12 +4291,12 @@
     const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
     
     complaintsData.push([
-    complaint.owner_name || '',
-    complaint.phone || '',
-    complaint.complaint_type || '',
-    complaint.details || '',
+    complaint.owner_name || '-',
+    "'" + (complaint.phone || '-'), // Add ' prefix
+    complaint.complaint_type || '-',
+    complaint.details || '-',
     statusText,
-    complaint.reply || '',
+    complaint.reply || '-',
     formattedDate
     ]);
     });
@@ -4331,18 +4311,6 @@
     { wch: 40 }, // الرد
     { wch: 25 }  // تاريخ التقديم
     ];
-    
-    // Format phone column as text
-    const compRange = XLSX.utils.decode_range(complaintsSheet['!ref']);
-    for (let R = 1; R <= compRange.e.r; ++R) {
-    // Phone column (B)
-    const cellRefB = XLSX.utils.encode_cell({ r: R, c: 1 });
-    if (complaintsSheet[cellRefB]) {
-    complaintsSheet[cellRefB].t = 's'; // Set type to string
-    complaintsSheet[cellRefB].z = '@'; // Set format to text
-    }
-    }
-    
     XLSX.utils.book_append_sheet(wb, complaintsSheet, 'الشكاوى');
     }
 
@@ -4789,38 +4757,13 @@
     }
 
     console.log('📋 عدد الصفوف:', jsonData.length);
-
-    // Skip statistics rows - find the header row with "اسم المالك"
-    let headerRowIndex = -1;
-    for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
-    const row = jsonData[i];
-    if (row && row.length > 0) {
-    const firstCell = String(row[0] || '').trim();
-    // Check if this row contains "اسم المالك" or "الاسم" or "name"
-    if (firstCell.includes('اسم المالك') || firstCell.includes('اسم') || 
-        firstCell.toLowerCase().includes('name') || firstCell.toLowerCase().includes('owner')) {
-    headerRowIndex = i;
-    console.log('📍 وجدت صف العناوين في الصف ' + (i + 1));
-    break;
-    }
-    }
-    }
-
-    if (headerRowIndex === -1) {
-    // No header found, assume old format (data starts from row 1)
-    headerRowIndex = 0;
-    console.log('📍 لم يتم العثور على صف العناوين، استخدام الصف الأول');
-    }
-
-    console.log('📋 الصف الأول (Header):', jsonData[headerRowIndex]);
-    if (jsonData[headerRowIndex + 1]) {
-    console.log('📋 الصف الثاني:', jsonData[headerRowIndex + 1]);
-    }
+    console.log('📋 الصف الأول (Header):', jsonData[0]);
+    console.log('📋 الصف الثاني:', jsonData[1]);
 
     // Try Fixed Columns First (B-H format)
     let useFixedColumns = false;
     const columnMap = {};
-    let dataStartRow = headerRowIndex + 1; // Data starts after header
+    let dataStartRow = 1; // Default: data starts from row 1
 
     // الترتيب الثابت للأعمدة (نفس import_excel.html):
     // A=0 (رقم تسلسلي أو فاضي)
@@ -4830,7 +4773,7 @@
     // Check if data follows fixed column format
     // Look for actual data (skip header rows)
     let foundFixedFormat = false;
-    for (let i = dataStartRow; i < Math.min(jsonData.length, dataStartRow + 5); i++) {
+    for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
     if (jsonData[i] && jsonData[i].length >= 4) {
     const colC = jsonData[i][2]; // Column C - الاسم
     const colD = jsonData[i][3]; // Column D - الرقم القومي
@@ -4877,11 +4820,11 @@
     columnMap.phone = 7;         // H - رقم التليفون
     console.log('✅ تم تحديد الأعمدة الثابتة:', columnMap);
     } else {
-    // Smart Column Detection from header row
-    const headers = jsonData[headerRowIndex].map(h => String(h).toLowerCase().trim());
+    // Smart Column Detection
+    const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
 
     const patterns = {
-    owner: ['اسم', 'الاسم', 'name', 'owner'],
+    owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
     nationalId: ['رقم قومي', 'القومي', 'بطاقة', 'national', 'id'],
     phone: ['هاتف', 'تليفون', 'موبايل', 'phone', 'mobile'],
     vType: ['نوع', 'المركبة', 'type', 'vehicle'],
@@ -4917,7 +4860,7 @@
     const preview = document.getElementById('importPreview');
 
     // Determine starting row for data processing
-    const startRow = useFixedColumns ? dataStartRow : (headerRowIndex + 1);
+    const startRow = useFixedColumns ? dataStartRow : 1;
 
     let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
     <p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
@@ -5249,16 +5192,11 @@
 
     window.searchOrders = function() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const searchType = document.getElementById('searchType') ? document.getElementById('searchType').value : 'all';
+    const searchType = document.getElementById('searchType') ?document.getElementById('searchType').value : 'all';
 
     if (!searchTerm) {
     filteredOrdersData = allOrdersData;
     } else {
-    // Log search if term is 3+ characters (to avoid logging every keystroke)
-    if (searchTerm.length >= 3) {
-    logAdminAction(currentUsername, 'بحث في المركبات', `بحث عن: "${searchTerm}" في: ${searchType === 'all' ? 'كل الحقول' : searchType}`).catch(err => console.error('خطأ في تسجيل البحث:', err));
-    }
-    
     filteredOrdersData = allOrdersData.filter(orderData => {
     const item = orderData.item;
 
