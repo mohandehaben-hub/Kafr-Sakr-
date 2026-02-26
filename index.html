@@ -4172,38 +4172,29 @@
     // Sheet 1: Vehicles Data with Statistics Header
     console.log('📝 جاري تجهيز بيانات المركبات...');
     
-    // Create statistics section as table header
+    // Create data array with new column structure
     const vehiclesData = [
-    ['📊 إحصائيات منظومة كفر صقر', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['📋 بيانات المركبات', '', '⚖️ بيانات الشكاوى', '', '', '', '', ''],
-    ['إجمالي الطلبات', totalVehicles, 'إجمالي الشكاوى', totalComplaints, '', '', '', ''],
-    ['✅ تم التكويد', codedVehicles, '✅ تم الرد', repliedComplaints, '', '', '', ''],
-    ['⏳ قيد الانتظار', pendingVehicles, '⏳ قيد المراجعة', pendingComplaints, '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['📅 تاريخ التصدير: ' + new Date().toLocaleString('ar-EG'), '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['اسم المالك', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'رقم اللوحة', 'الكود', 'الحالة', 'تاريخ التقديم']
+    ['الاسم', 'الرقم القومي', 'الهاتف', 'النوع', 'الموديل', 'الشاسيه', 'الموتور', 'العنوان', 'الكود']
     ];
 
+    // Sort vehicles by code (ascending order)
+    allVehicles.sort((a, b) => {
+    const codeA = a.code ? parseInt(a.code) : 999999;
+    const codeB = b.code ? parseInt(b.code) : 999999;
+    return codeA - codeB;
+    });
+
     allVehicles.forEach(vehicle => {
-    // Format date
-    const date = new Date(vehicle.submitted_at);
-    const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
-    
-    // Status text
-    const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
-    
     vehiclesData.push([
-    vehicle.owner_name || '',
-    vehicle.national_id || '',
-    vehicle.phone || '',
-    vehicle.vehicle_type || '',
-    vehicle.plate_number || '',
-    vehicle.code || '',
-    statusText,
-    formattedDate
+    vehicle.owner_name || '',        // الاسم
+    vehicle.national_id || '',       // الرقم القومي
+    vehicle.phone || '',             // الهاتف
+    vehicle.vehicle_type || '',      // النوع
+    vehicle.vehicle_year || '',      // الموديل
+    vehicle.chassis_number || '',    // الشاسيه
+    vehicle.motor_number || '',      // الموتور
+    vehicle.address || '',           // العنوان
+    vehicle.code || ''               // الكود
     ]);
     });
 
@@ -4211,40 +4202,62 @@
     
     // Set column widths
     vehiclesSheet['!cols'] = [
-    { wch: 20 }, // اسم المالك
+    { wch: 20 }, // الاسم
     { wch: 18 }, // الرقم القومي
-    { wch: 15 }, // رقم الهاتف
-    { wch: 15 }, // نوع المركبة
-    { wch: 15 }, // رقم اللوحة
-    { wch: 12 }, // الكود
-    { wch: 15 }, // الحالة
-    { wch: 25 }  // تاريخ التقديم
+    { wch: 15 }, // الهاتف
+    { wch: 15 }, // النوع
+    { wch: 12 }, // الموديل
+    { wch: 18 }, // الشاسيه
+    { wch: 18 }, // الموتور
+    { wch: 20 }, // العنوان
+    { wch: 12 }  // الكود
     ];
 
-    // Format cells as text for national_id and phone (starting from row 11 - after header)
+    // Format cells as text for national_id, phone, chassis, motor (starting from row 1 - after header)
     const range = XLSX.utils.decode_range(vehiclesSheet['!ref']);
-    for (let R = 11; R <= range.e.r; ++R) {
+    for (let R = 1; R <= range.e.r; ++R) {
     // National ID column (B)
     const cellRefB = XLSX.utils.encode_cell({ r: R, c: 1 });
     if (vehiclesSheet[cellRefB]) {
-    vehiclesSheet[cellRefB].t = 's'; // Set type to string
-    vehiclesSheet[cellRefB].z = '@'; // Set format to text
+    vehiclesSheet[cellRefB].t = 's';
+    vehiclesSheet[cellRefB].z = '@';
     }
     // Phone column (C)
     const cellRefC = XLSX.utils.encode_cell({ r: R, c: 2 });
     if (vehiclesSheet[cellRefC]) {
-    vehiclesSheet[cellRefC].t = 's'; // Set type to string
-    vehiclesSheet[cellRefC].z = '@'; // Set format to text
+    vehiclesSheet[cellRefC].t = 's';
+    vehiclesSheet[cellRefC].z = '@';
+    }
+    // Chassis column (F)
+    const cellRefF = XLSX.utils.encode_cell({ r: R, c: 5 });
+    if (vehiclesSheet[cellRefF]) {
+    vehiclesSheet[cellRefF].t = 's';
+    vehiclesSheet[cellRefF].z = '@';
+    }
+    // Motor column (G)
+    const cellRefG = XLSX.utils.encode_cell({ r: R, c: 6 });
+    if (vehiclesSheet[cellRefG]) {
+    vehiclesSheet[cellRefG].t = 's';
+    vehiclesSheet[cellRefG].z = '@';
     }
     }
 
-    // Merge cells for statistics header
-    vehiclesSheet['!merges'] = [
-    { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }, // Title row
-    { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } }, // بيانات المركبات
-    { s: { r: 2, c: 2 }, e: { r: 2, c: 4 } }, // بيانات الشكاوى
-    { s: { r: 7, c: 0 }, e: { r: 7, c: 7 } }  // Date row
-    ];
+    // Style header row
+    for (let C = 0; C <= 8; C++) {
+    const cellRef = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!vehiclesSheet[cellRef]) vehiclesSheet[cellRef] = { t: 's', v: '' };
+    vehiclesSheet[cellRef].s = {
+    fill: { fgColor: { rgb: "1A5276" } },
+    font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12 },
+    alignment: { horizontal: "center", vertical: "center" },
+    border: {
+    top: { style: "medium", color: { rgb: "000000" } },
+    bottom: { style: "medium", color: { rgb: "000000" } },
+    left: { style: "thin", color: { rgb: "000000" } },
+    right: { style: "thin", color: { rgb: "000000" } }
+    }
+    };
+    }
 
     XLSX.utils.book_append_sheet(wb, vehiclesSheet, 'بيانات المركبات');
 
@@ -4834,7 +4847,7 @@
     const headers = jsonData[headerRowIndex].map(h => String(h).toLowerCase().trim());
 
     const patterns = {
-    owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
+    owner: ['اسم', 'الاسم', 'name', 'owner'],
     nationalId: ['رقم قومي', 'القومي', 'بطاقة', 'national', 'id'],
     phone: ['هاتف', 'تليفون', 'موبايل', 'phone', 'mobile'],
     vType: ['نوع', 'المركبة', 'type', 'vehicle'],
