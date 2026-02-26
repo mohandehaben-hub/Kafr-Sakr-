@@ -1198,7 +1198,10 @@
     <option value="50">50</option>
     <option value="100" selected>100</option>
     <option value="200">200</option>
+    <option value="300">300</option>
+    <option value="400">400</option>
     <option value="500">500</option>
+    <option value="all">الكل</option>
     </select>
     <span id="totalRecordsInfo" style="font-weight: bold; color: #27ae60; font-size: 1.1rem;">إجمالي: 0 سجل</span>
     <span id="loadingMoreInfo" style="font-weight: 600; color: #e67e22; font-size: 0.9rem; display: none;">⏳ جاري التحميل...</span>
@@ -5247,7 +5250,12 @@
     };
 
     window.changeRecordsPerPage = function() {
-    recordsPerPage = parseInt(document.getElementById('recordsPerPage').value);
+    const selectedValue = document.getElementById('recordsPerPage').value;
+    if (selectedValue === 'all') {
+    recordsPerPage = filteredOrdersData.length; // Show all records
+    } else {
+    recordsPerPage = parseInt(selectedValue);
+    }
     currentPage = 1;
     renderCurrentPage();
     };
