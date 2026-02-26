@@ -1155,7 +1155,7 @@
     <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
     <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
-    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">📜 سجل المشرفين</button>
+    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none;">📜 سجل المشرفين</button>
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
     <button id="dateFilterBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white;">📅 فلترة بالتاريخ</button>
     <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">👁️ إظهار/إخفاء الأعمدة</button>
@@ -2734,12 +2734,15 @@
     const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
     const cleanupMainBtn = document.getElementById('cleanDuplicatesMainBtn');
     const supervisorLogBtn = document.getElementById('supervisorLogBtn');
+    const showAdminLogsBtn = document.getElementById('showAdminLogsBtn');
     if (userRole !== 'SUPER') {
     if (cleanupBtn) cleanupBtn.style.display = 'none';
     if (cleanupMainBtn) cleanupMainBtn.style.display = 'none';
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'none';
+    if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'none';
     } else {
     if (supervisorLogBtn) supervisorLogBtn.style.display = 'inline-block';
+    if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'inline-block';
     }
     } catch (error) {
     console.error('❌ خطأ في تسجيل الدخول:', error);
@@ -5179,8 +5182,13 @@
 
     // Show/hide supervisor log button based on role
     const supervisorLogBtn = document.getElementById('supervisorLogBtn');
-    if (supervisorLogBtn) {
-    supervisorLogBtn.style.display = userRole === 'SUPER' ? 'inline-block' : 'none';
+    const showAdminLogsBtn = document.getElementById('showAdminLogsBtn');
+    if (userRole === 'SUPER') {
+    if (supervisorLogBtn) supervisorLogBtn.style.display = 'inline-block';
+    if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'inline-block';
+    } else {
+    if (supervisorLogBtn) supervisorLogBtn.style.display = 'none';
+    if (showAdminLogsBtn) showAdminLogsBtn.style.display = 'none';
     }
 
     // Show/hide cleanup buttons based on role
