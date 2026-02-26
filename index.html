@@ -783,7 +783,7 @@
     alt="علم الشرقية">
     </div>
     <div class="header-title" style="flex: 1; min-width: 150px;">
-    <h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">� رئاسة مركز ومدينة كفر صقر</h1>>
+    <h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
     <small style="font-size: 0.65rem; opacity: 0.85;">د/ أحمد المقدم</small>
     </div>
     <div style="display:flex; gap:6px; flex-wrap: wrap;">
@@ -860,7 +860,7 @@
     <!-- Citizen Page (Tuk Tuk Registration) -->
     <div id="citizenPage" style="display:none;">
     <div class="card">
-    <h2 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 2rem;">� تسجيل توكتوك جديد</h2>
+    <h2 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 2rem;">📝 تسجيل توكتوك جديد</h2>
 
     <!-- Registration Form -->
     <div id="registrationForm">
@@ -1169,8 +1169,8 @@
     <option value="code">🔢 الكود</option>
     <option value="nationalId">🆔 الرقم القومي</option>
     <option value="phone">📱 الهاتف</option>
-    <option value="chassis">� الشاسيه</option>
-    <option value="motor">⚙️ الموتور</option>
+    <option value="chassis">الشاسيه</option>
+    <option value="motor">الموتور</option>
     </select>
     <input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
     </div>
@@ -4252,8 +4252,8 @@
     
     vehiclesData.push([
     vehicle.owner_name || '-',
-    "'" + (vehicle.national_id || '-'), // Add ' prefix to prevent scientific notation
-    "'" + (vehicle.phone || '-'), // Add ' prefix
+    vehicle.national_id || '-',
+    vehicle.phone || '-',
     vehicle.vehicle_type || '-',
     vehicle.plate_number || '-',
     vehicle.code || '-',
@@ -4292,7 +4292,7 @@
     
     complaintsData.push([
     complaint.owner_name || '-',
-    "'" + (complaint.phone || '-'), // Add ' prefix
+    complaint.phone || '-',
     complaint.complaint_type || '-',
     complaint.details || '-',
     statusText,
