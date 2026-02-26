@@ -1836,6 +1836,39 @@
     <!-- System Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+    // Early function definitions for pagination (to avoid "not defined" errors)
+    window.currentPage = 1;
+    window.recordsPerPage = 100;
+    window.allOrdersData = [];
+    window.filteredOrdersData = [];
+    
+    window.changePage = function(direction) {
+        if (!window.filteredOrdersData || window.filteredOrdersData.length === 0) return;
+        const totalPages = Math.ceil(window.filteredOrdersData.length / window.recordsPerPage) || 1;
+        window.currentPage += direction;
+        if (window.currentPage < 1) window.currentPage = 1;
+        if (window.currentPage > totalPages) window.currentPage = totalPages;
+        if (typeof renderCurrentPage === 'function') renderCurrentPage();
+    };
+    
+    window.changeRecordsPerPage = function() {
+        const select = document.getElementById('recordsPerPage');
+        if (!select) return;
+        const selectedValue = select.value;
+        if (selectedValue === 'all') {
+            window.recordsPerPage = window.filteredOrdersData.length || 100;
+        } else {
+            window.recordsPerPage = parseInt(selectedValue) || 100;
+        }
+        window.currentPage = 1;
+        if (typeof renderCurrentPage === 'function') renderCurrentPage();
+    };
+    
+    window.searchOrders = function() {
+        // Will be overridden later with full implementation
+        console.log('Search function will be initialized after data loads');
+    };
+    
     // Initialize Database Client
     (function() {
         const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
@@ -5246,11 +5279,9 @@
     // ============================================
     // PAGINATION SYSTEM
     // ============================================
-    window.currentPage = 1;
-    window.recordsPerPage = 100;
-    window.allOrdersData = [];
-    window.filteredOrdersData = [];
-
+    // Variables already defined at top of script
+    
+    // Override searchOrders with full implementation
     window.searchOrders = function() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     const searchType = document.getElementById('searchType') ?document.getElementById('searchType').value : 'all';
@@ -5308,6 +5339,7 @@
     console.log(resultMsg);
     };
 
+    // Override changePage with full implementation
     window.changePage = function(direction) {
     const totalPages = Math.ceil(window.filteredOrdersData.length / window.recordsPerPage) || 1;
     window.currentPage += direction;
@@ -5316,6 +5348,7 @@
     renderCurrentPage();
     };
 
+    // Override changeRecordsPerPage with full implementation
     window.changeRecordsPerPage = function() {
     const selectedValue = document.getElementById('recordsPerPage').value;
     if (selectedValue === 'all') {
