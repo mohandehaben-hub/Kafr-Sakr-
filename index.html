@@ -1,7 +1,7 @@
     <!DOCTYPE html>
     <!--
     ═══════════════════════════════════════════════════════════════
-    منظومة تكويد المركبات - رئاسة مركز ومدينة كفر صقر
+    منظومة تقنين المركبات - رئاسة مركز ومدينة كفر صقر
     ═══════════════════════════════════════════════════════════════
     🔒 نظام آمن ومحمي بالكامل
     
@@ -17,7 +17,7 @@
     <meta http-equiv="Expires" content="0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>منظومة تكويد المركبات - كفر صقر</title>
+    <title>منظومة تقنين المركبات - كفر صقر</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png">
@@ -772,25 +772,70 @@
     </div>
 
     <!-- Header -->
-    <header>
-    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%;">
-    <div style="display: flex; align-items: center; gap: 6px;">
+    <header style="padding: 20px 30px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; width: 100%;">
+    
+    <!-- الجانب الأيمن: الشعارات والعنوان -->
+    <div style="display: flex; align-items: center; gap: 12px; flex: 0 0 auto;">
     <img src="https://i.postimg.cc/Hs92TtbL/41jjsn4SHDL-AC-UF894-1000-QL80.jpg" 
-    style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
+    style="width: 55px; height: 55px; object-fit: contain; border-radius: 8px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); background: white; padding: 4px; border: 2px solid rgba(255,255,255,0.6);" 
     alt="علم مصر">
     <img src="https://i.postimg.cc/brFBgHg7/Flag-of-Sharkiya-Governorate.png" 
-    style="width: 35px; height: 35px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white; padding: 3px; border: 1px solid rgba(255,255,255,0.5);" 
+    style="width: 55px; height: 55px; object-fit: contain; border-radius: 8px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); background: white; padding: 4px; border: 2px solid rgba(255,255,255,0.6);" 
     alt="علم الشرقية">
+    <div class="header-title" style="min-width: 180px;">
+    <h1 style="font-size: 1.1rem; margin: 0; line-height: 1.3;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
+    <small style="font-size: 0.85rem; opacity: 0.95; color: #d4af37; font-weight: 600;">د/ أحمد المقدم</small>
     </div>
-    <div class="header-title" style="flex: 1; min-width: 150px;">
-    <h1 style="font-size: 0.9rem; margin: 0; line-height: 1.2;">🏛️ رئاسة مركز ومدينة كفر صقر</h1>
-    <small style="font-size: 0.65rem; opacity: 0.85;">د/ أحمد المقدم</small>
     </div>
-    <div style="display:flex; gap:6px; flex-wrap: wrap;">
-    <button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="goToPortal()">🏠 البوابة</button>
-    <button id="goAdminBtn" class="btn" style="background: rgba(255,255,255,0.15); color: white; display:none; padding: 6px 10px; font-size: 0.75rem;" onclick="goToAdmin()">⚙️ لوحة التحكم</button>
-    <button id="logoutBtn" class="btn" style="background: rgba(255,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.4); display:none; cursor:pointer; padding: 6px 10px; font-size: 0.75rem;" onclick="logoutAdmin()">🚪 خروج</button>
-    <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4); padding: 6px 10px; font-size: 0.75rem;">🔐 التحكم</button>
+
+    <!-- الوسط: القيادات (يظهر في الصفحة الرئيسية فقط) -->
+    <div id="leadershipSection" style="display: flex; justify-content: space-evenly; align-items: center; gap: 40px; flex: 1; padding: 10px 20px; background: rgba(0,0,0,0.15); border-radius: 15px; backdrop-filter: blur(10px);">
+    
+    <!-- الرئيس -->
+    <div style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <img src="https://i.postimg.cc/sgFxMzTn/ryys-aljmhwryh.jpg" 
+    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    alt="الرئيس">
+    <span style="font-size: 0.7rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">الرئيس عبد الفتاح السيسي</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block;">رئيس الجمهورية</span>
+    </div>
+    
+    <!-- الوزيرة -->
+    <div style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <img src="https://i.postimg.cc/63Q5kpp0/alwzyrt.jpg" 
+    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    alt="الوزيرة">
+    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">د/ منال عوض</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block;">وزيرة التنمية المحلية</span>
+    </div>
+    
+    <!-- المحافظ -->
+    <div style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <img src="https://i.postimg.cc/W3fbTcDb/almhafz.jpg" 
+    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    alt="المحافظ">
+    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">م/ حازم الأشموني</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block;">محافظ الشرقية</span>
+    </div>
+    
+    <!-- رئيس المدينة -->
+    <div style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <img src="https://i.ibb.co/20JSTtJz/Whats-App-Image-2026-02-27-at-8-20-41-PM-3.jpg" 
+    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    alt="رئيس المدينة">
+    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">د/ أحمد المقدم</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block;">رئيس مركز كفر صقر</span>
+    </div>
+    
+    </div>
+
+    <!-- الجانب الأيسر: أزرار التحكم -->
+    <div style="display:flex; gap:6px; flex-wrap: wrap; flex: 0 0 auto;">
+    <button id="goPortalBtn" class="btn" style="background: rgba(255,255,255,0.2); color: white; display:none; padding: 6px 12px; font-size: 0.75rem; border: 2px solid rgba(255,255,255,0.3);" onclick="goToPortal()">🏠 البوابة</button>
+    <button id="goAdminBtn" class="btn" style="background: rgba(255,255,255,0.2); color: white; display:none; padding: 6px 12px; font-size: 0.75rem; border: 2px solid rgba(255,255,255,0.3);" onclick="goToAdmin()">⚙️ لوحة التحكم</button>
+    <button id="logoutBtn" class="btn" style="background: rgba(231,76,60,0.8); color: white; border: 2px solid rgba(255,255,255,0.5); display:none; cursor:pointer; padding: 6px 12px; font-size: 0.75rem;" onclick="logoutAdmin()">🚪 خروج</button>
+    <button id="loginBtn" class="btn" style="background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.5); padding: 6px 12px; font-size: 0.75rem;">🔐 التحكم</button>
     </div>
     </div>
     </header>
@@ -814,7 +859,7 @@
     <!-- Tuk Tuk Coding Portal -->
     <div class="portal-box" onclick="openService('citizenPage')" style="border-bottom: 6px solid var(--primary);">
     <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" style="width: 120px; height: 100px; object-fit: contain; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" alt="توكتوك">
-    <h2 style="color: var(--primary);">تكويد التوكتوك</h2>
+    <h2 style="color: var(--primary);">تقنين التوكتوك</h2>
     <p>تسجيل بيانات التوكتوك بالمنظومة الذكية</p>
     </div>
 
@@ -980,10 +1025,40 @@
     </div>
 
     <!-- Complaints Page -->
+    <!-- Complaints Selection Page (Choose Vehicle Type) -->
+    <div id="complaintsSelectionPage" style="display:none;">
+    <div class="card" style="border: 3px solid var(--accent);">
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚖️ اختر نوع المركبة</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1rem;">اختر نوع المركبة التي تريد تقديم شكوى بشأنها</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;">
+    <!-- توكتوك -->
+    <div onclick="openComplaintForm('توكتوك')" style="cursor: pointer; padding: 40px; background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%); border-radius: 20px; border: 3px solid var(--warning); text-align: center; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(243, 156, 18, 0.2);" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(243, 156, 18, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(243, 156, 18, 0.2)'">
+    <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" style="width: 150px; height: 120px; object-fit: contain; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" alt="توكتوك">
+    <h3 style="color: var(--warning); margin: 15px 0; font-size: 1.5rem;">🛺 توكتوك</h3>
+    <p style="color: #666; font-size: 1rem;">شكوى بخصوص توكتوك<br>(أدخل رقم الكود)</p>
+    </div>
+    
+    <!-- ميكروباص -->
+    <div onclick="openComplaintForm('ميكروباص')" style="cursor: pointer; padding: 40px; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(34, 153, 84, 0.1) 100%); border-radius: 20px; border: 3px solid var(--secondary); text-align: center; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2);" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(39, 174, 96, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(39, 174, 96, 0.2)'">
+    <img src="https://i.postimg.cc/44zFDbrR/images.jpg" style="width: 150px; height: 120px; object-fit: contain; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" alt="ميكروباص">
+    <h3 style="color: var(--secondary); margin: 15px 0; font-size: 1.5rem;">🚐 ميكروباص</h3>
+    <p style="color: #666; font-size: 1rem;">شكوى بخصوص ميكروباص<br>(أدخل رقم اللوحة)</p>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Complaints Page -->
     <div id="complaintsPage" style="display:none;">
     <div class="card" style="border: 3px solid var(--accent);">
     <h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚖️ تقديم شكوى</h2>
     <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.05rem;">املأ البيانات التالية لتقديم شكوى</p>
+    
+    <!-- عرض نوع المركبة المختار -->
+    <div id="selectedVehicleType" style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.1) 0%, rgba(186, 74, 0, 0.1) 100%); padding: 15px; border-radius: 12px; margin-bottom: 25px; text-align: center; border: 2px solid rgba(211, 84, 0, 0.3); display: none;">
+    <h4 style="color: var(--accent); margin: 0; font-size: 1.2rem;">نوع المركبة: <span id="vehicleTypeDisplay"></span></h4>
+    </div>
 
     <div class="form-grid">
     <div class="input-group" style="grid-column: 1 / -1;">
@@ -999,6 +1074,12 @@
     <div class="input-group">
     <label>رقم الهاتف (11 رقم)</label>
     <input type="tel" id="compPhone" maxlength="11" placeholder="01XXXXXXXXX">
+    </div>
+
+    <div class="input-group" id="vehicleIdGroup">
+    <label id="vehicleIdLabel">رقم الكود / اللوحة</label>
+    <input type="text" id="compVehicleId" placeholder="أدخل رقم الكود أو اللوحة">
+    <small id="vehicleIdHint" style="color: #666; margin-top: 5px; display: block;"></small>
     </div>
 
     <div class="input-group">
@@ -1117,50 +1198,24 @@
     </div>
     </div>
 
-    <style>
-    .stat-card:hover {
-    transform: translateY(-8px) scale(1.05);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.3) !important;
-    }
-
-    .stat-card:active {
-    transform: translateY(-4px) scale(1.02);
-    }
-
-    .stat-card {
-    position: relative;
-    overflow: hidden;
-    }
-
-    .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-    }
-
-    .stat-card:hover::before {
-    width: 300px;
-    height: 300px;
-    }
-    </style>
-
     <div class="card">
     <!-- Control Buttons -->
-    <div style="display:flex; gap:15px; margin-bottom:35px; flex-wrap: wrap; align-items: center;">
-    <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white;">🚜 جدول المركبات</button>
-    <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white;">⚖️ قائمة الشكاوى</button>
-    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none;">📜 سجل المشرفين</button>
-    <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">📥 استيراد من Excel</button>
-    <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none;">👁️ إظهار/إخفاء الأعمدة</button>
-    <div style="flex: 1; display: flex; gap: 10px;">
-    <select id="searchType" style="padding: 12px; border-radius: 12px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 150px;">
+    <div style="display:flex !important; flex-direction: row !important; gap:8px; margin-bottom:15px; flex-wrap: wrap; align-items: center;">
+    <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🚜 جدول المركبات</button>
+    <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">⚖️ قائمة الشكاوى</button>
+    <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📜 سجل المشرفين</button>
+    <button id="uploadExcelBtn" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📤 رفع ملف Excel</button>
+    <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
+    <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📥 استيراد من Excel</button>
+    <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">👁️ إظهار/إخفاء الأعمدة</button>
+    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📊 تصدير Excel</button>
+    <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🧹 حذف المكرر</button>
+    <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🚪 خروج</button>
+    </div>
+    
+    <!-- Search Section -->
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+    <select id="searchType" style="padding: 10px; border-radius: 10px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.95); font-weight: 600; min-width: 130px; font-size: 0.85rem;">
     <option value="all">🔍 الكل</option>
     <option value="name">👤 الاسم</option>
     <option value="code">🔢 الكود</option>
@@ -1169,11 +1224,14 @@
     <option value="chassis">الشاسيه</option>
     <option value="motor">الموتور</option>
     </select>
-    <input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:16px; border-radius:16px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600;" placeholder="🔍 ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
+    <input type="text" id="searchInput" oninput="window.searchOrders()" style="flex: 1; padding:12px; border-radius:12px; border:2px solid var(--glass-border); background:rgba(255,255,255,0.95); font-weight:600; font-size: 0.9rem;" placeholder="� ابحث في كل السجلات..." title="البحث يعمل على جميع البيانات المحملة">
     </div>
-    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none;">📊 تصدير Excel</button>
-    <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">🧹 حذف المكرر</button>
-    <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">🚪 خروج</button>
+    
+    <!-- أزرار الفلترة حسب نوع المركبة -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
+    <button onclick="window.filterByVehicleType('all')" class="btn" style="padding: 12px 25px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white; font-weight: 600; border-radius: 12px;">📋 الكل</button>
+    <button onclick="window.filterByVehicleType('tuktuk')" class="btn" style="padding: 12px 25px; background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: white; font-weight: 600; border-radius: 12px;">🛺 توكتوك فقط</button>
+    <button onclick="window.filterByVehicleType('microbus')" class="btn" style="padding: 12px 25px; background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; font-weight: 600; border-radius: 12px;">🚐 ميكروباص فقط</button>
     </div>
 
     <!-- Filter Status Message -->
@@ -1216,13 +1274,14 @@
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">المالك</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الرقم القومي</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الهاتف</th>
+    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">نوع المركبة</th>
+    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الكود/اللوحة</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">النوع</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموديل</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الشاسيه</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموتور</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">العنوان</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">التاريخ</th>
-    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الكود</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">📷 الصور</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الإجراءات</th>
     </tr>
@@ -1448,25 +1507,6 @@
     <span style="position: relative; z-index: 1;">دخول 🚀</span>
     </button>
 
-    <style>
-    #confirmLoginBtn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(26, 82, 118, 0.5);
-    }
-
-    #confirmLoginBtn:active {
-    transform: translateY(0);
-    }
-
-    #loginModal {
-    animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-    }
-    </style>
     </div>
     </div>
 
@@ -1579,19 +1619,10 @@
     تطوير: م/ باهي التهامي | م/ مهند التهامي
     </div>
 
-    <style>
-    /* Hover effect for developer credit */
-    div[style*="bottom: 8px; right: 8px"]:hover {
-    background: rgba(0,0,0,0.7) !important;
-    color: rgba(255,255,255,0.95) !important;
-    transform: scale(1.05);
-    }
-    </style>
-
     <!-- JavaScript -->
     <script>
     console.log('═'.repeat(60));
-    console.log('✅ منظومة تكويد المركبات - كفر صقر');
+    console.log('✅ منظومة تقنين المركبات - كفر صقر');
     console.log('🔒 نظام آمن ومحمي');
     console.log('═'.repeat(60));
 
@@ -1599,12 +1630,54 @@
     function openService(serviceId) {
     console.log('🔄 فتح القسم:', serviceId);
     document.getElementById('portalSection').style.display = 'none';
+    
+    // إذا كان القسم هو الشكاوى، افتح صفحة اختيار نوع المركبة
+    if (serviceId === 'complaintsPage') {
+    document.getElementById('complaintsSelectionPage').style.display = 'block';
+    document.getElementById('complaintsPage').style.display = 'none';
+    } else {
     document.getElementById(serviceId).style.display = 'block';
+    }
+    
     document.getElementById('goPortalBtn').style.display = 'inline-flex';
 
     // Auto-open registration form for Tuk Tuk (no vehicle selection needed)
     if (serviceId === 'citizenPage') {
     document.getElementById('vType').value = 'توكتوك';
+    }
+    }
+    
+    // فتح نموذج الشكوى حسب نوع المركبة
+    function openComplaintForm(vehicleType) {
+    document.getElementById('complaintsSelectionPage').style.display = 'none';
+    document.getElementById('complaintsPage').style.display = 'block';
+    
+    // حفظ نوع المركبة
+    window.selectedComplaintVehicleType = vehicleType;
+    
+    // عرض نوع المركبة
+    const typeDisplay = document.getElementById('selectedVehicleType');
+    const vehicleTypeDisplay = document.getElementById('vehicleTypeDisplay');
+    if (typeDisplay && vehicleTypeDisplay) {
+    typeDisplay.style.display = 'block';
+    vehicleTypeDisplay.textContent = vehicleType === 'توكتوك' ? '🛺 توكتوك' : '🚐 ميكروباص';
+    }
+    
+    // تحديث Label وPlaceholder حسب نوع المركبة
+    const label = document.getElementById('vehicleIdLabel');
+    const input = document.getElementById('compVehicleId');
+    const hint = document.getElementById('vehicleIdHint');
+    
+    if (vehicleType === 'توكتوك') {
+    label.textContent = 'رقم كود التقنين';
+    input.placeholder = 'مثال: 1234';
+    input.type = 'number';
+    hint.textContent = '✓ أدخل رقم الكود المكون من أرقام فقط';
+    } else {
+    label.textContent = 'رقم لوحة الميكروباص';
+    input.placeholder = 'مثال: ر ع و 1234';
+    input.type = 'text';
+    hint.textContent = '✓ أدخل رقم اللوحة (حروف عربية + أرقام)';
     }
     }
 
@@ -2402,8 +2475,12 @@
     const ownerName = document.getElementById('compOwnerName').value.trim();
     const nid = document.getElementById('compNationalId').value.trim();
     const phone = document.getElementById('compPhone').value.trim();
+    const vehicleId = document.getElementById('compVehicleId').value.trim();
     const compType = document.getElementById('compType').value;
     const details = document.getElementById('compDetails').value.trim();
+    
+    // الحصول على نوع المركبة المحفوظ
+    const vehicleType = window.selectedComplaintVehicleType || 'توكتوك';
 
     // Get all image files
     const selfie = document.getElementById('compSelfie').files[0];
@@ -2411,7 +2488,7 @@
     const problemImages = document.getElementById('compProblemImage').files;
     const vehicleImage = document.getElementById('compVehicleImage').files[0];
 
-    if (!ownerName || nid.length !== 14 || phone.length !== 11 || !compType || !details) {
+    if (!ownerName || nid.length !== 14 || phone.length !== 11 || !vehicleId || !compType || !details) {
     alert("❌ يرجى إكمال جميع البيانات المطلوبة");
     return;
     }
@@ -2457,6 +2534,8 @@
     owner_name: ownerName,
     national_id: nid,
     phone,
+    vehicle_type: vehicleType,
+    vehicle_id: vehicleId,
     complaint_type: compType,
     details,
     images: imgUrls,
@@ -2945,6 +3024,11 @@
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
     document.getElementById('goAdminBtn').style.display = 'inline-flex';
+    
+    // إظهار قسم القيادات في البوابة
+    const leadershipSection = document.getElementById('leadershipSection');
+    if (leadershipSection) leadershipSection.style.display = 'flex';
+    
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
     };
 
@@ -2958,6 +3042,11 @@
     document.getElementById('adminPage').style.display = 'block';
     document.getElementById('goAdminBtn').style.display = 'none';
     document.getElementById('goPortalBtn').style.display = 'inline-flex';
+    
+    // إخفاء قسم القيادات في لوحة التحكم
+    const leadershipSection = document.getElementById('leadershipSection');
+    if (leadershipSection) leadershipSection.style.display = 'none';
+    
     console.log('⚙️ العودة للوحة التحكم');
     };
 
@@ -3020,6 +3109,7 @@
     motorNumber: item.motor_number || '',
     address: item.address || '',
     vCode: item.code || '',
+    licensePlate: item.license_plate || '',
     refNumber: item.ref_number || '',
     timestamp: item.submitted_at || Date.now(),
     status: item.status || 'pending',
@@ -3062,17 +3152,31 @@
     for (let i = 0; i < quickShowCount; i++) {
     const item = combinedOrders[i];
     const tr = document.createElement('tr');
+    
+    // تحديد نوع المركبة
+    let vehicleTypeDisplay = '🛺 توكتوك';
+    let vehicleIdDisplay = item.vCode || '-';
+    let vehicleTypeValue = 'tuktuk';
+    
+    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
+    if (item.licensePlate && item.licensePlate !== '') {
+    vehicleTypeDisplay = '🚐 ميكروباص';
+    vehicleIdDisplay = item.licensePlate;
+    vehicleTypeValue = 'microbus';
+    }
+    
     tr.innerHTML = `
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
     `;
@@ -3101,17 +3205,31 @@
     for (let i = currentIndex; i < endIndex; i++) {
     const item = combinedOrders[i];
     const tr = document.createElement('tr');
+    
+    // تحديد نوع المركبة
+    let vehicleTypeDisplay = '🛺 توكتوك';
+    let vehicleIdDisplay = item.vCode || '-';
+    let vehicleTypeValue = 'tuktuk';
+    
+    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
+    if (item.licensePlate && item.licensePlate !== '') {
+    vehicleTypeDisplay = '🚐 ميكروباص';
+    vehicleIdDisplay = item.licensePlate;
+    vehicleTypeValue = 'microbus';
+    }
+    
     tr.innerHTML = `
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
     `;
@@ -3155,17 +3273,31 @@
     const id = item.id;
 
     const tr = document.createElement('tr');
+    
+    // تحديد نوع المركبة
+    let vehicleTypeDisplay = '🛺 توكتوك';
+    let vehicleIdDisplay = item.vCode || '-';
+    let vehicleTypeValue = 'tuktuk';
+    
+    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
+    if (item.licensePlate && item.licensePlate !== '') {
+    vehicleTypeDisplay = '🚐 ميكروباص';
+    vehicleIdDisplay = item.licensePlate;
+    vehicleTypeValue = 'microbus';
+    }
+    
     tr.innerHTML = `
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
     <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
@@ -3389,7 +3521,7 @@
     }
     } catch (error) {
     console.error('❌ خطأ في تحميل البيانات:', error); 
-    document.getElementById('dataTable').innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:var(--danger);">❌ حدث خطأ في تحميل البيانات</td></tr>';
+    document.getElementById('dataTable').innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:var(--danger);">❌ حدث خطأ في تحميل البيانات</td></tr>';
     }
     }
 
@@ -3446,6 +3578,7 @@
     motorNumber: item.motor_number || '',
     address: item.address || '',
     vCode: item.code || '',
+    licensePlate: item.license_plate || '',
     refNumber: item.ref_number || '',
     timestamp: item.submitted_at || Date.now(),
     status: item.status || 'pending',
@@ -3476,17 +3609,31 @@
     allOrders.forEach(item => {
     const id = item.id;
     const tr = document.createElement('tr');
+    
+    // تحديد نوع المركبة
+    let vehicleTypeDisplay = '🛺 توكتوك';
+    let vehicleIdDisplay = item.vCode || '-';
+    let vehicleTypeValue = 'tuktuk';
+    
+    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
+    if (item.licensePlate && item.licensePlate !== '') {
+    vehicleTypeDisplay = '🚐 ميكروباص';
+    vehicleIdDisplay = item.licensePlate;
+    vehicleTypeValue = 'microbus';
+    }
+    
     tr.innerHTML = `
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.85rem; color:${item.vCode ? 'var(--secondary)' : 'var(--danger)'}">${item.vCode || '-'}</td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
     <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
     <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
@@ -3666,6 +3813,88 @@
     document.getElementById('loadAllDataBtn').style.display = 'inline-block';
     window.isLoadingAll = false;
     alert('حدث خطأ في تحميل البيانات');
+    }
+    };
+
+    // Upload Excel Data
+    window.uploadExcelData = async function(file) {
+    try {
+    // التحقق من وجود مكتبة XLSX
+    if (typeof XLSX === 'undefined') {
+    alert('❌ مكتبة XLSX غير محملة. يرجى إضافة المكتبة أولاً.');
+    console.error('XLSX library not loaded');
+    return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+    try {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+    console.log('📊 تم قراءة', jsonData.length, 'سجل من ملف Excel');
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const row of jsonData) {
+    try {
+    // تحويل البيانات من Excel
+    const orderData = {
+    owner_name: row['الاسم'] || row['name'] || '',
+    national_id: String(row['الرقم القومي'] || row['nationalId'] || ''),
+    phone: String(row['الهاتف'] || row['phone'] || ''),
+    vehicle_type: row['نوع المركبة'] || row['vehicleType'] || 'ميكروباص',
+    license_plate: row['رقم اللوحة'] || row['licensePlate'] || '',
+    address: row['العنوان'] || row['address'] || '',
+    vehicle_year: String(row['موديل السنة'] || row['year'] || ''),
+    chassis_number: row['الشاسيه'] || row['chassis'] || '',
+    motor_number: row['الموتور'] || row['motor'] || '',
+    status: 'pending',
+    submitted_at: new Date().toISOString(),
+    images: []
+    };
+
+    // التحقق من البيانات الأساسية
+    if (!orderData.owner_name || !orderData.national_id || !orderData.license_plate) {
+    console.warn('⚠️ سجل غير مكتمل:', row);
+    errorCount++;
+    continue;
+    }
+
+    // حفظ في قاعدة البيانات
+    const { error } = await window.supabaseClient
+    .from('orders')
+    .insert([orderData]);
+
+    if (error) {
+    console.error('❌ خطأ في حفظ السجل:', error);
+    errorCount++;
+    } else {
+    successCount++;
+    }
+    } catch (rowError) {
+    console.error('❌ خطأ في معالجة السجل:', rowError);
+    errorCount++;
+    }
+    }
+
+    alert(`✅ تم رفع ${successCount} سجل بنجاح\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
+
+    // إعادة تحميل البيانات
+    await loadAdminData();
+    } catch (error) {
+    console.error('❌ خطأ في قراءة ملف Excel:', error);
+    alert('❌ حدث خطأ في قراءة ملف Excel');
+    }
+    };
+
+    reader.readAsArrayBuffer(file);
+    } catch (error) {
+    console.error('❌ خطأ في رفع الملف:', error);
+    alert('❌ حدث خطأ في رفع الملف');
     }
     };
 
@@ -3919,6 +4148,22 @@
     loadComplaints();
     };
     }
+
+    // Excel Upload Button Handler
+    const uploadExcelBtn = document.getElementById('uploadExcelBtn');
+    const excelFileInput = document.getElementById('excelFileInput');
+    if (uploadExcelBtn && excelFileInput) {
+    uploadExcelBtn.onclick = () => {
+    excelFileInput.click();
+    };
+    excelFileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+    window.uploadExcelData(file);
+    e.target.value = ''; // Reset input
+    }
+    };
+    }
     }
 
     // Complaint Reply Modal Handler
@@ -4047,6 +4292,31 @@
         if (logsContainer) logsContainer.style.display = 'none';
     }
 
+    // Filter by vehicle type
+    function filterByVehicleType(type) {
+        if (type === 'all') {
+            window.filteredOrdersData = window.allOrdersData;
+        } else if (type === 'tuktuk') {
+            window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+                const item = orderData.item;
+                return !item.licensePlate || item.licensePlate === ''; // توكتوك = ما عندوش لوحة
+            });
+        } else if (type === 'microbus') {
+            window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+                const item = orderData.item;
+                return item.licensePlate && item.licensePlate !== ''; // ميكروباص = عنده لوحة
+            });
+        }
+        window.currentPage = 1;
+        renderCurrentPage();
+        const ordersContainer = document.getElementById('ordersTableContainer');
+        const complaintsContainer = document.getElementById('complaintsTableContainer');
+        const logsContainer = document.getElementById('adminLogsContainer');
+        if (ordersContainer) ordersContainer.style.display = 'block';
+        if (complaintsContainer) complaintsContainer.style.display = 'none';
+        if (logsContainer) logsContainer.style.display = 'none';
+    }
+
     function showComplaintsTable() {
         const ordersContainer = document.getElementById('ordersTableContainer');
         const complaintsContainer = document.getElementById('complaintsTableContainer');
@@ -4061,6 +4331,7 @@
     window.showAllOrders = showAllOrders;
     window.showCodedOrders = showCodedOrders;
     window.showPendingOrders = showPendingOrders;
+    window.filterByVehicleType = filterByVehicleType;
     window.showComplaintsTable = showComplaintsTable;
 
     // Show Activity Log
