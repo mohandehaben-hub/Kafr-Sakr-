@@ -61,6 +61,7 @@
     direction: rtl;
     color: var(--text-dark);
     padding-bottom: 100px;
+    padding-top: 120px;
     min-height: 100vh;
     }
 
@@ -78,10 +79,14 @@
     align-items: center;
     box-shadow: var(--shadow-lg);
     border-bottom: 3px solid rgba(255, 255, 255, 0.3);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 1000;
     animation: slideDown 0.5s ease;
+    transition: transform 0.3s ease;
     }
 
     .header-title h1 {
