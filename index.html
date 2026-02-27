@@ -61,8 +61,12 @@
     direction: rtl;
     color: var(--text-dark);
     padding-bottom: 100px;
-    padding-top: 220px;
+    padding-top: 200px;
     min-height: 100vh;
+    }
+    
+    body.admin-mode {
+    padding-top: 100px;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -805,42 +809,42 @@
     </header>
 
     <!-- القيادات (تحت الهيدر مباشرة) -->
-    <div id="leadershipSection" style="display: flex; justify-content: center; align-items: center; gap: 30px; padding: 20px 30px; background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(21, 67, 96, 0.95) 100%); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: fixed; top: 85px; left: 0; right: 0; width: 100%; z-index: 999; transition: transform 0.3s ease;">
+    <div id="leadershipSection" style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(21, 67, 96, 0.95) 100%); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: fixed; top: 85px; left: 0; right: 0; width: 100%; z-index: 999; transition: transform 0.3s ease; flex-wrap: nowrap;">
     
     <!-- الرئيس -->
-    <div class="leadership-item" style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div class="leadership-item" style="text-align: center; transition: transform 0.3s; flex-shrink: 0;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
     <img src="https://i.postimg.cc/sgFxMzTn/ryys-aljmhwryh.jpg" 
-    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 6px;" 
     alt="الرئيس">
-    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">الرئيس عبد الفتاح السيسي</span>
-    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.85); display: block;">رئيس الجمهورية</span>
+    <span style="font-size: 0.7rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;">الرئيس عبد الفتاح السيسي</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block; white-space: nowrap;">رئيس الجمهورية</span>
     </div>
     
     <!-- الوزيرة -->
-    <div class="leadership-item" style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div class="leadership-item" style="text-align: center; transition: transform 0.3s; flex-shrink: 0;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
     <img src="https://i.postimg.cc/63Q5kpp0/alwzyrt.jpg" 
-    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 6px;" 
     alt="الوزيرة">
-    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">د/ منال عوض</span>
-    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.85); display: block;">وزيرة التنمية المحلية</span>
+    <span style="font-size: 0.7rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;">د/ منال عوض</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block; white-space: nowrap;">وزيرة التنمية المحلية</span>
     </div>
     
     <!-- المحافظ -->
-    <div class="leadership-item" style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div class="leadership-item" style="text-align: center; transition: transform 0.3s; flex-shrink: 0;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
     <img src="https://i.postimg.cc/W3fbTcDb/almhafz.jpg" 
-    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 6px;" 
     alt="المحافظ">
-    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">م/ حازم الأشموني</span>
-    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.85); display: block;">محافظ الشرقية</span>
+    <span style="font-size: 0.7rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;">م/ حازم الأشموني</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block; white-space: nowrap;">محافظ الشرقية</span>
     </div>
     
     <!-- رئيس المدينة -->
-    <div class="leadership-item" style="text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div class="leadership-item" style="text-align: center; transition: transform 0.3s; flex-shrink: 0;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
     <img src="https://i.ibb.co/20JSTtJz/Whats-App-Image-2026-02-27-at-8-20-41-PM-3.jpg" 
-    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 8px;" 
+    style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: block; margin: 0 auto 6px;" 
     alt="رئيس المدينة">
-    <span style="font-size: 0.75rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">د/ أحمد المقدم</span>
-    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.85); display: block;">رئيس مركز كفر صقر</span>
+    <span style="font-size: 0.7rem; color: white; display: block; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;">د/ أحمد المقدم</span>
+    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.85); display: block; white-space: nowrap;">رئيس مركز كفر صقر</span>
     </div>
     
     </div>
@@ -2911,6 +2915,14 @@
     document.getElementById('complaintsPage').style.display = 'none';
     document.getElementById('complaintInquiryPage').style.display = 'none';
     document.getElementById('adminPage').style.display = 'block';
+    
+    // Hide leadership section in admin panel
+    const leadershipSection = document.getElementById('leadershipSection');
+    if (leadershipSection) leadershipSection.style.display = 'none';
+    
+    // Add admin mode class to body
+    document.body.classList.add('admin-mode');
+    
     document.getElementById('goPortalBtn').style.display = 'inline-flex';
     document.getElementById('logoutBtn').style.display = 'inline-flex';
     document.getElementById('loginBtn').style.display = 'none';
@@ -3119,6 +3131,9 @@
     // إظهار قسم القيادات في البوابة
     const leadershipSection = document.getElementById('leadershipSection');
     if (leadershipSection) leadershipSection.style.display = 'flex';
+    
+    // Remove admin mode class from body
+    document.body.classList.remove('admin-mode');
     
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
     };
