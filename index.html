@@ -3710,7 +3710,7 @@
     // Now load the rest progressively (10 at a time)
     let currentIndex = quickShowCount;
     const batchSize = 10;
-    const maxRows = Math.min(combinedOrders.length, 200); // Limit to 200 on mobile
+    const maxRows = combinedOrders.length; // Show all records
 
     function loadNextBatch() {
     if (currentIndex >= maxRows) {
@@ -4819,8 +4819,7 @@
     const { data: logs, error } = await window.supabaseClient
     .from('admin_logs')
     .select('*')
-    .order('logged_at', { ascending: false })
-    .limit(200);
+    .order('logged_at', { ascending: false });
 
     if (error) throw error;
 
