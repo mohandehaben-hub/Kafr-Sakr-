@@ -3948,7 +3948,7 @@
     while (hasMore) {
     const { data: batch, error } = await window.supabaseClient
     .from('orders')
-    .select('license_plate, national_id')
+    .select('*')
     .range(from, from + checkBatchSize - 1);
 
     if (error) {
