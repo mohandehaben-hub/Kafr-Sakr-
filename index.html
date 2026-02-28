@@ -1677,65 +1677,6 @@
     </div>
     </div>
 
-    <!-- Modal for Bulk Import -->
-    <div id="bulkImportModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
-    <div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 900px; border-radius: 35px; position: relative;">
-    <span onclick="document.getElementById('bulkImportModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
-    <h3 style="color: #8e44ad; font-size: 1.8rem; margin-bottom: 30px;">📥 استيراد بيانات جماعي من Excel</h3>
-
-    <div style="background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%); padding: 25px; border-radius: 20px; margin: 25px 0; border: 2px solid rgba(142, 68, 173, 0.3);">
-    <h4 style="color: #8e44ad; margin-top: 0;">📋 تنسيق الملف المطلوب:</h4>
-    <p style="color: #666; line-height: 1.8; margin: 15px 0;">يدعم النظام طريقتين للاستيراد:</p>
-
-    <div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
-    <h5 style="color: #8e44ad; margin: 0 0 10px 0;">🧠 الطريقة الأولى: اكتشاف تلقائي (موصى به)</h5>
-    <p style="color: #555; margin: 0; line-height: 1.6;">ضع أسماء الأعمدة في الصف الأول، وسيقوم النظام باكتشافها تلقائياً</p>
-    <p style="color: #666; font-size: 0.9rem; margin: 5px 0 0 0;">مثال: "الاسم الرباعي" | "الرقم القومي" | "رقم الهاتف" | "نوع المركبة"</p>
-    </div>
-
-    <div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
-    <h5 style="color: #8e44ad; margin: 0 0 10px 0;">📍 الطريقة الثانية: أعمدة ثابتة</h5>
-    <p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">استخدم الترتيب التالي للأعمدة:</p>
-    <ol style="color: #555; line-height: 1.8; font-weight: 600; margin: 0; padding-right: 20px;">
-    <li><strong>العمود B:</strong> الكود (اختياري)</li>
-    <li><strong>العمود C:</strong> الاسم الرباعي (إلزامي)</li>
-    <li><strong>العمود D:</strong> الرقم القومي (14 رقم - إلزامي)</li>
-    <li><strong>العمود E:</strong> العنوان</li>
-    <li><strong>العمود F:</strong> رقم الشاسيه</li>
-    <li><strong>العمود G:</strong> رقم الموتور</li>
-    <li><strong>العمود H:</strong> رقم التليفون (11 رقم)</li>
-    </ol>
-    </div>
-
-    <button id="downloadTemplateBtn" class="btn" style="background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; margin-top: 15px;">📄 تحميل ملف نموذجي</button>
-
-    <button id="cleanDuplicatesBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; margin-top: 15px;">🧹 تنظيف السجلات المكررة</button>
-    </div>
-
-    <div class="input-group">
-    <label style="font-size: 1.1rem; color: #8e44ad;">اختر ملف Excel للاستيراد:</label>
-    <input type="file" id="bulkImportFile" accept=".xlsx, .xls" style="padding: 20px; border: 3px dashed #8e44ad; background: rgba(142, 68, 173, 0.05); font-weight: 600; border-radius: 15px;">
-    </div>
-
-    <div id="importPreview" style="display:none; margin: 25px 0; max-height: 300px; overflow-y: auto; background: white; padding: 20px; border-radius: 15px; border: 2px solid #ddd;"></div>
-
-    <!-- Progress Bar -->
-    <div id="importProgress" style="display:none; margin: 25px 0;">
-    <div style="background: #f0f0f0; border-radius: 10px; overflow: hidden; height: 30px; position: relative;">
-    <div id="progressBar" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); height: 100%; width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center;">
-    <span id="progressText" style="color: white; font-weight: bold; font-size: 0.9rem; position: absolute; width: 100%; text-align: center; z-index: 1;">0%</span>
-    </div>
-    </div>
-    <p id="progressStatus" style="text-align: center; margin-top: 10px; color: #666; font-weight: 600;">جاري المعالجة...</p>
-    </div>
-
-    <div style="display:flex; gap:15px; margin-top:35px;">
-    <button id="confirmImportBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white;">✅ تأكيد الاستيراد</button>
-    <button onclick="document.getElementById('bulkImportModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
-    </div>
-    </div>
-    </div>
-
     <!-- Modal for Activity Log -->
     <div id="activityLogModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
     <div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 800px; border-radius: 35px; position: relative;">
@@ -3852,6 +3793,9 @@
     document.getElementById('dataTable').innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:var(--danger);">❌ حدث خطأ في تحميل البيانات</td></tr>';
     }
     }
+    
+    // Make loadAdminData global
+    window.loadAdminData = loadAdminData;
 
     // Load All Data function
     window.loadAllData = async function() {
@@ -3992,6 +3936,50 @@
 
     let successCount = 0;
     let errorCount = 0;
+    let duplicateCount = 0;
+    
+    // Load existing data to check for duplicates
+    console.log('🔍 جاري التحقق من السجلات الموجودة...');
+    let existingRecords = [];
+    let from = 0;
+    const checkBatchSize = 1000;
+    let hasMore = true;
+
+    while (hasMore) {
+    const { data: batch, error } = await window.supabaseClient
+    .from('orders')
+    .select('license_plate, national_id')
+    .range(from, from + checkBatchSize - 1);
+
+    if (error) {
+    console.error('Error loading existing records:', error);
+    break;
+    }
+
+    if (batch && batch.length > 0) {
+    existingRecords = existingRecords.concat(batch);
+    from += checkBatchSize;
+    hasMore = batch.length === checkBatchSize;
+    } else {
+    hasMore = false;
+    }
+    }
+
+    // Create Sets for fast lookup
+    const existingLicensePlates = new Set(
+    existingRecords
+    .filter(r => r.license_plate)
+    .map(r => r.license_plate.trim().toLowerCase())
+    );
+    const existingNationalIds = new Set(
+    existingRecords
+    .filter(r => r.national_id)
+    .map(r => r.national_id.trim())
+    );
+
+    console.log(`✅ تم تحميل ${existingRecords.length} سجل موجود`);
+    console.log(`📋 ${existingLicensePlates.size} رقم سيارة موجود`);
+    console.log(`📋 ${existingNationalIds.size} رقم قومي موجود`);
     
     // Convert images to base64 if provided
     let imageDataArray = [];
@@ -4014,23 +4002,50 @@
 
     for (const row of jsonData) {
     try {
+    // Extract data first
+    const licensePlate = (row['رقم السيارة'] || row['رقم اللوحة'] || row['licensePlate'] || row['B'] || '').toString().trim();
+    const nationalId = (row['الرقم القومي'] || row['nationalId'] || '').toString().trim();
+    const ownerName = (row['إسم المالك'] || row['الاسم'] || row['name'] || row['C'] || '').toString().trim();
+    
+    // Check for duplicates
+    let isDuplicate = false;
+    let duplicateReason = '';
+    
+    if (vehicleType === 'ميكروباص' && licensePlate) {
+    if (existingLicensePlates.has(licensePlate.toLowerCase())) {
+    isDuplicate = true;
+    duplicateReason = `رقم السيارة ${licensePlate} موجود بالفعل`;
+    }
+    } else if (vehicleType === 'توكتوك' && nationalId) {
+    if (existingNationalIds.has(nationalId)) {
+    isDuplicate = true;
+    duplicateReason = `الرقم القومي ${nationalId} موجود بالفعل`;
+    }
+    }
+    
+    if (isDuplicate) {
+    console.warn(`⚠️ تكرار: ${duplicateReason} - ${ownerName}`);
+    duplicateCount++;
+    continue; // Skip duplicate
+    }
+    
     // Generate ref_number
     const refNumber = 'REF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     
-    // تحويل البيانات من Excel - دعم الأعمدة القديمة والجديدة
+    // تحويل البيانات من Excel - دعم أعمدة متعددة
     const orderData = {
-    owner_name: row['إسم المالك'] || row['الاسم'] || row['name'] || '',
-    national_id: String(row['الرقم القومي'] || row['nationalId'] || ''),
+    owner_name: ownerName,
+    national_id: nationalId,
     phone: String(row['الهاتف'] || row['phone'] || ''),
     vehicle_type: vehicleType, // استخدام نوع المركبة المختار
-    license_plate: row['رقم السيارة'] || row['رقم اللوحة'] || row['licensePlate'] || '',
-    address: row['الخط'] || row['العنوان'] || row['address'] || '',
+    license_plate: licensePlate,
+    address: row['الخط'] || row['العنوان'] || row['address'] || row['A'] || '',
     vehicle_year: String(row['موديل السنة'] || row['year'] || ''),
-    chassis_number: String(row['رقم الشاسية'] || row['الشاسيه'] || row['chassis'] || ''),
-    motor_number: String(row['رقم الموتور'] || row['الموتور'] || row['motor'] || ''),
-    passenger_capacity: String(row['عدد الركاب'] || row['السعة'] || ''),
-    renewal_date: String(row['تاريخ التجديد'] || row['التاريخ'] || ''),
-    line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || '',
+    chassis_number: String(row['رقم الشاسية'] || row['الشاسيه'] || row['chassis'] || row['D'] || ''),
+    motor_number: String(row['رقم الموتور'] || row['الموتور'] || row['motor'] || row['E'] || ''),
+    passenger_capacity: String(row['عدد الركاب'] || row['السعة'] || row['G'] || ''),
+    renewal_date: String(row['تاريخ التجديد'] || row['التاريخ'] || row['J'] || ''),
+    line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || row['A'] || '',
     ref_number: refNumber,
     status: 'pending',
     submitted_at: new Date().toISOString(),
@@ -4060,6 +4075,9 @@
     errorCount++;
     } else {
     successCount++;
+    // Add to existing sets to prevent duplicates within same file
+    if (licensePlate) existingLicensePlates.add(licensePlate.toLowerCase());
+    if (nationalId) existingNationalIds.add(nationalId);
     }
     } catch (rowError) {
     console.error('❌ خطأ في معالجة السجل:', rowError);
@@ -4069,7 +4087,7 @@
 
     document.getElementById('loadingSpinner').style.display = 'none';
 
-    alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
+    alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}\n${duplicateCount > 0 ? `⚠️ تم تجاهل ${duplicateCount} سجل مكرر\n` : ''}${errorCount > 0 ? `❌ فشل ${errorCount} سجل` : ''}`);
 
     // إعادة تحميل البيانات
     await loadAdminData();
@@ -5120,6 +5138,127 @@
 
     // Bulk Import - Open Modal instead of new page
     const bulkImportBtn = document.getElementById('bulkImportBtn');
+    const excelFileInput = document.getElementById('excelFileInput');
+    if (bulkImportBtn && excelFileInput) {
+    bulkImportBtn.onclick = () => {
+    // Open new import modal
+    document.getElementById('excelImportModal').style.display = 'block';
+    // Reset modal state
+    window.importModalState = {
+    vehicleType: null,
+    excelFile: null,
+    images: []
+    };
+    document.getElementById('importStep2').style.opacity = '0.5';
+    document.getElementById('importStep2').style.pointerEvents = 'none';
+    document.getElementById('importStep3').style.opacity = '0.5';
+    document.getElementById('importStep3').style.pointerEvents = 'none';
+    document.getElementById('confirmImportBtn').style.opacity = '0.5';
+    document.getElementById('confirmImportBtn').style.pointerEvents = 'none';
+    document.getElementById('selectedVehicleType').style.display = 'none';
+    document.getElementById('selectedFileName').style.display = 'none';
+    document.getElementById('selectedImagesCount').style.display = 'none';
+    document.getElementById('importPreviewSection').style.display = 'none';
+    document.getElementById('importTuktukBtn').style.border = '3px solid transparent';
+    document.getElementById('importMicrobusBtn').style.border = '3px solid transparent';
+    };
+    
+    // Vehicle type selection
+    window.selectImportVehicleType = function(type) {
+    window.importModalState.vehicleType = type;
+    document.getElementById('selectedVehicleType').innerHTML = `✅ تم اختيار: <strong>${type}</strong>`;
+    document.getElementById('selectedVehicleType').style.display = 'block';
+    
+    // Highlight selected button
+    if (type === 'توكتوك') {
+    document.getElementById('importTuktukBtn').style.border = '3px solid #f39c12';
+    document.getElementById('importMicrobusBtn').style.border = '3px solid transparent';
+    } else {
+    document.getElementById('importMicrobusBtn').style.border = '3px solid #27ae60';
+    document.getElementById('importTuktukBtn').style.border = '3px solid transparent';
+    }
+    
+    // Enable step 2
+    document.getElementById('importStep2').style.opacity = '1';
+    document.getElementById('importStep2').style.pointerEvents = 'auto';
+    };
+    
+    // Excel file selection
+    document.getElementById('excelImportFileInput').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+    window.importModalState.excelFile = file;
+    document.getElementById('selectedFileName').innerHTML = `📄 <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)`;
+    document.getElementById('selectedFileName').style.display = 'block';
+    
+    // Enable step 3
+    document.getElementById('importStep3').style.opacity = '1';
+    document.getElementById('importStep3').style.pointerEvents = 'auto';
+    
+    // Preview Excel data
+    try {
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+    
+    document.getElementById('importPreviewContent').innerHTML = `
+    <div style="display: flex; justify-content: space-around; text-align: center;">
+    <div>
+    <div style="font-size: 2rem; font-weight: 700; color: #27ae60;">${jsonData.length}</div>
+    <div style="font-size: 0.9rem; color: #666;">عدد السجلات</div>
+    </div>
+    <div>
+    <div style="font-size: 2rem; font-weight: 700; color: #3498db;">${Object.keys(jsonData[0] || {}).length}</div>
+    <div style="font-size: 0.9rem; color: #666;">عدد الأعمدة</div>
+    </div>
+    </div>
+    <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 10px; font-size: 0.85rem; color: #555; text-align: right;">
+    <strong>الأعمدة المتاحة:</strong><br>
+    ${Object.keys(jsonData[0] || {}).join(' • ')}
+    </div>
+    `;
+    document.getElementById('importPreviewSection').style.display = 'block';
+    
+    // Enable import button
+    document.getElementById('confirmImportBtn').style.opacity = '1';
+    document.getElementById('confirmImportBtn').style.pointerEvents = 'auto';
+    } catch (error) {
+    console.error('Error previewing Excel:', error);
+    }
+    }
+    };
+    
+    // Images selection
+    document.getElementById('excelImportImagesInput').onchange = (e) => {
+    const files = Array.from(e.target.files);
+    window.importModalState.images = files;
+    if (files.length > 0) {
+    const totalSize = files.reduce((sum, f) => sum + f.size, 0);
+    document.getElementById('selectedImagesCount').innerHTML = `🖼️ تم اختيار <strong>${files.length}</strong> صورة (${(totalSize / 1024 / 1024).toFixed(2)} MB)`;
+    document.getElementById('selectedImagesCount').style.display = 'block';
+    }
+    };
+    
+    // Confirm import
+    document.getElementById('confirmImportBtn').onclick = async () => {
+    if (!window.importModalState.vehicleType || !window.importModalState.excelFile) {
+    alert('❌ يرجى اختيار نوع المركبة وملف Excel');
+    return;
+    }
+    
+    // Close modal and start import
+    document.getElementById('excelImportModal').style.display = 'none';
+    
+    // Call upload function
+    await window.uploadExcelData(
+    window.importModalState.excelFile, 
+    window.importModalState.vehicleType,
+    window.importModalState.images
+    );
+    };
+    }
+    
     // Upload LocalStorage to Supabase
     const uploadBtn = document.getElementById('uploadLocalToSupabaseBtn');
     if (uploadBtn) {
