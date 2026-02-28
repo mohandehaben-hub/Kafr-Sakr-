@@ -892,6 +892,10 @@
     justify-content: center;
     }
     
+    body.admin-mode .fab-button {
+    display: none !important;
+    }
+    
     header {
     padding: 6px 8px !important;
     min-height: 50px !important;
@@ -951,6 +955,27 @@
     
     header > div > div:last-child {
     display: none !important;
+    }
+    
+    body.admin-mode header > div > div:last-child {
+    display: flex !important;
+    gap: 4px !important;
+    }
+    
+    body.admin-mode header > div > div:last-child button {
+    padding: 3px 6px !important;
+    font-size: 0.6rem !important;
+    min-width: auto !important;
+    border-radius: 6px !important;
+    }
+    
+    body.admin-mode #goPortalBtn,
+    body.admin-mode #logoutBtn {
+    display: inline-flex !important;
+    }
+    
+    body.admin-mode #goAdminBtn {
+    display: inline-flex !important;
     }
     #leadershipSection {
     display: flex !important;
