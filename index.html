@@ -1469,7 +1469,7 @@
     <button onclick="window.changePage(1)" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">التالي ⏭️</button>
     </div>
     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-    <button id="loadAllDataBtn" onclick="window.loadAllData()" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; display: none;">📥 تحميل كل البيانات</button>
+    <!-- All data loads automatically - no button needed -->
     <label style="font-weight: 600; color: #555;">عدد السجلات في الصفحة:</label>
     <select id="recordsPerPage" onchange="window.changeRecordsPerPage()" style="padding: 8px 15px; border-radius: 10px; border: 2px solid #8e44ad; font-weight: 600; background: white;">
     <option value="50">50</option>
@@ -2288,6 +2288,7 @@
                         // Load data
                         if (typeof loadAdminData === 'function') {
                             await loadAdminData();
+                            window.adminDataLoaded = true; // Mark as loaded
                         }
                         console.log('✅ تم استعادة الجلسة بنجاح');
                     } else {
@@ -3094,8 +3095,12 @@
     document.getElementById('logoutBtn').style.display = 'inline-flex';
     document.getElementById('loginBtn').style.display = 'none';
 
-    loadAdminData();
-    loadComplaints();
+    // Load data only if not already loaded from session restore
+    if (!window.adminDataLoaded) {
+        loadAdminData();
+        loadComplaints();
+        window.adminDataLoaded = true; // Mark as loaded after first load
+    }
 
     // Hide buttons based on role
     const bulkImportBtn = document.getElementById('bulkImportBtn');
@@ -3255,6 +3260,7 @@
     sessionStorage.removeItem('supabaseSession');
     sessionStorage.removeItem('adminRole');
     sessionStorage.removeItem('adminUsername');
+    window.adminDataLoaded = false; // Reset the flag
     document.getElementById('adminPage').style.display = 'none';
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
@@ -3807,9 +3813,16 @@
     console.log('✅ تم تحميل ' + combinedOrders.length + ' سجل بعد إزالة التكرار');
     console.log('🔍 البحث يعمل على كل الـ ' + combinedOrders.length + ' سجل');
 
-    // Show "Load All Data" button if there might be more data
-    if (supabaseOrders.length >= 50) {document.getElementById('loadAllDataBtn').style.display = 'inline-block';
-    }
+    // Initialize pagination with ALL data (not just rendered rows)
+    const allOrdersArray = combinedOrders.map(item => ({
+        element: null, // Will be created when needed
+        item: item,
+        id: item.id
+    }));
+    initializePagination(allOrdersArray);
+    console.log('✅ تم تهيئة البحث على ' + allOrdersArray.length + ' سجل');
+
+    // All data is already loaded automatically
     } catch (error) {
     console.error('❌ خطأ في تحميل البيانات:', error); 
     document.getElementById('dataTable').innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:var(--danger);">❌ حدث خطأ في تحميل البيانات</td></tr>';
@@ -5563,8 +5576,10 @@
 
     let importedData = [];
 
-    // Read Excel File
-    document.getElementById('bulkImportFile').onchange = async (e) => {
+    // Read Excel File (OLD CODE - Element doesn't exist, using new import modal instead)
+    const bulkImportFileElement = document.getElementById('bulkImportFile');
+    if (bulkImportFileElement) {
+    bulkImportFileElement.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -5757,6 +5772,7 @@
     };
     reader.readAsArrayBuffer(file);
     };
+    } // End of bulkImportFileElement check
 
     // Confirm Import
     const confirmImportBtn = document.getElementById('confirmImportBtn');
@@ -5980,7 +5996,9 @@
     };
     }
 
-    // On page load - check for existing admin session
+    // On page load - check for existing admin session (OLD CODE - DISABLED)
+    // This is now handled by the Supabase session restore in the init script above
+    /*
     (function() {
     const savedAuth = sessionStorage.getItem('adminAuth');
     const savedRole = sessionStorage.getItem('adminRole');
@@ -6020,6 +6038,7 @@
     console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (${userRole})`);
     }
     })();
+    */
 
     // ============================================
     // PAGINATION SYSTEM
@@ -6028,13 +6047,49 @@
     
     // Override searchOrders with full implementation
     window.searchOrders = function() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const searchType = document.getElementById('searchType') ?document.getElementById('searchType').value : 'all';
-
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+    
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    // If no search term, don't do anything during loading
     if (!searchTerm) {
-    window.filteredOrdersData = window.allOrdersData;
-    } else {
-    // Log search operation
+        // Check if data is loaded
+        if (!window.allOrdersData || window.allOrdersData.length === 0) {
+            return; // Silently return - no need to log
+        }
+        // Show all data - separate by vehicle type
+        window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+            const item = orderData.item;
+            return !item.licensePlate || item.licensePlate === '';
+        });
+        window.filteredMicrobusData = window.allOrdersData.filter(orderData => {
+            const item = orderData.item;
+            return item.licensePlate && item.licensePlate !== '';
+        });
+        
+        // Show both tables when showing all data
+        const tukTukTable = document.getElementById('ordersTableContainer');
+        const microbusTable = document.getElementById('microbusTableContainer');
+        if (tukTukTable && microbusTable) {
+            tukTukTable.style.display = 'block';
+            microbusTable.style.display = 'block';
+        }
+        
+        window.currentPage = 1;
+        renderCurrentPage();
+        return;
+    }
+    
+    // Check if data is loaded first (only log if user is actually searching)
+    if (!window.allOrdersData || window.allOrdersData.length === 0) {
+        console.log('⏳ البيانات لم تحمل بعد...');
+        return;
+    }
+    
+    const searchType = document.getElementById('searchType') ? document.getElementById('searchType').value : 'all';
+    
+    // Log search operation only if search term is at least 3 characters (to avoid spam)
     const searchTypeText = searchType === 'all' ? 'الكل' : 
                           searchType === 'name' ? 'الاسم' :
                           searchType === 'code' ? 'الكود' :
@@ -6044,48 +6099,89 @@
                           searchType === 'chassis' ? 'الشاسيه' :
                           searchType === 'motor' ? 'الموتور' : searchType;
     
-    window.logSupervisorAction('بحث في البيانات', `بحث في (${searchTypeText}) عن: "${searchTerm}"`);
+    if (searchTerm.length >= 3) {
+        window.logSupervisorAction('بحث في البيانات', `بحث في (${searchTypeText}) عن: "${searchTerm}"`);
+    }
     
-    window.filteredOrdersData = window.allOrdersData.filter(orderData => {
-    const item = orderData.item;
-
-    if (searchType === 'all') {
-    return (
-    (item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
-    (item.name && item.name.toLowerCase().includes(searchTerm)) ||
-    (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) ||
-    (item.code && item.code.toString().toLowerCase().includes(searchTerm)) ||
-    (item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm)) ||
-    (item.nationalId && item.nationalId.toLowerCase().includes(searchTerm)) ||
-    (item.phone && item.phone.includes(searchTerm)) ||
-    (item.refNumber && item.refNumber.toLowerCase().includes(searchTerm)) ||
-    (item.address && item.address.toLowerCase().includes(searchTerm)) ||
-    (item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm)) ||
-    (item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm))
-    );
-    } else if (searchType === 'name') {
-    return (item.owner && item.owner.toLowerCase().includes(searchTerm)) || (item.name && item.name.toLowerCase().includes(searchTerm));
-    } else if (searchType === 'code') {
-    return (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) || (item.code && item.code.toString().toLowerCase().includes(searchTerm));
-    } else if (searchType === 'plate') {
-    return item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm);
-    } else if (searchType === 'nationalId') {
-    return item.nationalId && item.nationalId.includes(searchTerm);
-    } else if (searchType === 'phone') {
-    return item.phone && item.phone.includes(searchTerm);
-    } else if (searchType === 'chassis') {
-    return item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm);
-    } else if (searchType === 'motor') {
-    return item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm);
-    }
-    return false;
+    // Filter function to check if item matches search
+    const matchesSearch = (item) => {
+        if (searchType === 'all') {
+            return (
+                (item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
+                (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+                (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) ||
+                (item.code && item.code.toString().toLowerCase().includes(searchTerm)) ||
+                (item.licensePlate && item.licensePlate.toLowerCase().includes(searchTerm)) ||
+                (item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm)) ||
+                (item.nationalId && item.nationalId.toLowerCase().includes(searchTerm)) ||
+                (item.phone && item.phone.includes(searchTerm)) ||
+                (item.refNumber && item.refNumber.toLowerCase().includes(searchTerm)) ||
+                (item.address && item.address.toLowerCase().includes(searchTerm)) ||
+                (item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm)) ||
+                (item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm))
+            );
+        } else if (searchType === 'name') {
+            return (item.owner && item.owner.toLowerCase().includes(searchTerm)) || (item.name && item.name.toLowerCase().includes(searchTerm));
+        } else if (searchType === 'code') {
+            return (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) || (item.code && item.code.toString().toLowerCase().includes(searchTerm));
+        } else if (searchType === 'plate') {
+            return (item.licensePlate && item.licensePlate.toLowerCase().includes(searchTerm)) || (item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm));
+        } else if (searchType === 'nationalId') {
+            return item.nationalId && item.nationalId.includes(searchTerm);
+        } else if (searchType === 'phone') {
+            return item.phone && item.phone.includes(searchTerm);
+        } else if (searchType === 'chassis') {
+            return item.chassisNumber && item.chassisNumber.toLowerCase().includes(searchTerm);
+        } else if (searchType === 'motor') {
+            return item.motorNumber && item.motorNumber.toLowerCase().includes(searchTerm);
+        }
+        return false;
+    };
+    
+    // Filter all data and separate by vehicle type
+    const allFilteredData = window.allOrdersData.filter(orderData => matchesSearch(orderData.item));
+    
+    // Separate tuktuk and microbus
+    window.filteredOrdersData = allFilteredData.filter(orderData => {
+        const item = orderData.item;
+        return !item.licensePlate || item.licensePlate === '';
     });
-    }
+    
+    window.filteredMicrobusData = allFilteredData.filter(orderData => {
+        const item = orderData.item;
+        return item.licensePlate && item.licensePlate !== '';
+    });
+    
     window.currentPage = 1;
+    
+    // Auto-show appropriate table based on search results
+    const tukTukTable = document.getElementById('ordersTableContainer');
+    const microbusTable = document.getElementById('microbusTableContainer');
+    
+    if (tukTukTable && microbusTable) {
+        if (window.filteredOrdersData.length === 0 && window.filteredMicrobusData && window.filteredMicrobusData.length > 0) {
+            // Only microbus results - show microbus table only
+            tukTukTable.style.display = 'none';
+            microbusTable.style.display = 'block';
+        } else if (window.filteredOrdersData.length > 0 && (!window.filteredMicrobusData || window.filteredMicrobusData.length === 0)) {
+            // Only tuktuk results - show tuktuk table only
+            tukTukTable.style.display = 'block';
+            microbusTable.style.display = 'none';
+        } else if (window.filteredOrdersData.length > 0 && window.filteredMicrobusData && window.filteredMicrobusData.length > 0) {
+            // Both have results - show both tables
+            tukTukTable.style.display = 'block';
+            microbusTable.style.display = 'block';
+        }
+    }
+    
     renderCurrentPage();
-    const resultMsg = window.filteredOrdersData.length === window.allOrdersData.length ? 
-    `🔍 عرض كل السجلات: ${window.allOrdersData.length}` : 
-    `🔍 البحث (${searchType}) عن: "${searchTerm}" - النتائج: ${window.filteredOrdersData.length} من ${window.allOrdersData.length}`;
+    
+    const totalResults = window.filteredOrdersData.length + (window.filteredMicrobusData ? window.filteredMicrobusData.length : 0);
+    const totalData = window.allOrdersData.length;
+    
+    const resultMsg = totalResults === totalData ? 
+    `🔍 عرض كل السجلات: ${totalData}` : 
+    `🔍 البحث (${searchTypeText}) عن: "${searchTerm}" - النتائج: ${totalResults} من ${totalData} (توكتوك: ${window.filteredOrdersData.length} | ميكروباص: ${window.filteredMicrobusData ? window.filteredMicrobusData.length : 0})`;
     console.log(resultMsg);
     };
 
@@ -6176,6 +6272,40 @@
     window.initializePagination = initializePagination;
 
     console.log('✅ نظام Pagination جاهز');
+
+    // ============================================
+    // AUTO-SHOW MICROBUS TABLE WHEN SELECTING PLATE SEARCH
+    // ============================================
+    
+    // Add event listener to searchType select
+    const searchTypeSelect = document.getElementById('searchType');
+    if (searchTypeSelect) {
+        searchTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            const tukTukTable = document.getElementById('ordersTableContainer');
+            const microbusTable = document.getElementById('microbusTableContainer');
+            
+            if (tukTukTable && microbusTable) {
+                if (selectedType === 'plate') {
+                    // Show microbus table when selecting plate search
+                    tukTukTable.style.display = 'none';
+                    microbusTable.style.display = 'block';
+                    console.log('🚐 تم التبديل إلى جدول الميكروباص (بحث عن رقم اللوحة)');
+                } else if (selectedType === 'code') {
+                    // Show tuktuk table when selecting code search
+                    tukTukTable.style.display = 'block';
+                    microbusTable.style.display = 'none';
+                    console.log('🛺 تم التبديل إلى جدول التوكتوك (بحث عن الكود)');
+                } else {
+                    // Show both tables for other search types
+                    tukTukTable.style.display = 'block';
+                    microbusTable.style.display = 'block';
+                    console.log('📋 تم عرض كل الجداول');
+                }
+            }
+        });
+        console.log('✅ تم تفعيل التبديل التلقائي للجداول حسب نوع البحث');
+    }
 
     // ============================================
     // SUPERVISOR LOG SYSTEM
