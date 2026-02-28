@@ -896,6 +896,12 @@
     padding: 6px 8px !important;
     min-height: 50px !important;
     }
+    
+    body.admin-mode header {
+    padding: 4px 6px !important;
+    min-height: 40px !important;
+    }
+    
     header > div {
     flex-direction: row !important;
     align-items: center !important;
@@ -916,6 +922,12 @@
     width: 30px !important;
     height: 30px !important;
     }
+    
+    body.admin-mode header > div > div:first-child img {
+    width: 25px !important;
+    height: 25px !important;
+    }
+    
     .header-title {
     text-align: left !important;
     min-width: auto !important;
@@ -924,9 +936,19 @@
     font-size: 0.7rem !important;
     line-height: 1.2 !important;
     }
+    
+    body.admin-mode .header-title h1 {
+    font-size: 0.6rem !important;
+    }
+    
     .header-title small {
     font-size: 0.6rem !important;
     }
+    
+    body.admin-mode .header-title small {
+    font-size: 0.5rem !important;
+    }
+    
     header > div > div:last-child {
     display: none !important;
     }
@@ -966,7 +988,7 @@
     padding-top: 130px !important;
     }
     body.admin-mode {
-    padding-top: 60px !important;
+    padding-top: 50px !important;
     }
     }
     </style>
@@ -2174,22 +2196,6 @@
                         if (logoutBtn) logoutBtn.style.display = 'inline-flex';
                         if (goPortalBtn) goPortalBtn.style.display = 'inline-flex';
                         
-                        // Add role badge
-                        const header = document.querySelector('header');
-                        const existingBadge = document.getElementById('roleBadge');
-                        if (existingBadge) existingBadge.remove();
-                        
-                        const roleBadge = savedRole === 'SUPER' ? '👑 مدير عام' : savedRole === 'ADMIN' ? '🔧 مشرف' : '👁️ عرض فقط';
-                        const roleColor = savedRole === 'SUPER' ? '#e74c3c' : savedRole === 'ADMIN' ? '#3498db' : '#95a5a6';
-                        
-                        if (header) {
-                            const badge = document.createElement('div');
-                            badge.id = 'roleBadge';
-                            badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
-                            badge.innerText = roleBadge;
-                            header.appendChild(badge);
-                        }
-                        
                         // Load data
                         if (typeof loadAdminData === 'function') {
                             await loadAdminData();
@@ -2974,10 +2980,6 @@
     // Log admin login
     await logAdminAction(currentUsername, 'تسجيل دخول', `دخول آمن إلى النظام`);
 
-    // Show role badge
-    const roleBadge = userRole === "SUPER" ? "👑 مدير عام" : userRole === "ADMIN" ? "🔧 مشرف" : "👁️ عرض فقط";
-    const roleColor = userRole === "SUPER" ? "#e74c3c" : userRole === "ADMIN" ? "#3498db" : "#95a5a6";
-
     document.getElementById('portalSection').style.display = 'none';
     document.getElementById('citizenPage').style.display = 'none';
     document.getElementById('inquiryPage').style.display = 'none';
@@ -3008,16 +3010,6 @@
     if (isMobileDevice) {
     document.getElementById('toggleColumnsBtn').style.display = 'inline-block';
     }
-
-    // Add role badge to header
-    const header = document.querySelector('header');
-    const existingBadge = document.getElementById('roleBadge');
-    if (existingBadge) existingBadge.remove();
-    const badge = document.createElement('div');
-    badge.id = 'roleBadge';
-    badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
-    badge.innerText = roleBadge;
-    header.appendChild(badge);
 
     loadAdminData();
     loadComplaints();
@@ -5762,16 +5754,6 @@
     if (cleanupBtn) cleanupBtn.style.display = 'none';
     if (cleanupMainBtn) cleanupMainBtn.style.display = 'none';
     }
-
-    // Restore badge
-    const header = document.querySelector('header');
-    const roleBadge = userRole === 'SUPER' ? '👑 مدير عام' : userRole === 'ADMIN' ? '🔧 مشرف' : '👁️ عرض فقط';
-    const roleColor = userRole === 'SUPER' ? '#e74c3c' : userRole === 'ADMIN' ? '#3498db' : '#95a5a6';
-    const badge = document.createElement('div');
-    badge.id = 'roleBadge';
-    badge.style.cssText = `background: ${roleColor}; color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;`;
-    badge.innerText = roleBadge;
-    header.appendChild(badge);
 
     console.log(`✅ تم استعادة جلسة الدخول: ${currentUsername} (${userRole})`);
     }
