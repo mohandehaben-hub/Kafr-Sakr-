@@ -941,12 +941,14 @@
     display: none !important;
     }
     
-    body.admin-mode header > div > div:last-child {
+    body.admin-mode header > div > div:last-child,
+    body.portal-logged-in header > div > div:last-child {
     display: flex !important;
     gap: 4px !important;
     }
     
-    body.admin-mode header > div > div:last-child button {
+    body.admin-mode header > div > div:last-child button,
+    body.portal-logged-in header > div > div:last-child button {
     padding: 3px 6px !important;
     font-size: 0.6rem !important;
     min-width: auto !important;
@@ -958,8 +960,17 @@
     display: inline-flex !important;
     }
     
-    body.admin-mode #goAdminBtn {
+    body.portal-logged-in #goAdminBtn,
+    body.portal-logged-in #logoutBtn {
     display: inline-flex !important;
+    }
+    
+    body.admin-mode #goAdminBtn {
+    display: none !important;
+    }
+    
+    body.portal-logged-in #goPortalBtn {
+    display: none !important;
     }
     #leadershipSection {
     display: flex !important;
@@ -1068,7 +1079,10 @@
     <!-- Citizen Page (Tuk Tuk Registration) -->
     <div id="citizenPage" style="display:none;">
     <div class="card">
-    <h2 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 2rem;">📝 تسجيل توكتوك جديد</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="text-align: center; color: var(--primary); margin: 0; font-size: 2rem; flex: 1;">📝 تسجيل توكتوك جديد</h2>
+    <button onclick="backToPortal()" class="btn" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; padding: 8px 16px; font-size: 0.9rem;">🏠 رجوع للبوابة</button>
+    </div>
 
     <!-- Registration Form -->
     <div id="registrationForm">
@@ -1158,7 +1172,10 @@
     <!-- Inquiry Page -->
     <div id="inquiryPage" style="display:none;">
     <div class="card" style="border: 3px solid var(--secondary);">
-    <h2 style="text-align: center; color: var(--secondary); margin-bottom: 40px; font-size: 2rem;">🔍 استعلام عن حالة الطلب</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="text-align: center; color: var(--secondary); margin: 0; font-size: 2rem; flex: 1;">🔍 استعلام عن حالة الطلب</h2>
+    <button onclick="backToPortal()" class="btn" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; padding: 8px 16px; font-size: 0.9rem;">🏠 رجوع للبوابة</button>
+    </div>
     <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1rem;">أدخل بياناتك للتحقق من حالة طلبك</p>
 
     <div class="form-grid">
@@ -1214,7 +1231,10 @@
     <!-- Complaints Page -->
     <div id="complaintsPage" style="display:none;">
     <div class="card" style="border: 3px solid var(--accent);">
-    <h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚖️ تقديم شكوى</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="text-align: center; color: var(--accent); margin: 0; font-size: 2rem; flex: 1;">⚖️ تقديم شكوى</h2>
+    <button onclick="backToPortal()" class="btn" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; padding: 8px 16px; font-size: 0.9rem;">🏠 رجوع للبوابة</button>
+    </div>
     <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.05rem;">املأ البيانات التالية لتقديم شكوى</p>
     
     <!-- عرض نوع المركبة المختار -->
@@ -1306,7 +1326,10 @@
     <!-- Complaint Inquiry Page -->
     <div id="complaintInquiryPage" style="display:none;">
     <div class="card" style="border: 3px solid var(--warning);">
-    <h2 style="text-align: center; color: var(--warning); margin-bottom: 40px; font-size: 2rem;">📋 استعلام عن حالة الشكوى</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="text-align: center; color: var(--warning); margin: 0; font-size: 2rem; flex: 1;">📋 استعلام عن حالة الشكوى</h2>
+    <button onclick="backToPortal()" class="btn" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; padding: 8px 16px; font-size: 0.9rem;">🏠 رجوع للبوابة</button>
+    </div>
     <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1rem;">أدخل بياناتك للتحقق من حالة شكواك</p>
 
     <div class="form-grid">
@@ -3196,13 +3219,15 @@
     document.getElementById('portalSection').style.display = 'block';
     document.getElementById('goPortalBtn').style.display = 'none';
     document.getElementById('goAdminBtn').style.display = 'inline-flex';
+    document.getElementById('logoutBtn').style.display = 'inline-flex';
     
     // إظهار قسم القيادات في البوابة
     const leadershipSection = document.getElementById('leadershipSection');
     if (leadershipSection) leadershipSection.style.display = 'flex';
     
-    // Remove admin mode class from body
+    // Remove admin mode class from body, add portal-logged-in class
     document.body.classList.remove('admin-mode');
+    document.body.classList.add('portal-logged-in');
     
     // Update FAB button
     const fabBtn = document.getElementById('fabLoginBtn');
@@ -3229,8 +3254,9 @@
     const leadershipSection = document.getElementById('leadershipSection');
     if (leadershipSection) leadershipSection.style.display = 'none';
     
-    // Add admin mode class to body
+    // Add admin mode class to body, remove portal-logged-in class
     document.body.classList.add('admin-mode');
+    document.body.classList.remove('portal-logged-in');
     
     // Update FAB button
     const fabBtn = document.getElementById('fabLoginBtn');
@@ -3240,6 +3266,22 @@
     }
     
     console.log('⚙️ العودة للوحة التحكم');
+    };
+
+    // Back to Portal function (from any service page)
+    window.backToPortal = function() {
+    document.getElementById('citizenPage').style.display = 'none';
+    document.getElementById('inquiryPage').style.display = 'none';
+    document.getElementById('complaintsPage').style.display = 'none';
+    document.getElementById('complaintInquiryPage').style.display = 'none';
+    document.getElementById('adminPage').style.display = 'none';
+    document.getElementById('portalSection').style.display = 'block';
+    
+    // Show leadership section
+    const leadershipSection = document.getElementById('leadershipSection');
+    if (leadershipSection) leadershipSection.style.display = 'flex';
+    
+    console.log('🏠 العودة للبوابة الرئيسية');
     };
 
     async function loadAdminData() {
