@@ -810,6 +810,11 @@
     </div>
     </header>
 
+    <!-- Floating Action Button (Mobile Only) -->
+    <button id="fabLoginBtn" class="fab-button" onclick="document.getElementById('loginBtn').click()">
+    🔐
+    </button>
+
     <!-- القيادات (تحت الهيدر مباشرة) -->
     <div id="leadershipSection" style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(21, 67, 96, 0.95) 100%); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: fixed; top: 85px; left: 0; right: 0; width: 100%; z-index: 999; transition: transform 0.3s ease; flex-wrap: nowrap;">
     
@@ -852,76 +857,109 @@
     </div>
 
     <style>
+    /* Floating Action Button for Mobile */
+    .fab-button {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a5276 0%, #3498db 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    cursor: pointer;
+    z-index: 10000;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    }
+    
+    .fab-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+    }
+    
+    .fab-button.logout-mode {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+    
     @media (max-width: 768px) {
+    .fab-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    }
+    
     header {
-    padding: 10px 15px !important;
+    padding: 6px 8px !important;
+    min-height: 50px !important;
     }
     header > div {
-    flex-direction: column !important;
+    flex-direction: row !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 6px !important;
+    justify-content: flex-start !important;
     }
     header > div > div:first-child {
-    justify-content: center !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
+    flex: 1 !important;
     }
     header > div > div:first-child > div:first-child {
     display: flex;
-    gap: 10px;
+    gap: 4px;
     }
     header > div > div:first-child img {
-    width: 40px !important;
-    height: 40px !important;
+    width: 30px !important;
+    height: 30px !important;
     }
     .header-title {
-    text-align: center !important;
+    text-align: left !important;
     min-width: auto !important;
     }
     .header-title h1 {
-    font-size: 0.85rem !important;
-    line-height: 1.3 !important;
+    font-size: 0.7rem !important;
+    line-height: 1.2 !important;
     }
     .header-title small {
-    font-size: 0.7rem !important;
+    font-size: 0.6rem !important;
+    }
+    header > div > div:last-child {
+    display: none !important;
     }
     #leadershipSection {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 15px !important;
-    padding: 15px !important;
+    gap: 10px !important;
+    padding: 10px !important;
     justify-content: center !important;
-    top: 95px !important;
+    top: 50px !important;
     }
     .leadership-item {
     flex: 0 0 auto !important;
     }
     .leadership-item img {
-    width: 60px !important;
-    height: 60px !important;
+    width: 50px !important;
+    height: 50px !important;
+    margin-bottom: 4px !important;
     }
     .leadership-item span:first-of-type {
-    font-size: 0.65rem !important;
+    font-size: 0.6rem !important;
     white-space: normal !important;
+    line-height: 1.1 !important;
     }
     .leadership-item span:last-of-type {
-    font-size: 0.55rem !important;
+    font-size: 0.5rem !important;
     white-space: normal !important;
     }
-    header > div > div:last-child {
-    justify-content: center !important;
-    width: 100% !important;
-    }
-    header button {
-    padding: 6px 10px !important;
-    font-size: 0.7rem !important;
-    }
     body {
-    padding-top: 280px !important;
+    padding-top: 190px !important;
     }
     body.admin-mode {
-    padding-top: 110px !important;
+    padding-top: 60px !important;
     }
     }
     </style>
@@ -2947,6 +2985,13 @@
     // Add admin mode class to body
     document.body.classList.add('admin-mode');
     
+    // Update FAB button
+    const fabBtn = document.getElementById('fabLoginBtn');
+    if (fabBtn) {
+    fabBtn.innerHTML = '🚪';
+    fabBtn.onclick = () => logoutAdmin();
+    }
+    
     document.getElementById('goPortalBtn').style.display = 'inline-flex';
     document.getElementById('logoutBtn').style.display = 'inline-flex';
     document.getElementById('loginBtn').style.display = 'none';
@@ -3159,6 +3204,13 @@
     // Remove admin mode class from body
     document.body.classList.remove('admin-mode');
     
+    // Update FAB button
+    const fabBtn = document.getElementById('fabLoginBtn');
+    if (fabBtn) {
+    fabBtn.innerHTML = '🔐';
+    fabBtn.onclick = () => document.getElementById('loginBtn').click();
+    }
+    
     console.log('🏠 العودة للبوابة (لا يزال مسجل الدخول)');
     };
 
@@ -3176,6 +3228,16 @@
     // إخفاء قسم القيادات في لوحة التحكم
     const leadershipSection = document.getElementById('leadershipSection');
     if (leadershipSection) leadershipSection.style.display = 'none';
+    
+    // Add admin mode class to body
+    document.body.classList.add('admin-mode');
+    
+    // Update FAB button
+    const fabBtn = document.getElementById('fabLoginBtn');
+    if (fabBtn) {
+    fabBtn.innerHTML = '🚪';
+    fabBtn.onclick = () => logoutAdmin();
+    }
     
     console.log('⚙️ العودة للوحة التحكم');
     };
