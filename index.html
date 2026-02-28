@@ -1437,6 +1437,7 @@
     <option value="all">🔍 الكل</option>
     <option value="name">👤 الاسم</option>
     <option value="code">🔢 الكود</option>
+    <option value="plate">🚗 رقم اللوحة</option>
     <option value="nationalId">🆔 الرقم القومي</option>
     <option value="phone">📱 الهاتف</option>
     <option value="chassis">الشاسيه</option>
@@ -6037,6 +6038,7 @@
     const searchTypeText = searchType === 'all' ? 'الكل' : 
                           searchType === 'name' ? 'الاسم' :
                           searchType === 'code' ? 'الكود' :
+                          searchType === 'plate' ? 'رقم اللوحة' :
                           searchType === 'nationalId' ? 'الرقم القومي' :
                           searchType === 'phone' ? 'الهاتف' :
                           searchType === 'chassis' ? 'الشاسيه' :
@@ -6052,6 +6054,8 @@
     (item.owner && item.owner.toLowerCase().includes(searchTerm)) ||
     (item.name && item.name.toLowerCase().includes(searchTerm)) ||
     (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) ||
+    (item.code && item.code.toString().toLowerCase().includes(searchTerm)) ||
+    (item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm)) ||
     (item.nationalId && item.nationalId.toLowerCase().includes(searchTerm)) ||
     (item.phone && item.phone.includes(searchTerm)) ||
     (item.refNumber && item.refNumber.toLowerCase().includes(searchTerm)) ||
@@ -6062,7 +6066,9 @@
     } else if (searchType === 'name') {
     return (item.owner && item.owner.toLowerCase().includes(searchTerm)) || (item.name && item.name.toLowerCase().includes(searchTerm));
     } else if (searchType === 'code') {
-    return item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm);
+    return (item.vCode && item.vCode.toString().toLowerCase().includes(searchTerm)) || (item.code && item.code.toString().toLowerCase().includes(searchTerm));
+    } else if (searchType === 'plate') {
+    return item.plateNumber && item.plateNumber.toLowerCase().includes(searchTerm);
     } else if (searchType === 'nationalId') {
     return item.nationalId && item.nationalId.includes(searchTerm);
     } else if (searchType === 'phone') {
