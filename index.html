@@ -4047,9 +4047,9 @@
     renewal_date: String(row['تاريخ التجديد'] || row['التاريخ'] || row['J'] || ''),
     line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || row['A'] || '',
     ref_number: refNumber,
-    status: 'pending',
-    submitted_at: new Date().toISOString(),
-    images: imageDataArray // Add images to all records
+    status: 'completed',
+    submitted_at: Date.now(),
+    images: imageDataArray
     };
 
     // التحقق من البيانات الأساسية
@@ -4606,26 +4606,37 @@
         const microbusTable = document.getElementById('microbusTableContainer');
         
         if (type === 'all') {
-            window.filteredOrdersData = window.allOrdersData;
-            // Show tuktuk table for "all"
+            // Show both tables
             if (tukTukTable) tukTukTable.style.display = 'block';
-            if (microbusTable) microbusTable.style.display = 'none';
+            if (microbusTable) microbusTable.style.display = 'block';
+            
+            // Split data into tuktuk and microbus
+            window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+                const item = orderData.item;
+                return !item.licensePlate || item.licensePlate === '';
+            });
+            window.filteredMicrobusData = window.allOrdersData.filter(orderData => {
+                const item = orderData.item;
+                return item.licensePlate && item.licensePlate !== '';
+            });
         } else if (type === 'tuktuk') {
             // Filter: tuktuk = no licensePlate or empty licensePlate
             window.filteredOrdersData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
                 return !item.licensePlate || item.licensePlate === '';
             });
-            // Show tuktuk table
+            window.filteredMicrobusData = [];
+            // Show tuktuk table only
             if (tukTukTable) tukTukTable.style.display = 'block';
             if (microbusTable) microbusTable.style.display = 'none';
         } else if (type === 'microbus') {
             // Filter: microbus = has licensePlate
-            window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+            window.filteredMicrobusData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
                 return item.licensePlate && item.licensePlate !== '';
             });
-            // Show microbus table
+            window.filteredOrdersData = [];
+            // Show microbus table only
             if (tukTukTable) tukTukTable.style.display = 'none';
             if (microbusTable) microbusTable.style.display = 'block';
         }
@@ -6073,30 +6084,57 @@
     };
 
     function renderCurrentPage() {
+    // Render tuktuk table
+    if (window.filteredOrdersData && window.filteredOrdersData.length > 0) {
     const startIndex = (window.currentPage - 1) * window.recordsPerPage;
     const endIndex = startIndex + window.recordsPerPage;
     const pageData = window.filteredOrdersData.slice(startIndex, endIndex);
     const totalPages = Math.ceil(window.filteredOrdersData.length / window.recordsPerPage) || 1; 
-    document.getElementById('pageInfo').textContent = `صفحة ${window.currentPage} من ${totalPages}`; 
-    document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${window.filteredOrdersData.length} سجل`;
-
-    // Determine which table to use based on current filter
-    const isMicrobus = window.currentVehicleFilter === 'microbus';
-    const tableBody = document.getElementById(isMicrobus ? 'microbusDataTable' : 'dataTable');
-    tableBody.innerHTML = '';
-
-    pageData.forEach(orderData => {
-    // Detect vehicle type from item data
-    const item = orderData.item;
-    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
     
-    // Use createTableRow to build the row
-    const tr = window.createTableRow(item, vehicleType);
+    const tableBody = document.getElementById('dataTable');
+    if (tableBody) {
+    tableBody.innerHTML = '';
+    pageData.forEach(orderData => {
+    const item = orderData.item;
+    const tr = window.createTableRow(item, 'tuktuk');
     tableBody.appendChild(tr);
     });
-
-    const actualEnd = Math.min(endIndex, window.filteredOrdersData.length);
-    console.log(`📄 عرض الصفحة ${window.currentPage}/${totalPages}: السجلات ${startIndex + 1}-${actualEnd} من ${window.filteredOrdersData.length}`);
+    }
+    
+    document.getElementById('pageInfo').textContent = `صفحة ${window.currentPage} من ${totalPages}`; 
+    document.getElementById('totalRecordsInfo').textContent = `توكتوك: ${window.filteredOrdersData.length} سجل`;
+    }
+    
+    // Render microbus table
+    if (window.filteredMicrobusData && window.filteredMicrobusData.length > 0) {
+    const startIndex = (window.currentPage - 1) * window.recordsPerPage;
+    const endIndex = startIndex + window.recordsPerPage;
+    const pageData = window.filteredMicrobusData.slice(startIndex, endIndex);
+    
+    const tableBody = document.getElementById('microbusDataTable');
+    if (tableBody) {
+    tableBody.innerHTML = '';
+    pageData.forEach(orderData => {
+    const item = orderData.item;
+    const tr = window.createTableRow(item, 'microbus');
+    tableBody.appendChild(tr);
+    });
+    }
+    
+    // Update info if only microbus is shown
+    if (!window.filteredOrdersData || window.filteredOrdersData.length === 0) {
+    const totalPages = Math.ceil(window.filteredMicrobusData.length / window.recordsPerPage) || 1;
+    document.getElementById('pageInfo').textContent = `صفحة ${window.currentPage} من ${totalPages}`; 
+    document.getElementById('totalRecordsInfo').textContent = `ميكروباص: ${window.filteredMicrobusData.length} سجل`;
+    }
+    }
+    
+    // Update total if both are shown
+    if (window.filteredOrdersData && window.filteredOrdersData.length > 0 && 
+        window.filteredMicrobusData && window.filteredMicrobusData.length > 0) {
+    const total = window.filteredOrdersData.length + window.filteredMicrobusData.length;
+    document.getElementById('totalRecordsInfo').textContent = `الإجمالي: ${total} سجل (توكتوك: ${window.filteredOrdersData.length} | ميكروباص: ${window.filteredMicrobusData.length})`;
+    }
     }
 
     function initializePagination(ordersArray) {
