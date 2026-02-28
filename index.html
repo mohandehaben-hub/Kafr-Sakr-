@@ -931,32 +931,39 @@
     display: none !important;
     }
     #leadershipSection {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-    padding: 10px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding: 8px 4px !important;
     justify-content: center !important;
     top: 50px !important;
+    overflow-x: auto !important;
     }
     .leadership-item {
     flex: 0 0 auto !important;
+    min-width: 70px !important;
     }
     .leadership-item img {
-    width: 50px !important;
-    height: 50px !important;
-    margin-bottom: 4px !important;
+    width: 45px !important;
+    height: 45px !important;
+    margin-bottom: 3px !important;
     }
     .leadership-item span:first-of-type {
-    font-size: 0.6rem !important;
-    white-space: normal !important;
+    font-size: 0.5rem !important;
+    white-space: nowrap !important;
     line-height: 1.1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     }
     .leadership-item span:last-of-type {
-    font-size: 0.5rem !important;
-    white-space: normal !important;
+    font-size: 0.45rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     }
     body {
-    padding-top: 190px !important;
+    padding-top: 130px !important;
     }
     body.admin-mode {
     padding-top: 60px !important;
