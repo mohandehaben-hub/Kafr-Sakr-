@@ -942,13 +942,15 @@
     }
     
     body.admin-mode header > div > div:last-child,
-    body.portal-logged-in header > div > div:last-child {
+    body.portal-logged-in header > div > div:last-child,
+    body.in-service-page header > div > div:last-child {
     display: flex !important;
     gap: 4px !important;
     }
     
     body.admin-mode header > div > div:last-child button,
-    body.portal-logged-in header > div > div:last-child button {
+    body.portal-logged-in header > div > div:last-child button,
+    body.in-service-page header > div > div:last-child button {
     padding: 3px 6px !important;
     font-size: 0.6rem !important;
     min-width: auto !important;
@@ -965,11 +967,21 @@
     display: inline-flex !important;
     }
     
+    body.in-service-page #goPortalBtn {
+    display: inline-flex !important;
+    }
+    
     body.admin-mode #goAdminBtn {
     display: none !important;
     }
     
     body.portal-logged-in #goPortalBtn {
+    display: none !important;
+    }
+    
+    body.in-service-page #goAdminBtn,
+    body.in-service-page #logoutBtn,
+    body.in-service-page #loginBtn {
     display: none !important;
     }
     #leadershipSection {
@@ -1207,7 +1219,10 @@
     <!-- Complaints Selection Page (Choose Vehicle Type) -->
     <div id="complaintsSelectionPage" style="display:none;">
     <div class="card" style="border: 3px solid var(--accent);">
-    <h2 style="text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem;">⚖️ اختر نوع المركبة</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="text-align: center; color: var(--accent); margin: 0; font-size: 2rem; flex: 1;">⚖️ اختر نوع المركبة</h2>
+    <button onclick="backToPortal()" class="btn" style="background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; padding: 8px 16px; font-size: 0.9rem;">🏠 رجوع للبوابة</button>
+    </div>
     <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1rem;">اختر نوع المركبة التي تريد تقديم شكوى بشأنها</p>
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;">
@@ -1846,6 +1861,9 @@
     function openService(serviceId) {
     console.log('🔄 فتح القسم:', serviceId);
     document.getElementById('portalSection').style.display = 'none';
+    
+    // Add class to show back button on mobile
+    document.body.classList.add('in-service-page');
     
     // إذا كان القسم هو الشكاوى، افتح صفحة اختيار نوع المركبة
     if (serviceId === 'complaintsPage') {
@@ -3273,9 +3291,16 @@
     document.getElementById('citizenPage').style.display = 'none';
     document.getElementById('inquiryPage').style.display = 'none';
     document.getElementById('complaintsPage').style.display = 'none';
+    document.getElementById('complaintsSelectionPage').style.display = 'none';
     document.getElementById('complaintInquiryPage').style.display = 'none';
     document.getElementById('adminPage').style.display = 'none';
     document.getElementById('portalSection').style.display = 'block';
+    
+    // Remove service page class
+    document.body.classList.remove('in-service-page');
+    
+    // Hide go portal button
+    document.getElementById('goPortalBtn').style.display = 'none';
     
     // Show leadership section
     const leadershipSection = document.getElementById('leadershipSection');
