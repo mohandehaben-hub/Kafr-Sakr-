@@ -575,27 +575,11 @@
     font-size: 0.65rem !important;
     }
 
-    /* Hide non-essential columns on mobile by default */
-    table th:nth-child(4),  /* Type */
-    table td:nth-child(4),
-    table th:nth-child(5),  /* Year */
-    table td:nth-child(5),
-    table th:nth-child(6),  /* Chassis */
-    table td:nth-child(6),
-    table th:nth-child(7),  /* Motor */
-    table td:nth-child(7),
-    table th:nth-child(9),  /* Date */
-    table td:nth-child(9),
-    table th:nth-child(11), /* Images */
-    table td:nth-child(11),
-    table th:nth-child(12), /* Actions */
-    table td:nth-child(12) {
-    display: none !important;
-    }
-
-    /* Show hidden columns when toggle is active */
-    table.show-all-columns th,
-    table.show-all-columns td {
+    /* Hide non-essential columns on mobile by default - REMOVED, show all columns */
+    
+    /* Show all columns always */
+    table th,
+    table td {
     display: table-cell !important;
     }
     }
@@ -1385,8 +1369,7 @@
     <button id="uploadExcelBtn" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📤 رفع ملف Excel</button>
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📥 استيراد من Excel</button>
-    <button id="toggleColumnsBtn" class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; display: none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">👁️ إظهار/إخفاء الأعمدة</button>
-    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📊 تصدير Excel</button>
+    <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">� تصدير Excel</button>
     <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🧹 حذف المكرر</button>
     <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🚪 خروج</button>
     </div>
@@ -3030,12 +3013,6 @@
     document.getElementById('logoutBtn').style.display = 'inline-flex';
     document.getElementById('loginBtn').style.display = 'none';
 
-    // Show toggle columns button on mobile only
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    if (isMobileDevice) {
-    document.getElementById('toggleColumnsBtn').style.display = 'inline-block';
-    }
-
     loadAdminData();
     loadComplaints();
 
@@ -4604,18 +4581,6 @@
     // Toggle columns button (mobile only)
     const toggleColumnsBtn = document.getElementById('toggleColumnsBtn');
     if (toggleColumnsBtn) {
-    toggleColumnsBtn.onclick = () => {
-    const table = document.querySelector('#dataTable').parentElement.parentElement.querySelector('table');
-    if (table.classList.contains('show-all-columns')) {
-    table.classList.remove('show-all-columns');
-    document.getElementById('toggleColumnsBtn').innerHTML = '👁️ إظهار كل الأعمدة';
-    } else {
-    table.classList.add('show-all-columns');
-    document.getElementById('toggleColumnsBtn').innerHTML = '👁️ إخفاء الأعمدة الزيادة';
-    }
-    };
-    }
-
     // Apply date filter button
     const applyDateFilterBtn = document.getElementById('applyDateFilterBtn');
     if (applyDateFilterBtn) {
