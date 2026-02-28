@@ -4049,13 +4049,7 @@
     ref_number: refNumber,
     status: 'pending',
     submitted_at: new Date().toISOString(),
-    images: imageDataArray, // Add images to all records
-    status_history: [{
-    status: 'pending',
-    timestamp: Date.now(),
-    note: `استيراد ${vehicleType} من Excel${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}`,
-    by: sessionStorage.getItem('userRole') || 'ADMIN'
-    }]
+    images: imageDataArray // Add images to all records
     };
 
     // التحقق من البيانات الأساسية
