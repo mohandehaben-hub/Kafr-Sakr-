@@ -1577,6 +1577,66 @@
     </div>
     </div>
 
+    <!-- Modal for Excel Import -->
+    <div id="excelImportModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
+    <div style="background: white; margin: 3% auto; padding: 40px; width: 92%; max-width: 600px; border-radius: 25px; position: relative;">
+    <span onclick="document.getElementById('excelImportModal').style.display='none'" style="position: absolute; top: 15px; left: 20px; color: var(--danger); font-size: 40px; cursor: pointer;">&times;</span>
+    
+    <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">📥 استيراد من Excel</h3>
+    
+    <!-- Step 1: Vehicle Type Selection -->
+    <div id="importStep1" style="margin-bottom: 30px;">
+    <label style="display: block; font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 15px; text-align: center;">🚗 اختر نوع المركبة:</label>
+    <div style="display: flex; gap: 15px; justify-content: center;">
+    <button onclick="window.selectImportVehicleType('توكتوك')" id="importTuktukBtn" class="btn" style="flex: 1; padding: 20px; font-size: 1.1rem; background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: white; border: 3px solid transparent;">
+    🛺 توكتوك
+    </button>
+    <button onclick="window.selectImportVehicleType('ميكروباص')" id="importMicrobusBtn" class="btn" style="flex: 1; padding: 20px; font-size: 1.1rem; background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; border: 3px solid transparent;">
+    🚐 ميكروباص
+    </button>
+    </div>
+    <div id="selectedVehicleType" style="display: none; margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--primary);"></div>
+    </div>
+    
+    <!-- Step 2: Excel File Upload -->
+    <div id="importStep2" style="margin-bottom: 30px; opacity: 0.5; pointer-events: none;">
+    <label style="display: block; font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 15px; text-align: center;">📄 اختر ملف Excel:</label>
+    <input type="file" id="excelImportFileInput" accept=".xlsx,.xls" style="display: none;">
+    <button onclick="document.getElementById('excelImportFileInput').click()" class="btn" style="width: 100%; padding: 20px; font-size: 1.1rem; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">
+    📂 اختيار ملف Excel
+    </button>
+    <div id="selectedFileName" style="display: none; margin-top: 15px; padding: 12px; background: rgba(142, 68, 173, 0.1); border-radius: 10px; text-align: center; font-size: 1rem; color: #8e44ad;"></div>
+    </div>
+    
+    <!-- Step 3: Images Upload (Optional) -->
+    <div id="importStep3" style="margin-bottom: 30px; opacity: 0.5; pointer-events: none;">
+    <label style="display: block; font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 15px; text-align: center;">📷 رفع صور المركبات (اختياري):</label>
+    <input type="file" id="excelImportImagesInput" accept="image/*" multiple style="display: none;">
+    <button onclick="document.getElementById('excelImportImagesInput').click()" class="btn" style="width: 100%; padding: 20px; font-size: 1.1rem; background: linear-gradient(135deg, #3498db 0%, #2874a6 100%); color: white;">
+    🖼️ اختيار الصور
+    </button>
+    <div id="selectedImagesCount" style="display: none; margin-top: 15px; padding: 12px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; text-align: center; font-size: 1rem; color: #3498db;"></div>
+    <small style="display: block; text-align: center; color: #666; margin-top: 10px;">يمكنك اختيار صور متعددة</small>
+    </div>
+    
+    <!-- Preview Section -->
+    <div id="importPreviewSection" style="display: none; margin-bottom: 25px; padding: 20px; background: rgba(39, 174, 96, 0.05); border-radius: 15px; border: 2px solid rgba(39, 174, 96, 0.2);">
+    <h4 style="color: #27ae60; font-size: 1.2rem; margin-bottom: 15px; text-align: center;">📊 معاينة البيانات</h4>
+    <div id="importPreviewContent" style="font-size: 1rem; color: #333;"></div>
+    </div>
+    
+    <!-- Import Button -->
+    <div style="display: flex; gap: 15px; margin-top: 30px;">
+    <button id="confirmImportBtn" class="btn" style="flex: 1; padding: 20px; font-size: 1.2rem; background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; opacity: 0.5; pointer-events: none;">
+    ✅ بدء الاستيراد
+    </button>
+    <button onclick="document.getElementById('excelImportModal').style.display='none'" class="btn" style="flex: 1; padding: 20px; font-size: 1.2rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">
+    ❌ إلغاء
+    </button>
+    </div>
+    </div>
+    </div>
+
     <!-- Modal for Edit -->
     <div id="editModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
     <div style="background: white; margin: 3% auto; padding: 45px; width: 92%; max-width: 700px; border-radius: 35px; position: relative;">
@@ -3906,7 +3966,7 @@
     };
 
     // Upload Excel Data
-    window.uploadExcelData = async function(file, vehicleType = 'ميكروباص') {
+    window.uploadExcelData = async function(file, vehicleType = 'ميكروباص', images = []) {
     try {
     // التحقق من وجود مكتبة XLSX
     if (typeof XLSX === 'undefined') {
@@ -3925,12 +3985,38 @@
 
     console.log('📊 تم قراءة', jsonData.length, 'سجل من ملف Excel');
     console.log('🚗 نوع المركبة المختار:', vehicleType);
+    console.log('🖼️ عدد الصور:', images.length);
+
+    // Show progress
+    document.getElementById('loadingSpinner').style.display = 'block';
 
     let successCount = 0;
     let errorCount = 0;
+    
+    // Convert images to base64 if provided
+    let imageDataArray = [];
+    if (images.length > 0) {
+    for (const imgFile of images) {
+    try {
+    const base64 = await new Promise((resolve, reject) => {
+    const imgReader = new FileReader();
+    imgReader.onload = () => resolve(imgReader.result);
+    imgReader.onerror = reject;
+    imgReader.readAsDataURL(imgFile);
+    });
+    imageDataArray.push(base64);
+    } catch (err) {
+    console.error('Error converting image:', err);
+    }
+    }
+    console.log('✅ تم تحويل', imageDataArray.length, 'صورة');
+    }
 
     for (const row of jsonData) {
     try {
+    // Generate ref_number
+    const refNumber = 'REF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    
     // تحويل البيانات من Excel - دعم الأعمدة القديمة والجديدة
     const orderData = {
     owner_name: row['إسم المالك'] || row['الاسم'] || row['name'] || '',
@@ -3940,19 +4026,26 @@
     license_plate: row['رقم السيارة'] || row['رقم اللوحة'] || row['licensePlate'] || '',
     address: row['الخط'] || row['العنوان'] || row['address'] || '',
     vehicle_year: String(row['موديل السنة'] || row['year'] || ''),
-    chassis_number: row['رقم الشاسية'] || row['الشاسيه'] || row['chassis'] || '',
-    motor_number: row['رقم الموتور'] || row['الموتور'] || row['motor'] || '',
-    passenger_capacity: row['عدد الركاب'] || row['السعة'] || '',
-    renewal_date: row['تاريخ التجديد'] || row['التاريخ'] || '',
+    chassis_number: String(row['رقم الشاسية'] || row['الشاسيه'] || row['chassis'] || ''),
+    motor_number: String(row['رقم الموتور'] || row['الموتور'] || row['motor'] || ''),
+    passenger_capacity: String(row['عدد الركاب'] || row['السعة'] || ''),
+    renewal_date: String(row['تاريخ التجديد'] || row['التاريخ'] || ''),
     line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || '',
+    ref_number: refNumber,
     status: 'pending',
     submitted_at: new Date().toISOString(),
-    images: []
+    images: imageDataArray, // Add images to all records
+    status_history: [{
+    status: 'pending',
+    timestamp: Date.now(),
+    note: `استيراد ${vehicleType} من Excel${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}`,
+    by: sessionStorage.getItem('userRole') || 'ADMIN'
+    }]
     };
 
     // التحقق من البيانات الأساسية
-    if (!orderData.owner_name || !orderData.license_plate) {
-    console.warn('⚠️ سجل غير مكتمل:', row);
+    if (!orderData.owner_name) {
+    console.warn('⚠️ سجل غير مكتمل (اسم المالك مفقود):', row);
     errorCount++;
     continue;
     }
@@ -3974,11 +4067,14 @@
     }
     }
 
-    alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
+    document.getElementById('loadingSpinner').style.display = 'none';
+
+    alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
 
     // إعادة تحميل البيانات
     await loadAdminData();
     } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
     console.error('❌ خطأ في قراءة ملف Excel:', error);
     alert('❌ حدث خطأ في قراءة ملف Excel');
     }
@@ -4247,17 +4343,121 @@
     const excelFileInput = document.getElementById('excelFileInput');
     if (bulkImportBtn && excelFileInput) {
     bulkImportBtn.onclick = () => {
-    // Show vehicle type selection modal
-    const vehicleType = confirm("اختر نوع المركبة:\n\nاضغط OK للميكروباص\nاضغط Cancel للتوكتوك");
-    window.selectedImportVehicleType = vehicleType ? 'ميكروباص' : 'توكتوك';
-    excelFileInput.click();
+    // Open new import modal
+    document.getElementById('excelImportModal').style.display = 'block';
+    // Reset modal state
+    window.importModalState = {
+    vehicleType: null,
+    excelFile: null,
+    images: []
     };
-    excelFileInput.onchange = (e) => {
+    document.getElementById('importStep2').style.opacity = '0.5';
+    document.getElementById('importStep2').style.pointerEvents = 'none';
+    document.getElementById('importStep3').style.opacity = '0.5';
+    document.getElementById('importStep3').style.pointerEvents = 'none';
+    document.getElementById('confirmImportBtn').style.opacity = '0.5';
+    document.getElementById('confirmImportBtn').style.pointerEvents = 'none';
+    document.getElementById('selectedVehicleType').style.display = 'none';
+    document.getElementById('selectedFileName').style.display = 'none';
+    document.getElementById('selectedImagesCount').style.display = 'none';
+    document.getElementById('importPreviewSection').style.display = 'none';
+    document.getElementById('importTuktukBtn').style.border = '3px solid transparent';
+    document.getElementById('importMicrobusBtn').style.border = '3px solid transparent';
+    };
+    
+    // Vehicle type selection
+    window.selectImportVehicleType = function(type) {
+    window.importModalState.vehicleType = type;
+    document.getElementById('selectedVehicleType').innerHTML = `✅ تم اختيار: <strong>${type}</strong>`;
+    document.getElementById('selectedVehicleType').style.display = 'block';
+    
+    // Highlight selected button
+    if (type === 'توكتوك') {
+    document.getElementById('importTuktukBtn').style.border = '3px solid #f39c12';
+    document.getElementById('importMicrobusBtn').style.border = '3px solid transparent';
+    } else {
+    document.getElementById('importMicrobusBtn').style.border = '3px solid #27ae60';
+    document.getElementById('importTuktukBtn').style.border = '3px solid transparent';
+    }
+    
+    // Enable step 2
+    document.getElementById('importStep2').style.opacity = '1';
+    document.getElementById('importStep2').style.pointerEvents = 'auto';
+    };
+    
+    // Excel file selection
+    document.getElementById('excelImportFileInput').onchange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-    window.uploadExcelData(file, window.selectedImportVehicleType);
-    e.target.value = ''; // Reset input
+    window.importModalState.excelFile = file;
+    document.getElementById('selectedFileName').innerHTML = `📄 <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)`;
+    document.getElementById('selectedFileName').style.display = 'block';
+    
+    // Enable step 3
+    document.getElementById('importStep3').style.opacity = '1';
+    document.getElementById('importStep3').style.pointerEvents = 'auto';
+    
+    // Preview Excel data
+    try {
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+    
+    document.getElementById('importPreviewContent').innerHTML = `
+    <div style="display: flex; justify-content: space-around; text-align: center;">
+    <div>
+    <div style="font-size: 2rem; font-weight: 700; color: #27ae60;">${jsonData.length}</div>
+    <div style="font-size: 0.9rem; color: #666;">عدد السجلات</div>
+    </div>
+    <div>
+    <div style="font-size: 2rem; font-weight: 700; color: #3498db;">${Object.keys(jsonData[0] || {}).length}</div>
+    <div style="font-size: 0.9rem; color: #666;">عدد الأعمدة</div>
+    </div>
+    </div>
+    <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 10px; font-size: 0.85rem; color: #555; text-align: right;">
+    <strong>الأعمدة المتاحة:</strong><br>
+    ${Object.keys(jsonData[0] || {}).join(' • ')}
+    </div>
+    `;
+    document.getElementById('importPreviewSection').style.display = 'block';
+    
+    // Enable import button
+    document.getElementById('confirmImportBtn').style.opacity = '1';
+    document.getElementById('confirmImportBtn').style.pointerEvents = 'auto';
+    } catch (error) {
+    console.error('Error previewing Excel:', error);
     }
+    }
+    };
+    
+    // Images selection
+    document.getElementById('excelImportImagesInput').onchange = (e) => {
+    const files = Array.from(e.target.files);
+    window.importModalState.images = files;
+    if (files.length > 0) {
+    const totalSize = files.reduce((sum, f) => sum + f.size, 0);
+    document.getElementById('selectedImagesCount').innerHTML = `🖼️ تم اختيار <strong>${files.length}</strong> صورة (${(totalSize / 1024 / 1024).toFixed(2)} MB)`;
+    document.getElementById('selectedImagesCount').style.display = 'block';
+    }
+    };
+    
+    // Confirm import
+    document.getElementById('confirmImportBtn').onclick = async () => {
+    if (!window.importModalState.vehicleType || !window.importModalState.excelFile) {
+    alert('❌ يرجى اختيار نوع المركبة وملف Excel');
+    return;
+    }
+    
+    // Close modal and start import
+    document.getElementById('excelImportModal').style.display = 'none';
+    
+    // Call upload function
+    await window.uploadExcelData(
+    window.importModalState.excelFile, 
+    window.importModalState.vehicleType,
+    window.importModalState.images
+    );
     };
     }
     }
