@@ -4100,24 +4100,27 @@
 
     for (const row of jsonData) {
     try {
-    // تحويل البيانات من Excel
+    // تحويل البيانات من Excel - دعم الأعمدة القديمة والجديدة
     const orderData = {
-    owner_name: row['الاسم'] || row['name'] || '',
+    owner_name: row['إسم المالك'] || row['الاسم'] || row['name'] || '',
     national_id: String(row['الرقم القومي'] || row['nationalId'] || ''),
     phone: String(row['الهاتف'] || row['phone'] || ''),
-    vehicle_type: row['نوع المركبة'] || row['vehicleType'] || 'ميكروباص',
-    license_plate: row['رقم اللوحة'] || row['licensePlate'] || '',
-    address: row['العنوان'] || row['address'] || '',
+    vehicle_type: row['نوع السيارة'] || row['نوع المركبة'] || row['vehicleType'] || 'ميكروباص',
+    license_plate: row['رقم السيارة'] || row['رقم اللوحة'] || row['licensePlate'] || '',
+    address: row['الخط'] || row['العنوان'] || row['address'] || '',
     vehicle_year: String(row['موديل السنة'] || row['year'] || ''),
-    chassis_number: row['الشاسيه'] || row['chassis'] || '',
-    motor_number: row['الموتور'] || row['motor'] || '',
+    chassis_number: row['رقم الشاسية'] || row['الشاسيه'] || row['chassis'] || '',
+    motor_number: row['رقم الموتور'] || row['الموتور'] || row['motor'] || '',
+    passenger_capacity: row['عدد الركاب'] || row['السعة'] || '',
+    renewal_date: row['تاريخ التجديد'] || row['التاريخ'] || '',
+    line: row['الخط'] || '',
     status: 'pending',
     submitted_at: new Date().toISOString(),
     images: []
     };
 
     // التحقق من البيانات الأساسية
-    if (!orderData.owner_name || !orderData.national_id || !orderData.license_plate) {
+    if (!orderData.owner_name || !orderData.license_plate) {
     console.warn('⚠️ سجل غير مكتمل:', row);
     errorCount++;
     continue;
@@ -4558,12 +4561,14 @@
         } else if (type === 'tuktuk') {
             window.filteredOrdersData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
-                return !item.licensePlate || item.licensePlate === ''; // توكتوك = ما عندوش لوحة
+                // فلترة التوكتوك: إما vehicle_type = 'توكتوك' أو مافيش رقم لوحة
+                return item.vehicleType === 'توكتوك' || (!item.licensePlate || item.licensePlate === '');
             });
         } else if (type === 'microbus') {
             window.filteredOrdersData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
-                return item.licensePlate && item.licensePlate !== ''; // ميكروباص = عنده لوحة
+                // فلترة الميكروباص: إما vehicle_type = 'ميكروباص' أو فيه رقم لوحة
+                return item.vehicleType === 'ميكروباص' || (item.licensePlate && item.licensePlate !== '');
             });
         }
         window.currentPage = 1;
