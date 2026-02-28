@@ -1404,9 +1404,8 @@
     <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🚜 جدول المركبات</button>
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">⚖️ قائمة الشكاوى</button>
     <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📜 سجل المشرفين</button>
-    <button id="uploadExcelBtn" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📤 رفع ملف Excel</button>
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
-    <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📥 استيراد من Excel</button>
+    <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">� استيراد من Excel</button>
     <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">� تصدير Excel</button>
     <button id="cleanDuplicatesMainBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🧹 حذف المكرر</button>
     </div>
@@ -1464,7 +1463,7 @@
     </div>
     </div>
 
-    <!-- Orders Table -->
+    <!-- Orders Table (Tuktuk) -->
     <div id="ordersTableContainer" style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
     <table id="excelTable" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
     <thead>
@@ -1472,8 +1471,7 @@
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">المالك</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الرقم القومي</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الهاتف</th>
-    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">نوع المركبة</th>
-    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الكود/اللوحة</th>
+    <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الكود</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">النوع</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموديل</th>
     <th style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.95) 0%, rgba(52, 152, 219, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الشاسيه</th>
@@ -1485,6 +1483,26 @@
     </tr>
     </thead>
     <tbody id="dataTable"></tbody>
+    </table>
+    </div>
+
+    <!-- Microbus Table -->
+    <div id="microbusTableContainer" style="overflow-x:auto; -webkit-overflow-scrolling: touch; display: none;">
+    <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+    <thead>
+    <tr>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">المالك</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">رقم اللوحة</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الخط</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الشاسيه</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الموتور</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">عدد الركاب</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">تاريخ التجديد</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">📷 الصور</th>
+    <th style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.95) 0%, rgba(34, 153, 84, 0.95) 100%); color: white; padding: 8px 6px; font-size: 0.85rem; position: sticky; top: 0; z-index: 10;">الإجراءات</th>
+    </tr>
+    </thead>
+    <tbody id="microbusDataTable"></tbody>
     </table>
     </div>
 
@@ -3309,6 +3327,239 @@
     console.log('🏠 العودة للبوابة الرئيسية');
     };
 
+    // Function to create table row based on vehicle type
+    function createTableRow(item, vehicleType) {
+    const tr = document.createElement('tr');
+    const userRole = sessionStorage.getItem('userRole') || 'VIEWER';
+    const currentUsername = sessionStorage.getItem('username') || 'مجهول';
+    const id = item.id;
+    
+    if (vehicleType === 'microbus') {
+    // Microbus row
+    tr.innerHTML = `
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:var(--secondary)">${item.licensePlate || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.7rem;">${item.line || item.address || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'};">${item.chassisNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'};">${item.motorNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.7rem;">${item.passengerCapacity || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.65rem;">${item.renewalDate || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(39, 174, 96, 0.12); color:#27ae60; padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    </td>
+    `;
+    } else {
+    // Tuktuk row
+    const vehicleIdDisplay = item.vCode || '-';
+    tr.innerHTML = `
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
+    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
+    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
+    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    </td>
+    `;
+    }
+    
+    // Add event listeners for buttons
+    const viewBtn = tr.querySelector('.view-btn');
+    if (viewBtn) {
+    viewBtn.onclick = () => {
+    if (item.images && item.images.length > 0) {
+    window.viewImages(item.images);
+    } else {
+    alert("⚠️ لا توجد صور متاحة للعرض");
+    }
+    };
+    }
+    
+    const editBtn = tr.querySelector('.btn-edit');
+    if (editBtn) {
+    editBtn.onclick = async () => {
+    document.getElementById('editOwnerName').value = item.owner;
+    document.getElementById('editPhone').value = item.phone || '';
+    document.getElementById('editVType').value = item.vType;
+    document.getElementById('editVYear').value = item.vYear || '';
+    document.getElementById('editAddress').value = item.address || '';
+    document.getElementById('editModal').style.display = 'block';
+    document.getElementById('confirmEditBtn').onclick = async () => {
+    const newOwner = document.getElementById('editOwnerName').value.trim();
+    const newPhone = document.getElementById('editPhone').value.trim();
+    const newVType = document.getElementById('editVType').value;
+    const newVYear = document.getElementById('editVYear').value;
+    const newAddress = document.getElementById('editAddress').value.trim();
+    if (!newOwner || !newPhone || newPhone.length !== 11) {
+    alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
+    return;
+    }
+    document.getElementById('loadingSpinner').style.display = 'block';
+    const { error: editError2 } = await window.supabaseClient
+    .from('orders')
+    .update({
+    owner_name: newOwner,
+    phone: newPhone,
+    vehicle_type: newVType,
+    vehicle_year: newVYear,
+    address: newAddress,
+    status_history: [...(item.statusHistory || []), {
+    status: item.status || 'pending',
+    timestamp: Date.now(),
+    note: "تم تعديل البيانات",
+    by: userRole
+    }]
+    })
+    .eq('id', id);
+    if (editError2) throw editError2;
+    await window.logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+    document.getElementById('loadingSpinner').style.display = 'none';
+    document.getElementById('editModal').style.display = 'none';
+    alert("✅ تم التعديل بنجاح!");
+    await window.loadAdminData();
+    };
+    };
+    }
+    
+    const delBtn = tr.querySelector('.btn-del');
+    if (delBtn) {
+    delBtn.onclick = async () => {
+    if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
+    try {
+    const { error } = await window.supabaseClient
+    .from("orders")
+    .delete()
+    .eq("id", id);
+    if (error) {
+    console.error('❌ خطأ في الحذف:', error);
+    alert("❌ فشل الحذف: " + error.message);
+    return;
+    }
+    await window.logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+    alert("✅ تم الحذف بنجاح");
+    await window.loadAdminData();
+    } catch (err) {
+    console.error('❌ خطأ في عملية الحذف:', err);
+    alert("❌ حدث خطأ أثناء الحذف");
+    }
+    }
+    };
+    }
+    
+    const logBtn = tr.querySelector('.btn-log');
+    if (logBtn) {
+    logBtn.onclick = () => {
+    window.showActivityLog(item);
+    };
+    }
+    
+    // Tuktuk-specific buttons
+    if (vehicleType === 'tuktuk') {
+    const statusBtn = tr.querySelector('.btn-status');
+    if (statusBtn) {
+    statusBtn.onclick = async () => {
+    document.getElementById('statusChangeModal').style.display = 'block';
+    document.getElementById('newStatusSelect').value = item.status || 'pending';
+    document.getElementById('statusNote').value = '';
+    document.getElementById('sendWhatsAppStatus').checked = true;
+    window.currentStatusChangeItem = { item, id };
+    };
+    }
+    
+    const codeBtn = tr.querySelector('.btn-code');
+    if (codeBtn) {
+    codeBtn.onclick = async () => {
+    if (item.vCode) {
+    alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
+    return;
+    }
+    const info = await window.getSmartNextCode();
+    document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
+    document.getElementById('manualCodeInput').value = info.next;
+    document.getElementById('codeModal').style.display = 'block';
+    document.getElementById('confirmCodeBtn').onclick = async () => {
+    const newCode = document.getElementById('manualCodeInput').value;
+    if (!newCode) {
+    alert("❌ يرجى إدخال كود صحيح");
+    return;
+    }
+    document.getElementById('loadingSpinner').style.display = 'block';
+    try {
+    const { data: existingCode, error: checkError } = await window.supabaseClient
+    .from('orders')
+    .select('id, owner_name, code')
+    .eq('code', newCode.toString())
+    .single();
+    if (existingCode) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
+    return;
+    }
+    const { error } = await window.supabaseClient
+    .from('orders')
+    .update({
+    code: newCode.toString(),
+    coded_at: Date.now(),
+    status: "coded",
+    status_history: [...(item.statusHistory || []), {
+    status: "coded",
+    timestamp: Date.now(),
+    note: `تم التكويد برقم: ${newCode}`,
+    by: userRole
+    }]
+    })
+    .eq('id', id);
+    if (error) {
+    console.error('❌ خطأ في تكويد المركبة:', error);
+    throw error;
+    }
+    await window.logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
+    document.getElementById('loadingSpinner').style.display = 'none';
+    document.getElementById('codeModal').style.display = 'none';
+    const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
+    if (sendWhatsApp) {
+    const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
+    `👤 السيد/ة: ${item.owner}\n` +
+    `🔢 كود المركبة: *${newCode}*\n` +
+    `🚜 نوع المركبة: ${item.vType}\n` +
+    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+    `✅ يمكنك الآن استلام المركبة من المقر\n\n` +
+    `_رئاسة مركز ومدينة كفر صقر_`;
+    if (item.phone && item.phone.length === 11) {
+    const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    }
+    }
+    alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
+    await window.loadAdminData();
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ في عملية التكويد:', error);
+    alert(`❌ حدث خطأ أثناء التكويد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    }
+    };
+    };
+    }
+    }
+    
+    return tr;
+    }
+    
+    window.createTableRow = createTableRow;
+
     async function loadAdminData() {
     console.log('📥 جاري تحميل البيانات من قاعدة البيانات...');
 
@@ -3369,9 +3620,13 @@
     address: item.address || '',
     vCode: item.code || '',
     licensePlate: item.license_plate || '',
+    line: item.line || '',
+    passengerCapacity: item.passenger_capacity || '',
+    renewalDate: item.renewal_date || '',
     refNumber: item.ref_number || '',
     timestamp: item.submitted_at || Date.now(),
     status: item.status || 'pending',
+    statusHistory: item.status_history || [],
     images: item.images || [],
     source: 'supabase'
     }));
@@ -3410,35 +3665,12 @@
 
     for (let i = 0; i < quickShowCount; i++) {
     const item = combinedOrders[i];
-    const tr = document.createElement('tr');
     
-    // تحديد نوع المركبة
-    let vehicleTypeDisplay = '🛺 توكتوك';
-    let vehicleIdDisplay = item.vCode || '-';
-    let vehicleTypeValue = 'tuktuk';
+    // Detect vehicle type
+    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
     
-    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
-    if (item.licensePlate && item.licensePlate !== '') {
-    vehicleTypeDisplay = '🚐 ميكروباص';
-    vehicleIdDisplay = item.licensePlate;
-    vehicleTypeValue = 'microbus';
-    }
-    
-    tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
-    `;
+    // Use createTableRow function
+    const tr = window.createTableRow(item, vehicleType);
     quickFragment.appendChild(tr);
     ordersArray.push({ element: tr, item: item, id: item.id });
     }
@@ -3463,35 +3695,12 @@
 
     for (let i = currentIndex; i < endIndex; i++) {
     const item = combinedOrders[i];
-    const tr = document.createElement('tr');
     
-    // تحديد نوع المركبة
-    let vehicleTypeDisplay = '🛺 توكتوك';
-    let vehicleIdDisplay = item.vCode || '-';
-    let vehicleTypeValue = 'tuktuk';
+    // Detect vehicle type
+    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
     
-    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
-    if (item.licensePlate && item.licensePlate !== '') {
-    vehicleTypeDisplay = '🚐 ميكروباص';
-    vehicleIdDisplay = item.licensePlate;
-    vehicleTypeValue = 'microbus';
-    }
-    
-    tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);">🖼️ (${item.images ? item.images.length : 0})</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#999;">عرض فقط</td>
-    `;
+    // Use createTableRow function
+    const tr = window.createTableRow(item, vehicleType);
     fragment.appendChild(tr);
     ordersArray.push({ element: tr, item: item, id: item.id });
     }
@@ -3523,7 +3732,6 @@
 
     function renderNextBatch() {
     try {
-    // On mobile, stop at 100 rows initially
     const endIndex = Math.min(renderIndex + batchSize, maxIndex);
     const fragment = document.createDocumentFragment();
 
@@ -3531,210 +3739,11 @@
     const item = combinedOrders[i];
     const id = item.id;
 
-    const tr = document.createElement('tr');
+    // Detect vehicle type
+    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
     
-    // تحديد نوع المركبة
-    let vehicleTypeDisplay = '🛺 توكتوك';
-    let vehicleIdDisplay = item.vCode || '-';
-    let vehicleTypeValue = 'tuktuk';
-    
-    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
-    if (item.licensePlate && item.licensePlate !== '') {
-    vehicleTypeDisplay = '🚐 ميكروباص';
-    vehicleIdDisplay = item.licensePlate;
-    vehicleTypeValue = 'microbus';
-    }
-    
-    tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
-    </td>
-    `;
-
-    tr.querySelector('.btn-status').onclick = async () => {
-    document.getElementById('statusChangeModal').style.display = 'block';
-    document.getElementById('newStatusSelect').value = item.status || 'pending';
-    document.getElementById('statusNote').value = '';
-    document.getElementById('sendWhatsAppStatus').checked = true;
-    window.currentStatusChangeItem = { item, id };
-    };
-
-    tr.querySelector('.btn-code').onclick = async () => {
-    if (item.vCode) {
-    alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
-    return;
-    }
-    const info = await getSmartNextCode();
-    document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
-    document.getElementById('manualCodeInput').value = info.next;
-    document.getElementById('codeModal').style.display = 'block';
-    document.getElementById('confirmCodeBtn').onclick = async () => {
-    const newCode = document.getElementById('manualCodeInput').value;
-    if (!newCode) {
-    alert("❌ يرجى إدخال كود صحيح");
-    return;
-    }
-
-    // Check if code already exists
-    document.getElementById('loadingSpinner').style.display = 'block';
-
-    try {
-    const { data: existingCode, error: checkError } = await window.supabaseClient
-    .from('orders')
-    .select('id, owner_name, code')
-    .eq('code', newCode.toString())
-    .single();
-
-    if (existingCode) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
-    return;
-    }
-
-    const { error } = await window.supabaseClient
-    .from('orders')
-    .update({
-    code: newCode.toString(),
-    coded_at: Date.now(),
-    status: "coded",
-    status_history: [...(item.statusHistory || []), {
-    status: "coded",
-    timestamp: Date.now(),
-    note: `تم التكويد برقم: ${newCode}`,
-    by: userRole
-    }]
-    })
-    .eq('id', id);
-
-    if (error) {
-    console.error('❌ خطأ في تكويد المركبة:', error);
-    throw error;
-    }
-
-    await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
-    document.getElementById('loadingSpinner').style.display = 'none';
-    document.getElementById('codeModal').style.display = 'none';
-
-    const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
-    if (sendWhatsApp) {
-    const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🔢 كود المركبة: *${newCode}*\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-    `✅ يمكنك الآن استلام المركبة من المقر\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    if (item.phone && item.phone.length === 11) {
-    const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    }
-    }
-
-    alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-
-    // Reload data to show updated record
-    await loadAdminData();
-
-    } catch (error) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    console.error('❌ خطأ في عملية التكويد:', error);
-    alert(`❌ حدث خطأ أثناء التكويد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
-    }
-    };
-    };
-
-    tr.querySelector('.btn-edit').onclick = async () => {
-    document.getElementById('editOwnerName').value = item.owner;
-    document.getElementById('editPhone').value = item.phone || '';
-    document.getElementById('editVType').value = item.vType;
-    document.getElementById('editVYear').value = item.vYear || '';
-    document.getElementById('editAddress').value = item.address || '';
-    document.getElementById('editModal').style.display = 'block';
-    document.getElementById('confirmEditBtn').onclick = async () => {
-    const newOwner = document.getElementById('editOwnerName').value.trim();
-    const newPhone = document.getElementById('editPhone').value.trim();
-    const newVType = document.getElementById('editVType').value;
-    const newVYear = document.getElementById('editVYear').value;
-    const newAddress = document.getElementById('editAddress').value.trim();
-    if (!newOwner || !newPhone || newPhone.length !== 11) {
-    alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
-    return;
-    }
-    document.getElementById('loadingSpinner').style.display = 'block';
-    const { error: editError2 } = await window.supabaseClient
-    .from('orders')
-    .update({
-    owner_name: newOwner,
-    phone: newPhone,
-    vehicle_type: newVType,
-    vehicle_year: newVYear,
-    address: newAddress,
-    status_history: [...(item.statusHistory || []), {
-    status: item.status || 'pending',
-    timestamp: Date.now(),
-    note: "تم تعديل البيانات",
-    by: userRole
-    }]
-    })
-    .eq('id', id);
-    if (editError2) throw editError2;
-    await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-    document.getElementById('loadingSpinner').style.display = 'none';
-    document.getElementById('editModal').style.display = 'none';
-    alert("✅ تم التعديل بنجاح!");
-    };
-    };
-
-    tr.querySelector('.btn-del').onclick = async () => {
-    if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-    try {
-    // Delete from Database
-    const { error } = await window.supabaseClient
-    .from("orders")
-    .delete()
-    .eq("id", id);
-    if (error) {
-    console.error('❌ خطأ في الحذف:', error);
-    alert("❌ فشل الحذف: " + error.message);
-    return;
-    }
-    await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-    alert("✅ تم الحذف بنجاح");
-    await loadAdminData();
-    } catch (err) {
-    console.error('❌ خطأ في عملية الحذف:', err);
-    alert("❌ حدث خطأ أثناء الحذف");
-    }
-    }
-    };
-
-    tr.querySelector('.btn-log').onclick = () => {
-    showActivityLog(item);
-    };
-
-    tr.querySelector('.view-btn').onclick = () => {
-    if (item.images && item.images.length > 0) {
-    viewImages(item.images);
-    } else {
-    alert("⚠️ لا توجد صور متاحة للعرض");
-    }
-    };
+    // Use createTableRow function
+    const tr = window.createTableRow(item, vehicleType);
 
     fragment.appendChild(tr);
     ordersArray.push({ element: tr, item: item, id: id });
@@ -3838,6 +3847,9 @@
     address: item.address || '',
     vCode: item.code || '',
     licensePlate: item.license_plate || '',
+    line: item.line || '',
+    passengerCapacity: item.passenger_capacity || '',
+    renewalDate: item.renewal_date || '',
     refNumber: item.ref_number || '',
     timestamp: item.submitted_at || Date.now(),
     status: item.status || 'pending',
@@ -3867,194 +3879,12 @@
     const ordersArray = [];
     allOrders.forEach(item => {
     const id = item.id;
-    const tr = document.createElement('tr');
     
-    // تحديد نوع المركبة
-    let vehicleTypeDisplay = '🛺 توكتوك';
-    let vehicleIdDisplay = item.vCode || '-';
-    let vehicleTypeValue = 'tuktuk';
+    // Detect vehicle type
+    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
     
-    // إذا كان الحقل licensePlate موجود وليس فارغ، يبقى ميكروباص
-    if (item.licensePlate && item.licensePlate !== '') {
-    vehicleTypeDisplay = '🚐 ميكروباص';
-    vehicleIdDisplay = item.licensePlate;
-    vehicleTypeValue = 'microbus';
-    }
-    
-    tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:${vehicleTypeValue === 'tuktuk' ? 'linear-gradient(135deg, #f39c12 0%, #d68910 100%)' : 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'}; color:white; padding:4px 8px; border-radius:6px; font-weight:600; font-size:0.7rem;">${vehicleTypeDisplay}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
-    </td>
-    `;
-
-    // Attach button handlers
-    tr.querySelector('.btn-status').onclick = async () => {
-    document.getElementById('statusChangeModal').style.display = 'block';
-    document.getElementById('newStatusSelect').value = item.status || 'pending';
-    document.getElementById('statusNote').value = '';
-    document.getElementById('sendWhatsAppStatus').checked = true;
-    window.currentStatusChangeItem = { item, id };
-    };
-
-    tr.querySelector('.btn-code').onclick = async () => {
-    if (item.vCode) {
-    alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
-    return;
-    }
-    const info = await getSmartNextCode();
-    document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
-    document.getElementById('manualCodeInput').value = info.next;
-    document.getElementById('codeModal').style.display = 'block';
-    document.getElementById('confirmCodeBtn').onclick = async () => {
-    const newCode = document.getElementById('manualCodeInput').value;
-    if (!newCode) {
-    alert("❌ يرجى إدخال كود صحيح");
-    return;
-    }
-
-    // Check if code already exists
-    document.getElementById('loadingSpinner').style.display = 'block';
-    const { data: existingCode, error: checkError } = await window.supabaseClient
-    .from('orders')
-    .select('id, owner_name, code')
-    .eq('code', newCode.toString())
-    .single();
-
-    if (existingCode) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
-    return;
-    }
-
-    const { error: codeError2 } = await window.supabaseClient
-    .from('orders')
-    .update({
-    code: newCode.toString(),
-    coded_at: Date.now(),
-    status: "coded",
-    status_history: [...(item.statusHistory || []), {
-    status: "coded",
-    timestamp: Date.now(),
-    note: `تم التكويد برقم: ${newCode}`,
-    by: userRole
-    }]
-    })
-    .eq('id', id);
-    if (codeError2) throw codeError2;
-    await logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
-    document.getElementById('loadingSpinner').style.display = 'none';
-    document.getElementById('codeModal').style.display = 'none';
-    const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
-    if (sendWhatsApp) {
-    const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🔢 كود المركبة: *${newCode}*\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-    `✅ يمكنك الآن استلام المركبة من المقر\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    if (item.phone && item.phone.length === 11) {
-    const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    }
-    }
-    alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-    };
-    };
-
-    tr.querySelector('.btn-edit').onclick = async () => {
-    document.getElementById('editOwnerName').value = item.owner;
-    document.getElementById('editPhone').value = item.phone || '';
-    document.getElementById('editVType').value = item.vType;
-    document.getElementById('editVYear').value = item.vYear || '';
-    document.getElementById('editAddress').value = item.address || '';
-    document.getElementById('editModal').style.display = 'block';
-    document.getElementById('confirmEditBtn').onclick = async () => {
-    const newOwner = document.getElementById('editOwnerName').value.trim();
-    const newPhone = document.getElementById('editPhone').value.trim();
-    const newVType = document.getElementById('editVType').value;
-    const newVYear = document.getElementById('editVYear').value;
-    const newAddress = document.getElementById('editAddress').value.trim();
-    if (!newOwner || !newPhone || newPhone.length !== 11) {
-    alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
-    return;
-    }
-    document.getElementById('loadingSpinner').style.display = 'block';
-    const { error: editError3 } = await window.supabaseClient
-    .from('orders')
-    .update({
-    owner_name: newOwner,
-    phone: newPhone,
-    vehicle_type: newVType,
-    vehicle_year: newVYear,
-    address: newAddress,
-    status_history: [...(item.statusHistory || []), {
-    status: item.status || 'pending',
-    timestamp: Date.now(),
-    note: "تم تعديل البيانات",
-    by: userRole
-    }]
-    })
-    .eq('id', id);
-    if (editError3) throw editError3;
-    await logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-    document.getElementById('loadingSpinner').style.display = 'none';
-    document.getElementById('editModal').style.display = 'none';
-    alert("✅ تم التعديل بنجاح!");
-    };
-    };
-
-    tr.querySelector('.btn-del').onclick = async () => {
-    if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-    try {
-    // Delete from Database
-    const { error } = await window.supabaseClient
-    .from("orders")
-    .delete()
-    .eq("id", id);
-    if (error) {
-    console.error('❌ خطأ في الحذف:', error);
-    alert("❌ فشل الحذف: " + error.message);
-    return;
-    }
-    await logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-    alert("✅ تم الحذف بنجاح");
-    await loadAdminData();
-    } catch (err) {
-    console.error('❌ خطأ في عملية الحذف:', err);
-    alert("❌ حدث خطأ أثناء الحذف");
-    }
-    }
-    };
-
-    tr.querySelector('.btn-log').onclick = () => {
-    showActivityLog(item);
-    };
-
-    tr.querySelector('.view-btn').onclick = () => {
-    if (item.images && item.images.length > 0) {
-    viewImages(item.images);
-    } else {
-    alert("⚠️ لا توجد صور متاحة للعرض");
-    }
-    };
-
+    // Use createTableRow function
+    const tr = window.createTableRow(item, vehicleType);
     ordersArray.push({ element: tr, item: item, id: id });
     });
     document.getElementById('statTotal').innerText = total;
@@ -4076,7 +3906,7 @@
     };
 
     // Upload Excel Data
-    window.uploadExcelData = async function(file) {
+    window.uploadExcelData = async function(file, vehicleType = 'ميكروباص') {
     try {
     // التحقق من وجود مكتبة XLSX
     if (typeof XLSX === 'undefined') {
@@ -4094,6 +3924,7 @@
     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
     console.log('📊 تم قراءة', jsonData.length, 'سجل من ملف Excel');
+    console.log('🚗 نوع المركبة المختار:', vehicleType);
 
     let successCount = 0;
     let errorCount = 0;
@@ -4105,7 +3936,7 @@
     owner_name: row['إسم المالك'] || row['الاسم'] || row['name'] || '',
     national_id: String(row['الرقم القومي'] || row['nationalId'] || ''),
     phone: String(row['الهاتف'] || row['phone'] || ''),
-    vehicle_type: row['نوع السيارة'] || row['نوع المركبة'] || row['vehicleType'] || 'ميكروباص',
+    vehicle_type: vehicleType, // استخدام نوع المركبة المختار
     license_plate: row['رقم السيارة'] || row['رقم اللوحة'] || row['licensePlate'] || '',
     address: row['الخط'] || row['العنوان'] || row['address'] || '',
     vehicle_year: String(row['موديل السنة'] || row['year'] || ''),
@@ -4113,7 +3944,7 @@
     motor_number: row['رقم الموتور'] || row['الموتور'] || row['motor'] || '',
     passenger_capacity: row['عدد الركاب'] || row['السعة'] || '',
     renewal_date: row['تاريخ التجديد'] || row['التاريخ'] || '',
-    line: row['الخط'] || '',
+    line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || '',
     status: 'pending',
     submitted_at: new Date().toISOString(),
     images: []
@@ -4143,7 +3974,7 @@
     }
     }
 
-    alert(`✅ تم رفع ${successCount} سجل بنجاح\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
+    alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح\n${errorCount > 0 ? `⚠️ فشل ${errorCount} سجل` : ''}`);
 
     // إعادة تحميل البيانات
     await loadAdminData();
@@ -4411,17 +4242,20 @@
     };
     }
 
-    // Excel Upload Button Handler
-    const uploadExcelBtn = document.getElementById('uploadExcelBtn');
+    // Bulk Import Button - Show vehicle type selection modal
+    const bulkImportBtn = document.getElementById('bulkImportBtn');
     const excelFileInput = document.getElementById('excelFileInput');
-    if (uploadExcelBtn && excelFileInput) {
-    uploadExcelBtn.onclick = () => {
+    if (bulkImportBtn && excelFileInput) {
+    bulkImportBtn.onclick = () => {
+    // Show vehicle type selection modal
+    const vehicleType = confirm("اختر نوع المركبة:\n\nاضغط OK للميكروباص\nاضغط Cancel للتوكتوك");
+    window.selectedImportVehicleType = vehicleType ? 'ميكروباص' : 'توكتوك';
     excelFileInput.click();
     };
     excelFileInput.onchange = (e) => {
     const file = e.target.files[0];
     if (file) {
-    window.uploadExcelData(file);
+    window.uploadExcelData(file, window.selectedImportVehicleType);
     e.target.value = ''; // Reset input
     }
     };
@@ -4556,27 +4390,40 @@
 
     // Filter by vehicle type
     function filterByVehicleType(type) {
+        const tukTukTable = document.getElementById('ordersTableContainer');
+        const microbusTable = document.getElementById('microbusTableContainer');
+        
         if (type === 'all') {
             window.filteredOrdersData = window.allOrdersData;
+            // Show tuktuk table for "all"
+            if (tukTukTable) tukTukTable.style.display = 'block';
+            if (microbusTable) microbusTable.style.display = 'none';
         } else if (type === 'tuktuk') {
+            // Filter: tuktuk = no licensePlate or empty licensePlate
             window.filteredOrdersData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
-                // فلترة التوكتوك: إما vehicle_type = 'توكتوك' أو مافيش رقم لوحة
-                return item.vehicleType === 'توكتوك' || (!item.licensePlate || item.licensePlate === '');
+                return !item.licensePlate || item.licensePlate === '';
             });
+            // Show tuktuk table
+            if (tukTukTable) tukTukTable.style.display = 'block';
+            if (microbusTable) microbusTable.style.display = 'none';
         } else if (type === 'microbus') {
+            // Filter: microbus = has licensePlate
             window.filteredOrdersData = window.allOrdersData.filter(orderData => {
                 const item = orderData.item;
-                // فلترة الميكروباص: إما vehicle_type = 'ميكروباص' أو فيه رقم لوحة
-                return item.vehicleType === 'ميكروباص' || (item.licensePlate && item.licensePlate !== '');
+                return item.licensePlate && item.licensePlate !== '';
             });
+            // Show microbus table
+            if (tukTukTable) tukTukTable.style.display = 'none';
+            if (microbusTable) microbusTable.style.display = 'block';
         }
+        
         window.currentPage = 1;
+        window.currentVehicleFilter = type; // Save current filter
         renderCurrentPage();
-        const ordersContainer = document.getElementById('ordersTableContainer');
+        
         const complaintsContainer = document.getElementById('complaintsTableContainer');
         const logsContainer = document.getElementById('adminLogsContainer');
-        if (ordersContainer) ordersContainer.style.display = 'block';
         if (complaintsContainer) complaintsContainer.style.display = 'none';
         if (logsContainer) logsContainer.style.display = 'none';
     }
@@ -5073,15 +4920,6 @@
 
     // Bulk Import - Open Modal instead of new page
     const bulkImportBtn = document.getElementById('bulkImportBtn');
-    if (bulkImportBtn) {
-    bulkImportBtn.onclick = () => {
-    document.getElementById('bulkImportModal').style.display = 'block';
-    document.getElementById('bulkImportFile').value = '';
-    document.getElementById('importPreview').style.display = 'none';
-    document.getElementById('importPreview').innerHTML = '';
-    };
-    }
-
     // Upload LocalStorage to Supabase
     const uploadBtn = document.getElementById('uploadLocalToSupabaseBtn');
     if (uploadBtn) {
@@ -5909,11 +5747,18 @@
     document.getElementById('pageInfo').textContent = `صفحة ${window.currentPage} من ${totalPages}`; 
     document.getElementById('totalRecordsInfo').textContent = `إجمالي: ${window.filteredOrdersData.length} سجل`;
 
-    const tableBody = document.getElementById('dataTable');
+    // Determine which table to use based on current filter
+    const isMicrobus = window.currentVehicleFilter === 'microbus';
+    const tableBody = document.getElementById(isMicrobus ? 'microbusDataTable' : 'dataTable');
     tableBody.innerHTML = '';
 
     pageData.forEach(orderData => {
-    const tr = orderData.element;
+    // Detect vehicle type from item data
+    const item = orderData.item;
+    const vehicleType = (item.licensePlate && item.licensePlate !== '') ? 'microbus' : 'tuktuk';
+    
+    // Use createTableRow to build the row
+    const tr = window.createTableRow(item, vehicleType);
     tableBody.appendChild(tr);
     });
 
@@ -5925,6 +5770,7 @@
     window.allOrdersData = ordersArray;
     window.filteredOrdersData = ordersArray;
     window.currentPage = 1;
+    window.currentVehicleFilter = window.currentVehicleFilter || 'all'; // Initialize if not set
     renderCurrentPage();
     }
     
