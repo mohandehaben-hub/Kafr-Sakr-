@@ -5,6 +5,7 @@
     ═══════════════════════════════════════════════════════════════
     🔒 نظام آمن ومحمي بالكامل
     
+    م/ مهند التهامي - 01021102607
     ═══════════════════════════════════════════════════════════════
     -->
     <html lang="ar" dir="rtl">
@@ -1395,26 +1396,31 @@
     <!-- Admin Page -->
     <div id="adminPage" style="display:none;">
     <!-- Statistics Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; margin-bottom: 35px;">
-    <div class="stat-card" onclick="showAllOrders()" style="background: linear-gradient(135deg, rgba(26, 82, 118, 0.15) 0%, rgba(52, 152, 219, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--primary); box-shadow: 0 8px 25px rgba(26, 82, 118, 0.2); cursor: pointer; transition: all 0.3s ease;">
-    <p style="margin: 0; color: var(--primary); font-size: 1rem; font-weight: 600;">📋 إجمالي الطلبات</p>
-    <h3 id="statTotal" style="margin: 15px 0; font-size: 2.5rem; color: var(--primary); font-weight: bold;">0</h3>
-    <small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px;">
+    <div class="stat-card" onclick="showStickerAppliedOrders()" style="background: linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(26, 188, 156, 0.15) 100%); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; text-align: center; border: 2px solid #16a085; box-shadow: 0 4px 12px rgba(22, 160, 133, 0.15); cursor: pointer; transition: all 0.3s ease;">
+    <p style="margin: 0; color: #16a085; font-size: 0.75rem; font-weight: 600;">🏷️ تم لصق الملصق</p>
+    <h3 id="statStickerApplied" style="margin: 8px 0; font-size: 1.5rem; color: #16a085; font-weight: bold;">0</h3>
+    <small style="color: #666; font-size: 0.65rem;">اضغط للعرض</small>
     </div>
-    <div class="stat-card" onclick="showCodedOrders()" style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(46, 204, 113, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--secondary); box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2); cursor: pointer; transition: all 0.3s ease;">
-    <p style="margin: 0; color: var(--secondary); font-size: 1rem; font-weight: 600;">✅ تم التكويد</p>
-    <h3 id="statCoded" style="margin: 15px 0; font-size: 2.5rem; color: var(--secondary); font-weight: bold;">0</h3>
-    <small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
+    <div class="stat-card" onclick="showPendingOrders()" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.15) 0%, rgba(214, 137, 16, 0.15) 100%); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; text-align: center; border: 2px solid var(--warning); box-shadow: 0 4px 12px rgba(243, 156, 18, 0.15); cursor: pointer; transition: all 0.3s ease;">
+    <p style="margin: 0; color: var(--warning); font-size: 0.75rem; font-weight: 600;">⏳ قيد الانتظار</p>
+    <h3 id="statPending" style="margin: 8px 0; font-size: 1.5rem; color: var(--warning); font-weight: bold;">0</h3>
+    <small style="color: #666; font-size: 0.65rem;">اضغط للعرض</small>
     </div>
-    <div class="stat-card" onclick="showPendingOrders()" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.15) 0%, rgba(214, 137, 16, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--warning); box-shadow: 0 8px 25px rgba(243, 156, 18, 0.2); cursor: pointer; transition: all 0.3s ease;">
-    <p style="margin: 0; color: var(--warning); font-size: 1rem; font-weight: 600;">⏳ قيد الانتظار</p>
-    <h3 id="statPending" style="margin: 15px 0; font-size: 2.5rem; color: var(--warning); font-weight: bold;">0</h3>
-    <small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
+    <div class="stat-card" onclick="window.filterByVehicleType('tuktuk')" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.15) 0%, rgba(230, 126, 34, 0.15) 100%); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; text-align: center; border: 2px solid #f39c12; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.15); cursor: pointer; transition: all 0.3s ease;">
+    <p style="margin: 0; color: #f39c12; font-size: 0.75rem; font-weight: 600;">🛺 توكتوك</p>
+    <h3 id="statTuktuk" style="margin: 8px 0; font-size: 1.5rem; color: #f39c12; font-weight: bold;">0</h3>
+    <small style="color: #666; font-size: 0.65rem;">اضغط للعرض</small>
     </div>
-    <div class="stat-card" onclick="showComplaintsTable()" style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.15) 0%, rgba(186, 74, 0, 0.15) 100%); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; text-align: center; border: 3px solid var(--accent); box-shadow: 0 8px 25px rgba(211, 84, 0, 0.2); cursor: pointer; transition: all 0.3s ease;">
-    <p style="margin: 0; color: var(--accent); font-size: 1rem; font-weight: 600;">⚖️ إجمالي الشكاوى</p>
-    <h3 id="statCompTotal" style="margin: 15px 0; font-size: 2.5rem; color: var(--accent); font-weight: bold;">0</h3>
-    <small style="color: #666; font-size: 0.85rem;">اضغط للعرض</small>
+    <div class="stat-card" onclick="window.filterByVehicleType('microbus')" style="background: linear-gradient(135deg, rgba(142, 68, 173, 0.15) 0%, rgba(155, 89, 182, 0.15) 100%); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; text-align: center; border: 2px solid #8e44ad; box-shadow: 0 4px 12px rgba(142, 68, 173, 0.15); cursor: pointer; transition: all 0.3s ease;">
+    <p style="margin: 0; color: #8e44ad; font-size: 0.75rem; font-weight: 600;">🚐 ميكروباص</p>
+    <h3 id="statMicrobus" style="margin: 8px 0; font-size: 1.5rem; color: #8e44ad; font-weight: bold;">0</h3>
+    <small style="color: #666; font-size: 0.65rem;">اضغط للعرض</small>
+    </div>
+    <div class="stat-card" onclick="showComplaintsTable()" style="background: linear-gradient(135deg, rgba(211, 84, 0, 0.15) 0%, rgba(186, 74, 0, 0.15) 100%); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; text-align: center; border: 2px solid var(--accent); box-shadow: 0 4px 12px rgba(211, 84, 0, 0.15); cursor: pointer; transition: all 0.3s ease;">
+    <p style="margin: 0; color: var(--accent); font-size: 0.75rem; font-weight: 600;">⚖️ الشكاوى</p>
+    <h3 id="statCompTotal" style="margin: 8px 0; font-size: 1.5rem; color: var(--accent); font-weight: bold;">0</h3>
+    <small style="color: #666; font-size: 0.65rem;">اضغط للعرض</small>
     </div>
     </div>
 
@@ -1424,6 +1430,7 @@
     <button id="showOrdersBtn" class="btn" style="background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🚜 جدول المركبات</button>
     <button id="showComplaintsBtn" class="btn" style="background: linear-gradient(135deg, var(--accent) 0%, #ba4a00 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">⚖️ قائمة الشكاوى</button>
     <button id="showAdminLogsBtn" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; display: none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📜 سجل المشرفين</button>
+    <button id="showAvailableCodesBtn" class="btn" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">🔢 الأكواد المتاحة</button>
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
     <button id="bulkImportBtn" class="btn" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📥 استيراد من Excel</button>
     <button id="exportExcelBtn" class="btn" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color:white; display:none; padding: 10px 18px; font-size: 0.85rem; width: auto !important;">📤 تصدير Excel</button>
@@ -1775,20 +1782,14 @@
     <div id="statusChangeModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
     <div style="background: white; margin: 5% auto; padding: 45px; width: 92%; max-width: 550px; border-radius: 35px; position: relative;">
     <span onclick="document.getElementById('statusChangeModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: var(--danger); font-size: 45px; cursor: pointer;">&times;</span>
-    <h3 style="color: #8e44ad; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">🔄 تغيير حالة الطلب</h3>
+    <h3 style="color: #16a085; font-size: 1.8rem; margin-bottom: 30px; text-align: center;">🏷️ لصق الملصق</h3>
 
-    <div class="input-group">
-    <label style="font-size: 1.1rem; color: #8e44ad;">اختر الحالة الجديدة:</label>
-    <select id="newStatusSelect" style="padding: 18px; border-radius: 12px; border: 3px solid #8e44ad; width: 100%; font-size: 1.1rem; font-weight: 700; color: #8e44ad;">
-    <option value="pending">⏳ قيد المراجعة</option>
-    <option value="approved">✓ تم القبول</option>
-    <option value="coded">✅ تم التكويد</option>
-    <option value="delivered">🎉 تم التسليم</option>
-    </select>
+    <div style="text-align: center; margin: 30px 0;">
+    <p style="font-size: 1.2rem; color: #555; margin-bottom: 20px; font-weight: 600;">هل تم لصق الملصق على المركبة؟</p>
     </div>
 
     <div class="input-group">
-    <label style="font-size: 1.1rem; color: #8e44ad;">ملاحظة (اختياري):</label>
+    <label style="font-size: 1.1rem; color: #16a085;">ملاحظة (اختياري):</label>
     <textarea id="statusNote" rows="3" placeholder="أضف ملاحظة..." style="padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); width: 100%; font-size: 1rem;"></textarea>
     </div>
 
@@ -1802,9 +1803,11 @@
     </div>
 
     <div style="display:flex; gap:15px; margin-top:35px;">
-    <button id="confirmStatusChangeBtn" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white;">✅ تأكيد التغيير</button>
-    <button onclick="document.getElementById('statusChangeModal').style.display='none'" class="btn" style="flex:1; padding:18px; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white;">❌ إلغاء</button>
+    <button id="confirmStickerYesBtn" class="btn" style="flex:1; padding:20px; font-size: 1.3rem; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); color: white; font-weight: bold;">✅ نعم<br><small style="font-size: 0.8rem; font-weight: normal;">تم لصق الملصق</small></button>
+    <button id="confirmStickerNoBtn" class="btn" style="flex:1; padding:20px; font-size: 1.3rem; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; font-weight: bold;">❌ لا<br><small style="font-size: 0.8rem; font-weight: normal;">إلغاء/إزالة الملصق</small></button>
     </div>
+    
+    <button onclick="document.getElementById('statusChangeModal').style.display='none'" class="btn" style="width: 100%; margin-top: 15px; padding:12px; font-size: 1rem; background: #95a5a6; color: white;">إغلاق</button>
     </div>
     </div>
 
@@ -2126,6 +2129,7 @@
     pending: { text: 'قيد المراجعة', color: '#f39c12', icon: '⏳' },
     approved: { text: 'تم القبول', color: '#3498db', icon: '✓' },
     coded: { text: 'تم التكويد', color: '#27ae60', icon: '✅' },
+    sticker_applied: { text: 'تم لصق الملصق', color: '#16a085', icon: '�️' },
     delivered: { text: 'تم التسليم', color: '#16a085', icon: '🎉' }
     };
     return statusMap[status] || statusMap.pending;
@@ -3047,12 +3051,15 @@
     if (userEmail.includes('super') || userEmail === 'admin@kafrsaqr.com') {
         window.userRole = 'SUPER'; // مدير عام
         userRole = 'SUPER';
+        sessionStorage.setItem('userRole', 'SUPER');
     } else if (userEmail.includes('admin')) {
         window.userRole = 'ADMIN'; // مشرف
         userRole = 'ADMIN';
+        sessionStorage.setItem('userRole', 'ADMIN');
     } else {
         window.userRole = 'VIEWER'; // عرض فقط
         userRole = 'VIEWER';
+        sessionStorage.setItem('userRole', 'VIEWER');
     }
 
     window.currentUsername = user.email.split('@')[0];
@@ -3062,6 +3069,7 @@
     sessionStorage.setItem('supabaseSession', JSON.stringify(data.session));
     sessionStorage.setItem('adminRole', userRole);
     sessionStorage.setItem('adminUsername', currentUsername);
+    sessionStorage.setItem('username', currentUsername);
 
     // Hide login modal
     document.getElementById('loginModal').style.display = 'none';
@@ -3362,46 +3370,81 @@
     const currentUsername = sessionStorage.getItem('username') || 'مجهول';
     const id = item.id;
     
+    // Determine background color based on status
+    const bgColor = item.status === 'sticker_applied' ? 'rgba(22, 160, 133, 0.5)' : 'rgba(255, 255, 255, 0.85)';
+    
+    // Debug log for sticker_applied status
+    if (item.status === 'sticker_applied') {
+        console.log(`🟢 صف أخضر: كود ${item.vCode} - ${item.owner} - الحالة: ${item.status}`);
+    }
+    
     if (vehicleType === 'microbus') {
     // Microbus row
     tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:var(--secondary)">${item.licensePlate || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.7rem;">${item.line || item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'};">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'};">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.7rem;">${item.passengerCapacity || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.65rem;">${item.renewalDate || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(39, 174, 96, 0.12); color:#27ae60; padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:600; font-size:0.7rem;">${item.owner}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:bold; font-size:0.75rem; color:var(--secondary)">${item.licensePlate || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-size:0.7rem;">${item.line || item.address || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'};">${item.chassisNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'};">${item.motorNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-size:0.7rem;">${item.passengerCapacity || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-size:0.65rem;">${item.renewalDate || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor};"><button class="btn view-btn" style="background:rgba(39, 174, 96, 0.12); color:#27ae60; padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+    <td style="padding: 3px 2px; background: ${bgColor};">
+    <div style="display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; font-size:0.65rem;">✏️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; font-size:0.65rem;">🗑️</button>
+    </div>
     </td>
     `;
+    
+    // Hide buttons based on role for microbus
+    if (userRole === 'VIEWER') {
+        const editBtn = tr.querySelector('.btn-edit');
+        if (editBtn) editBtn.style.display = 'none';
+    }
+    if (userRole !== 'SUPER') {
+        const delBtn = tr.querySelector('.btn-del');
+        if (delBtn) delBtn.style.display = 'none';
+    }
+    
     } else {
     // Tuktuk row
     const vehicleIdDisplay = item.vCode || '-';
     tr.innerHTML = `
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:600; font-size:0.7rem;">${item.owner}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85);"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
-    <td style="padding: 3px 2px; background: rgba(255, 255, 255, 0.85); display:flex; gap:2px; flex-wrap:wrap;">
-    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔄</button>
-    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">🔢</button>
-    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; display: ${userRole === 'VIEWER' ? 'none' : 'inline-flex'}; font-size:0.65rem;">✏️</button>
-    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; display: ${userRole === 'SUPER' ? 'inline-flex' : 'none'}; font-size:0.65rem;">🗑️</button>
-    <button class="btn btn-log" title="سجل العمليات" style="padding:3px 5px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; font-size:0.65rem;">📋</button>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:600; font-size:0.7rem;">${item.owner}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-family:monospace; font-weight:500; font-size:0.65rem;">${item.nationalId}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:500; font-size:0.65rem;">${item.phone || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:bold; font-size:0.75rem; color:${vehicleIdDisplay !== '-' ? 'var(--secondary)' : 'var(--danger)'}">${vehicleIdDisplay}</td>
+    <td style="padding: 3px 2px; background: ${bgColor};"><span style="background:linear-gradient(135deg, var(--info) 0%, var(--primary) 100%); color:white; padding:2px 4px; border-radius:4px; font-weight:600; font-size:0.65rem;">${item.vType}</span></td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-weight:500; color:#555; font-size:0.65rem;">${item.vYear || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-family:monospace; font-size:0.6rem; color:${item.chassisNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.chassisNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-family:monospace; font-size:0.6rem; color:${item.motorNumber ? '#27ae60' : '#999'}; font-weight:500;">${item.motorNumber || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color:#555; font-size:0.65rem;" title="${item.address || '-'}">${item.address || '-'}</td>
+    <td style="padding: 3px 2px; background: ${bgColor}; font-size:0.6rem; color:#666;">${window.formatDateTime(item.timestamp)}</td>
+    <td style="padding: 3px 2px; background: ${bgColor};"><button class="btn view-btn" style="background:rgba(26, 82, 118, 0.12); color:var(--primary); padding:3px 6px; font-weight:600; font-size:0.6rem;">🖼️ (${item.images ? item.images.length : 0})</button></td>
+    <td style="padding: 3px 2px; background: ${bgColor};">
+    <div style="display:flex; gap:2px; flex-wrap:wrap;">
+    <button class="btn btn-status" title="تغيير الحالة" style="padding:3px 5px; background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; font-size:0.65rem;">🔄</button>
+    <button class="btn btn-code" title="تكويد" style="padding:3px 5px; background: linear-gradient(135deg, var(--info) 0%, #2874a6 100%); color: white; font-size:0.65rem;">🔢</button>
+    <button class="btn btn-edit" title="تعديل" style="padding:3px 5px; background: linear-gradient(135deg, var(--warning) 0%, #d68910 100%); color: white; font-size:0.65rem;">✏️</button>
+    <button class="btn btn-del" title="حذف" style="padding:3px 5px; background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; font-size:0.65rem;">🗑️</button>
+    </div>
     </td>
     `;
+    }
+    
+    // Hide buttons based on role AFTER creating HTML
+    if (userRole === 'VIEWER') {
+        const statusBtn = tr.querySelector('.btn-status');
+        const codeBtn = tr.querySelector('.btn-code');
+        const editBtn = tr.querySelector('.btn-edit');
+        if (statusBtn) statusBtn.style.display = 'none';
+        if (codeBtn) codeBtn.style.display = 'none';
+        if (editBtn) editBtn.style.display = 'none';
+    }
+    if (userRole !== 'SUPER') {
+        const delBtn = tr.querySelector('.btn-del');
+        if (delBtn) delBtn.style.display = 'none';
     }
     
     // Add event listeners for buttons
@@ -3487,20 +3530,12 @@
     };
     }
     
-    const logBtn = tr.querySelector('.btn-log');
-    if (logBtn) {
-    logBtn.onclick = () => {
-    window.showActivityLog(item);
-    };
-    }
-    
     // Tuktuk-specific buttons
     if (vehicleType === 'tuktuk') {
     const statusBtn = tr.querySelector('.btn-status');
     if (statusBtn) {
     statusBtn.onclick = async () => {
     document.getElementById('statusChangeModal').style.display = 'block';
-    document.getElementById('newStatusSelect').value = item.status || 'pending';
     document.getElementById('statusNote').value = '';
     document.getElementById('sendWhatsAppStatus').checked = true;
     window.currentStatusChangeItem = { item, id };
@@ -3583,6 +3618,12 @@
     }
     }
     
+    // Add green background for sticker_applied status
+    if (item.status === 'sticker_applied') {
+    tr.style.background = 'linear-gradient(135deg, rgba(22, 160, 133, 0.25) 0%, rgba(46, 204, 113, 0.25) 100%)';
+    tr.style.borderLeft = '4px solid #16a085';
+    }
+    
     return tr;
     }
     
@@ -3622,15 +3663,31 @@
     const orders = allOrders;
     console.log(`✅ تم تحميل ${orders ? orders.length : 0} سجل من قاعدة البيانات`);
 
-    let total = 0, coded = 0, pending = 0;
+    let total = 0, coded = 0, pending = 0, stickerApplied = 0, tuktukCount = 0, microbusCount = 0;
 
     if (orders && orders.length > 0) {
     orders.forEach(item => {
     total++;
+    
+    // Count vehicle types
+    if (item.license_plate && item.license_plate !== '') {
+    microbusCount++;
+    } else {
+    tuktukCount++;
+    }
+    
+    // Count statuses
     if (item.status === 'coded' || item.status === 'delivered') {
     coded++;
-    } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
+    } else if (item.status === 'sticker_applied') {
+    stickerApplied++;
+    } else if ((item.status === 'pending' || item.status === 'approved' || !item.status) && !item.license_plate) {
+    // قيد الانتظار = توكتوك فقط من المنصة (ref_number يبدأ بـ KS-)
+    // استبعاد المستوردة من Excel (ref_number يبدأ بـ KS-IMP-)
+    const refNum = item.ref_number || '';
+    if (!refNum.includes('IMP')) {
     pending++;
+    }
     }
     });
     }
@@ -3658,6 +3715,12 @@
     images: item.images || [],
     source: 'supabase'
     }));
+
+    // Debug: Log sticker_applied records
+    const stickerAppliedRecords = supabaseOrders.filter(o => o.status === 'sticker_applied');
+    if (stickerAppliedRecords.length > 0) {
+        console.log(`🏷️ وجدت ${stickerAppliedRecords.length} سجل بحالة "تم لصق الملصق":`, stickerAppliedRecords.map(r => `كود ${r.vCode} - ${r.owner}`));
+    }
 
     const combinedOrders = [...supabaseOrders];
 
@@ -3805,9 +3868,11 @@
     console.log('🚀 بدء العرض التدريجي: ' + combinedOrders.length + ' سجل');
     renderNextBatch();
     }; 
-    document.getElementById('statTotal').innerText = total; 
-    document.getElementById('statCoded').innerText = coded; 
+    // Update statistics (only existing cards)
+    document.getElementById('statStickerApplied').innerText = stickerApplied;
     document.getElementById('statPending').innerText = pending;
+    document.getElementById('statTuktuk').innerText = tuktukCount;
+    document.getElementById('statMicrobus').innerText = microbusCount;
 
     console.log('✅ تم تحميل ' + combinedOrders.length + ' سجل بعد إزالة التكرار');
     console.log('🔍 البحث يعمل على كل الـ ' + combinedOrders.length + ' سجل');
@@ -3896,14 +3961,30 @@
     source: 'supabase'
     }));
 
-    let total = 0, coded = 0, pending = 0;
+    let total = 0, coded = 0, pending = 0, stickerApplied = 0, tuktukCount = 0, microbusCount = 0;
 
     allOrders.forEach(item => {
     total++;
+    
+    // Count vehicle types
+    if (item.licensePlate && item.licensePlate !== '') {
+    microbusCount++;
+    } else {
+    tuktukCount++;
+    }
+    
+    // Count statuses
     if (item.status === 'coded' || item.status === 'delivered') {
     coded++;
-    } else if (item.status === 'pending' || item.status === 'approved' || !item.status) {
+    } else if (item.status === 'sticker_applied') {
+    stickerApplied++;
+    } else if ((item.status === 'pending' || item.status === 'approved' || !item.status) && !item.licensePlate) {
+    // قيد الانتظار = توكتوك فقط من المنصة (ref_number يبدأ بـ KS-)
+    // استبعاد المستوردة من Excel (ref_number يبدأ بـ KS-IMP-)
+    const refNum = item.refNumber || '';
+    if (!refNum.includes('IMP')) {
     pending++;
+    }
     }
     });
 
@@ -3925,9 +4006,11 @@
     const tr = window.createTableRow(item, vehicleType);
     ordersArray.push({ element: tr, item: item, id: id });
     });
-    document.getElementById('statTotal').innerText = total;
-    document.getElementById('statCoded').innerText = coded;
+    // Update statistics (only existing cards)
+    document.getElementById('statStickerApplied').innerText = stickerApplied;
     document.getElementById('statPending').innerText = pending;
+    document.getElementById('statTuktuk').innerText = tuktukCount;
+    document.getElementById('statMicrobus').innerText = microbusCount;
     document.getElementById('loadingMoreInfo').style.display = 'none';
 
     initializePagination(ordersArray);
@@ -4265,43 +4348,102 @@
     };
     }
 
-    // Status Change Modal Handler
-    const confirmStatusChangeBtn = document.getElementById('confirmStatusChangeBtn');
-    if (confirmStatusChangeBtn) {
-    confirmStatusChangeBtn.onclick = async () => {
+    // Status Change Modal Handler - YES Button (Apply Sticker)
+    const confirmStickerYesBtn = document.getElementById('confirmStickerYesBtn');
+    if (confirmStickerYesBtn) {
+    confirmStickerYesBtn.onclick = async () => {
     if (!window.currentStatusChangeItem) return;
 
     const { item, id } = window.currentStatusChangeItem;
-    const newStatus = document.getElementById('newStatusSelect').value;
     const note = document.getElementById('statusNote').value.trim();
     const sendWhatsApp = document.getElementById('sendWhatsAppStatus').checked;
+    const userRole = window.userRole || sessionStorage.getItem('userRole') || 'ADMIN';
+    const currentUsername = window.currentUsername || sessionStorage.getItem('username') || 'مجهول';
 
-    const statusNames = {
-    "pending": "قيد المراجعة",
-    "approved": "تم القبول",
-    "coded": "تم التكويد",
-    "delivered": "تم التسليم"
-    };
+    const newStatus = 'sticker_applied';
 
     if (!id) {
     alert("❌ خطأ: معرف الطلب غير موجود");
-    console.error('Missing order ID:', window.currentStatusChangeItem);
     return;
     }
 
     document.getElementById('loadingSpinner').style.display = 'block';
 
     try {
+    // Update only status (status_history column doesn't exist in database)
     const { error: statusError } = await window.supabaseClient
     .from('orders')
     .update({
-    status: newStatus,
-    status_history: [...(item.statusHistory || []), {
-    status: newStatus,
-    timestamp: Date.now(),
-    note: note || "",
-    by: userRole
-    }]
+    status: newStatus
+    })
+    .eq('id', id);
+
+    if (statusError) {
+    console.error('❌ خطأ في تغيير الحالة:', statusError);
+    console.error('❌ تفاصيل الخطأ:', JSON.stringify(statusError, null, 2));
+    console.error('❌ ID:', id);
+    console.error('❌ newStatus:', newStatus);
+    alert(`❌ خطأ في تغيير الحالة:\n${statusError.message || statusError.hint || JSON.stringify(statusError)}`);
+    throw statusError;
+    }
+
+    await logAdminAction(currentUsername, 'لصق ملصق', `تم لصق الملصق على مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
+
+    if (sendWhatsApp && item.phone && item.phone.length === 11) {
+    const message = `🏷️ *تم لصق الملصق!*\n\n` +
+    `👤 السيد/ة: ${item.owner}\n` +
+    `🚜 نوع المركبة: ${item.vType}\n` +
+    `🔢 كود المركبة: ${item.vCode || 'غير مكود'}\n` +
+    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
+    `✅ تم لصق الملصق الجديد على مركبتك\n\n` +
+    `_رئاسة مركز ومدينة كفر صقر_`;
+    const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    }
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    document.getElementById('statusChangeModal').style.display = 'none';
+    alert("✅ تم لصق الملصق بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
+    await loadAdminData();
+    } catch (error) {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    console.error('❌ خطأ:', error);
+    alert(`❌ حدث خطأ: ${error.message}`);
+    }
+    };
+    }
+
+    // Status Change Modal Handler - NO Button (Remove Sticker)
+    const confirmStickerNoBtn = document.getElementById('confirmStickerNoBtn');
+    if (confirmStickerNoBtn) {
+    confirmStickerNoBtn.onclick = async () => {
+    if (!window.currentStatusChangeItem) return;
+
+    const { item, id } = window.currentStatusChangeItem;
+    const note = document.getElementById('statusNote').value.trim();
+    const userRole = window.userRole || sessionStorage.getItem('userRole') || 'ADMIN';
+    const currentUsername = window.currentUsername || sessionStorage.getItem('username') || 'مجهول';
+
+    // إرجاع الحالة إلى "تم التكويد" أو "pending" حسب وجود كود
+    const newStatus = item.vCode ? 'coded' : 'pending';
+
+    if (!id) {
+    alert("❌ خطأ: معرف الطلب غير موجود");
+    return;
+    }
+
+    if (!confirm("⚠️ هل أنت متأكد من إلغاء/إزالة الملصق؟\nسيتم إرجاع الحالة إلى الوضع الطبيعي")) {
+    return;
+    }
+
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+    // Update only status (status_history column doesn't exist in database)
+    const { error: statusError } = await window.supabaseClient
+    .from('orders')
+    .update({
+    status: newStatus
     })
     .eq('id', id);
 
@@ -4310,69 +4452,19 @@
     throw statusError;
     }
 
-    // Log status change action
-    await logAdminAction(currentUsername, 'تغيير حالة', `تم تغيير حالة مركبة ${item.vType} للمالك: ${item.owner} إلى: ${statusNames[newStatus]} (الرقم المرجعي: ${item.refNumber})`);
-
-    // Send WhatsApp notification if checkbox is checked
-    if (sendWhatsApp && item.phone && item.phone.length === 11) {
-    let message = '';
-    const statusName = statusNames[newStatus];
-
-    if (newStatus === 'approved') {
-    message = `✅ *تم قبول طلبك!*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    ` الرقم المرجعي: ${item.refNumber}\n\n` +
-    `✅ الحالة: ${statusName}\n` +
-    `⏳ طلبك قيد التكويد، سيتم التواصل معك قريباً\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    } else if (newStatus === 'delivered') {
-    message = `🎉 *تم تسليم المركبة!*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    `🔢 الكود: ${item.vCode || 'غير متوفر'}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-    `✅ الحالة: ${statusName}\n` +
-    `🎊 شكراً لاستخدامكم منظومة التكويد\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    } else if (newStatus === 'pending') {
-    message = `⏳ *تحديث حالة الطلب*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-    `⏳ الحالة: ${statusName}\n` +
-    `📝 طلبك قيد المراجعة من قبل الإدارة\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    } else if (newStatus === 'coded') {
-    message = `✅ *تم تكويد مركبتك!*\n\n` +
-    `👤 السيد/ة: ${item.owner}\n` +
-    `🚜 نوع المركبة: ${item.vType}\n` +
-    `🔢 الكود: ${item.vCode || 'سيتم إبلاغك قريباً'}\n` +
-    `📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-    `✅ الحالة: ${statusName}\n` +
-    `📞 للاستفسار: 01021102607\n\n` +
-    `_رئاسة مركز ومدينة كفر صقر_`;
-    }
-
-    if (message) {
-    const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    }
-    }
+    await logAdminAction(currentUsername, 'إلغاء ملصق', `تم إلغاء الملصق من مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
 
     document.getElementById('loadingSpinner').style.display = 'none';
     document.getElementById('statusChangeModal').style.display = 'none';
-    alert("✅ تم تحديث الحالة بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-
-    // Reload data to show updated record
+    alert("✅ تم إلغاء الملصق وإرجاع الحالة إلى الوضع الطبيعي");
     await loadAdminData();
-
     } catch (error) {
     document.getElementById('loadingSpinner').style.display = 'none';
-    console.error('❌ خطأ في تغيير الحالة:', error);
-    alert(`❌ حدث خطأ أثناء تغيير الحالة:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+    console.error('❌ خطأ:', error);
+    alert(`❌ حدث خطأ: ${error.message}`);
     }
     };
+    }
 
     const showComplaintsBtn = document.getElementById('showComplaintsBtn');
     if (showComplaintsBtn) {
@@ -4506,7 +4598,6 @@
     );
     };
     }
-    }
 
     // Complaint Reply Modal Handler
     const confirmComplaintReplyBtn = document.getElementById('confirmComplaintReplyBtn');
@@ -4585,6 +4676,48 @@
     };
     }
 
+    const showAvailableCodesBtn = document.getElementById('showAvailableCodesBtn');
+    if (showAvailableCodesBtn) {
+    showAvailableCodesBtn.onclick = () => {
+    showAvailableCodes();
+    };
+    }
+
+    // Show available (unused) codes
+    function showAvailableCodes() {
+    // Get all used codes
+    const usedCodes = new Set();
+    window.allOrdersData.forEach(orderData => {
+    const item = orderData.item;
+    if (item.vCode && item.vCode.trim() !== '') {
+    usedCodes.add(item.vCode.trim());
+    }
+    });
+
+    // Define code range (adjust as needed)
+    const codeStart = 1;
+    const codeEnd = 2500; // Adjust based on your needs
+    const availableCodes = [];
+
+    for (let i = codeStart; i <= codeEnd; i++) {
+    const code = i.toString();
+    if (!usedCodes.has(code)) {
+    availableCodes.push(code);
+    }
+    }
+
+    // Display in modal or alert
+    const message = `🔢 الأكواد المتاحة (غير المستخدمة):\n\n` +
+    `📊 إجمالي الأكواد: ${codeEnd - codeStart + 1}\n` +
+    `✅ المستخدم: ${usedCodes.size}\n` +
+    `🆓 المتاح: ${availableCodes.length}\n\n` +
+    `أول 50 كود متاح:\n${availableCodes.slice(0, 50).join(', ')}` +
+    (availableCodes.length > 50 ? `\n\n... و ${availableCodes.length - 50} كود آخر` : '');
+
+    alert(message);
+    console.log('🔢 جميع الأكواد المتاحة:', availableCodes);
+    }
+
     // Filter functions for stat cards
     function showAllOrders() {
         window.filteredOrdersData = window.allOrdersData;
@@ -4619,10 +4752,27 @@
         if (logsContainer) logsContainer.style.display = 'none';
     }
 
+    function showStickerAppliedOrders() {
+        window.filteredOrdersData = window.allOrdersData.filter(orderData => {
+            const item = orderData.item;
+            return item.status === 'sticker_applied';
+        });
+        window.currentPage = 1;
+        renderCurrentPage();
+        const ordersContainer = document.getElementById('ordersTableContainer');
+        const complaintsContainer = document.getElementById('complaintsTableContainer');
+        const logsContainer = document.getElementById('adminLogsContainer');
+        if (ordersContainer) ordersContainer.style.display = 'block';
+        if (complaintsContainer) complaintsContainer.style.display = 'none';
+        if (logsContainer) logsContainer.style.display = 'none';
+    }
+
     function showPendingOrders() {
         window.filteredOrdersData = window.allOrdersData.filter(orderData => {
             const item = orderData.item;
-            return item.status === 'pending' || item.status === 'approved' || !item.status;
+            // قيد الانتظار = توكتوك فقط من المنصة (استبعاد المستورد من Excel)
+            const refNum = item.refNumber || '';
+            return (item.status === 'pending' || item.status === 'approved' || !item.status) && !item.licensePlate && !refNum.includes('IMP');
         });
         window.currentPage = 1;
         renderCurrentPage();
@@ -4698,6 +4848,7 @@
     // Make functions global
     window.showAllOrders = showAllOrders;
     window.showCodedOrders = showCodedOrders;
+    window.showStickerAppliedOrders = showStickerAppliedOrders;
     window.showPendingOrders = showPendingOrders;
     window.filterByVehicleType = filterByVehicleType;
     window.showComplaintsTable = showComplaintsTable;
