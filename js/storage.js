@@ -285,7 +285,7 @@ resultDiv.style.border = '3px solid var(--danger)';
 resultDiv.innerHTML = `
 <i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
 <h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد بيانات مطابقة</h3>
-<p style="color: #666; font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
+<p class="inquiry-text-muted" style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
 `;
 } else {
 const statusInfo = window.getStatusDisplay(data.status || 'pending');
@@ -293,8 +293,8 @@ const statusInfo = window.getStatusDisplay(data.status || 'pending');
 // Build status history HTML with admin info
 let historyHTML = '';
 if (data.statusHistory && data.statusHistory.length > 0) {
-historyHTML = '<div style="background: white; padding: 25px; border-radius: 20px; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">';
-historyHTML += '<h4 style="color: var(--primary); margin: 0 0 20px 0; font-size: 1.3rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">📋 سجل حالة الطلب</h4>';
+historyHTML = '<div class="inquiry-history-container">';
+historyHTML += '<h4 style="margin: 0 0 20px 0; font-size: 1.3rem;">📋 سجل حالة الطلب</h4>';
 historyHTML += '<div style="position: relative; padding-right: 30px;">';
 
 data.statusHistory.forEach((log, index) => {
@@ -318,17 +318,17 @@ const isLast = index === data.statusHistory.length - 1;
 
         historyHTML += `
 <div style="position: relative; margin-bottom: ${isLast ? '0' : '25px'};">
-<div style="position: absolute; right: -30px; top: 5px; width: 18px; height: 18px; background: ${logStatusInfo.color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 2;"></div>
-${!isLast ? '<div style="position: absolute; right: -21px; top: 23px; width: 2px; height: calc(100% + 25px); background: #ddd; z-index: 1;"></div>' : ''}
-<div style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,250,250,0.95) 100%); padding: 18px; border-radius: 12px; border-right: 4px solid ${logStatusInfo.color}; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+<div style="position: absolute; right: -30px; top: 5px; width: 18px; height: 18px; background: ${logStatusInfo.color}; border-radius: 50%; border: 3px solid var(--bg2); box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 2;"></div>
+${!isLast ? '<div style="position: absolute; right: -21px; top: 23px; width: 2px; height: calc(100% + 25px); background: var(--border2); z-index: 1;"></div>' : ''}
+<div class="inquiry-history-item" style="border-right: 4px solid ${logStatusInfo.color};">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
 <span style="background: ${logStatusInfo.color}; color: white; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 0.95rem;">${logStatusInfo.icon} ${logStatusInfo.text}</span>
 ${adminInfo}
 </div>
-<span style="color: #999; font-size: 0.85rem; font-weight: 600;">${window.formatDateTime(log.timestamp)}</span>
+<span class="inquiry-text-muted" style="font-size: 0.85rem; font-weight: 600;">${window.formatDateTime(log.timestamp)}</span>
 </div>
-${log.note ? `<p style="margin: 10px 0 0 0; color: #555; line-height: 1.6; font-size: 0.95rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 8px;">💬 ${sanitizeText(log.note)}</p>` : ''}
+${log.note ? `<p style="margin: 10px 0 0 0; line-height: 1.6; font-size: 0.95rem;">💬 ${sanitizeText(log.note)}</p>` : ''}
 </div>
 </div>
 `;
@@ -354,26 +354,26 @@ resultDiv.innerHTML = `
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+<div class="inquiry-card" style="text-align: center;">
+<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
 </div>
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
-</div>
-
+<div class="inquiry-card" style="text-align: center;">
+<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
 </div>
 
-<div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+</div>
+
+<div class="inquiry-card">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
-<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
-<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
+<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
 </div>
 <div>
-<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التكويد</p>
-<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.codedAt)}</p>
+<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التكويد</p>
+<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.codedAt)}</p>
 </div>
 </div>
 </div>
@@ -403,26 +403,26 @@ resultDiv.innerHTML = `
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+<div class="inquiry-card" style="text-align: center;">
+<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
 </div>
-<div style="background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-<p style="color: #999; font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p style="color: var(--primary); font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
-</div>
-
+<div class="inquiry-card" style="text-align: center;">
+<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
 </div>
 
-<div style="background: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+</div>
+
+<div class="inquiry-card">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
-<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
-<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
+<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
 </div>
 <div>
-<p style="color: #999; font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التسجيل</p>
-<p style="color: var(--primary); font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.timestamp)}</p>
+<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التسجيل</p>
+<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.timestamp)}</p>
 </div>
 </div>
 </div>
@@ -597,7 +597,7 @@ resultDiv.innerHTML = `
 <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); padding: 40px; border-radius: 25px; text-align: center; border: 3px solid var(--danger);">
 <i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
 <h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد شكاوى مطابقة</h3>
-<p style="color: #666; font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
+<p class="inquiry-text-muted" style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
 </div>
 `;
 } else {
@@ -605,7 +605,7 @@ let complaintsHTML = '';
 complaints.forEach((data) => {
 const statusColor = data.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
 const statusText = data.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
-const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.15)' : 'rgba(243, 156, 18, 0.15)';
+const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.08)' : 'rgba(243, 156, 18, 0.08)';
 
 complaintsHTML += `
 <div style="background: linear-gradient(135deg, ${statusBg} 0%, ${statusBg} 100%); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 3px solid ${statusColor};">
@@ -613,10 +613,10 @@ complaintsHTML += `
 <h3 style="color: ${statusColor}; margin: 0; font-size: 1.5rem;">${sanitizeText(data.complaint_type) || 'شكوى'}</h3>
 <span style="background: ${statusColor}; color: white; padding: 8px 16px; border-radius: 10px; font-weight: bold;">${statusText}</span>
 </div>
-<div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
-<p style="color: #666; margin: 0; line-height: 1.8;"><strong style="color: var(--primary);">التفاصيل:</strong><br>${sanitizeText(data.details) || 'لا توجد تفاصيل'}</p>
+<div class="inquiry-subcard" style="margin-bottom: 15px; padding: 16px 20px;">
+<p class="inquiry-text-primary" style="margin: 0; line-height: 1.8;"><strong style="color: var(--gold);">التفاصيل:</strong><br>${sanitizeText(data.details) || 'لا توجد تفاصيل'}</p>
 </div>
-<p style="color: #666; font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.submitted_at)}</p>
+<p class="inquiry-text-muted" style="font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.submitted_at)}</p>
 ${data.images ? `
 <div style="margin: 15px 0;">
 <button class="btn btn-view-inquiry-images" data-id="${sanitizeText(data.id)}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
@@ -625,7 +625,7 @@ ${data.images ? `
 ${data.status === 'replied' && data.reply ? `
 <div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--secondary); margin-top: 15px;">
 <p style="color: var(--secondary); margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem;">💬 الرد من الإدارة:</p>
-<p style="color: #555; margin: 0; line-height: 1.8;">${sanitizeText(data.reply)}</p>
+<p class="inquiry-text-primary" style="margin: 0; line-height: 1.8;">${sanitizeText(data.reply)}</p>
 </div>
 ` : `
 <div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px;">
@@ -638,7 +638,7 @@ ${data.status === 'replied' && data.reply ? `
 
 resultDiv.style.display = 'block';
 resultDiv.innerHTML = `
-<h3 style="text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${complaints.length})</h3>
+<h3 style="text-align: center; color: var(--text); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${complaints.length})</h3>
 ${complaintsHTML}
 `;
 

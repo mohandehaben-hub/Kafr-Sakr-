@@ -1,4 +1,4 @@
-﻿
+
 /* ═══════════════════════════════════════════════════════════
    منظومة تقنين المركبات - كفر صقر
    Dark Government Theme v5.0
@@ -871,6 +871,7 @@ table tr.sticker-applied td { background:rgba(46,204,113,0.08); border-right:3px
 .portal-box:hover::before { transform:scaleX(1); }
 .portal-box:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); border-color:var(--gold-border); background:var(--bg3); }
 .portal-box img { animation:float 3s ease-in-out infinite; margin-bottom:12px; }
+.portal-box-text { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .portal-box h2 { font-size:1rem; font-weight:800; color:var(--text); margin:0 0 6px; }
 .portal-box p  { font-size:0.74rem; color:var(--text2); line-height:1.5; margin:0; }
 
@@ -993,7 +994,7 @@ body.admin-mode .fab-button { display:none !important; }
 }
 @media (max-width:768px) {
   :root { --h-header:50px; --h-leaders:70px; --h-total:120px; }
-  body { padding-top:120px; }
+  body { padding-top:50px; }
   body.admin-mode { padding-top:54px; }
 
   /* ── Mobile Sidebar: slide-in from right ── */
@@ -1043,24 +1044,92 @@ body.admin-mode .fab-button { display:none !important; }
   .header-title small { font-size: 0.52rem; }
   .btn-header { padding: 4px 8px; font-size: 0.68rem; }
 
-  /* ── Leadership ── */
-  #leadershipSection { gap: 10px; padding: 0 10px; }
+  /* ── Leadership (Static scrolling to save viewport height) ── */
+  #leadershipSection {
+    position: static;
+    height: auto;
+    padding: 12px 10px;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: auto;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--gold-border);
+    box-shadow: none;
+    gap: 10px;
+  }
   .leadership-item img { width: 38px; height: 38px; }
   .leader-name { font-size: 0.46rem; }
   .leader-title { font-size: 0.4rem; }
 
-  /* ── Portal ── */
+  /* ── Portal (Horizontal list cards on mobile) ── */
   #portalSection > h2 { font-size: 1.3rem; }
-  .portal-container { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .portal-box { min-height: 150px; padding: 18px 10px; }
-  .portal-box h2 { font-size: 0.85rem; }
-  .portal-box p  { font-size: 0.68rem; }
+  .portal-container { grid-template-columns: 1fr; gap: 12px; }
+  .portal-box {
+    flex-direction: row;
+    text-align: right;
+    justify-content: flex-start;
+    padding: 16px 20px;
+    min-height: auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .portal-box img {
+    width: 56px !important;
+    height: 56px !important;
+    margin-bottom: 0 !important;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .portal-box-text {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: right;
+    flex: 1;
+    min-width: 0;
+  }
+  .portal-box h2 {
+    font-size: 1.1rem !important;
+    margin: 0 0 4px 0 !important;
+    font-weight: 800;
+  }
+  .portal-box p {
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+  }
 
   /* ── Cards & Forms ── */
   .card { padding: 16px 14px; }
   .form-grid { grid-template-columns: 1fr; gap: 10px; }
   .form-grid-2 { grid-template-columns: 1fr; }
-  .vehicle-grid { grid-template-columns: 1fr 1fr; }
+  
+  /* ── Vehicle Selection Grid (Horizontal cards) ── */
+  .vehicle-grid { grid-template-columns: 1fr; gap: 12px; }
+  .vehicle-card-pro {
+    display: flex;
+    flex-direction: row;
+    text-align: right;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 16px;
+    min-height: auto;
+  }
+  .vehicle-card-pro img {
+    width: 60px !important;
+    height: 60px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0;
+  }
+  .vehicle-card-pro h3 {
+    font-size: 1.1rem;
+    margin: 0 0 4px 0;
+  }
+  .vehicle-card-pro p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
 
   /* ── Tables ── */
   table { font-size: 0.65rem; }
@@ -1079,9 +1148,10 @@ body.admin-mode .fab-button { display:none !important; }
 }
 
 @media (max-width: 380px) {
-  .portal-container { gap: 8px; }
-  .portal-box { min-height: 130px; padding: 12px 8px; }
-  .vehicle-grid { grid-template-columns: 1fr; }
+  .portal-box { padding: 12px 14px; gap: 12px; }
+  .portal-box img { width: 48px !important; height: 48px !important; }
+  .portal-box h2 { font-size: 0.95rem !important; }
+  .portal-box p { font-size: 0.72rem !important; }
   .search-bar { flex-wrap: wrap; }
   .search-select { max-width: 100%; }
 }
@@ -1195,6 +1265,58 @@ table tr.row-microbus td:first-child { border-right:3px solid var(--blue); }
 /* Vehicle type badges — single definition */
 .badge-tuktuk  { background:var(--gold-bg);  color:var(--gold); padding:2px 8px; border-radius:20px; font-size:0.65rem; font-weight:700; border:1px solid var(--gold-border); white-space:nowrap; }
 .badge-microbus { background:var(--blue-bg); color:var(--blue); padding:2px 8px; border-radius:20px; font-size:0.65rem; font-weight:700; border:1px solid rgba(52,152,219,0.3); white-space:nowrap; }
+
+/* Inquiry Results Theme Consistency */
+.inquiry-card {
+  background: var(--bg3) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border2) !important;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--shadow-sm);
+}
+.inquiry-subcard {
+  background: var(--bg2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border2) !important;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--shadow-sm);
+}
+.inquiry-text-primary {
+  color: var(--text) !important;
+}
+.inquiry-text-muted {
+  color: var(--text2) !important;
+}
+.inquiry-history-container {
+  background: var(--bg2) !important;
+  padding: 25px;
+  border-radius: 20px;
+  margin: 25px 0;
+  border: 1px solid var(--gold-border) !important;
+  box-shadow: var(--shadow-md);
+  color: var(--text) !important;
+}
+.inquiry-history-container h4 {
+  color: var(--gold) !important;
+  border-bottom: 2px solid var(--gold-border) !important;
+  padding-bottom: 10px;
+}
+.inquiry-history-item {
+  background: var(--bg3) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border2) !important;
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  border-radius: 12px;
+}
+.inquiry-history-item p {
+  color: var(--text2) !important;
+  background: var(--bg4) !important;
+  padding: 10px;
+  border-radius: 8px;
+}
 
 /* ══════════════════════════════════════════════════════════
    PRINT STYLES - طباعة نظيفة ورسمية
