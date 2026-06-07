@@ -1,7 +1,7 @@
 // config.js - إعدادات قاعدة البيانات
 
 const SUPABASE_URL = window.SUPABASE_URL || 'https://xlieswavjjgqsnczesct.supabase.co';
-const SUPABASE_KEY = window.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsaWVzd2F2ampncXNuY3plc2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDY3ODMsImV4cCI6MjA4NjkyMjc4M30.B5UvhsGQ80h86pOTFa9Yd9YOjK1DaY-8KPN1mtLBRbk';
+const SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl';
 
 // Initialize Supabase Client
 (function() {
