@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Local Environment Config for Vanilla JS
+js/env.js
+
+# Dependencies
+node_modules/
+
+# AI and IDE metadata
+.gemini/
+brain/
+scratch/
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
