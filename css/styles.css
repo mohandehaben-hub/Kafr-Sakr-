@@ -1379,3 +1379,163 @@ table tr.row-microbus td:first-child { border-right:3px solid var(--blue); }
   * { color: black !important; background: white !important; }
   h2, h3, strong { color: #000 !important; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   ACCESSIBILITY - إمكانية الوصول
+══════════════════════════════════════════════════════════ */
+
+/* Skip Navigation Link */
+.skip-nav {
+  position: absolute;
+  top: -100px;
+  right: 0;
+  background: var(--gold);
+  color: var(--primary);
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 1rem;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  z-index: 99999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+  font-family: 'Cairo', sans-serif;
+}
+.skip-nav:focus {
+  top: 0;
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Improved Focus Styles for Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15);
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .portal-box, .vehicle-card-pro, .card {
+    border: 2px solid ButtonText;
+  }
+  .btn {
+    border: 2px solid ButtonText;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PERFORMANCE OPTIMIZATION
+══════════════════════════════════════════════════════════ */
+img {
+  content-visibility: auto;
+}
+
+/* Responsive images */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE EXTRA IMPROVEMENTS - تحسينات إضافية للموبايل
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Better touch targets - minimum 44×44px */
+  .btn, button, .portal-box, a[role="button"] {
+    min-height: 44px;
+  }
+
+  /* Portal title: better size on very small screens */
+  #portalSection > h2 {
+    font-size: 1.15rem !important;
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
+    padding: 0 10px;
+    line-height: 1.4;
+  }
+
+  /* Better spacing between sections on mobile */
+  #portalSection {
+    padding-bottom: 80px;
+  }
+
+  /* Make portal boxes easier to tap */
+  .portal-box {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(201, 168, 76, 0.2);
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  /* Better input sizing on mobile */
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+
+  /* Prevent horizontal scroll from large elements */
+  main.container, .container {
+    overflow-x: hidden;
+  }
+
+  /* Better modal sizing on small screens */
+  .modal-inner, #editModal > div,
+  #bulkImportModal > div,
+  #codeModal > div {
+    margin: 2% auto !important;
+    width: 96% !important;
+    max-height: 96vh;
+    overflow-y: auto;
+    padding: 20px 16px !important;
+  }
+
+  /* Toast notifications - better mobile position */
+  #toastContainer {
+    bottom: 70px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Very small screens */
+  .header-title h1 {
+    font-size: 0.65rem !important;
+  }
+
+  .portal-box h2 {
+    font-size: 0.95rem !important;
+  }
+
+  /* Stats cards: 2-col on very small */
+  .stats-dashboard-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Better table scroll on mobile */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--r-md);
+  }
+}
