@@ -47,8 +47,7 @@
 
 </head>
 <body>
-<!-- Skip Navigation Link for Accessibility -->
-<a href="#mainContent" class="skip-nav" tabindex="1">الانتقال إلى المحتوى الرئيسي</a>
+
 
 <!-- 3D Floating Orbs -->
 <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(0,184,148,0.3),transparent);top:-100px;right:-100px;animation-delay:0s;"></div>
@@ -127,7 +126,7 @@
 <div class="flag-stripe"></div>
 
 <!-- Main Container -->
-<main id="mainContent" class="container">
+<div class="container">
 
 <!-- Portal Section -->
 <div id="portalSection">
@@ -666,7 +665,7 @@
 <!-- Modal for Images -->
 <div id="imgModal" style="display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(15px); overflow-y: auto;">
 <span onclick="document.getElementById('imgModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: white; font-size: 45px; cursor: pointer; z-index: 10001;">&times;</span>
-<img id="mainViewImg" alt="صورة مستند المعاينة" style="max-width:90%; max-height:80vh; display:block; margin:80px auto 30px; border:8px solid white; border-radius:25px;">
+<img id="mainViewImg" style="max-width:90%; max-height:80vh; display:block; margin:80px auto 30px; border:8px solid white; border-radius:25px;">
 <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 15px; padding: 25px; flex-wrap: wrap;"></div>
 </div>
 
@@ -1348,7 +1347,7 @@ window.updateSidebarBadges = function(newReqs, complaints) {
       </span>
     </div>
   </div>
-</main>
+</div>
 
 </body>
 </html>
