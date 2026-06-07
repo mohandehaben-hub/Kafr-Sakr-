@@ -43,7 +43,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/fa.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
-<link rel="stylesheet" href="css/styles.css?v=5.3">
+<link rel="stylesheet" href="css/styles.css?v=6.0">
 
 </head>
 <body>
@@ -130,17 +130,13 @@
 
 <!-- Portal Section -->
 <div id="portalSection">
-<h2 style="text-align: center; color: white; margin-top: 50px; margin-bottom: 15px; font-size: 2.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-أهلاً بك في بوابة الخدمات الرقمية المتطورة
-</h2>
-<p style="text-align: center; color: rgba(255,255,255,0.9); margin-bottom: 50px; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-يرجى اختيار القسم الذي ترغب في الدخول إليه
-</p>
+<h2>أهلاً بك في بوابة الخدمات الرقمية</h2>
+<p>يرجى اختيار القسم الذي ترغب في الدخول إليه</p>
 
 <div class="portal-container">
 <!-- Tuk Tuk Coding Portal -->
-<div class="portal-box" onclick="openService('citizenPage')" style="border-bottom: 4px solid var(--info);">
-<img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" style="width: 110px; height: 90px; object-fit: contain; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); animation: float 3s ease-in-out infinite; animation-delay: 1.5s;" alt="توكتوك">
+<div class="portal-box portal-box--blue" onclick="openService('citizenPage')">
+<img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="portal-icon portal-icon--rounded" alt="توكتوك" loading="lazy">
 <div class="portal-box-text">
 <h2 style="color: var(--info);">تقنين التوكتوك</h2>
 <p>تسجيل بيانات التوكتوك بالمنظومة الذكية</p>
@@ -148,17 +144,17 @@
 </div>
 
 <!-- Inquiry Portal -->
-<div class="portal-box" onclick="openService('inquiryPage')" style="border-bottom: 4px solid var(--secondary);">
-<img src="https://img.icons8.com/fluency/96/search.png" style="width: 90px; height: 90px; object-fit: contain; margin-bottom: 15px; animation: float 3s ease-in-out infinite;" alt="استعلام">
+<div class="portal-box portal-box--green" onclick="openService('inquiryPage')">
+<img src="https://img.icons8.com/fluency/96/search.png" class="portal-icon" alt="استعلام" loading="lazy">
 <div class="portal-box-text">
-<h2 style="color: var(--secondary);">استعلام عن حالة الطلب</h2>
+<h2 style="color: var(--secondary);">استعلام عن الطلب</h2>
 <p>تحقق من حالة طلبك ومعرفة الكود الخاص بمركبتك</p>
 </div>
 </div>
 
 <!-- Complaints Portal -->
-<div class="portal-box" onclick="openService('complaintsPage')" style="border-bottom: 4px solid var(--accent);">
-<img src="https://img.icons8.com/fluency/96/complaint.png" style="width: 90px; height: 90px; object-fit: contain; margin-bottom: 15px; animation: float 3s ease-in-out infinite; animation-delay: 0.5s;" alt="شكوى">
+<div class="portal-box portal-box--gold" onclick="openService('complaintsPage')">
+<img src="https://img.icons8.com/fluency/96/complaint.png" class="portal-icon" alt="شكوى" loading="lazy" style="animation-delay:0.5s;">
 <div class="portal-box-text">
 <h2 style="color: var(--accent);">تقديم شكوى</h2>
 <p>تقديم الشكاوى والبلاغات مع التوثيق الكامل</p>
@@ -166,8 +162,8 @@
 </div>
 
 <!-- Complaint Inquiry Portal -->
-<div class="portal-box" onclick="openService('complaintInquiryPage')" style="border-bottom: 4px solid var(--warning);">
-<img src="https://img.icons8.com/fluency/96/clipboard.png" style="width: 90px; height: 90px; object-fit: contain; margin-bottom: 15px; animation: float 3s ease-in-out infinite; animation-delay: 1s;" alt="استعلام شكوى">
+<div class="portal-box portal-box--orange" onclick="openService('complaintInquiryPage')">
+<img src="https://img.icons8.com/fluency/96/clipboard.png" class="portal-icon" alt="استعلام شكوى" loading="lazy" style="animation-delay:1s;">
 <div class="portal-box-text">
 <h2 style="color: var(--warning);">استعلام عن الشكوى</h2>
 <p>تابع حالة شكواك واطلع على الرد</p>
@@ -176,20 +172,21 @@
 </div>
 
 <!-- Contact Buttons -->
+<div class="whatsapp-section-label">
+  <i class="ri-whatsapp-line" style="color:#25D366;font-size:1rem;"></i>
+  تواصل معنا مباشرة عبر واتساب
+</div>
 <div class="whatsapp-btns">
-<a href="https://wa.me/201000385098?text=مرحباً، أحتاج للمساعدة" target="_blank" title="تواصل واتساب - 1">
-<button class="whatsapp-btn"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">1</span></button>
+<a href="https://wa.me/201000385098?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 1">
+<button class="whatsapp-btn" aria-label="واتساب 1"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">1</span></button>
 </a>
-<a href="https://wa.me/201008206884?text=مرحباً، أحتاج للمساعدة" target="_blank" title="تواصل واتساب - 2">
-<button class="whatsapp-btn"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">2</span></button>
+<a href="https://wa.me/201008206884?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 2">
+<button class="whatsapp-btn" aria-label="واتساب 2"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">2</span></button>
 </a>
-<a href="https://wa.me/201026182272?text=مرحباً، أحتاج للمساعدة" target="_blank" title="تواصل واتساب - 3">
-<button class="whatsapp-btn"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">3</span></button>
+<a href="https://wa.me/201026182272?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 3">
+<button class="whatsapp-btn" aria-label="واتساب 3"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">3</span></button>
 </a>
 </div>
-
-<p style="text-align: center; color: rgba(255,255,255,0.9); margin-top: 10px; margin-bottom: 30px; font-size: 1rem;">
-</p>
 </div>
 
 <!-- Citizen Page (Tuk Tuk Registration) -->
