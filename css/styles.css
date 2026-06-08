@@ -1578,11 +1578,11 @@ img, video {
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
 
-/* Portal box color accents */
-.portal-box--blue  { border-bottom: 3px solid var(--blue); }
-.portal-box--green { border-bottom: 3px solid var(--green); }
-.portal-box--gold  { border-bottom: 3px solid var(--gold); }
-.portal-box--orange{ border-bottom: 3px solid var(--orange); }
+/* Portal box color accents — unified gold */
+.portal-box--blue,
+.portal-box--green,
+.portal-box--gold,
+.portal-box--orange { border-bottom: 3px solid var(--gold); }
 
 /* Mobile: portal icon override */
 @media (max-width: 768px) {
