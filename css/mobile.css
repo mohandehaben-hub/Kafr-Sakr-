@@ -1,166 +1,124 @@
 /* ═══════════════════════════════════════════════════════════
-   منظومة كفر صقر — Mobile-First App Design v1.0
-   يتم تحميله بعد styles.css ويُعيد ضبط كل العناصر للموبايل
+   منظومة كفر صقر — Mobile App Design v2.0
+   Geometric | Clean | Professional Government App
    ═══════════════════════════════════════════════════════════ */
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE VARIABLES OVERRIDE
+   ROOT — Mobile Variables
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   :root {
-    --h-header:   52px;
-    --h-leaders:  50px;
-    --h-total:    102px;
-    --app-bottom-nav: 64px;
-    --r-sm: 10px;
-    --r-md: 14px;
-    --r-lg: 18px;
+    --h-header:        50px;
+    --h-leaders:       0px;   /* مخفي كلياً */
+    --h-total:         50px;
+    --app-bottom-nav:  62px;
+    --mob-padding:     14px;
+    --mob-radius:      14px;
+    --mob-gap:         10px;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   BODY — تقليل المسافات وإضافة مساحة للـ Bottom Nav
+   BODY
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   body {
-    padding-top: 102px !important;
-    padding-bottom: 74px !important;
+    padding-top: 50px !important;
+    padding-bottom: 70px !important;
+    background: #0b1120 !important;
   }
   body.admin-mode {
-    padding-top: 52px !important;
+    padding-top: 50px !important;
     padding-bottom: 0 !important;
   }
-
-  /* إخفاء الـ orbs على الموبايل لتحسين الأداء */
-  .orb { display: none !important; }
+  /* إزالة الـ decorative elements */
+  .orb,
+  body::before { display: none !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   HEADER — مضغوط واحترافي
+   HEADER — شريط علوي نظيف 50px
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   header {
-    height: 52px !important;
+    height: 50px !important;
     background: #0d1523 !important;
-    border-bottom: 1.5px solid rgba(201,168,76,0.2) !important;
+    border-bottom: 1px solid rgba(201,168,76,0.18) !important;
+    box-shadow: 0 1px 12px rgba(0,0,0,0.5) !important;
   }
   header > div {
-    padding: 0 12px !important;
-    gap: 8px !important;
+    padding: 0 14px !important;
+    gap: 10px !important;
   }
-  .header-logos {
-    gap: 5px !important;
-  }
+  .header-logos { gap: 6px !important; }
   .header-logos img {
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 5px !important;
-    border-width: 1px !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    border-width: 1.5px !important;
   }
   .header-title h1 {
-    font-size: 0.7rem !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0 !important;
   }
-  .header-title small {
-    font-size: 0.52rem !important;
-    display: none !important; /* مخفي — يظهر في الـ leadership bar */
-  }
-  /* إخفاء زر التحكم من الهيدر — موجود في الـ Bottom Nav */
-  #loginBtn, #headerAdminBtn {
-    display: none !important;
-  }
-  .header-actions {
-    display: none !important;
-  }
+  .header-title small { display: none !important; }
+  /* إخفاء أزرار الهيدر — موجودة في Bottom Nav */
+  .header-actions,
+  #loginBtn,
+  #headerAdminBtn { display: none !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   LEADERSHIP BAR — مضغوط ونظيف
+   LEADERSHIP BAR — محذوف كلياً على الموبايل
+   (ده ياخد مساحة كبيرة ومش ضروري على الموبايل)
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #leadershipSection {
-    height: 50px !important;
-    top: 52px !important;
-    gap: 10px !important;
-    padding: 0 12px !important;
-    background: rgba(9,15,32,0.98) !important;
-    border-bottom: 1px solid rgba(201,168,76,0.15) !important;
-  }
-  .leadership-item {
-    gap: 5px !important;
-    padding: 0 6px !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    min-width: unset !important;
-    border-right: none !important;
-    border-left: 1px solid rgba(255,255,255,0.07) !important;
-  }
-  .leadership-item:first-child {
-    border-left: none !important;
-  }
-  .leadership-item img {
-    width: 28px !important;
-    height: 28px !important;
-    border-width: 1.5px !important;
-  }
-  .leader-name {
-    font-size: 0.6rem !important;
-    font-weight: 700 !important;
-    display: none !important; /* الاسم مخفي — التصغير الشديد */
-  }
-  .leader-title {
-    font-size: 0.5rem !important;
     display: none !important;
   }
-}
-
-/* ══════════════════════════════════════════════════════════
-   FLAG STRIPE
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
   .flag-stripe {
-    top: 102px !important;
+    top: 50px !important;
     height: 3px !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   FAB BUTTONS — إخفاء القديمة واستبدالها بالـ Bottom Nav
+   FAB — إخفاء الـ FAB القديمة
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .fab-button {
-    display: none !important;
-  }
-  /* زر رجوع للـ Admin يفضل ظاهر */
+  .fab-button { display: none !important; }
   .fab-back-admin-btn {
-    bottom: calc(var(--app-bottom-nav) + 12px) !important;
+    bottom: calc(var(--app-bottom-nav) + 10px) !important;
+    z-index: 1100 !important;
+    width: 42px !important;
+    height: 42px !important;
+  }
+  .fab-sidebar-btn {
+    bottom: calc(var(--app-bottom-nav) + 10px) !important;
+    right: 14px !important;
+    width: 42px !important;
+    height: 42px !important;
     z-index: 1100 !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   BOTTOM NAVIGATION BAR — التنقل السفلي
+   BOTTOM NAVIGATION — شريط تنقل سفلي احترافي
 ══════════════════════════════════════════════════════════ */
-#appBottomNav {
-  display: none; /* مخفي على desktop */
-}
+#appBottomNav { display: none; }
 
 @media (max-width: 768px) {
   #appBottomNav {
     display: flex !important;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: #0a1020;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    bottom: 0; left: 0; right: 0;
+    height: var(--app-bottom-nav);
+    background: #080f1e;
+    border-top: 1px solid rgba(255,255,255,0.06);
     z-index: 1050;
     align-items: stretch;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.6);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -6px 30px rgba(0,0,0,0.7);
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   .bnav-item {
@@ -169,286 +127,330 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    cursor: pointer;
-    position: relative;
+    gap: 2px;
     background: none;
     border: none;
-    color: #5a6b8a;
+    color: #3d4f6a;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.58rem;
-    font-weight: 600;
+    font-size: 0.55rem;
+    font-weight: 700;
     padding: 0;
-    transition: color 0.2s ease;
+    cursor: pointer;
+    position: relative;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     user-select: none;
     text-decoration: none;
+    transition: color 0.2s;
   }
-
   .bnav-item i {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     line-height: 1;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform 0.2s, color 0.2s;
   }
+  .bnav-item span { font-size: 0.55rem; }
 
-  .bnav-item span {
-    line-height: 1;
-    font-size: 0.58rem;
-  }
-
-  /* Active state */
-  .bnav-item.active {
-    color: #c9a84c;
-  }
+  /* Active */
+  .bnav-item.active { color: #c9a84c; }
   .bnav-item.active i {
-    transform: translateY(-2px);
     color: #c9a84c;
-    filter: drop-shadow(0 0 6px rgba(201,168,76,0.5));
+    transform: translateY(-1px);
+    filter: drop-shadow(0 0 5px rgba(201,168,76,0.45));
   }
-
-  /* Active indicator dot */
   .bnav-item.active::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    bottom: 0; left: 50%;
     transform: translateX(-50%);
-    width: 28px;
-    height: 3px;
+    width: 24px; height: 2.5px;
     background: #c9a84c;
-    border-radius: 3px 3px 0 0;
+    border-radius: 2px 2px 0 0;
   }
+  .bnav-item:active { background: rgba(255,255,255,0.03); }
 
-  /* Hover on mobile (touch feedback) */
-  .bnav-item:active {
-    background: rgba(201,168,76,0.06);
-  }
-
-  /* زر "دخول" — لون مختلف */
-  .bnav-item.bnav-login {
-    color: #4a7fb5;
-  }
-  .bnav-item.bnav-login.active {
-    color: #3498db;
-  }
-  .bnav-item.bnav-login.active i {
-    color: #3498db;
-    filter: drop-shadow(0 0 6px rgba(52,152,219,0.5));
-  }
-  .bnav-item.bnav-login.active::after {
-    background: #3498db;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
-   PORTAL SECTION — البوابة الرئيسية
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  #portalSection > h2 {
-    font-size: 1rem !important;
-    margin: 16px 0 6px !important;
-    padding: 0 12px !important;
-  }
-  #portalSection > p {
-    font-size: 0.78rem !important;
-    margin-bottom: 14px !important;
-    padding: 0 12px !important;
-  }
-
-  .portal-container {
-    gap: 10px !important;
-    padding: 0 12px !important;
-  }
-
-  .portal-box {
-    padding: 12px 14px !important;
-    border-radius: 14px !important;
-    min-height: unset !important;
-    flex-direction: row !important;
-    gap: 12px !important;
-    align-items: center !important;
-  }
-
-  .portal-box-text h2 {
-    font-size: 0.9rem !important;
-    margin-bottom: 2px !important;
-  }
-  .portal-box-text p {
-    font-size: 0.72rem !important;
-    line-height: 1.4 !important;
-  }
-
-  /* WhatsApp section */
-  .whatsapp-section-label {
-    font-size: 0.78rem !important;
-    margin: 14px 12px 8px !important;
-  }
-  .whatsapp-btns {
-    margin: 0 12px 12px !important;
-    gap: 10px !important;
-  }
-  .whatsapp-btn {
-    width: 46px !important;
-    height: 46px !important;
-  }
+  /* Login special */
+  .bnav-item.bnav-login { color: #2d4a7a; }
+  .bnav-item.bnav-login.active { color: #3498db; }
+  .bnav-item.bnav-login.active i { color: #3498db; filter: drop-shadow(0 0 5px rgba(52,152,219,0.4)); }
+  .bnav-item.bnav-login.active::after { background: #3498db; }
 }
 
 /* ══════════════════════════════════════════════════════════
    CONTAINER
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .container {
+  .container { padding: 0 !important; max-width: 100% !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PORTAL SECTION — البوابة الرئيسية
+   تصميم هندسي نظيف: قائمة عمودية واضحة
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #portalSection {
+    padding: 14px var(--mob-padding) 0 !important;
+  }
+
+  /* العنوان والوصف */
+  #portalSection > h2 {
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 4px !important;
     padding: 0 !important;
-    max-width: 100% !important;
+    text-align: center !important;
+  }
+  #portalSection > p {
+    font-size: 0.72rem !important;
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    color: var(--text3) !important;
+  }
+
+  /* شبكة البطاقات — grid 2 أعمدة */
+  .portal-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  /* بطاقة الخدمة — تصميم هندسي مربع */
+  .portal-box {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 18px 10px !important;
+    border-radius: var(--mob-radius) !important;
+    gap: 10px !important;
+    min-height: 115px !important;
+    border-bottom: 3px solid var(--gold) !important;
+    background: #131d33 !important;
+    transition: transform 0.18s, box-shadow 0.18s !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .portal-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(201,168,76,0.03);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .portal-box:active { transform: scale(0.97) !important; }
+  .portal-box:active::before { opacity: 1; }
+
+  /* أيقونة الخدمة */
+  .portal-icon {
+    width: 44px !important;
+    height: 44px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+    animation: none !important;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4)) !important;
+  }
+
+  /* نص الخدمة */
+  .portal-box-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+  }
+  .portal-box-text h2 {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    line-height: 1.3 !important;
+  }
+  .portal-box-text p {
+    font-size: 0.62rem !important;
+    line-height: 1.4 !important;
+    color: var(--text3) !important;
+    margin: 0 !important;
+  }
+
+  /* ألوان الحدود لكل بطاقة */
+  .portal-box--blue  { border-bottom-color: var(--blue) !important; }
+  .portal-box--green { border-bottom-color: var(--green) !important; }
+  .portal-box--gold  { border-bottom-color: var(--gold) !important; }
+  .portal-box--orange{ border-bottom-color: var(--orange) !important; }
+
+  /* ═══ قسم واتساب — تبسيط وإخفاء النص الزائد ═══ */
+  .whatsapp-section-label {
+    font-size: 0.72rem !important;
+    margin: 16px 0 8px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    color: var(--text3) !important;
+  }
+  .whatsapp-btns {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+  }
+  .whatsapp-btn {
+    width: 44px !important;
+    height: 44px !important;
+    min-height: unset !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
+  .whatsapp-badge {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 0.5rem !important;
+    line-height: 16px !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   CARDS — تقليل الـ padding
+   CARDS — بطاقات الصفحات الداخلية
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .card, .card-blue {
-    padding: 14px !important;
-    margin-bottom: 12px !important;
-    border-radius: 14px !important;
+    padding: var(--mob-padding) !important;
+    border-radius: var(--mob-radius) !important;
+    margin: 10px var(--mob-padding) !important;
   }
   .page-header {
     margin-bottom: 14px !important;
     padding-bottom: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
   }
-  .page-header h2 {
-    font-size: 1rem !important;
+  .page-header h2 { font-size: 0.9rem !important; }
+  .btn-back {
+    padding: 5px 10px !important;
+    font-size: 0.7rem !important;
+    height: 30px !important;
+    min-height: 30px !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   ADMIN PANEL — القسم الإداري
+   ADMIN — لوحة الإدارة
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Admin panel top bar */
-  .admin-top-bar {
-    padding: 0 10px !important;
-    gap: 6px !important;
-    height: 48px !important;
-  }
-
-  /* Search row */
+  /* Search bar */
   .search-row {
-    padding: 8px 10px !important;
+    padding: 8px var(--mob-padding) !important;
     gap: 6px !important;
   }
   .search-input {
     font-size: 0.85rem !important;
     padding: 8px 10px !important;
     height: 38px !important;
+    border-radius: 10px !important;
   }
   .search-select {
-    font-size: 0.8rem !important;
+    font-size: 0.78rem !important;
     padding: 6px 8px !important;
     height: 38px !important;
+    border-radius: 10px !important;
   }
 
   /* Filter chips */
   .filter-chips {
     gap: 6px !important;
-    padding: 8px 10px !important;
+    padding: 6px var(--mob-padding) !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
   }
+  .filter-chips::-webkit-scrollbar { display: none; }
   .chip {
-    font-size: 0.72rem !important;
-    padding: 5px 10px !important;
-    height: 30px !important;
-    min-height: 30px !important;
+    font-size: 0.7rem !important;
+    padding: 4px 12px !important;
+    height: 28px !important;
+    min-height: 28px !important;
     border-radius: 20px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
     gap: 4px !important;
   }
-  .chip i {
-    font-size: 0.8rem !important;
-  }
+  .chip i { font-size: 0.78rem !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   PAGINATION BAR — ضغط واحترافية
+   PAGINATION — ضغط كامل وهندسي
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .pagination-bar {
-    padding: 6px 10px !important;
-    gap: 6px !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: nowrap !important;
+    padding: 6px var(--mob-padding) !important;
     min-height: unset !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
   }
+  /* إخفاء "السجلات في الصفحة" */
+  .pagination-bar > div:has(#recordsPerPage),
+  .pagination-bar label,
+  #recordsPerPage,
+  #loadingMoreInfo { display: none !important; }
 
-  /* إخفاء "السجلات في الصفحة" من الـ pagination العلوي */
-  .pagination-bar > div:last-child:has(#recordsPerPage) {
-    display: none !important;
-  }
-
-  /* أزرار السابق/التالي — أصغر وأنيق */
+  /* أزرار التنقل */
   .pagination-bar .btn.btn-info {
-    padding: 5px 10px !important;
-    font-size: 0.72rem !important;
-    height: 30px !important;
-    min-height: 30px !important;
-    border-radius: 8px !important;
-    gap: 3px !important;
-  }
-  .pagination-bar .btn.btn-info i {
-    font-size: 0.85rem !important;
-  }
-
-  /* نص "صفحة X من Y" */
-  .page-info {
+    padding: 4px 10px !important;
     font-size: 0.7rem !important;
-    padding: 4px 8px !important;
-    background: rgba(255,255,255,0.06) !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    border-radius: 8px !important;
+    gap: 2px !important;
+  }
+  .pagination-bar .btn.btn-info i { font-size: 0.8rem !important; }
+
+  .page-info {
+    font-size: 0.68rem !important;
+    padding: 3px 8px !important;
+    background: rgba(255,255,255,0.05) !important;
     border-radius: 6px !important;
     white-space: nowrap !important;
+    font-weight: 700 !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   TABLE — جدول البيانات أكثر احترافية على الموبايل
+   TABLE — جدول البيانات
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .table-container, .table-wrap, [id$="TableContainer"] {
+  .table-container,
+  .table-wrap,
+  [id$="TableContainer"] {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     border-radius: 10px !important;
+    margin: 0 var(--mob-padding) !important;
   }
 
-  /* Table general */
-  #excelTable th,
-  #excelTable td,
-  table th,
-  table td {
-    font-size: 0.7rem !important;
-    padding: 7px 6px !important;
+  table th, table td {
+    font-size: 0.68rem !important;
+    padding: 6px 5px !important;
     white-space: nowrap !important;
   }
-
-  /* Table header */
-  #excelTable thead th,
   table thead th {
-    font-size: 0.68rem !important;
-    padding: 7px 6px !important;
-    letter-spacing: 0 !important;
-  }
-
-  /* إخفاء عمود "التفاصيل" على الموبايل — يُعوض بزر */
-  table th:nth-child(7):not(:last-child),
-  table td:nth-child(7):not(:last-child) {
-    display: none !important;
-  }
-
-  /* Buttons inside table */
-  table .btn {
-    padding: 4px 7px !important;
     font-size: 0.65rem !important;
-    border-radius: 6px !important;
-    min-height: 28px !important;
+    padding: 6px 5px !important;
+  }
+
+  /* إخفاء عمود التفاصيل على الموبايل */
+  table th:nth-child(7),
+  table td:nth-child(7) { display: none !important; }
+
+  /* أزرار داخل الجدول */
+  table .btn {
+    padding: 3px 6px !important;
+    font-size: 0.62rem !important;
+    border-radius: 5px !important;
+    min-height: 26px !important;
   }
 }
 
@@ -456,131 +458,122 @@
    STATS CARDS — إحصائيات
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .stats-dashboard-grid,
-  .stats-grid {
+  .stats-dashboard-grid, .stats-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 8px !important;
-    padding: 10px !important;
+    padding: 10px var(--mob-padding) !important;
   }
-
   .stat-card {
     padding: 12px 10px !important;
     border-radius: 12px !important;
   }
-  .stat-card .stat-value {
-    font-size: 1.4rem !important;
-  }
-  .stat-card .stat-label {
-    font-size: 0.65rem !important;
-  }
-  .stat-card .stat-icon {
-    font-size: 1.4rem !important;
-  }
-}
+  .stat-card .stat-value { font-size: 1.35rem !important; }
+  .stat-card .stat-label { font-size: 0.6rem !important; }
+  .stat-card .stat-icon { font-size: 1.3rem !important; }
 
-/* ══════════════════════════════════════════════════════════
-   MODALS — أفضل للموبايل
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .modal-inner,
-  #editModal > div,
-  #bulkImportModal > div,
-  #codeModal > div {
-    margin: 0 auto !important;
-    margin-top: auto !important;
-    width: 100% !important;
-    max-height: 90vh !important;
-    overflow-y: auto !important;
-    padding: 20px 16px !important;
-    border-radius: 20px 20px 0 0 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
+  /* Stats Dash Cards (in portal) */
+  .stats-dash-card {
+    padding: 10px !important;
+    border-radius: 10px !important;
+    gap: 8px !important;
   }
-
-  #loginModal > div {
-    margin: 10% auto !important;
-    width: 92% !important;
-    border-radius: var(--r-xl) !important;
-    padding: 24px 18px !important;
+  .stats-dash-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
   }
+  .stats-dash-label { font-size: 0.65rem !important; }
+  .stats-dash-val { font-size: 1.2rem !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
    INPUT GROUPS — نماذج الإدخال
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .input-group {
-    margin-bottom: 12px !important;
-  }
+  .input-group { margin-bottom: 12px !important; }
   .input-group label {
-    font-size: 0.78rem !important;
+    font-size: 0.75rem !important;
     margin-bottom: 5px !important;
   }
   .input-group input,
   .input-group select,
   .input-group textarea {
-    font-size: 16px !important; /* يمنع zoom على iOS */
+    font-size: 16px !important;
     padding: 10px 12px !important;
     border-radius: 10px !important;
-    height: auto !important;
     min-height: 42px !important;
+    height: auto !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   BUTTONS — أزرار عامة
+   MODALS — Bottom Sheet style على الموبايل
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .btn-back {
-    padding: 6px 12px !important;
-    font-size: 0.75rem !important;
-    height: 32px !important;
-    min-height: 32px !important;
+  /* Login modal — centered */
+  #loginModal > div {
+    margin: auto !important;
+    width: 92% !important;
+    border-radius: 18px !important;
+    padding: 24px 18px !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Other modals — bottom sheet */
+  #editModal > div,
+  #bulkImportModal > div,
+  #codeModal > div {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 20px 16px !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   INQUIRY PAGE — صفحة الاستعلام
+   ADMIN BUTTONS — أزرار الإدارة
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #inquiryPage .card {
-    padding: 14px !important;
-  }
-  #inquiryResult {
-    padding: 14px !important;
-    margin-top: 12px !important;
+  .admin-top-bar { padding: 0 10px !important; height: 46px !important; gap: 5px !important; }
+  .admin-top-bar .btn {
+    font-size: 0.68rem !important;
+    padding: 4px 8px !important;
+    height: 30px !important;
+    min-height: 30px !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   COMPLAINTS PAGE
+   FOOTER — إخفاء الـ engineer footer على الموبايل
+   يحسب إنه مش محتاج مساحة في شاشة صغيرة
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #complaintsPage .card {
-    padding: 14px !important;
+  .engineer-footer,
+  footer,
+  [class*="footer"] {
+    display: none !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   ENGINEER FOOTER
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .engineer-footer {
-    font-size: 0.6rem !important;
-    padding: 6px 10px !important;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
-   TOAST — إشعارات
+   TOAST
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #toastContainer {
-    bottom: calc(var(--app-bottom-nav) + 10px) !important;
-    right: 10px !important;
-    left: 10px !important;
+    bottom: calc(var(--app-bottom-nav) + 8px) !important;
+    right: 10px !important; left: 10px !important;
     max-width: 100% !important;
     transform: none !important;
     width: auto !important;
@@ -588,67 +581,39 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   SIDEBAR ADMIN — تعديلات
+   CITIZEN PAGE — تسجيل توكتوك
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* sidebar toggle button — رفع عن الـ Bottom Nav */
-  .fab-sidebar-btn {
-    bottom: calc(var(--app-bottom-nav) + 12px) !important;
-    right: 14px !important;
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 1rem !important;
-    z-index: 1100 !important;
-  }
+  #citizenPage .card { margin: 8px var(--mob-padding) !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   ADMIN TAB BUTTONS — تبويبات الإدارة
+   ADMIN LAYOUT — على الموبايل
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* الأزرار في الـ admin top bar */
-  .admin-top-bar .btn {
-    font-size: 0.7rem !important;
-    padding: 5px 8px !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    gap: 3px !important;
-  }
-  .admin-top-bar .btn i,
-  .admin-top-bar .btn span {
-    font-size: 0.75rem !important;
-  }
+  .admin-layout { margin-top: 0 !important; }
+  .admin-main { margin-right: 0 !important; padding: 10px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   CITIZEN PAGE — صفحة تسجيل التوكتوك
+   INQUIRY RESULT CARD — نتيجة الاستعلام
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #citizenPage .card {
-    margin: 0 8px 10px !important;
+  .inquiry-card, .inquiry-subcard {
+    padding: 14px !important;
+    border-radius: 12px !important;
   }
+  .inquiry-history-container { padding: 14px !important; border-radius: 14px !important; margin: 14px 0 !important; }
+  .inquiry-history-item { padding: 12px !important; border-radius: 10px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   LOADING SPINNER
+   TOUCH OPTIMIZATIONS
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .loading {
-    z-index: 99999 !important;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
-   SMOOTH SCROLL BEHAVIOR على الموبايل
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  html {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* تحسين النقر على الموبايل */
-  button, a, [onclick] {
-    touch-action: manipulation;
-  }
+  html { -webkit-overflow-scrolling: touch; }
+  button, a, [onclick], [role="button"] { touch-action: manipulation; }
+  /* Minimum touch target */
+  button:not(.bnav-item):not(.chip):not(.btn-back):not(.pagination-bar .btn),
+  a[role="button"] { min-height: 40px; }
 }
