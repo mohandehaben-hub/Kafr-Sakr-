@@ -392,7 +392,10 @@
       </button>
       <!-- أدوات الصيانة - SUPER فقط -->
       <div id="maintenanceTools" style="display:none;">
-        <div class="sidebar-section-label" style="margin-top:8px">الصيانة</div>
+        <div class="sidebar-section-label" style="margin-top:8px">الإدارة والصيانة</div>
+        <button class="sidebar-item" id="navStaffManagement" onclick="window.openStaffManagementModal()">
+          <span class="s-icon"><i class="ri-user-settings-line"></i></span>إدارة المشرفين
+        </button>
         <button class="sidebar-item" onclick="window.cleanupDuplicates()">
           <span class="s-icon"><i class="ri-delete-bin-2-line"></i></span>تنظيف المكرر
         </button>
@@ -1287,6 +1290,58 @@ window.updateSidebarBadges = function(newReqs, complaints) {
       <button onclick="window.openStatsModal()" class="btn btn-ghost" style="font-size:0.78rem;padding:6px 16px">
         <i class="ri-refresh-line"></i> تحديث
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Staff Management Modal ══ -->
+<div id="staffManagementModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);z-index:10000;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--bg2);border:1px solid var(--gold-border);border-top:3px solid var(--gold);border-radius:var(--r-xl);padding:26px;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--gold)">
+        <i class="ri-user-settings-line"></i> إدارة حسابات المشرفين
+      </h3>
+      <button onclick="document.getElementById('staffManagementModal').style.display='none'"
+        style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.3rem;padding:4px">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <!-- نموذج إنشاء مشرف جديد -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:20px;">
+      <h4 style="margin:0 0 12px 0;font-size:0.95rem;color:var(--text);display:flex;align-items:center;gap:6px;">
+        <i class="ri-user-add-line" style="color:var(--green)"></i> إضافة مشرف جديد (صلاحية بحث فقط)
+      </h4>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="font-size:0.8rem;color:var(--text3);display:block;margin-bottom:4px;">اسم المستخدم (يكتب بالإنجليزية، مثلاً: ahmed)</label>
+          <input type="text" id="newStaffUsername" placeholder="مثال: ahmed" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--text3);display:block;margin-bottom:4px;">الاسم بالكامل (اختياري)</label>
+          <input type="text" id="newStaffFullName" placeholder="مثال: أحمد محمد" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--text3);display:block;margin-bottom:4px;">كلمة المرور</label>
+          <input type="password" id="newStaffPassword" placeholder="كلمة المرور (6 خانات أو أكثر)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:0.9rem;">
+        </div>
+        <div style="background:rgba(52,152,219,0.08);border:1px dashed rgba(52,152,219,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--blue);">
+          ℹ️ الصلاحية: <strong>مشرف استعلام وبحث فقط (VIEWER)</strong> — يتمكن من البحث وعرض الطلبات دون تعديل أو حذف.
+        </div>
+        <button id="btnCreateSupervisor" onclick="window.handleCreateSupervisor()" class="btn" style="background:linear-gradient(135deg,var(--green),#27ae60);color:white;padding:12px;font-weight:700;margin-top:4px;">
+          ➕ إنشاء الحساب فوراً
+        </button>
+      </div>
+    </div>
+
+    <!-- قائمة المشرفين المسجلين -->
+    <div>
+      <h4 style="margin:0 0 10px 0;font-size:0.95rem;color:var(--text3);display:flex;align-items:center;gap:6px;">
+        <i class="ri-team-line"></i> الحسابات المسجلة بالنظام
+      </h4>
+      <div id="staffAccountsList" style="display:flex;flex-direction:column;gap:8px;">
+        <p style="text-align:center;color:var(--text3);font-size:0.85rem;">جاري التحميل...</p>
+      </div>
     </div>
   </div>
 </div>

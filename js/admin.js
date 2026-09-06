@@ -3090,4 +3090,131 @@ window.exportBackup = async function() {
   }
 };
 
+/* ═══════════════════════════════════════════════════════════════
+   إدارة حسابات المشرفين (خاص بالمدير العام SUPER فقط)
+═══════════════════════════════════════════════════════════════ */
+function _escapeHtml(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+window.openStaffManagementModal = async function() {
+  const role = sessionStorage.getItem('userRole');
+  if (role !== 'SUPER') {
+    alert('❌ هذه الميزة مخصصة للمدير العام فقط.');
+    return;
+  }
+  const modal = document.getElementById('staffManagementModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  await window.loadStaffAccountsList();
+};
+
+window.loadStaffAccountsList = async function() {
+  const listContainer = document.getElementById('staffAccountsList');
+  if (!listContainer) return;
+  listContainer.innerHTML = '<p style="text-align:center;color:var(--text3);font-size:0.85rem;">⏳ جاري التحميل...</p>';
+
+  try {
+    const { data: staffList, error } = await window.supabaseClient.rpc('get_staff_list');
+    if (error) throw error;
+
+    if (!staffList || staffList.length === 0) {
+      listContainer.innerHTML = '<p style="text-align:center;color:var(--text3);font-size:0.85rem;">لا توجد حسابات أخرى مسجلة.</p>';
+      return;
+    }
+
+    listContainer.innerHTML = staffList.map(s => {
+      const isSelf = (s.username || '').toLowerCase() === 'eltohamy' || s.role === 'SUPER';
+      const roleBadge = s.role === 'SUPER'
+        ? '<span style="background:rgba(201,168,76,0.15);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">مدير عام (SUPER)</span>'
+        : '<span style="background:rgba(52,152,219,0.15);color:var(--blue);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">بحث فقط (VIEWER)</span>';
+
+      return `
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="font-weight:700;font-size:0.92rem;color:var(--text);display:flex;align-items:center;gap:8px;">
+              <span>👤 ${_escapeHtml(s.username)}</span>
+              ${roleBadge}
+            </div>
+            <div style="font-size:0.78rem;color:var(--text3);margin-top:3px;">
+              ${_escapeHtml(s.full_name || 'بدون اسم')}
+            </div>
+          </div>
+          <div>
+            ${!isSelf ? `
+              <button onclick="window.handleDeleteStaff('${s.user_id}', '${_escapeHtml(s.username)}')" class="btn" style="background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.3);padding:6px 12px;font-size:0.8rem;border-radius:8px;cursor:pointer;">
+                <i class="ri-delete-bin-line"></i> حذف
+              </button>
+            ` : '<span style="font-size:0.75rem;color:var(--gold);font-weight:700;">حسابك الرئيسي</span>'}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Failed to load staff list:', err);
+    listContainer.innerHTML = '<p style="text-align:center;color:var(--red);font-size:0.85rem;">فشل تحميل قائمة الحسابات: ' + (err.message || '') + '</p>';
+  }
+};
+
+window.handleCreateSupervisor = async function() {
+  const usernameInput = document.getElementById('newStaffUsername');
+  const fullNameInput = document.getElementById('newStaffFullName');
+  const passwordInput = document.getElementById('newStaffPassword');
+  const btn = document.getElementById('btnCreateSupervisor');
+
+  const username = usernameInput ? usernameInput.value.trim() : '';
+  const fullName = fullNameInput ? fullNameInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value.trim() : '';
+
+  if (!username || username.length < 3) {
+    alert('❌ يرجى إدخال اسم مستخدم صحيح (3 أحرف إنجليزية على الأقل وبدون مسافات).');
+    return;
+  }
+  if (!password || password.length < 6) {
+    alert('❌ كلمة المرور يجب أن تكون 6 خانات على الأقل.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = '⏳ جاري الإنشاء...';
+
+  try {
+    const { data, error } = await window.supabaseClient.rpc('create_supervisor_account', {
+      p_username: username,
+      p_password: password,
+      p_full_name: fullName,
+      p_role: 'VIEWER'
+    });
+
+    if (error) throw error;
+
+    alert(`✅ تم إنشاء حساب المشرف بنجاح!\n\nاسم الدخول: ${username}\nالصلاحية: استعلام وبحث فقط\n\nيدخل المشرف بكتابة اسمه وكلمة المرور في شاشة الدخول.`);
+    if (usernameInput) usernameInput.value = '';
+    if (fullNameInput) fullNameInput.value = '';
+    if (passwordInput) passwordInput.value = '';
+    await window.loadStaffAccountsList();
+  } catch (err) {
+    console.error('Failed to create supervisor:', err);
+    alert('❌ فشل إنشاء الحساب: ' + (err.message || 'خطأ غير متوقع'));
+  } finally {
+    btn.disabled = false;
+    btn.innerText = '➕ إنشاء الحساب فوراً';
+  }
+};
+
+window.handleDeleteStaff = async function(userId, username) {
+  if (!confirm(`هل أنت متأكد من حذف حساب المشرف (${username}) نهائياً؟`)) return;
+
+  try {
+    const { error } = await window.supabaseClient.rpc('delete_staff_account', { p_user_id: userId });
+    if (error) throw error;
+    alert(`✅ تم حذف حساب المشرف (${username}) بنجاح.`);
+    await window.loadStaffAccountsList();
+  } catch (err) {
+    console.error('Failed to delete staff account:', err);
+    alert('❌ فشل حذف الحساب: ' + (err.message || ''));
+  }
+};
+
 // ── EOF ──
+
