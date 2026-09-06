@@ -291,12 +291,18 @@ document.getElementById('loginUsername').focus();
 checkActiveLockout();
 }; 
 document.getElementById('confirmLoginBtn').onclick = async () => {
-const email = document.getElementById('loginUsername').value.trim();
+let userInput = document.getElementById('loginUsername').value.trim();
 const password = document.getElementById('loginPassword').value.trim();
 
-if (!email || !password) {
-alert("❌ يرجى إدخال البريد الإلكتروني وكلمة المرور");
+if (!userInput || !password) {
+alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
 return;
+}
+
+// إضافة @gmail.com تلقائياً إذا كتب المستخدم اسمه فقط (مثلاً Eltohamy)
+let email = userInput;
+if (!email.includes('@')) {
+  email = email.toLowerCase() + '@gmail.com';
 }
 
 // Check Lockout
@@ -357,7 +363,7 @@ if (attempts >= 5) {
 } else {
   // رسالة توضيحية حسب نوع الخطأ
   if (error.message.includes('Invalid login credentials')) {
-      alert(`❌ البريد الإلكتروني أو كلمة المرور غير صحيحة\n\nمحاولات متبقية قبل الحظر: ${5 - attempts}`);
+      alert(`❌ اسم المستخدم أو كلمة المرور غير صحيحة\n\nمحاولات متبقية قبل الحظر: ${5 - attempts}`);
   } else if (error.message.includes('Email not confirmed')) {
       alert("❌ البريد الإلكتروني غير مفعل\n\nيرجى تفعيل البريد الإلكتروني أولاً");
   } else {
@@ -382,30 +388,42 @@ hideCaptcha();
 // Successful login
 const user = data.user;
 
-// Determine role based on email
-const userEmail = user.email.toLowerCase();
-if (userEmail.includes('super') || userEmail === 'admin@kafrsaqr.com') {
-    window.userRole = 'SUPER'; // مدير عام
-    userRole = 'SUPER';
-    sessionStorage.setItem('userRole', 'SUPER');
-} else if (userEmail.includes('admin')) {
-    window.userRole = 'ADMIN'; // مشرف
-    userRole = 'ADMIN';
-    sessionStorage.setItem('userRole', 'ADMIN');
-} else {
-    window.userRole = 'VIEWER'; // عرض فقط
-    userRole = 'VIEWER';
-    sessionStorage.setItem('userRole', 'VIEWER');
+// استعلام الصلاحية الحقيقية من جدول staff أو التعرف على Eltohamy
+let detectedRole = 'SUPER';
+let displayName = 'Eltohamy';
+
+try {
+  const { data: staffMember } = await window.supabaseClient
+    .from('staff')
+    .select('role, full_name, username')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (staffMember && staffMember.role) {
+    detectedRole = staffMember.role;
+    if (staffMember.username) displayName = staffMember.username;
+  }
+} catch (err) {
+  console.warn('Could not fetch staff role from table:', err);
 }
 
-window.currentUsername = user.email.split('@')[0];
-currentUsername = user.email.split('@')[0];
+// Fallback role check
+if (email.toLowerCase().includes('eltohamy') || email.toLowerCase().includes('super') || email.toLowerCase() === 'admin@kafrsaqr.com') {
+  detectedRole = 'SUPER';
+}
+
+window.userRole = detectedRole;
+userRole = detectedRole;
+sessionStorage.setItem('userRole', detectedRole);
+
+window.currentUsername = displayName;
+currentUsername = displayName;
 
 // Save session
 sessionStorage.setItem('supabaseSession', JSON.stringify(data.session));
-sessionStorage.setItem('adminRole', userRole);
-sessionStorage.setItem('adminUsername', currentUsername);
-sessionStorage.setItem('username', currentUsername);
+sessionStorage.setItem('adminRole', detectedRole);
+sessionStorage.setItem('adminUsername', displayName);
+sessionStorage.setItem('username', displayName);
 
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
