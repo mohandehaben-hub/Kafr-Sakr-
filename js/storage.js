@@ -150,6 +150,21 @@ btn.disabled = true;
 btn._submitting = true;
 
 try {
+// 🛡️ التحقق المسبق من عدم تسجيل الرقم القومي قبل رفع أي صور لحماية المساحة
+btn.innerText = "جاري التحقق من البيانات...";
+const { data: isAvailable, error: nidCheckErr } = await window.supabaseClient.rpc('check_nid_available', {
+  p_national_id: nid
+});
+
+if (!nidCheckErr && isAvailable === false) {
+  document.getElementById('loadingSpinner').style.display = 'none';
+  btn.disabled = false;
+  btn._submitting = false;
+  btn.innerText = "تسجيل المركبة الآن 🚜";
+  _alert("⚠️ هذا الرقم القومي مسجل بالفعل في المنظومة مسبقاً!\n\nيمكنك الاستعلام عن كود وحالة طلبك من صفحة الاستعلام.");
+  return;
+}
+
 const imgUrls = [];
 btn.innerText = "جاري رفع الصور...";
 for (let i = 0; i < files.length; i++) {
@@ -457,6 +472,7 @@ alert("❌ حدث خطأ: " + error.message);
 // Submit Complaint
 document.getElementById('submitCompBtn').onclick = async () => {
 const btn = document.getElementById('submitCompBtn');
+if (btn._submitting) return;
 const _alert = window._origAlert || window.alert;
 
 // ✅ Anti-Spam: منع إرسال أكثر من شكوى كل 5 دقائق
@@ -492,12 +508,65 @@ return;
 if (!selfie || !idCard || !vehicleImage) {
 _alert("❌ يرجى رفع الصور المطلوبة:\n• صورة سيلفي\n• صورة البطاقة\n• صورة المركبة/الكود");
 return;
-}; 
+}
+
+// 🛡️ التحقق الصارم من نوع وحجم الملفات قبل البدء في الرفع
+const requiredImages = [
+  { file: selfie, label: 'صورة السيلفي' },
+  { file: idCard, label: 'صورة البطاقة' },
+  { file: vehicleImage, label: 'صورة المركبة/الكود' }
+];
+
+const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+for (const item of requiredImages) {
+  if (item.file.size > 5242880) {
+    _alert(`❌ حجم "${item.label}" يتجاوز 5MB\nيرجى اختيار صورة بحجم أصغر.`);
+    return;
+  }
+  if (!ALLOWED_MIMES.includes(item.file.type)) {
+    _alert(`❌ ملف "${item.label}" غير مسموح. يُسمح فقط بصور JPG, PNG, WebP.`);
+    return;
+  }
+}
+
+if (problemImages && problemImages.length > 3) {
+  _alert("❌ يُسمح برفع 3 صور كحد أقصى للمشكلة.");
+  return;
+}
+
+if (problemImages && problemImages.length > 0) {
+  for (let i = 0; i < problemImages.length; i++) {
+    const pFile = problemImages[i];
+    if (pFile.size > 5242880) {
+      _alert(`❌ حجم صورة المشكلة "${pFile.name}" يتجاوز 5MB.`);
+      return;
+    }
+    if (!ALLOWED_MIMES.includes(pFile.type)) {
+      _alert(`❌ صورة المشكلة "${pFile.name}" غير صالحة. يُسمح فقط بـ JPG, PNG, WebP.`);
+      return;
+    }
+  }
+}
+
 document.getElementById('loadingSpinner').style.display = 'block';
 btn.disabled = true;
-btn.innerText = "جاري الإرسال...";
+btn._submitting = true;
+btn.innerText = "جاري التحقق من البيانات...";
 
 try {
+// 🛡️ التحقق المسبق من عدد الشكاوى المسموح بها في السيرفر قبل استهلاك مساحة التخزين
+const { data: canSubmit, error: compCheckErr } = await window.supabaseClient.rpc('can_submit_complaint', {
+  p_national_id: nid
+});
+
+if (!compCheckErr && canSubmit === false) {
+  document.getElementById('loadingSpinner').style.display = 'none';
+  btn.disabled = false;
+  btn._submitting = false;
+  btn.innerText = "إرسال الشكوى ✉️";
+  _alert("⚠️ تم الوصول للحد الأقصى من الشكاوى المسموح بها لهذا الرقم القومي (5 شكاوى).\n\nيرجى الانتظار لحين مراجعة شكاويك السابقة والرد عليها.");
+  return;
+}
 const imgUrls = {
 selfie: '',
 idCard: '',
@@ -564,6 +633,7 @@ location.reload();
 document.getElementById('loadingSpinner').style.display = 'none';
 alert("❌ خطأ: " + error.message);
 btn.disabled = false;
+btn._submitting = false;
 btn.innerText = "إرسال الشكوى ✉️";
 }
 };

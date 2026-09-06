@@ -23,3 +23,8 @@ scratch/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Citizen spreadsheets & data exports
+*.xls
+*.xlsx
+*.csv
