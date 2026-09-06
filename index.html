@@ -44,6 +44,7 @@
 <link rel="stylesheet" href="css/fa.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
 <link rel="stylesheet" href="css/styles.css?v=6.0">
+<link rel="stylesheet" href="css/mobile.css?v=1.0">
 
 </head>
 <body>
@@ -96,6 +97,84 @@
 <button id="fabBackAdminBtn" class="fab-back-admin-btn" onclick="window.smartBack()" style="display:none;">
   <i class="ri-arrow-right-line"></i>
 </button>
+
+<!-- ═══════════════════════════════════════════════════
+     BOTTOM NAVIGATION BAR — شريط التنقل السفلي للموبايل
+     ═══════════════════════════════════════════════════ -->
+<nav id="appBottomNav" aria-label="التنقل الرئيسي">
+  <button class="bnav-item active" id="bnav-home" onclick="bnavGo('portalSection','bnav-home')" aria-label="البوابة الرئيسية">
+    <i class="ri-home-5-line"></i>
+    <span>البوابة</span>
+  </button>
+  <button class="bnav-item" id="bnav-register" onclick="bnavGo('citizenPage','bnav-register')" aria-label="تسجيل توكتوك">
+    <i class="ri-motorbike-line"></i>
+    <span>تسجيل</span>
+  </button>
+  <button class="bnav-item" id="bnav-inquiry" onclick="bnavGo('inquiryPage','bnav-inquiry')" aria-label="استعلام">
+    <i class="ri-search-eye-line"></i>
+    <span>استعلام</span>
+  </button>
+  <button class="bnav-item" id="bnav-complaint" onclick="bnavGo('complaintsPage','bnav-complaint')" aria-label="تقديم شكوى">
+    <i class="ri-chat-3-line"></i>
+    <span>شكوى</span>
+  </button>
+  <button class="bnav-item bnav-login" id="bnav-login" onclick="bnavLogin()" aria-label="تسجيل الدخول">
+    <i class="ri-shield-keyhole-line"></i>
+    <span>دخول</span>
+  </button>
+</nav>
+
+<script>
+/* Bottom Navigation Logic */
+function bnavGo(sectionId, btnId) {
+  // استخدام الدالة الموجودة إذا كانت متاحة
+  if (typeof openService === 'function' && sectionId !== 'portalSection') {
+    openService(sectionId);
+  } else if (typeof showSection === 'function') {
+    showSection(sectionId);
+  } else {
+    // fallback: إظهار القسم يدوياً
+    var sections = ['portalSection','citizenPage','inquiryPage','complaintsPage','complaintInquiryPage'];
+    sections.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.style.display = (id === sectionId) ? '' : 'none';
+    });
+  }
+  // تحديث الحالة النشطة للأزرار
+  document.querySelectorAll('.bnav-item:not(.bnav-login)').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.getElementById(btnId);
+  if(btn) btn.classList.add('active');
+  // scroll للأعلى
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function bnavLogin() {
+  var loginBtn = document.getElementById('loginBtn');
+  if(loginBtn) loginBtn.click();
+  // تحديث نشاط زر الدخول
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('bnav-login').classList.add('active');
+}
+// إعادة التنشيط عند الرجوع للبوابة
+document.addEventListener('DOMContentLoaded', function(){
+  var homeBtn = document.getElementById('bnav-home');
+  // مراقبة ظهور البوابة لإعادة تنشيط زر البوابة
+  var portalEl = document.getElementById('portalSection');
+  if(portalEl && homeBtn){
+    var obs = new MutationObserver(function(mutations){
+      mutations.forEach(function(m){
+        if(m.attributeName === 'style'){
+          var visible = portalEl.style.display !== 'none' && portalEl.style.display !== '';
+          if(visible || !portalEl.style.display){
+            document.querySelectorAll('.bnav-item:not(.bnav-login)').forEach(function(b){ b.classList.remove('active'); });
+            homeBtn.classList.add('active');
+          }
+        }
+      });
+    });
+    obs.observe(portalEl, {attributes: true, attributeFilter: ['style']});
+  }
+});
+</script>
 
 <!-- القيادات -->
 <div id="leadershipSection">
