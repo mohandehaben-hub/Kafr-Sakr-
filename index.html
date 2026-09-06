@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="css/fa.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
 <link rel="stylesheet" href="css/styles.css?v=6.0">
-<link rel="stylesheet" href="css/mobile.css?v=2.0">
+<link rel="stylesheet" href="css/mobile.css?v=3.5">
 
 </head>
 <body>
@@ -201,8 +201,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </div>
 
 
-<!-- Egyptian Flag Stripe -->
-<div class="flag-stripe"></div>
+
 
 <!-- Main Container -->
 <div class="container">
@@ -215,57 +214,123 @@ document.addEventListener('DOMContentLoaded', function(){
 <div class="portal-container">
 <!-- Tuk Tuk Coding Portal -->
 <div class="portal-box portal-box--blue" onclick="openService('citizenPage')">
-<img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="portal-icon portal-icon--rounded" alt="توكتوك" loading="lazy">
-<div class="portal-box-text">
-<h2 style="color: var(--info);">تقنين التوكتوك</h2>
-<p>تسجيل بيانات التوكتوك بالمنظومة الذكية</p>
-</div>
+  <div class="portal-img-wrap">
+    <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="portal-icon portal-icon--tuktuk" alt="توكتوك" loading="lazy">
+  </div>
+  <div class="portal-box-text">
+    <h2>تقنين التوكتوك</h2>
+    <p>تسجيل بيانات التوكتوك بالمنظومة الذكية</p>
+  </div>
 </div>
 
 <!-- Inquiry Portal -->
 <div class="portal-box portal-box--green" onclick="openService('inquiryPage')">
-<img src="https://img.icons8.com/fluency/96/search.png" class="portal-icon" alt="استعلام" loading="lazy">
-<div class="portal-box-text">
-<h2 style="color: var(--secondary);">استعلام عن الطلب</h2>
-<p>تحقق من حالة طلبك ومعرفة الكود الخاص بمركبتك</p>
-</div>
+  <div class="portal-img-wrap">
+    <img src="https://img.icons8.com/fluency/96/search.png" class="portal-icon" alt="استعلام" loading="lazy">
+  </div>
+  <div class="portal-box-text">
+    <h2>استعلام عن الطلب</h2>
+    <p>تحقق من حالة طلبك ومعرفة كود مركبتك</p>
+  </div>
 </div>
 
 <!-- Complaints Portal -->
 <div class="portal-box portal-box--gold" onclick="openService('complaintsPage')">
-<img src="https://img.icons8.com/fluency/96/complaint.png" class="portal-icon" alt="شكوى" loading="lazy" style="animation-delay:0.5s;">
-<div class="portal-box-text">
-<h2 style="color: var(--accent);">تقديم شكوى</h2>
-<p>تقديم الشكاوى والبلاغات مع التوثيق الكامل</p>
-</div>
+  <div class="portal-img-wrap">
+    <img src="https://img.icons8.com/fluency/96/complaint.png" class="portal-icon" alt="شكوى" loading="lazy">
+  </div>
+  <div class="portal-box-text">
+    <h2>تقديم شكوى</h2>
+    <p>تقديم الشكاوى والبلاغات مع التوثيق</p>
+  </div>
 </div>
 
 <!-- Complaint Inquiry Portal -->
 <div class="portal-box portal-box--orange" onclick="openService('complaintInquiryPage')">
-<img src="https://img.icons8.com/fluency/96/clipboard.png" class="portal-icon" alt="استعلام شكوى" loading="lazy" style="animation-delay:1s;">
-<div class="portal-box-text">
-<h2 style="color: var(--warning);">استعلام عن الشكوى</h2>
-<p>تابع حالة شكواك واطلع على الرد</p>
-</div>
+  <div class="portal-img-wrap">
+    <img src="https://img.icons8.com/fluency/96/clipboard.png" class="portal-icon" alt="استعلام شكوى" loading="lazy">
+  </div>
+  <div class="portal-box-text">
+    <h2>استعلام عن الشكوى</h2>
+    <p>تابع حالة شكواك واطلع على الرد</p>
+  </div>
 </div>
 </div>
 
-<!-- Contact Buttons -->
-<div class="whatsapp-section-label">
-  <i class="ri-whatsapp-line" style="color:#25D366;font-size:1rem;"></i>
-  تواصل معنا مباشرة عبر واتساب
+<!-- Contact Section — mobile: single button + bottom sheet | desktop: 3 buttons -->
+<div class="wa-contact-section">
+  <!-- Mobile: single button -->
+  <button class="wa-single-btn mob-only" onclick="openWASheet()">
+    <i class="ri-whatsapp-line"></i>
+    تواصل مع الدعم
+    <i class="ri-arrow-up-s-line" style="margin-right:auto"></i>
+  </button>
+
+  <!-- Desktop: 3 buttons (unchanged) -->
+  <div class="whatsapp-section-label desk-only">
+    <i class="ri-whatsapp-line" style="color:#25D366;font-size:1rem;"></i>
+    تواصل معنا مباشرة عبر واتساب
+  </div>
+  <div class="whatsapp-btns desk-only">
+    <a href="https://wa.me/201000385098?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 1">
+      <button class="whatsapp-btn" aria-label="واتساب 1"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">1</span></button>
+    </a>
+    <a href="https://wa.me/201008206884?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 2">
+      <button class="whatsapp-btn" aria-label="واتساب 2"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">2</span></button>
+    </a>
+    <a href="https://wa.me/201026182272?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 3">
+      <button class="whatsapp-btn" aria-label="واتساب 3"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">3</span></button>
+    </a>
+  </div>
 </div>
-<div class="whatsapp-btns">
-<a href="https://wa.me/201000385098?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 1">
-<button class="whatsapp-btn" aria-label="واتساب 1"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">1</span></button>
-</a>
-<a href="https://wa.me/201008206884?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 2">
-<button class="whatsapp-btn" aria-label="واتساب 2"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">2</span></button>
-</a>
-<a href="https://wa.me/201026182272?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" title="تواصل واتساب - 3">
-<button class="whatsapp-btn" aria-label="واتساب 3"><svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.48 2.028 7.784L0 32l8.384-2.196A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm8.448 22.896c-.352.992-2.072 1.816-2.856 1.936-.744.096-1.712.136-2.76-.172-.632-.188-1.444-.44-2.484-.86-4.356-1.76-7.196-6.14-7.416-6.424-.22-.284-1.796-2.388-1.796-4.556s1.136-3.232 1.54-3.672c.404-.44.88-.548 1.172-.548.292 0 .584.004.84.016.268.012.632-.1.988.752.356.852 1.22 2.976 1.328 3.192.108.216.18.468.036.752-.144.284-.216.46-.432.708-.216.248-.456.552-.652.74-.216.208-.44.432-.188.848.252.416 1.12 1.848 2.404 2.992 1.652 1.472 3.044 1.932 3.476 2.148.432.216.684.18.936-.108.252-.288 1.08-1.26 1.368-1.696.288-.436.576-.364.972-.216.396.148 2.516 1.188 2.948 1.404.432.216.72.324.824.504.104.18.104 1.036-.248 2.028z"/></svg><span class="whatsapp-badge">3</span></button>
-</a>
+
+<!-- WhatsApp Bottom Sheet (Mobile Only) -->
+<div id="waBottomSheet" style="display:none;">
+  <div class="wa-sheet-overlay" onclick="closeWASheet()"></div>
+  <div class="wa-sheet-inner">
+    <div class="wa-sheet-handle"></div>
+    <div class="wa-sheet-header">
+      <i class="ri-whatsapp-line" style="color:#25D366;font-size:1.4rem;"></i>
+      <span>تواصل مع الدعم</span>
+    </div>
+    <div class="wa-sheet-list">
+      <a href="https://wa.me/201000385098?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" class="wa-contact-row">
+        <div class="wa-contact-icon"><i class="ri-customer-service-line"></i></div>
+        <div class="wa-contact-info">
+          <span class="wa-contact-name">خدمة العملاء</span>
+          <span class="wa-contact-num">01000385098</span>
+        </div>
+        <i class="ri-arrow-left-s-line wa-contact-arrow"></i>
+      </a>
+      <a href="https://wa.me/201008206884?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" class="wa-contact-row">
+        <div class="wa-contact-icon"><i class="ri-building-line"></i></div>
+        <div class="wa-contact-info">
+          <span class="wa-contact-name">مكتب المتابعة</span>
+          <span class="wa-contact-num">01008206884</span>
+        </div>
+        <i class="ri-arrow-left-s-line wa-contact-arrow"></i>
+      </a>
+      <a href="https://wa.me/201026182272?text=مرحباً، أحتاج للمساعدة" target="_blank" rel="noopener" class="wa-contact-row">
+        <div class="wa-contact-icon"><i class="ri-phone-line"></i></div>
+        <div class="wa-contact-info">
+          <span class="wa-contact-name">الدعم الفني</span>
+          <span class="wa-contact-num">01026182272</span>
+        </div>
+        <i class="ri-arrow-left-s-line wa-contact-arrow"></i>
+      </a>
+    </div>
+  </div>
 </div>
+<script>
+function openWASheet(){
+  var sh = document.getElementById('waBottomSheet');
+  if(sh){ sh.style.display='flex'; document.body.style.overflow='hidden'; }
+}
+function closeWASheet(){
+  var sh = document.getElementById('waBottomSheet');
+  if(sh){ sh.style.display='none'; document.body.style.overflow=''; }
+}
+</script>
 </div>
 
 <!-- Citizen Page (Tuk Tuk Registration) -->
@@ -1078,11 +1143,11 @@ alt="علم الشرقية">
 </div><!-- end adminPage -->
 
 <!-- Egyptian Flag Stripe -->
-<div style="height: 8px; background: linear-gradient(90deg, #ce1126 0%, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #000000 66.66%, #000000 100%); box-shadow: 0 -2px 8px rgba(0,0,0,0.3);"></div>
+<div class="egypt-flag-footer-stripe" style="height: 8px; background: linear-gradient(90deg, #ce1126 0%, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #000000 66.66%, #000000 100%); box-shadow: 0 -2px 8px rgba(0,0,0,0.3);"></div>
 
 <!-- Footer -->
 <!-- Fixed Developer Credit - Bottom Right Corner -->
-<div style="position: fixed; bottom: 8px; right: 8px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 15px; font-size: 0.65rem; color: rgba(255,255,255,0.7); z-index: 9999; backdrop-filter: blur(5px); box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 300; letter-spacing: 0.5px; transition: all 0.3s ease;">
+<div class="fixed-dev-badge" style="position: fixed; bottom: 8px; right: 8px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 15px; font-size: 0.65rem; color: rgba(255,255,255,0.7); z-index: 9999; backdrop-filter: blur(5px); box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 300; letter-spacing: 0.5px; transition: all 0.3s ease;">
 تطوير:م/مهند ايهاب التهامي م/باهي ايهاب التهامي
 </div>
 
