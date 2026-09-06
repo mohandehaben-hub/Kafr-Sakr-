@@ -848,7 +848,8 @@ alt="علم الشرقية">
 
 <!-- Lockout Timer -->
 <div id="loginLockoutTimer" style="display: none; background: rgba(231, 76, 60, 0.1); border: 2px solid var(--red); color: var(--red); padding: 15px; border-radius: 15px; margin-bottom: 20px; font-weight: 700; text-align: center; font-size: 1.05rem;">
-  ⚠️ تم حظر محاولات الدخول مؤقتاً بسبب محاولات خاطئة متكررة. متبقي: <span id="countdownSeconds">00:00</span>
+  <div>⚠️ تم حظر محاولات الدخول مؤقتاً بسبب محاولات خاطئة متكررة. متبقي: <span id="countdownSeconds">00:00</span></div>
+  <button onclick="localStorage.removeItem('loginLockoutTime');localStorage.removeItem('loginAttempts');location.reload();" style="margin-top:10px;background:var(--red);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.85rem;">🔄 إلغاء الحظر والمحاولة الآن</button>
 </div>
 
 <!-- Math CAPTCHA -->

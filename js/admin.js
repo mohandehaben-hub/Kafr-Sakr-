@@ -246,7 +246,7 @@ function checkActiveLockout() {
     if (btn) btn.disabled = false;
     if (emailInput) emailInput.disabled = false;
     if (passInput) passInput.disabled = false;
-    
+
     // Check if CAPTCHA is needed
     const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
     if (attempts >= 3) {
@@ -256,6 +256,21 @@ function checkActiveLockout() {
     }
   }
 }
+
+window.resetLoginLockout = function() {
+  localStorage.removeItem('loginLockoutTime');
+  localStorage.setItem('loginAttempts', '0');
+  if (countdownInterval) clearInterval(countdownInterval);
+  const timerDiv = document.getElementById('loginLockoutTimer');
+  if (timerDiv) timerDiv.style.display = 'none';
+  const btn = document.getElementById('confirmLoginBtn');
+  if (btn) { btn.disabled = false; btn.innerText = 'دخول 🚀'; }
+  const emailInput = document.getElementById('loginUsername');
+  if (emailInput) emailInput.disabled = false;
+  const passInput = document.getElementById('loginPassword');
+  if (passInput) passInput.disabled = false;
+  hideCaptcha();
+};
 
 function showCaptcha() {
   const captchaGroup = document.getElementById('captchaGroup');
