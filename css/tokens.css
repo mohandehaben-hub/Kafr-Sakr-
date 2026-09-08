@@ -1,0 +1,74 @@
+:root {
+  /* Colors — Unified 2-Color Sovereign Identity */
+  --color-primary:          #10B981;
+  --color-primary-hover:    #059669;
+  --color-primary-active:   #047857;
+
+  --color-surface-base:     #0B0F17;
+  --color-surface-card:     #111827;
+  --color-surface-card-alt: #161F30;
+  --color-surface-elevated: #1E293B;
+  --color-surface-overlay:  rgba(11, 15, 23, 0.82);
+
+  --color-border-subtle:    rgba(148, 163, 184, 0.12);
+  --color-border-medium:    rgba(148, 163, 184, 0.22);
+  --color-border-focus:     #10B981;
+
+  --color-text-primary:     #F8FAFC;
+  --color-text-secondary:   #94A3B8;
+  --color-text-muted:       #64748B;
+  --color-text-inverse:     #0F172A;
+
+  --color-status-gold:      #10B981;
+  --color-status-success:   #10B981;
+  --color-status-danger:    #EF4444;
+  --color-status-info:      #10B981;
+
+  /* Spacing */
+  --space-2xs:  2px;
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   16px;
+  --space-lg:   24px;
+  --space-xl:   32px;
+  --space-2xl:  48px;
+
+  /* Border radius */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-pill: 9999px;
+
+  /* Typography */
+  --font-family-base:     'Cairo', 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+  --font-weight-black:    800;
+
+  --font-size-xs:   clamp(0.65rem, 2vw, 0.72rem);
+  --font-size-sm:   clamp(0.75rem, 2.5vw, 0.82rem);
+  --font-size-base: clamp(0.85rem, 3vw, 0.92rem);
+  --font-size-md:   clamp(0.95rem, 3.5vw, 1.05rem);
+  --font-size-lg:   clamp(1.1rem, 4vw, 1.25rem);
+  --font-size-xl:   clamp(1.25rem, 5vw, 1.45rem);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 4px rgba(0, 0, 0, 0.25);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg:  0 8px 30px rgba(0, 0, 0, 0.5);
+
+  /* Layout & Safe Area */
+  --header-height:       52px;
+  --bottom-nav-height:   62px;
+  --safe-area-top:       env(safe-area-inset-top, 0px);
+  --safe-area-bottom:    env(safe-area-inset-bottom, 0px);
+  --total-bottom-offset: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 16px);
+
+  /* Transitions */
+  --transition-fast:     0.12s ease;
+  --transition-normal:   0.2s ease;
+}

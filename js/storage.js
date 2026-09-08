@@ -4,21 +4,21 @@
 
 // Upload to Cloud Storage (Private)
 window.uploadToSupabaseStorage = async (file) => {
-  // ✅ تحقق صارم من نوع الملف وحجمه
+  //  تحقق صارم من نوع الملف وحجمه
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
   if (!ALLOWED_TYPES.includes(file.type)) {
-    throw new Error(`نوع الملف "${file.name}" غير مسموح. يُسمح فقط بـ JPG, PNG, WebP`);
+    throw new Error(`نوع الملف "${file.name}"غير مسموح. يُسمح فقط بـ JPG, PNG, WebP`);
   }
   if (file.size > MAX_SIZE) {
-    throw new Error(`حجم الملف "${file.name}" يتجاوز 5MB`);
+    throw new Error(`حجم الملف "${file.name}"يتجاوز 5MB`);
   }
   // منع SVG حتى لو جاء بـ MIME مختلف
   const ext = file.name.split('.').pop().toLowerCase();
   const BLOCKED_EXTENSIONS = ['svg', 'html', 'htm', 'exe', 'php', 'js', 'sh', 'bat'];
   if (BLOCKED_EXTENSIONS.includes(ext)) {
-    throw new Error(`امتداد الملف ".${ext}" غير مسموح`);
+    throw new Error(`امتداد الملف ".${ext}"غير مسموح`);
   }
 
 return new Promise((resolve, reject) => {
@@ -69,7 +69,7 @@ reject(new Error(`خطأ في الرفع: ${error.message}`));
 function formatDateTime(ts) {
 if (!ts) return "-";
 const d = new Date(ts);
-return d.toLocaleDateString('ar-EG') + " " + d.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+return d.toLocaleDateString('ar-EG') + ""+ d.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
 }
 
 // Make formatDateTime globally available
@@ -105,7 +105,7 @@ return data[0];
 document.getElementById('submitBtn').onclick = async () => {
 const btn = document.getElementById('submitBtn');
 if (btn._submitting) return;
-const _alert = window._origAlert || window.alert;
+const _alert = (msg, type = 'error') => { if (window.showToast) window.showToast(msg, type, 4500); else alert(msg); };
 const files = document.getElementById('multiFiles').files;
 const owner = document.getElementById('ownerName').value.trim();
 const nid = document.getElementById('nationalId').value.trim();
@@ -118,29 +118,29 @@ const birthDate = document.getElementById('birthDate').value;
 // التحقق من حجم الصور ونوعها
 for (let file of files) {
 if (file.size > 5242880) { // 5MB
-    _alert(`❌ حجم الصورة "${file.name}" يتجاوز 5MB\nيرجى اختيار صور أصغر`);
+    _alert(`حجم الصورة "${file.name}"يتجاوز 5MB\nيرجى اختيار صور أصغر`);
     return;
 }
 if (!['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type)) {
-    _alert(`❌ الملف "${file.name}" غير صورة صحيحة\nيرجى استخدام JPG أو PNG أو WebP فقط`);
+    _alert(`الملف "${file.name}"غير صورة صحيحة\nيرجى استخدام JPG أو PNG أو WebP فقط`);
     return;
 }
 }
 
 // Validate National ID
 if (!validateNationalId(document.getElementById('nationalId'))) {
-_alert("❌ يرجى إدخال رقم قومي صحيح (14 رقم)");
+_alert("يرجى إدخال رقم قومي صحيح (14 رقم)");
 return;
 }
 
 // Verify Birth Date
 if (!verifyBirthDate()) {
-_alert("❌ تاريخ الميلاد غير مطابق للرقم القومي");
+_alert("تاريخ الميلاد غير مطابق للرقم القومي");
 return;
 }
 
 if (!owner || nid.length !== 14 || phone.length !== 11 || !year || !vType || files.length === 0 || !birthDate) {
-_alert("❌ يرجى إكمال جميع البيانات المطلوبة");
+_alert("يرجى إكمال جميع البيانات المطلوبة");
 return;
 }
 
@@ -150,7 +150,7 @@ btn.disabled = true;
 btn._submitting = true;
 
 try {
-// 🛡️ التحقق المسبق من عدم تسجيل الرقم القومي قبل رفع أي صور لحماية المساحة
+//  التحقق المسبق من عدم تسجيل الرقم القومي قبل رفع أي صور لحماية المساحة
 btn.innerText = "جاري التحقق من البيانات...";
 const { data: isAvailable, error: nidCheckErr } = await window.supabaseClient.rpc('check_nid_available', {
   p_national_id: nid
@@ -160,8 +160,8 @@ if (!nidCheckErr && isAvailable === false) {
   document.getElementById('loadingSpinner').style.display = 'none';
   btn.disabled = false;
   btn._submitting = false;
-  btn.innerText = "تسجيل المركبة الآن 🚜";
-  _alert("⚠️ هذا الرقم القومي مسجل بالفعل في المنظومة مسبقاً!\n\nيمكنك الاستعلام عن كود وحالة طلبك من صفحة الاستعلام.");
+  btn.innerText = "تسجيل المركبة الآن ";
+  _alert("هذا الرقم القومي مسجل بالفعل في المنظومة مسبقاً!\n\nيمكنك الاستعلام عن كود وحالة طلبك من صفحة الاستعلام.");
   return;
 }
 
@@ -173,7 +173,7 @@ imgUrls.push(url);
 btn.innerText = `جاري رفع الصورة ${i + 1} من ${files.length}...`;
 }
 
-const refNumber = 'KS-' + Date.now().toString().slice(-8);
+const refNumber = 'KS-'+ Date.now().toString().slice(-8);
 
 // Prepare data with encryption for sensitive fields
 let dataToSave = {
@@ -187,22 +187,21 @@ images: imgUrls,
 submitted_at: Date.now(),
 ref_number: refNumber,
 status: "pending",
-code: ""
-};
+code: ""};
 
 // Save to Database
 await addOrderToSupabase(dataToSave); 
 document.getElementById('loadingSpinner').style.display = 'none';
 btn.disabled = false;
-btn.innerText = '📋 تسجيل المركبة';
+btn.innerText = 'تسجيل المركبة';
 
 // Send confirmation WhatsApp to citizen
-const confirmMessage = `✅ *تم تسجيل طلبك بنجاح!*\n\n` +
-`👤 السيد/ة: ${owner}\n` +
-`🚜 نوع المركبة: ${vType}\n` +
-`📋 الرقم المرجعي: *${refNumber}*\n\n` +
-`⏳ سيتم مراجعة طلبك والتواصل معك قريباً\n\n` +
-`📞 للاستفسار: 01021102607\n\n` +
+const confirmMessage = `*تم تسجيل طلبك بنجاح!*\n\n`+
+`السيد/ة: ${owner}\n`+
+`نوع المركبة: ${vType}\n`+
+`الرقم المرجعي: *${refNumber}*\n\n`+
+`سيتم مراجعة طلبك والتواصل معك قريباً\n\n`+
+`للاستفسار: 01021102607\n\n`+
 `_رئاسة مركز ومدينة كفر صقر_`;
 
 // Auto-send WhatsApp
@@ -215,7 +214,7 @@ alert(`تم تسجيل بياناتك بنجاح!\n\nرقمك المرجعي: ${
 setTimeout(() => location.reload(), 3000);
 } catch (e) {
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ حدث خطأ: " + e.message);
+alert("حدث خطأ: "+ e.message);
 btn.disabled = false;
 btn._submitting = false;
 btn.innerText = "إرسال الطلب";
@@ -236,13 +235,13 @@ window.sanitizeText = sanitizeText;
 
 // ── التحقق الصارم من المدخلات ────────────────────────────────
 function validateInputs(nid, phone) {
-  const _alert = window._origAlert || window.alert;
+  const _alert = (msg) => { if (window.showToast) window.showToast(msg, 'warning', 4000); else alert(msg); };
   if (!/^\d{14}$/.test(nid)) {
-    _alert("❌ الرقم القومي يجب أن يتكون من 14 رقماً صحيحاً فقط");
+    _alert("الرقم القومي يجب أن يتكون من 14 رقماً صحيحاً فقط");
     return false;
   }
   if (!/^\d{11}$/.test(phone)) {
-    _alert("❌ رقم الهاتف يجب أن يتكون من 11 رقماً صحيحاً فقط");
+    _alert("رقم الهاتف يجب أن يتكون من 11 رقماً صحيحاً فقط");
     return false;
   }
   return true;
@@ -297,10 +296,9 @@ if (!data) {
 resultDiv.style.display = 'block';
 resultDiv.style.background = 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%)';
 resultDiv.style.border = '3px solid var(--danger)';
-resultDiv.innerHTML = `
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
+resultDiv.innerHTML = `<i style="font-size: 80px; display: block; margin-bottom: 20px;"></i>
 <h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد بيانات مطابقة</h3>
-<p class="inquiry-text-muted" style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
+<p class="inquiry-text-muted"style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
 `;
 } else {
 const statusInfo = window.getStatusDisplay(data.status || 'pending');
@@ -309,7 +307,7 @@ const statusInfo = window.getStatusDisplay(data.status || 'pending');
 let historyHTML = '';
 if (data.statusHistory && data.statusHistory.length > 0) {
 historyHTML = '<div class="inquiry-history-container">';
-historyHTML += '<h4 style="margin: 0 0 20px 0; font-size: 1.3rem;">📋 سجل حالة الطلب</h4>';
+historyHTML += '<h4 style="margin: 0 0 20px 0; font-size: 1.3rem;"> سجل حالة الطلب</h4>';
 historyHTML += '<div style="position: relative; padding-right: 30px;">';
 
 data.statusHistory.forEach((log, index) => {
@@ -321,29 +319,28 @@ const isLast = index === data.statusHistory.length - 1;
         if (log.by) {
           const sanitizedBy = sanitizeText(log.by);
           if (log.by === 'SUPER') {
-            adminInfo = '<span style="background: #e74c3c; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">👑 مدير عام</span>';
+            adminInfo = '<span style="background: #e74c3c; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;"> مدير عام</span>';
           } else if (log.by === 'ADMIN') {
-            adminInfo = '<span style="background: #3498db; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">🔧 مشرف</span>';
+            adminInfo = '<span style="background: #3498db; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;"> مشرف</span>';
           } else if (log.by === 'system') {
-            adminInfo = '<span style="background: #95a5a6; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">🤖 النظام</span>';
+            adminInfo = '<span style="background: #95a5a6; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;"> النظام</span>';
           } else {
-            adminInfo = `<span style="background: #7f8c8d; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;">👤 ${sanitizedBy}</span>`;
+            adminInfo = `<span style="background: #7f8c8d; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 10px;"> ${sanitizedBy}</span>`;
           }
         }
 
-        historyHTML += `
-<div style="position: relative; margin-bottom: ${isLast ? '0' : '25px'};">
+        historyHTML += `<div style="position: relative; margin-bottom: ${isLast ? '0': '25px'};">
 <div style="position: absolute; right: -30px; top: 5px; width: 18px; height: 18px; background: ${logStatusInfo.color}; border-radius: 50%; border: 3px solid var(--bg2); box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 2;"></div>
-${!isLast ? '<div style="position: absolute; right: -21px; top: 23px; width: 2px; height: calc(100% + 25px); background: var(--border2); z-index: 1;"></div>' : ''}
-<div class="inquiry-history-item" style="border-right: 4px solid ${logStatusInfo.color};">
+${!isLast ? '<div style="position: absolute; right: -21px; top: 23px; width: 2px; height: calc(100% + 25px); background: var(--border2); z-index: 1;"></div>': ''}
+<div class="inquiry-history-item"style="border-right: 4px solid ${logStatusInfo.color};">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
 <span style="background: ${logStatusInfo.color}; color: white; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 0.95rem;">${logStatusInfo.icon} ${logStatusInfo.text}</span>
 ${adminInfo}
 </div>
-<span class="inquiry-text-muted" style="font-size: 0.85rem; font-weight: 600;">${window.formatDateTime(log.timestamp)}</span>
+<span class="inquiry-text-muted"style="font-size: 0.85rem; font-weight: 600;">${window.formatDateTime(log.timestamp)}</span>
 </div>
-${log.note ? `<p style="margin: 10px 0 0 0; line-height: 1.6; font-size: 0.95rem;">💬 ${sanitizeText(log.note)}</p>` : ''}
+${log.note ? `<p style="margin: 10px 0 0 0; line-height: 1.6; font-size: 0.95rem;"> ${sanitizeText(log.note)}</p>`: ''}
 </div>
 </div>
 `;
@@ -356,26 +353,25 @@ if (data.vCode && data.vCode !== "") {
 resultDiv.style.display = 'block';
 resultDiv.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(46, 204, 113, 0.08) 100%)';
 resultDiv.style.border = '3px solid var(--secondary)';
-resultDiv.innerHTML = `
-<div style="text-align: center;">
-<i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;">✅</i>
+resultDiv.innerHTML = `<div style="text-align: center;">
+<i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;"></i>
 <h3 style="color: var(--secondary); margin-bottom: 25px; font-size: 2rem; font-weight: 900;">تم التكويد بنجاح!</h3>
 </div>
 
 <div style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); padding: 35px; border-radius: 25px; margin: 25px 0; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3); text-align: center;">
 <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 12px; font-weight: 600;">كود المركبة الخاص بك</p>
 <h2 style="color: white; font-size: 4.5rem; font-weight: 900; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.2); letter-spacing: 3px;">${data.vCode}</h2>
-<button onclick="navigator.clipboard.writeText('${data.vCode}').then(()=>window.showToast('تم نسخ الكود','success'))" style="margin-top:16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:8px 20px;border-radius:20px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.85rem;">نسخ الكود</button>
+<button onclick="navigator.clipboard.writeText('${data.vCode}').then(()=>window.showToast('تم نسخ الكود','success'))"style="margin-top:16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:8px 20px;border-radius:20px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.85rem;">نسخ الكود</button>
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
-<div class="inquiry-card" style="text-align: center;">
-<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+<div class="inquiry-card"style="text-align: center;">
+<p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vType}</p>
 </div>
-<div class="inquiry-card" style="text-align: center;">
-<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
+<div class="inquiry-card"style="text-align: center;">
+<p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vYear || 'غير محدد'}</p>
 </div>
 
 </div>
@@ -383,12 +379,12 @@ resultDiv.innerHTML = `
 <div class="inquiry-card">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
-<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
-<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> الرقم المرجعي</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
 </div>
 <div>
-<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التكويد</p>
-<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.codedAt)}</p>
+<p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> تاريخ التكويد</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.codedAt)}</p>
 </div>
 </div>
 </div>
@@ -397,7 +393,7 @@ ${historyHTML}
 
 <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(52, 152, 219, 0.3); text-align: center;">
 <p style="margin: 0; color: var(--info); font-size: 1rem; line-height: 1.8;">
-<strong style="font-size: 1.1rem;">✅ يمكنك الآن استلام المركبة</strong><br>
+<strong style="font-size: 1.1rem;"> يمكنك الآن استلام المركبة</strong><br>
 <span style="font-size: 0.95rem;">توجه إلى مقر رئاسة المركز مع المستندات المطلوبة</span>
 </p>
 </div>
@@ -406,8 +402,7 @@ ${historyHTML}
 resultDiv.style.display = 'block';
 resultDiv.style.background = 'linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(214, 137, 16, 0.08) 100%)';
 resultDiv.style.border = '3px solid var(--warning)';
-resultDiv.innerHTML = `
-<div style="text-align: center;">
+resultDiv.innerHTML = `<div style="text-align: center;">
 <i style="font-size: 90px; display: block; margin-bottom: 20px; animation: pulse 2s infinite;">${statusInfo.icon}</i>
 <h3 style="color: var(--warning); margin-bottom: 20px; font-size: 2rem; font-weight: 900;">${statusInfo.text}</h3>
 </div>
@@ -418,13 +413,13 @@ resultDiv.innerHTML = `
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
-<div class="inquiry-card" style="text-align: center;">
-<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">🚜 ${data.vType}</p>
+<div class="inquiry-card"style="text-align: center;">
+<p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vType}</p>
 </div>
-<div class="inquiry-card" style="text-align: center;">
-<p class="inquiry-text-muted" style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p class="inquiry-text-primary" style="font-size: 1.3rem; font-weight: bold; margin: 0;">📅 ${data.vYear || 'غير محدد'}</p>
+<div class="inquiry-card"style="text-align: center;">
+<p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vYear || 'غير محدد'}</p>
 </div>
 
 </div>
@@ -432,12 +427,12 @@ resultDiv.innerHTML = `
 <div class="inquiry-card">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
-<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📋 الرقم المرجعي</p>
-<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> الرقم المرجعي</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
 </div>
 <div>
-<p class="inquiry-text-muted" style="font-size: 0.85rem; margin: 0 0 5px 0;">📅 تاريخ التسجيل</p>
-<p class="inquiry-text-primary" style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.timestamp)}</p>
+<p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> تاريخ التسجيل</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0;">${window.formatDateTime(data.timestamp)}</p>
 </div>
 </div>
 </div>
@@ -446,7 +441,7 @@ ${historyHTML}
 
 <div style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.1) 100%); padding: 20px; border-radius: 15px; margin-top: 25px; border: 2px solid rgba(243, 156, 18, 0.3); text-align: center;">
 <p style="margin: 0; color: var(--warning); font-size: 1rem; line-height: 1.8;">
-<strong style="font-size: 1.1rem;">⏳ يرجى الانتظار</strong><br>
+<strong style="font-size: 1.1rem;">يرجى الانتظار</strong><br>
 <span style="font-size: 0.95rem;">سيتم مراجعة طلبك والتواصل معك قريباً</span>
 </p>
 </div>
@@ -456,10 +451,10 @@ ${historyHTML}
 document.getElementById('loadingSpinner').style.display = 'none';
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ حدث خطأ: " + error.message);
+alert("حدث خطأ: "+ error.message);
 } finally {
   const inquiryBtn = document.getElementById('inquiryBtn');
-  if (inquiryBtn) { inquiryBtn.disabled = false; inquiryBtn.innerHTML = '🔍 استعلام الآن'; }
+  if (inquiryBtn) { inquiryBtn.disabled = false; inquiryBtn.innerHTML = 'استعلام الآن'; }
   // إظهار زر الطباعة لو في نتيجة
   const printBtn = document.getElementById('inquiryPrintBtn');
   const resultDiv = document.getElementById('inquiryResult');
@@ -473,15 +468,15 @@ alert("❌ حدث خطأ: " + error.message);
 document.getElementById('submitCompBtn').onclick = async () => {
 const btn = document.getElementById('submitCompBtn');
 if (btn._submitting) return;
-const _alert = window._origAlert || window.alert;
+const _alert = (msg, type = 'error') => { if (window.showToast) window.showToast(msg, type, 4500); else alert(msg); };
 
-// ✅ Anti-Spam: منع إرسال أكثر من شكوى كل 5 دقائق
+//  Anti-Spam: منع إرسال أكثر من شكوى كل 5 دقائق
 const SPAM_KEY = 'lastComplaintTime';
 const COOLDOWN = 5 * 60 * 1000;
 const lastTime = parseInt(localStorage.getItem(SPAM_KEY) || '0');
 if (Date.now() - lastTime < COOLDOWN) {
   const remaining = Math.ceil((COOLDOWN - (Date.now() - lastTime)) / 60000);
-  _alert(`⚠️ يرجى الانتظار ${remaining} دقيقة قبل إرسال شكوى أخرى`);
+  _alert(`يرجى الانتظار ${remaining} دقيقة قبل إرسال شكوى أخرى`, 'warning');
   return;
 }
 const ownerName = document.getElementById('compOwnerName').value.trim();
@@ -501,36 +496,36 @@ const problemImages = document.getElementById('compProblemImage').files;
 const vehicleImage = document.getElementById('compVehicleImage').files[0];
 
 if (!ownerName || !validateInputs(nid, phone) || !vehicleId || !compType || !details) {
-_alert("❌ يرجى إكمال جميع البيانات المطلوبة");
+_alert("يرجى إكمال جميع البيانات المطلوبة");
 return;
 }
 
 if (!selfie || !idCard || !vehicleImage) {
-_alert("❌ يرجى رفع الصور المطلوبة:\n• صورة سيلفي\n• صورة البطاقة\n• صورة المركبة/الكود");
+_alert("يرجى رفع الصور المطلوبة:\n• صورة سيلفي\n• صورة البطاقة\n• صورة المركبة/الكود");
 return;
 }
 
-// 🛡️ التحقق الصارم من نوع وحجم الملفات قبل البدء في الرفع
+//  التحقق الصارم من نوع وحجم الملفات قبل البدء في الرفع
 const requiredImages = [
-  { file: selfie, label: 'صورة السيلفي' },
-  { file: idCard, label: 'صورة البطاقة' },
-  { file: vehicleImage, label: 'صورة المركبة/الكود' }
+  { file: selfie, label: 'صورة السيلفي'},
+  { file: idCard, label: 'صورة البطاقة'},
+  { file: vehicleImage, label: 'صورة المركبة/الكود'}
 ];
 
 const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 for (const item of requiredImages) {
   if (item.file.size > 5242880) {
-    _alert(`❌ حجم "${item.label}" يتجاوز 5MB\nيرجى اختيار صورة بحجم أصغر.`);
+    _alert(`حجم "${item.label}"يتجاوز 5MB\nيرجى اختيار صورة بحجم أصغر.`);
     return;
   }
   if (!ALLOWED_MIMES.includes(item.file.type)) {
-    _alert(`❌ ملف "${item.label}" غير مسموح. يُسمح فقط بصور JPG, PNG, WebP.`);
+    _alert(`ملف "${item.label}"غير مسموح. يُسمح فقط بصور JPG, PNG, WebP.`);
     return;
   }
 }
 
 if (problemImages && problemImages.length > 3) {
-  _alert("❌ يُسمح برفع 3 صور كحد أقصى للمشكلة.");
+  _alert("يُسمح برفع 3 صور كحد أقصى للمشكلة.");
   return;
 }
 
@@ -538,11 +533,11 @@ if (problemImages && problemImages.length > 0) {
   for (let i = 0; i < problemImages.length; i++) {
     const pFile = problemImages[i];
     if (pFile.size > 5242880) {
-      _alert(`❌ حجم صورة المشكلة "${pFile.name}" يتجاوز 5MB.`);
+      _alert(`حجم صورة المشكلة "${pFile.name}"يتجاوز 5MB.`);
       return;
     }
     if (!ALLOWED_MIMES.includes(pFile.type)) {
-      _alert(`❌ صورة المشكلة "${pFile.name}" غير صالحة. يُسمح فقط بـ JPG, PNG, WebP.`);
+      _alert(`صورة المشكلة "${pFile.name}"غير صالحة. يُسمح فقط بـ JPG, PNG, WebP.`);
       return;
     }
   }
@@ -554,7 +549,7 @@ btn._submitting = true;
 btn.innerText = "جاري التحقق من البيانات...";
 
 try {
-// 🛡️ التحقق المسبق من عدد الشكاوى المسموح بها في السيرفر قبل استهلاك مساحة التخزين
+//  التحقق المسبق من عدد الشكاوى المسموح بها في السيرفر قبل استهلاك مساحة التخزين
 const { data: canSubmit, error: compCheckErr } = await window.supabaseClient.rpc('can_submit_complaint', {
   p_national_id: nid
 });
@@ -563,16 +558,15 @@ if (!compCheckErr && canSubmit === false) {
   document.getElementById('loadingSpinner').style.display = 'none';
   btn.disabled = false;
   btn._submitting = false;
-  btn.innerText = "إرسال الشكوى ✉️";
-  _alert("⚠️ تم الوصول للحد الأقصى من الشكاوى المسموح بها لهذا الرقم القومي (5 شكاوى).\n\nيرجى الانتظار لحين مراجعة شكاويك السابقة والرد عليها.");
+  btn.innerText = "إرسال الشكوى ";
+  _alert("تم الوصول للحد الأقصى من الشكاوى المسموح بها لهذا الرقم القومي (5 شكاوى).\n\nيرجى الانتظار لحين مراجعة شكاويك السابقة والرد عليها.");
   return;
 }
 const imgUrls = {
 selfie: '',
 idCard: '',
 problemImages: [],
-vehicleImage: ''
-};
+vehicleImage: ''};
 
 // Upload selfie
 btn.innerText = "جاري رفع صورة السيلفي...";
@@ -608,17 +602,17 @@ status: 'pending',
 reply: '',
 submitted_at: Date.now()
 }); 
-// ✅ تسجيل وقت الإرسال لمنع الإزعاج
+//  تسجيل وقت الإرسال لمنع الإزعاج
 localStorage.setItem('lastComplaintTime', Date.now().toString());
 document.getElementById('loadingSpinner').style.display = 'none';
 
 // Send confirmation WhatsApp to citizen
-const confirmMessage = `✅ *تم استلام شكواك بنجاح!*\n\n` +
-`👤 السيد/ة: ${ownerName}\n` +
-`📋 نوع الشكوى: ${compType}\n` +
-`📸 تم رفع جميع الصور المطلوبة\n\n` +
-`⏳ سيتم مراجعة شكواك والرد عليك في أقرب وقت\n\n` +
-`📞 للاستفسار: 01021102607\n\n` +
+const confirmMessage = `*تم استلام شكواك بنجاح!*\n\n`+
+`السيد/ة: ${ownerName}\n`+
+`نوع الشكوى: ${compType}\n`+
+`تم رفع جميع الصور المطلوبة\n\n`+
+`سيتم مراجعة شكواك والرد عليك في أقرب وقت\n\n`+
+`للاستفسار: 01021102607\n\n`+
 `_رئاسة مركز ومدينة كفر صقر_`;
 
 // Auto-send WhatsApp (no confirmation needed for citizen's own submission)
@@ -627,14 +621,18 @@ const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(confirmMe
 window.open(whatsappUrl, '_blank');
 }
 
-alert("✅ تم إرسال شكواك بنجاح!\n\n📋 تم رفع جميع الصور المطلوبة\n⏳ سيتم المراجعة والرد في أقرب وقت.\n\n📱 سيتم فتح واتساب لإرسال تأكيد الاستلام");
-location.reload();
+window.showToast("تم إرسال شكواك بنجاح! سيتم مراجعتها والرد في أقرب وقت.", "success", 4000);
+setTimeout(() => location.reload(), 2500);
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ خطأ: " + error.message);
+if (window.handleError) {
+  window.handleError(error, 'إرسال الشكوى');
+} else {
+  alert("خطأ: "+ error.message);
+}
 btn.disabled = false;
 btn._submitting = false;
-btn.innerText = "إرسال الشكوى ✉️";
+btn.innerText = "إرسال الشكوى";
 }
 };
 
@@ -649,7 +647,7 @@ if (!owner || !validateInputs(nid, phone)) return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-// ✅ استخدام RPC الآمنة بدل الاستعلام المباشر
+//  استخدام RPC الآمنة بدل الاستعلام المباشر
 const { data: complaints, error } = await window.supabaseClient
 .rpc('get_my_complaints', {
   p_national_id: nid,
@@ -663,43 +661,38 @@ const resultDiv = document.getElementById('complaintInquiryResult');
 
 if (!complaints || complaints.length === 0) {
 resultDiv.style.display = 'block';
-resultDiv.innerHTML = `
-<div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); padding: 40px; border-radius: 25px; text-align: center; border: 3px solid var(--danger);">
-<i style="font-size: 80px; display: block; margin-bottom: 20px;">❌</i>
+resultDiv.innerHTML = `<div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); padding: 40px; border-radius: 25px; text-align: center; border: 3px solid var(--danger);">
+<i style="font-size: 80px; display: block; margin-bottom: 20px;"></i>
 <h3 style="color: var(--danger); margin-bottom: 15px; font-size: 1.8rem;">لا توجد شكاوى مطابقة</h3>
-<p class="inquiry-text-muted" style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
+<p class="inquiry-text-muted"style="font-size: 1.1rem;">تأكد من صحة البيانات المدخلة</p>
 </div>
 `;
 } else {
 let complaintsHTML = '';
 complaints.forEach((data) => {
-const statusColor = data.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
-const statusText = data.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
-const statusBg = data.status === 'replied' ? 'rgba(39, 174, 96, 0.08)' : 'rgba(243, 156, 18, 0.08)';
+const statusColor = data.status === 'replied'? 'var(--secondary)': 'var(--warning)';
+const statusText = data.status === 'replied'? 'تم الرد': 'قيد المراجعة';
+const statusBg = data.status === 'replied'? 'rgba(39, 174, 96, 0.08)': 'rgba(243, 156, 18, 0.08)';
 
-complaintsHTML += `
-<div style="background: linear-gradient(135deg, ${statusBg} 0%, ${statusBg} 100%); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 3px solid ${statusColor};">
+complaintsHTML += `<div style="background: linear-gradient(135deg, ${statusBg} 0%, ${statusBg} 100%); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 3px solid ${statusColor};">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 <h3 style="color: ${statusColor}; margin: 0; font-size: 1.5rem;">${sanitizeText(data.complaint_type) || 'شكوى'}</h3>
 <span style="background: ${statusColor}; color: white; padding: 8px 16px; border-radius: 10px; font-weight: bold;">${statusText}</span>
 </div>
-<div class="inquiry-subcard" style="margin-bottom: 15px; padding: 16px 20px;">
-<p class="inquiry-text-primary" style="margin: 0; line-height: 1.8;"><strong style="color: var(--gold);">التفاصيل:</strong><br>${sanitizeText(data.details) || 'لا توجد تفاصيل'}</p>
+<div class="inquiry-subcard"style="margin-bottom: 15px; padding: 16px 20px;">
+<p class="inquiry-text-primary"style="margin: 0; line-height: 1.8;"><strong style="color: var(--gold);">التفاصيل:</strong><br>${sanitizeText(data.details) || 'لا توجد تفاصيل'}</p>
 </div>
-<p class="inquiry-text-muted" style="font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.submitted_at)}</p>
-${data.images ? `
-<div style="margin: 15px 0;">
-<button class="btn btn-view-inquiry-images" data-id="${sanitizeText(data.id)}" style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;">🖼️ عرض الصور المرفقة</button>
+<p class="inquiry-text-muted"style="font-size: 0.9rem;"><strong>تاريخ التقديم:</strong> ${window.formatDateTime(data.submitted_at)}</p>
+${data.images ? `<div style="margin: 15px 0;">
+<button class="btn btn-view-inquiry-images"data-id="${sanitizeText(data.id)}"style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 10px 20px; border-radius: 12px; font-weight: bold;"> عرض الصور المرفقة</button>
 </div>
-` : ''}
-${data.status === 'replied' && data.reply ? `
-<div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--secondary); margin-top: 15px;">
-<p style="color: var(--secondary); margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem;">💬 الرد من الإدارة:</p>
-<p class="inquiry-text-primary" style="margin: 0; line-height: 1.8;">${sanitizeText(data.reply)}</p>
+`: ''}
+${data.status === 'replied'&& data.reply ? `<div style="background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%); padding: 20px; border-radius: 15px; border: 2px solid var(--secondary); margin-top: 15px;">
+<p style="color: var(--secondary); margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem;"> الرد من الإدارة:</p>
+<p class="inquiry-text-primary"style="margin: 0; line-height: 1.8;">${sanitizeText(data.reply)}</p>
 </div>
-` : `
-<div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px;">
-<p style="color: var(--warning); margin: 0; font-weight: bold;">⏳ شكواك قيد المراجعة، سيتم الرد في أقرب وقت</p>
+`: `<div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px;">
+<p style="color: var(--warning); margin: 0; font-weight: bold;">شكواك قيد المراجعة، سيتم الرد في أقرب وقت</p>
 </div>
 `}
 </div>
@@ -707,8 +700,7 @@ ${data.status === 'replied' && data.reply ? `
 });
 
 resultDiv.style.display = 'block';
-resultDiv.innerHTML = `
-<h3 style="text-align: center; color: var(--text); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${complaints.length})</h3>
+resultDiv.innerHTML = `<h3 style="text-align: center; color: var(--text); margin-bottom: 30px; font-size: 1.8rem;">شكاويك (${complaints.length})</h3>
 ${complaintsHTML}
 `;
 
@@ -723,7 +715,7 @@ btn.onclick = () => {
 const compId = btn.getAttribute('data-id');
 const data = complaintsData[compId];
 if (data && data.images) {
-if (typeof data.images === 'object' && !Array.isArray(data.images)) {
+if (typeof data.images === 'object'&& !Array.isArray(data.images)) {
 // New format: categorized images
 showCategorizedImages(data.images);
 } else if (Array.isArray(data.images)) {
@@ -731,7 +723,7 @@ showCategorizedImages(data.images);
 viewImages(data.images);
 }
 } else {
-alert("⚠️ لا توجد صور متاحة للعرض");
+alert("لا توجد صور متاحة للعرض");
 }
 };
 });
@@ -739,7 +731,7 @@ alert("⚠️ لا توجد صور متاحة للعرض");
 document.getElementById('loadingSpinner').style.display = 'none';
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("❌ حدث خطأ: " + error.message);
+alert("حدث خطأ: "+ error.message);
 console.error(error);
 }
 };

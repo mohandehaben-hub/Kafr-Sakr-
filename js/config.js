@@ -1,11 +1,21 @@
-// config.js - إعدادات قاعدة البيانات
+// config.js - إعدادات قاعدة البيانات الموحدة للأمان
+const SUPABASE_URL = (window.SUPABASE_URL && !window.SUPABASE_URL.includes('your-project-id')) 
+    ? window.SUPABASE_URL 
+    : '';
+const SUPABASE_KEY = (window.SUPABASE_KEY && !window.SUPABASE_KEY.includes('your-anon-public-key')) 
+    ? window.SUPABASE_KEY 
+    : '';
 
-const SUPABASE_URL = window.SUPABASE_URL || 'https://xlieswavjjgqsnczesct.supabase.co';
-const SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl';
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.warn('⚠️ [الأمان] يرجى التأكد من تهيئة js/env.js بمفاتيح المشروع المخصصة (راجع js/env.example.js).');
+}
 
 // Initialize Supabase Client
 (function() {
     function initSupabase() {
+        if (!SUPABASE_URL || !SUPABASE_KEY) {
+            return;
+        }
         if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
             window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             checkExistingSession();
@@ -32,14 +42,12 @@ const SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_5OgzcAecYuLwipCfNnmB
                     window.currentRole = savedRole;
                     window.userRole = savedRole;
 
-                    ['portalSection','citizenPage','inquiryPage','complaintsPage',
-                     'complaintInquiryPage','loginModal'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.style.display = 'none';
-                    });
-
-                    const adminPage = document.getElementById('adminPage');
-                    if (adminPage) adminPage.style.display = 'block';
+                    if (typeof window.switchPage === 'function') {
+                        window.switchPage('adminPage');
+                    } else {
+                        const adminPage = document.getElementById('adminPage');
+                        if (adminPage) adminPage.style.display = 'block';
+                    }
                     const loginBtn = document.getElementById('loginBtn');
                     if (loginBtn) loginBtn.style.display = 'none';
                     // أزرار الـ sidebar — تُظهر في الـ footer
@@ -65,9 +73,9 @@ const SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_5OgzcAecYuLwipCfNnmB
                     const leadershipSection = document.getElementById('leadershipSection');
                     if (leadershipSection) leadershipSection.style.display = 'none';
                     const sidebarToggle = document.getElementById('sidebarToggleBtn');
-                    if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+                    if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex': 'none';
                     const fabBtn = document.getElementById('fabLoginBtn');
-                    if (fabBtn) { fabBtn.innerHTML = '🚪'; fabBtn.onclick = () => window.logoutAdmin && window.logoutAdmin(); }
+                    if (fabBtn) { fabBtn.innerHTML = ''; fabBtn.onclick = () => window.logoutAdmin && window.logoutAdmin(); }
 
                     // إظهار أدوات الصيانة للـ SUPER
                     if (savedRole === 'SUPER') {
@@ -90,7 +98,7 @@ const SUPABASE_KEY = window.SUPABASE_KEY || 'sb_publishable_5OgzcAecYuLwipCfNnmB
                     sessionStorage.clear();
                 }
             } catch (err) {
-                console.error('❌ خطأ في استعادة الجلسة:', err);
+                console.error('خطأ في استعادة الجلسة:', err);
                 window.adminDataLoaded = false;
                 sessionStorage.clear();
             }

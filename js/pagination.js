@@ -5,7 +5,7 @@
 window.currentPage    = 1;
 window.recordsPerPage = 100;
 window.totalRecords   = 0;
-window.currentFilter  = 'all';   // all / tuktuk / microbus
+window.currentFilter  = 'tuktuk'; // tuktuk / microbus (لا يوجد خيار الكل للمركبات)
 window.currentSearch  = '';
 window.currentSearchType = 'all';
 window.isLoading      = false;
@@ -15,12 +15,17 @@ async function fetchPage(page, search, searchType, filter) {
   const from = (page - 1) * window.recordsPerPage;
   const to   = from + window.recordsPerPage - 1;
 
+  // ضمان عدم تمرير 'all'if (!filter || filter === 'all') filter = 'tuktuk';
+
   let query = window.supabaseClient
     .from('orders')
-    .select('*', { count: 'exact' });
+    .select('*', { count: 'exact'});
 
-  // ── عزل تام: فرض فلتر نوع المركبة دائماً ──
-  if (filter === 'tuktuk') {
+  // ── عزل تام: قسم الميكروباص أو قسم التوكتوك فقط ──
+  if (filter === 'microbus') {
+    // الميكروباص: يملك license_plate غير فارغ — لا يظهر أي توكتوك هنا أبداً
+    query = query.not('license_plate', 'is', null).neq('license_plate', '');
+  } else {
     // التوكتوك: لا يملك license_plate أو قيمته فارغة
     query = query.or('license_plate.is.null,license_plate.eq.');
     if (window._newRequestsMode) {
@@ -29,24 +34,36 @@ async function fetchPage(page, search, searchType, filter) {
     if (window._stickerMode) {
       query = query.eq('status', 'sticker_applied');
     }
-  } else if (filter === 'microbus') {
-    // الميكروباص: يملك license_plate غير فارغ — لا يظهر أي توكتوك هنا أبداً
-    query = query.not('license_plate', 'is', null).neq('license_plate', '');
   }
-  // filter === 'all': لا قيد على النوع
 
   // ── البحث السياقي ──
   if (search && search.trim()) {
-    const s = search.trim();
+    let s = search.trim();
+    // تحويل الأرقام المشرقية إلى إنجليزية
+    s = toAsciiDigits(s);
+    // حماية من حقن فلاتر PostgREST بتطهير الرموز المحجوزة (المبني عليها عامل .or)
+    s = s.replace(/[,()"\\]/g, '');
+    if (!s) return { data: [], count: 0 };
 
     if (searchType === 'name')
       query = query.ilike('owner_name', `%${s}%`);
-    else if (searchType === 'code')
-      query = query.eq('code', s);
-    else if (searchType === 'plate')
-      query = query.ilike('license_plate', `%${s}%`);
+    else if (searchType === 'code') {
+      const cleanCode = s.replace(/[^0-9]/g, '');
+      if (cleanCode) {
+        // بحث مرن بالكود: يدعم البحث بالأرقام الأولى أو الكود بالكامل
+        query = query.ilike('code', `%${cleanCode}%`);
+      } else {
+        // إذا كتب الاسم وهو في وضع الكود، ابحث بالاسم تلقائياً
+        query = query.ilike('owner_name', `%${s}%`);
+      }
+    }
+    else if (searchType === 'plate') {
+      // بحث مرن يطابق اللوحة سواء كانت الحروف متباعدة (ر ع و) أو متصلة
+      const flexible = s.replace(/\s+/g, '%');
+      query = query.ilike('license_plate', `%${flexible}%`);
+    }
     else if (searchType === 'nationalId')
-      query = query.eq('national_id', s);
+      query = query.ilike('national_id', `%${s}%`);
     else if (searchType === 'phone')
       query = query.ilike('phone', `%${s}%`);
     else if (searchType === 'chassis')
@@ -54,20 +71,15 @@ async function fetchPage(page, search, searchType, filter) {
     else if (searchType === 'motor')
       query = query.ilike('motor_number', `%${s}%`);
     else {
-      // searchType === 'all' — يبحث في الحقول المناسبة للقسم فقط
+      // searchType === 'all'— يبحث في حقول القسم المناسب
       if (filter === 'microbus') {
+        const flexible = s.replace(/\s+/g, '%');
         query = query.or(
-          `owner_name.ilike.%${s}%,license_plate.ilike.%${s}%,national_id.eq.${s},phone.ilike.%${s}%`
-        );
-      } else if (filter === 'tuktuk') {
-        query = query.or(
-          `owner_name.ilike.%${s}%,code.eq.${s},national_id.eq.${s},phone.ilike.%${s}%,chassis_number.ilike.%${s}%,motor_number.ilike.%${s}%`
-        );
+          `owner_name.ilike.%${s}%,license_plate.ilike.%${flexible}%,national_id.ilike.%${s}%,phone.ilike.%${s}%`);
       } else {
-        // all
+        // tuktuk
         query = query.or(
-          `owner_name.ilike.%${s}%,code.eq.${s},national_id.eq.${s},phone.ilike.%${s}%,license_plate.ilike.%${s}%,chassis_number.ilike.%${s}%,motor_number.ilike.%${s}%`
-        );
+          `owner_name.ilike.%${s}%,code.ilike.%${s}%,national_id.ilike.%${s}%,phone.ilike.%${s}%,chassis_number.ilike.%${s}%,motor_number.ilike.%${s}%`);
       }
     }
   }
@@ -130,75 +142,42 @@ function renderTable(orders) {
     images: o.images || [],
   });
 
-  const filter = window.currentFilter;
+  const filter = (window.currentFilter === 'microbus') ? 'microbus': 'tuktuk';
 
-  // ── عزل تام: حسب الفلتر الحالي ──
+  // ── عزل تام: قسم الميكروباص أو قسم التوكتوك ──
   if (filter === 'microbus') {
     // إخفاء جدول التوكتوك تماماً
     if (tukCont) tukCont.style.display = 'none';
-    tukBody.innerHTML = '';
+    if (tukBody) tukBody.innerHTML = '';
 
     // عرض الميكروباص فقط
     if (micBody && micCont) {
+      micCont.style.display = 'block';
       if (orders.length > 0) {
-        micCont.style.display = 'block';
         const frag = document.createDocumentFragment();
         orders.forEach(o => frag.appendChild(window.createTableRow(toItem(o), 'microbus')));
         micBody.innerHTML = '';
         micBody.appendChild(frag);
       } else {
-        micCont.style.display = 'block';
-        micBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:rgba(255,255,255,0.4)">لا توجد نتائج</td></tr>';
+        micBody.innerHTML = '<tr><td colspan="8"style="text-align:center;padding:24px;color:rgba(255,255,255,0.4)">لا توجد نتائج في قسم الميكروباص</td></tr>';
       }
     }
-    return;
-  }
-
-  if (filter === 'tuktuk') {
+  } else {
     // إخفاء جدول الميكروباص تماماً
     if (micCont) micCont.style.display = 'none';
     if (micBody) micBody.innerHTML = '';
 
     // عرض التوكتوك فقط
     if (tukCont) tukCont.style.display = 'block';
-    if (orders.length > 0) {
-      const frag = document.createDocumentFragment();
-      orders.forEach(o => frag.appendChild(window.createTableRow(toItem(o), 'tuktuk')));
-      tukBody.innerHTML = '';
-      tukBody.appendChild(frag);
-    } else {
-      tukBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:rgba(255,255,255,0.4)">لا توجد نتائج</td></tr>';
-    }
-    return;
-  }
-
-  // filter === 'all' — فصل بناءً على license_plate
-  const tukOrders = orders.filter(o => !o.license_plate || o.license_plate === '');
-  const micOrders = orders.filter(o => o.license_plate && o.license_plate !== '');
-
-  // Render tuktuk
-  if (tukOrders.length > 0) {
-    if (tukCont) tukCont.style.display = 'block';
-    const frag = document.createDocumentFragment();
-    tukOrders.forEach(o => frag.appendChild(window.createTableRow(toItem(o), 'tuktuk')));
-    tukBody.innerHTML = '';
-    tukBody.appendChild(frag);
-  } else {
-    if (tukCont) tukCont.style.display = 'none';
-    tukBody.innerHTML = '';
-  }
-
-  // Render microbus
-  if (micBody) {
-    if (micOrders.length > 0) {
-      if (micCont) micCont.style.display = 'block';
-      const frag = document.createDocumentFragment();
-      micOrders.forEach(o => frag.appendChild(window.createTableRow(toItem(o), 'microbus')));
-      micBody.innerHTML = '';
-      micBody.appendChild(frag);
-    } else {
-      if (micCont) micCont.style.display = 'none';
-      micBody.innerHTML = '';
+    if (tukBody) {
+      if (orders.length > 0) {
+        const frag = document.createDocumentFragment();
+        orders.forEach(o => frag.appendChild(window.createTableRow(toItem(o), 'tuktuk')));
+        tukBody.innerHTML = '';
+        tukBody.appendChild(frag);
+      } else {
+        tukBody.innerHTML = '<tr><td colspan="8"style="text-align:center;padding:24px;color:rgba(255,255,255,0.4)">لا توجد نتائج في قسم التوكتوك</td></tr>';
+      }
     }
   }
 }
@@ -209,20 +188,25 @@ function updatePaginationUI(count) {
   const totalPages = Math.ceil(count / window.recordsPerPage) || 1;
   const pageText = `صفحة ${window.currentPage} من ${totalPages}`;
 
-  // Top bar
-  const pageInfo  = document.getElementById('pageInfo');
-  if (pageInfo)  pageInfo.textContent  = pageText;
+  // Update single bottom bar
+  const pageInfo = document.getElementById('pageInfo');
+  if (pageInfo) pageInfo.textContent = pageText;
 
-  // Bottom bar
-  const pageInfo2  = document.getElementById('pageInfo2');
-  if (pageInfo2)  pageInfo2.textContent  = pageText;
+  const isFirst = window.currentPage <= 1;
+  const isLast = window.currentPage >= totalPages;
 
-  // Floating (mobile)
-  const floatPag  = document.getElementById('floatPagination');
-  const floatInfo = document.getElementById('floatPageInfo');
-  if (floatInfo) floatInfo.textContent = `${window.currentPage} / ${totalPages}`;
-  if (floatPag && window.innerWidth <= 768 && document.body.classList.contains('admin-mode')) {
-    floatPag.style.display = 'flex';
+  const prevBtn = document.getElementById('prevPageBtn');
+  if (prevBtn) {
+    prevBtn.disabled = isFirst;
+    prevBtn.style.opacity = isFirst ? '0.45': '1';
+    prevBtn.style.cursor = isFirst ? 'not-allowed': 'pointer';
+  }
+
+  const nextBtn = document.getElementById('nextPageBtn');
+  if (nextBtn) {
+    nextBtn.disabled = isLast;
+    nextBtn.style.opacity = isLast ? '0.45': '1';
+    nextBtn.style.cursor = isLast ? 'not-allowed': 'pointer';
   }
 
   const loading = document.getElementById('loadingMoreInfo');
@@ -255,7 +239,7 @@ async function loadPage(page) {
     }
   } catch (err) {
     const tukBody = document.getElementById('dataTable');
-    if (tukBody) tukBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:#f87171">❌ خطأ في تحميل البيانات</td></tr>';
+    if (tukBody) tukBody.innerHTML = '<tr><td colspan="8"style="text-align:center;padding:24px;color:#f87171"> خطأ في تحميل البيانات</td></tr>';
   } finally {
     window.isLoading = false;
   }
@@ -272,7 +256,7 @@ async function updateStats() {
     const badge = document.getElementById('newRequestsBadge');
     if (badge) {
       badge.textContent = newReqs || 0;
-      badge.style.display = (newReqs > 0) ? 'inline-flex' : 'none';
+      badge.style.display = (newReqs > 0) ? 'inline-flex': 'none';
     }
 
     // شارة الشكاوى غير المردود عليها
@@ -282,7 +266,7 @@ async function updateStats() {
     const compBadge = document.getElementById('compBadge');
     if (compBadge) {
       compBadge.textContent = compPending || 0;
-      compBadge.style.display = (compPending > 0) ? 'inline-flex' : 'none';
+      compBadge.style.display = (compPending > 0) ? 'inline-flex': 'none';
     }
   } catch(e) { console.error('Stats error:', e); }
 }
@@ -297,84 +281,198 @@ window.changePage = function(direction) {
 
 window.changeRecordsPerPage = function() {
   const val = document.getElementById('recordsPerPage').value;
-  window.recordsPerPage = val === 'all' ? 500 : parseInt(val);
+  window.recordsPerPage = val === 'all'? 500 : parseInt(val);
   loadPage(1);
 };
 
-window.searchOrders = function() {
-  const input = document.getElementById('searchInput');
-  const type  = document.getElementById('searchType');
-  window.currentSearch     = input ? input.value.trim() : '';
-  window.currentSearchType = type  ? type.value : 'all';
-  loadPage(1);
+// ── دالة تحويل الأرقام المشرقية (١٢٣) إلى إنجليزية (123) ──
+function toAsciiDigits(str) {
+  if (!str) return '';
+  return String(str).replace(/[\u0660-\u0669]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48));
+}
+window.toAsciiDigits = toAsciiDigits;
+
+// ── تنسيق لوحة السيارة تلقائياً: حروف متباعدة (ر ع و) + أرقام عادية (1234) ──
+function formatLicensePlateString(val) {
+  if (!val) return '';
+  val = toAsciiDigits(val);
+
+  const hasTrailingSpace = val.endsWith('');
+  const letters = val.match(/[\u0621-\u064A]/g) || [];
+  const digits  = val.match(/[0-9]/g) || [];
+
+  let formatted = '';
+  if (letters.length > 0 && digits.length > 0) {
+    const firstLetter = val.search(/[\u0621-\u064A]/);
+    const firstDigit  = val.search(/[0-9]/);
+    if (firstDigit < firstLetter) {
+      formatted = digits.join('') + ''+ letters.join('');
+    } else {
+      formatted = letters.join('') + ''+ digits.join('');
+    }
+  } else if (letters.length > 0) {
+    formatted = letters.join('');
+  } else if (digits.length > 0) {
+    formatted = digits.join('');
+  } else {
+    return val;
+  }
+
+  if (hasTrailingSpace && !formatted.endsWith('')) {
+    formatted += '';
+  }
+  return formatted;
+}
+window.formatLicensePlateString = formatLicensePlateString;
+
+// ── معالج إدخال البحث التفاعلي ──
+window.handleSearchInput = function(e) {
+  const input = (e && e.target) ? e.target : document.getElementById('searchInput');
+  if (!input) return;
+
+  const sType = window.currentSearchType || (window.currentFilter === 'microbus'? 'plate': 'code');
+
+  // تنسيق اللوحة تلقائياً عند البحث باللوحة أو إدخال حروف لوحة في قسم الميكروباص
+  if (sType === 'plate'|| (window.currentFilter === 'microbus'&& sType === 'all')) {
+    const prevPos = input.selectionStart;
+    const prevLen = input.value.length;
+    const formatted = formatLicensePlateString(input.value);
+    if (formatted !== input.value) {
+      input.value = formatted;
+      if (prevPos >= prevLen) {
+        input.setSelectionRange(formatted.length, formatted.length);
+      }
+    }
+  } else if (sType === 'code') {
+    // الكود: أرقام فقط وتحويل الأرقام العربية
+    const prevVal = input.value;
+    const converted = toAsciiDigits(prevVal).replace(/[^0-9]/g, '');
+    if (converted !== prevVal) {
+      input.value = converted;
+    }
+  }
+
+  window.searchOrders();
+};
+
+// ── تغيير نوع فلتر البحث يدوياً من القائمة ──
+window.onSearchTypeChange = function() {
+  const searchType  = document.getElementById('searchType');
+  const searchInput = document.getElementById('searchInput');
+  if (!searchType || !searchInput) return;
+
+  const val = searchType.value;
+  window.currentSearchType = val;
+
+  const placeholders = {
+    code:       'ابحث برقم الكود (مثال: 123)...',
+    plate:      'اكتب رقم اللوحة (مثال: ر ع و 1234)...',
+    name:       'ابحث باسم المالك...',
+    nationalId: 'ابحث بالرقم القومي (14 رقم)...',
+    phone:      'ابحث برقم الهاتف...',
+    chassis:    'ابحث برقم الشاسيه...',
+    motor:      'ابحث برقم الموتور...',
+    all:        'بحث شامل في كل الحقول...',
+  };
+  searchInput.placeholder = placeholders[val] || 'ابحث في السجلات...';
+
+  // إعادة تنسيق النص المكتوب حالياً إن وجد
+  if (val === 'plate'&& searchInput.value) {
+    searchInput.value = formatLicensePlateString(searchInput.value);
+  } else if (val === 'code'&& searchInput.value) {
+    searchInput.value = toAsciiDigits(searchInput.value).replace(/[^0-9]/g, '');
+  }
+
+  window.searchOrders(true);
+};
+
+let _searchDebounceTimer = null;
+window.searchOrders = function(immediate) {
+  if (_searchDebounceTimer) {
+    clearTimeout(_searchDebounceTimer);
+    _searchDebounceTimer = null;
+  }
+
+  const exec = () => {
+    const input = document.getElementById('searchInput');
+    const type  = document.getElementById('searchType');
+    window.currentSearch     = input ? input.value.trim() : '';
+    window.currentSearchType = type  ? type.value : (window.currentFilter === 'microbus'? 'plate': 'code');
+    loadPage(1);
+  };
+
+  if (immediate) {
+    exec();
+  } else {
+    _searchDebounceTimer = setTimeout(exec, 220);
+  }
 };
 
 window.filterByVehicleType = function(filter) {
+  // لا يوجد شيء اسمه 'all'للمركبات: إما توكتوك أو ميكروباص
+  filter = (filter === 'microbus') ? 'microbus': 'tuktuk';
   window.currentFilter = filter;
 
-  // تحديث عنوان الـ page bar
+  // تحديث أزرار الأقسام (Chips) إن وجدت
+  const chipTuk = document.getElementById('chipTuktuk');
+  const chipMic = document.getElementById('chipMicrobus');
+  if (chipTuk) chipTuk.classList.toggle('active', filter === 'tuktuk');
+  if (chipMic) chipMic.classList.toggle('active', filter === 'microbus');
+
+  // تحديث شريط تنقل الإدارة للموبايل
+  const bnavTuk = document.getElementById('adminBnavTuktuk');
+  const bnavMic = document.getElementById('adminBnavMicrobus');
+  if (bnavTuk) bnavTuk.classList.toggle('active', filter === 'tuktuk');
+  if (bnavMic) bnavMic.classList.toggle('active', filter === 'microbus');
+
+  // تحديث عنوان شريط الصفحة وفق القسم النشط
   const barTitle = document.getElementById('adminPageBarTitle');
   if (barTitle) {
-    const labels = {
-      all:      { icon: 'ri-truck-line',    text: 'جدول المركبات — الكل' },
-      tuktuk:   { icon: 'ri-motorbike-line',text: 'جدول المركبات — توكتوك' },
-      microbus: { icon: 'ri-bus-line',      text: 'جدول المركبات — ميكروباص' },
-    };
-    const l = labels[filter] || labels.all;
-    barTitle.innerHTML = `<i class="${l.icon}"></i> ${l.text}`;
+    barTitle.textContent = (filter === 'microbus') ? 'سجلات سيارات الميكروباص' : 'سجلات مركبات التوكتوك';
   }
 
-  // تحديث خيارات البحث السياقي حسب نوع المركبة
+  // تحديث خيارات البحث السياقي حسب نوع المركبة بدون أي كلمة افتراضي
   const searchType = document.getElementById('searchType');
   const searchInput = document.getElementById('searchInput');
   if (searchType) {
     if (searchInput) { searchInput.value = ''; window.currentSearch = ''; }
-    searchType.value = 'all';
-    window.currentSearchType = 'all';
 
     const tuktukOpts = [
-      { value: 'all',        label: '🔍 الكل' },
-      { value: 'code',       label: '🔢 الكود' },
-      { value: 'name',       label: '👤 الاسم' },
-      { value: 'nationalId', label: '🆔 الرقم القومي' },
-      { value: 'chassis',    label: '⚙️ الشاسيه' },
-      { value: 'motor',      label: '🔩 الموتور' },
+      { value: 'code',       label: 'الكود'},
+      { value: 'name',       label: 'اسم المالك'},
+      { value: 'nationalId', label: 'الرقم القومي'},
+      { value: 'phone',      label: 'رقم الهاتف'},
+      { value: 'chassis',    label: 'رقم الشاسيه'},
+      { value: 'motor',      label: 'رقم الموتور'},
+      { value: 'all',        label: 'بحث شامل'},
     ];
     const microbusOpts = [
-      { value: 'all',        label: '🔍 الكل' },
-      { value: 'plate',      label: '🚗 رقم اللوحة' },
-      { value: 'name',       label: '👤 الاسم' },
-      { value: 'nationalId', label: '🆔 الرقم القومي' },
-    ];
-    const allOpts = [
-      { value: 'all',        label: '🔍 الكل' },
-      { value: 'name',       label: '👤 الاسم' },
-      { value: 'code',       label: '🔢 الكود' },
-      { value: 'nationalId', label: '🆔 الرقم القومي' },
-      { value: 'phone',      label: '📱 الهاتف' },
-      { value: 'chassis',    label: '⚙️ الشاسيه' },
-      { value: 'motor',      label: '🔩 الموتور' },
+      { value: 'plate',      label: 'رقم اللوحة'},
+      { value: 'name',       label: 'اسم المالك / السائق'},
+      { value: 'nationalId', label: 'الرقم القومي'},
+      { value: 'phone',      label: 'رقم الهاتف'},
+      { value: 'all',        label: 'بحث شامل'},
     ];
 
-    const opts = filter === 'tuktuk'   ? tuktukOpts
-               : filter === 'microbus' ? microbusOpts
-               : allOpts;
+    const opts = (filter === 'microbus') ? microbusOpts : tuktukOpts;
+    const defaultSearchType = (filter === 'microbus') ? 'plate': 'code';
 
     searchType.innerHTML = opts.map(o =>
-      `<option value="${o.value}">${o.label}</option>`
-    ).join('');
-  }
+      `<option value="${o.value}"${o.value === defaultSearchType ? 'selected': ''}>${o.label}</option>`).join('');
 
-  // Update filter status
-  const statusEl   = document.getElementById('filterStatus');
-  const statusText = document.getElementById('filterStatusText');
-  if (statusEl && statusText) {
-    if (filter === 'all') { statusEl.style.display = 'none'; }
-    else {
-      statusEl.style.display = 'block';
-      statusText.textContent = filter === 'tuktuk' ? 'عرض التوكتوك فقط' : 'عرض الميكروباص فقط';
+    searchType.value = defaultSearchType;
+    window.currentSearchType = defaultSearchType;
+
+    if (searchInput) {
+      searchInput.placeholder = (filter === 'microbus')
+        ? 'اكتب رقم اللوحة (مثال: ر ع و 1234)...': 'ابحث برقم الكود...';
     }
   }
+
+  // إخفاء إشعار الفلتر القديم
+  const statusEl = document.getElementById('filterStatus');
+  if (statusEl) statusEl.style.display = 'none';
+
   loadPage(1);
 };
 

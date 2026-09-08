@@ -3,14 +3,13 @@
 // ═══════════════════════════════════════════════════════════════
 
 // ── متغير يتتبع من أين جاء المستخدم ──
-// 'portal' = جاء من البوابة | 'admin' = جاء من لوحة التحكم
+// 'portal'= جاء من البوابة | 'admin'= جاء من لوحة التحكم
 window._navSource = 'portal';
 
 // ── قائمة كل صفحات الخدمة ──
 const SERVICE_PAGES = [
   'citizenPage','inquiryPage','complaintsPage',
-  'complaintsSelectionPage','complaintInquiryPage'
-];
+  'complaintsSelectionPage','complaintInquiryPage'];
 
 // ── إخفاء كل الصفحات ──
 function hideAllPages() {
@@ -25,11 +24,9 @@ function updateBackButtons() {
   const isAdmin = !!sessionStorage.getItem('adminRole');
   const fromAdmin = window._navSource === 'admin';
   const label = fromAdmin
-    ? '<i class="ri-arrow-right-line"></i> لوحة التحكم'
-    : '<i class="ri-home-line"></i> البوابة';
+    ? '<i class="ri-arrow-right-line"></i> لوحة التحكم': '<i class="ri-home-line"></i> البوابة';
   const backBtns = document.querySelectorAll(
-    '#citizenBackBtn,#inquiryBackBtn,#compSelBackBtn,#compBackBtn,#compInqBackBtn'
-  );
+    '#citizenBackBtn,#inquiryBackBtn,#compSelBackBtn,#compBackBtn,#compInqBackBtn');
   backBtns.forEach(btn => { if (btn) btn.innerHTML = label; });
 }
 
@@ -42,18 +39,41 @@ window.smartBack = function() {
   }
 };
 
-// ── تسجيل الخروج ──
-window.logoutAdmin = async function() {
-  if (!confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) return;
+// ── تسجيل الخروج الاحترافي (Modal بدلاً من Confirm المتصفح) ──
+window.logoutAdmin = function() {
+  const modal = document.getElementById('logoutConfirmModal');
+  if (modal) {
+    modal.style.display = 'flex';
+  } else {
+    window.confirmLogoutAdmin();
+  }
+};
 
-  await window.supabaseClient.auth.signOut();
+window.closeLogoutModal = function() {
+  const modal = document.getElementById('logoutConfirmModal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.confirmLogoutAdmin = async function() {
+  window.closeLogoutModal();
+
+  try {
+    if (window.supabaseClient && window.supabaseClient.auth) {
+      await window.supabaseClient.auth.signOut();
+    }
+  } catch(e) {
+    console.warn('SignOut error:', e);
+  }
+
   ['supabaseSession','adminRole','adminUsername','userRole','username']
     .forEach(k => sessionStorage.removeItem(k));
   window.adminDataLoaded = false;
 
   hideAllPages();
-  document.getElementById('portalSection').style.display = 'block';
-  document.getElementById('loginBtn').style.display = 'inline-flex';
+  const portalSec = document.getElementById('portalSection');
+  if (portalSec) portalSec.style.display = 'flex';
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) loginBtn.style.display = 'inline-flex';
 
   // إخفاء أزرار الـ sidebar
   ['goPortalBtn','goAdminBtn','logoutBtn'].forEach(id => {
@@ -72,7 +92,13 @@ window.logoutAdmin = async function() {
   const badge = document.getElementById('roleBadge');
   if (badge) badge.remove();
 
-  location.reload();
+  if (typeof window.showToast === 'function') {
+    window.showToast('تم تسجيل الخروج بنجاح', 'info');
+  }
+
+  setTimeout(() => {
+    location.reload();
+  }, 350);
 };
 
 // ── إظهار/إخفاء زر لوحة التحكم في الهيدر ──
@@ -83,77 +109,43 @@ function updateHeaderAdminBtn() {
   const inPortal  = document.getElementById('portalSection')?.style.display !== 'none';
   const adminMode = document.body.classList.contains('admin-mode');
   // يظهر فقط في البوابة لما المستخدم مسجل دخول وليس في لوحة التحكم
-  btn.style.display = (isAdmin && inPortal && !adminMode) ? 'inline-flex' : 'none';
+  btn.style.display = (isAdmin && inPortal && !adminMode) ? 'inline-flex': 'none';
 }
 
 // ── الانتقال للبوابة من لوحة التحكم (مع إمكانية الرجوع) ──
 window.goToPortalFromAdmin = function() {
-  hideAllPages();
-  document.getElementById('portalSection').style.display = 'block';
-
-  document.body.classList.remove('admin-mode','in-service-page','sidebar-open');
-  document.body.classList.add('portal-logged-in');
-
-  const sidebar = document.getElementById('adminSidebar');
-  if (sidebar) sidebar.classList.remove('open');
-  const overlay = document.getElementById('sidebarOverlay');
-  if (overlay) overlay.classList.remove('show');
-
-  const leadershipSection = document.getElementById('leadershipSection');
-  if (leadershipSection) leadershipSection.style.display = 'flex';
-
-  // نحتفظ بـ _navSource = 'admin' حتى زر الرجوع في صفحات الخدمة يرجع للوحة التحكم
+  if (typeof window.switchPage === 'function') {
+    window.switchPage('portalSection');
+  } else {
+    hideAllPages();
+    document.getElementById('portalSection').style.display = 'block';
+  }
   window._navSource = 'admin';
-  if (typeof updateFABs === 'function') updateFABs();
   updateHeaderAdminBtn();
 };
 
 // ── الانتقال للبوابة (بدون خروج) ──
 window.goToPortal = function() {
-  hideAllPages();
-  document.getElementById('portalSection').style.display = 'block';
-
-  document.body.classList.remove('admin-mode','in-service-page','sidebar-open');
-  document.body.classList.add('portal-logged-in');
-
-  // أزرار الـ sidebar
-  const goPortalBtn = document.getElementById('goPortalBtn');
-  const goAdminBtn  = document.getElementById('goAdminBtn');
-  const logoutBtn   = document.getElementById('logoutBtn');
-  if (goPortalBtn) goPortalBtn.style.display = 'none';
-  if (goAdminBtn)  goAdminBtn.style.display  = 'flex';
-  if (logoutBtn)   logoutBtn.style.display   = 'flex';
-
-  // إغلاق الـ sidebar
-  const sidebar = document.getElementById('adminSidebar');
-  if (sidebar) sidebar.classList.remove('open');
-  const overlay = document.getElementById('sidebarOverlay');
-  if (overlay) overlay.classList.remove('show');
-
-  const sidebarToggle = document.getElementById('sidebarToggleBtn');
-  if (sidebarToggle) sidebarToggle.style.display = 'none';
-
-  const leadershipSection = document.getElementById('leadershipSection');
-  if (leadershipSection) leadershipSection.style.display = 'flex';
-
-  const fabBtn = document.getElementById('fabLoginBtn');
-  if (fabBtn) {
-    fabBtn.innerHTML = '🔐';
-    fabBtn.onclick = () => document.getElementById('loginBtn').click();
+  if (typeof window.switchPage === 'function') {
+    window.switchPage('portalSection');
+  } else {
+    hideAllPages();
+    document.getElementById('portalSection').style.display = 'block';
   }
-
   window._navSource = 'portal';
-  if (typeof updateFABs === 'function') updateFABs();
   updateHeaderAdminBtn();
 };
 
 // ── الانتقال للوحة التحكم ──
 window.goToAdmin = function() {
-  hideAllPages();
-  document.getElementById('adminPage').style.display = 'block';
-
-  document.body.classList.add('admin-mode');
-  document.body.classList.remove('portal-logged-in','in-service-page');
+  if (typeof window.switchPage === 'function') {
+    window.switchPage('adminPage');
+  } else {
+    hideAllPages();
+    document.getElementById('adminPage').style.display = 'block';
+    document.body.classList.add('admin-mode');
+    document.body.classList.remove('portal-logged-in','in-service-page');
+  }
 
   // أزرار الـ sidebar
   const goPortalBtn = document.getElementById('goPortalBtn');
@@ -168,11 +160,11 @@ window.goToAdmin = function() {
 
   // زر الـ hamburger — موبايل فقط
   const sidebarToggle = document.getElementById('sidebarToggleBtn');
-  if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+  if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex': 'none';
 
   const fabBtn = document.getElementById('fabLoginBtn');
   if (fabBtn) {
-    fabBtn.innerHTML = '🚪';
+    fabBtn.innerHTML = '';
     fabBtn.onclick = () => window.logoutAdmin();
   }
 
@@ -183,12 +175,16 @@ window.goToAdmin = function() {
 
 // ── الرجوع للبوابة من صفحة خدمة ──
 window.backToPortal = function() {
-  SERVICE_PAGES.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  document.getElementById('adminPage').style.display = 'none';
-  document.getElementById('portalSection').style.display = 'block';
+  if (typeof window.switchPage === 'function') {
+    window.switchPage('portalSection');
+  } else {
+    SERVICE_PAGES.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.setProperty('display', 'none', 'important');
+    });
+    document.getElementById('adminPage').style.setProperty('display', 'none', 'important');
+    document.getElementById('portalSection').style.setProperty('display', 'flex', 'important');
+  }
 
   document.body.classList.remove('in-service-page','admin-mode','sidebar-open');
 
@@ -205,32 +201,32 @@ window.backToPortal = function() {
   if (goAdminBtn && sessionStorage.getItem('adminRole')) goAdminBtn.style.display = 'flex';
   if (logoutBtn  && sessionStorage.getItem('adminRole')) logoutBtn.style.display  = 'flex';
 
-  const leadershipSection = document.getElementById('leadershipSection');
-  if (leadershipSection) leadershipSection.style.display = 'flex';
-
   window._navSource = 'portal';
   if (typeof updateFABs === 'function') updateFABs();
   updateHeaderAdminBtn();
+  window.scrollTo(0, 0);
 };
 
 // ── الرجوع للوحة التحكم من صفحة خدمة ──
 window.backToAdmin = function() {
-  SERVICE_PAGES.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  document.getElementById('portalSection').style.display = 'none';
-  document.getElementById('adminPage').style.display = 'block';
+  if (typeof window.switchPage === 'function') {
+    window.switchPage('adminPage');
+  } else {
+    SERVICE_PAGES.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.setProperty('display', 'none', 'important');
+    });
+    document.getElementById('portalSection').style.setProperty('display', 'none', 'important');
+    document.getElementById('adminPage').style.setProperty('display', 'block', 'important');
+  }
 
   document.body.classList.add('admin-mode');
   document.body.classList.remove('in-service-page','portal-logged-in','sidebar-open');
 
-  const leadershipSection = document.getElementById('leadershipSection');
-  if (leadershipSection) leadershipSection.style.display = 'none';
-
   window._navSource = 'admin';
   if (typeof updateFABs === 'function') updateFABs();
   updateHeaderAdminBtn();
+  window.scrollTo(0, 0);
 };
 
 // ── تحديث الـ FABs حسب الحالة ──
@@ -242,7 +238,7 @@ function updateFABs() {
 
   // fabLoginBtn: يظهر فقط في البوابة وغير مسجل دخول
   const fabLogin = document.getElementById('fabLoginBtn');
-  if (fabLogin) fabLogin.style.display = (!isAdmin && !inService && !adminMode) ? 'flex' : 'none';
+  if (fabLogin) fabLogin.style.display = (!isAdmin && !inService && !adminMode) ? 'flex': 'none';
 
   // fabSidebarBtn: يظهر فقط في admin mode (موبايل — CSS يتحكم)
   // CSS يتحكم فيه بـ body.admin-mode
@@ -250,8 +246,8 @@ function updateFABs() {
   // fabBackAdminBtn: يظهر في صفحات الخدمة لو جاي من لوحة التحكم
   const fabBack = document.getElementById('fabBackAdminBtn');
   if (fabBack) {
-    fabBack.style.display = (inService && fromAdmin) ? 'flex' : 'none';
-    fabBack.title = fromAdmin ? 'العودة للوحة التحكم' : 'العودة للبوابة';
+    fabBack.style.display = (inService && fromAdmin) ? 'flex': 'none';
+    fabBack.title = fromAdmin ? 'العودة للوحة التحكم': 'العودة للبوابة';
   }
 }
 window.updateFABs = updateFABs;
@@ -259,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardModal = document.getElementById('citizenCardModal');
   if (!cardModal) return;
   const observer = new MutationObserver(() => {
-    if (cardModal.style.display === 'flex' || cardModal.style.display === 'block') {
+    if (cardModal.style.display === 'flex'|| cardModal.style.display === 'block') {
       document.body.classList.add('print-card');
     } else {
       document.body.classList.remove('print-card');

@@ -1,30 +1,21 @@
-/* ═══════════════════════════════════════════════════════════
-   منظومة كفر صقر — Mobile App Design v3.0
-   ✅ Fix 1: Unified Icons (pi-mob-icon)
-   ✅ Fix 2: Slate Dark Theme (no neon)
-   ✅ Fix 3: WhatsApp Bottom Sheet
-   ✅ Fix 4: Clean Bottom Nav (no dev text)
-   ✅ Fix 5: Flag stripe removed
-   ═══════════════════════════════════════════════════════════ */
-
-/* Base styles for portal-img-wrap */
-.portal-img-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Page isolation */
+.app-page {
+  display: none !important;
 }
-.portal-icon--tuktuk {
-  border-radius: 12px;
-  object-fit: cover;
+.app-page.active-page {
+  display: block !important;
+}
+#portalSection.active-page {
+  display: flex !important;
+  flex-direction: column !important;
+}
+[style*="display: none"] {
+  display: none !important;
 }
 
-/* ══════════════════════════════════════════════════════════
-   FIX 2: SLATE DARK THEME — تغيير هوية الألوان كاملاً
-   بدل الأسود الحاد والنيون → رمادي أردوازي مريح للعين
-══════════════════════════════════════════════════════════ */
+/* Theme overrides */
 @media (max-width: 768px) {
   :root {
-    /* Slate Dark Palette */
     --bg:         #0F172A !important;
     --bg2:        #1E293B !important;
     --bg3:        #263548 !important;
@@ -33,30 +24,25 @@
     --c-surface:  #1E293B !important;
     --c-card:     #1E293B !important;
 
-    /* Borders — subtle, no neon */
     --border:     rgba(148,163,184,0.08) !important;
     --border2:    rgba(148,163,184,0.13) !important;
     --c-border:   rgba(148,163,184,0.08) !important;
     --glass-border: rgba(148,163,184,0.1) !important;
 
-    /* Text */
     --text:       #F1F5F9 !important;
     --text2:      #94A3B8 !important;
     --text3:      #64748B !important;
     --c-text:     #F1F5F9 !important;
     --c-muted:    #64748B !important;
 
-    /* Gold — keep but softer shadows */
-    --shadow-gold: 0 4px 14px rgba(201,168,76,0.2) !important;
-    --gold-bg:     rgba(201,168,76,0.08) !important;
-    --gold-border: rgba(201,168,76,0.18) !important;
+    --shadow-gold: none !important;
+    --gold-bg:     transparent !important;
+    --gold-border: rgba(148,163,184,0.15) !important;
 
-    /* Shadows — soft, professional */
-    --shadow-sm:  0 1px 6px rgba(0,0,0,0.35) !important;
-    --shadow-md:  0 4px 16px rgba(0,0,0,0.4) !important;
-    --shadow-lg:  0 12px 40px rgba(0,0,0,0.5) !important;
+    --shadow-sm:  0 1px 4px rgba(0,0,0,0.3) !important;
+    --shadow-md:  0 4px 12px rgba(0,0,0,0.35) !important;
+    --shadow-lg:  0 8px 24px rgba(0,0,0,0.4) !important;
 
-    /* Layout */
     --h-header:   50px;
     --h-leaders:  0px;
     --h-total:    50px;
@@ -66,9 +52,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   BODY
-══════════════════════════════════════════════════════════ */
+/* Body */
 @media (max-width: 768px) {
   body {
     padding-top: 50px !important;
@@ -82,63 +66,71 @@
   .orb, body::before { display: none !important; }
 }
 
-/* ══════════════════════════════════════════════════════════
-   FIX 5: HEADER — بدون flag stripe، نظيف
-══════════════════════════════════════════════════════════ */
+/* Header */
 @media (max-width: 768px) {
   header {
     height: 50px !important;
     background: #0D1525 !important;
-    border-bottom: 1px solid rgba(201,168,76,0.15) !important;
-    box-shadow: 0 1px 10px rgba(0,0,0,0.5) !important;
+    border-bottom: 1px solid rgba(148,163,184,0.15) !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.4) !important;
   }
   header > div { padding: 0 14px !important; gap: 10px !important; }
-  .header-logos { gap: 6px !important; }
-  .header-logos img {
-    width: 28px !important; height: 28px !important;
-    border-radius: 6px !important; border-width: 1px !important;
+  .header-logos { gap: 0 !important; }
+  .header-logos img, .gov-emblem-header {
+    width: 34px !important; height: 34px !important;
+    border-radius: 50% !important; border: 1.5px solid rgba(212, 175, 55, 0.7) !important;
+    background: #086948 !important; padding: 0 !important;
+    object-fit: cover !important; object-position: center !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.3) !important;
   }
   .header-title h1 { font-size: 0.75rem !important; }
   .header-title small { display: none !important; }
-  .header-actions, #loginBtn, #headerAdminBtn { display: none !important; }
+  .header-actions, #loginBtn, #headerAdminBtn, #headerLogoutBtn { display: none !important; }
 
-  /* إخفاء شريط العلم */
   .flag-stripe { display: none !important; }
-
-  /* إخفاء leadership bar */
   #leadershipSection { display: none !important; }
 }
 
-/* ══════════════════════════════════════════════════════════
-   FAB
-══════════════════════════════════════════════════════════ */
+/* FAB */
 @media (max-width: 768px) {
   .fab-button { display: none !important; }
-  .fab-back-admin-btn, .fab-sidebar-btn {
+  .fab-back-admin-btn {
     bottom: calc(var(--app-bottom-nav) + 10px) !important;
+    left: 14px !important;
     z-index: 1100 !important;
     width: 42px !important; height: 42px !important;
   }
-  .fab-sidebar-btn { right: 14px !important; }
+  .fab-sidebar-btn {
+    display: none !important;
+  }
 }
 
-/* ══════════════════════════════════════════════════════════
-   FIX 4: BOTTOM NAVIGATION — نظيف بدون نصوص المطورين
-══════════════════════════════════════════════════════════ */
+/* Bottom navigation */
 #appBottomNav { display: none; }
+#adminBottomNav { display: none; }
 
 @media (max-width: 768px) {
+  /* Citizen Bottom Nav (Hidden in admin mode) */
   #appBottomNav {
-    display: flex !important;
+    display: flex;
     position: fixed;
     bottom: 0; left: 0; right: 0;
     height: var(--app-bottom-nav);
     background: #080F1E;
-    border-top: 1px solid rgba(148,163,184,0.07);
+    border-top: 1px solid rgba(148,163,184,0.08);
     z-index: 1050;
     align-items: stretch;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.6);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.4);
     padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  body.admin-mode #appBottomNav {
+    display: none !important;
+  }
+  body:not(.admin-mode) #adminBottomNav {
+    display: none !important;
+  }
+  body.admin-mode #adminBottomNav {
+    display: flex !important;
   }
 
   .bnav-item {
@@ -147,41 +139,39 @@
     align-items: center; justify-content: center;
     gap: 3px;
     background: none; border: none;
-    color: #334155;
+    color: #475569;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.56rem; font-weight: 700;
+    font-size: 0.65rem; font-weight: 600;
     cursor: pointer;
     position: relative;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation; user-select: none;
-    transition: color 0.2s;
+    transition: color 0.15s;
     padding: 0;
     text-decoration: none;
   }
   .bnav-item i {
-    font-size: 1.3rem; line-height: 1;
-    transition: transform 0.2s, color 0.2s;
+    font-size: 1.2rem; line-height: 1;
+    transition: transform 0.15s, color 0.15s;
   }
-  .bnav-item span { font-size: 0.56rem; }
+  .bnav-item span { font-size: 0.62rem; }
   .bnav-item:active { background: rgba(255,255,255,0.03); }
 
-  .bnav-item.active { color: #C9A84C; }
+  .bnav-item.active { color: #10B981; }
   .bnav-item.active i {
-    color: #C9A84C; transform: translateY(-2px);
-    filter: drop-shadow(0 0 5px rgba(201,168,76,0.4));
+    color: #10B981; transform: translateY(-2px);
   }
   .bnav-item.active::after {
     content: ''; position: absolute;
     bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 22px; height: 2.5px;
-    background: #C9A84C; border-radius: 2px 2px 0 0;
+    width: 20px; height: 2px;
+    background: #10B981; border-radius: 2px 2px 0 0;
   }
-  .bnav-item.bnav-login { color: #1E3A5F; }
-  .bnav-item.bnav-login.active { color: #3B82F6; }
-  .bnav-item.bnav-login.active i { color: #3B82F6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.35)); }
-  .bnav-item.bnav-login.active::after { background: #3B82F6; }
+  .bnav-item.bnav-login { color: #475569; }
+  .bnav-item.bnav-login.active { color: #10B981; }
+  .bnav-item.bnav-login.active i { color: #10B981; }
+  .bnav-item.bnav-login.active::after { background: #10B981; }
 
-  /* FIX 4: إخفاء أي نص footer/engineer أو شريط علم سفلي يظهر */
   .engineer-footer,
   .fixed-dev-badge,
   .egypt-flag-footer-stripe,
@@ -190,6 +180,21 @@
   [class*="dev-footer"],
   [id*="dev-footer"],
   footer { display: none !important; }
+
+  /* بصمة التطوير في أسفل الموبايل (موحدة فوق شريط التنقل) */
+  footer.gov-developer-footer,
+  .gov-developer-footer {
+    display: flex !important;
+    margin: 18px auto 85px auto !important;
+    padding: 0 10px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .dev-footer-inner {
+    padding: 8px 14px !important;
+    font-size: 0.72rem !important;
+    gap: 8px !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -200,144 +205,17 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   PORTAL SECTION — شبكة 2×2 هندسية
+   PORTAL SECTION — Mobile Container Spacing
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #portalSection {
-    padding: 12px var(--mob-pad) 0 !important;
-  }
-  #portalSection > h2 {
-    font-size: 0.95rem !important;
-    font-weight: 800 !important;
-    margin: 0 0 3px !important;
-    padding: 0 !important;
-    text-align: center !important;
-    color: #F8FAFC !important;
-  }
-  #portalSection > p {
-    font-size: 0.68rem !important;
-    margin: 0 0 10px !important;
-    padding: 0 !important;
-    text-align: center !important;
-    color: #64748B !important;
-  }
-
-  .portal-container {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    padding: 10px var(--mob-pad) 14px !important;
+    flex-direction: column !important;
     gap: 10px !important;
-    padding: 0 !important;
-  }
-
-  /* بطاقات الخدمات — حجم هندسي مدمج ومحايد بدون ألوان مشتتة */
-  .portal-box {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 14px 8px 12px !important;
-    border-radius: 14px !important;
-    gap: 6px !important;
-    min-height: 124px !important;
-    background: #182234 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-bottom: none !important;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25) !important;
-    transition: transform 0.15s ease, background 0.15s ease !important;
-    position: relative !important;
-    overflow: hidden !important;
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
-  .portal-box:active {
-    transform: scale(0.96) !important;
-    background: #1e2c42 !important;
-  }
-
-  /* بادج موحد بدون أي تلوين (شفافية وزجاج داكن فخم) */
-  .portal-img-wrap {
-    width: 48px !important;
-    height: 48px !important;
-    border-radius: 13px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0 !important;
-    margin: 0 auto !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-    transition: transform 0.2s ease !important;
-  }
-  .portal-box:hover .portal-img-wrap,
-  .portal-box:active .portal-img-wrap {
-    transform: scale(1.05) !important;
-  }
-
-  /* إلغاء التلوين الخاص بكل بطاقة — توحيد المظهر المحايد */
-  .portal-box--blue .portal-img-wrap,
-  .portal-box--green .portal-img-wrap,
-  .portal-box--gold .portal-img-wrap,
-  .portal-box--orange .portal-img-wrap {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-  }
-
-  /* الصور القديمة داخل البادج الموحد بحجم متناسق */
-  .portal-box img {
-    display: block !important;
-    width: 32px !important;
-    height: 32px !important;
-    object-fit: contain !important;
-    margin: 0 !important;
-    animation: none !important;
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35)) !important;
-  }
-  /* صورة التوكتوك بحجم مضبوط متناسق تماماً مع باقي الأيقونات */
-  .portal-box img.portal-icon--tuktuk {
-    width: 36px !important;
-    height: 36px !important;
-    object-fit: cover !important;
-    border-radius: 9px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  /* إخفاء أيقونات remixicon المؤقتة */
-  .pi-mob-icon { display: none !important; }
-
-  /* نصوص البطاقات — لون موحد أبيض نقي بدون ألوان متباينة */
-  .portal-box-text {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 2px !important;
-    width: 100% !important;
-  }
-  .portal-box-text h2,
-  .portal-box--blue .portal-box-text h2,
-  .portal-box--green .portal-box-text h2,
-  .portal-box--gold .portal-box-text h2,
-  .portal-box--orange .portal-box-text h2 {
-    font-size: 0.82rem !important;
-    font-weight: 700 !important;
-    color: #F8FAFC !important;
-    margin: 0 !important;
-    line-height: 1.25 !important;
-    letter-spacing: -0.2px !important;
-  }
-  .portal-box-text p {
-    font-size: 0.6rem !important;
-    line-height: 1.3 !important;
-    color: #8899A6 !important;
-    margin: 0 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
   }
 }
+
+
 
 /* ══════════════════════════════════════════════════════════
    FIX 3: WHATSAPP — زر واحد + Bottom Sheet
@@ -493,18 +371,27 @@
     background: #1E293B !important; border-color: rgba(148,163,184,0.12) !important;
     color: #F1F5F9 !important;
   }
-  .filter-chips { gap: 6px !important; padding: 6px var(--mob-pad) !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none !important; }
+  .filter-chips { gap: 8px !important; padding: 6px var(--mob-pad) !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none !important; }
   .filter-chips::-webkit-scrollbar { display: none; }
   .chip {
-    font-size: 0.7rem !important; padding: 4px 12px !important;
-    height: 28px !important; min-height: 28px !important;
-    border-radius: 20px !important; flex-shrink: 0 !important; white-space: nowrap !important;
-    background: #263548 !important; border-color: rgba(148,163,184,0.1) !important;
-    color: #94A3B8 !important;
+    font-size: 0.8rem !important; padding: 6px 16px !important;
+    height: 36px !important; min-height: 36px !important;
+    border-radius: 18px !important; flex-shrink: 0 !important; white-space: nowrap !important;
+    background: #1E293B !important; border: 1px solid rgba(148,163,184,0.18) !important;
+    color: #94A3B8 !important; display: inline-flex !important; align-items: center !important; gap: 6px !important;
+    font-weight: 700 !important;
   }
   .chip.active, .chip:active {
-    background: rgba(201,168,76,0.12) !important;
-    border-color: rgba(201,168,76,0.25) !important; color: #C9A84C !important;
+    background: rgba(201,168,76,0.18) !important;
+    border-color: rgba(201,168,76,0.4) !important; color: #E5C368 !important;
+  }
+  .chip.yellow.active {
+    background: rgba(201,168,76,0.2) !important;
+    border-color: rgba(201,168,76,0.5) !important; color: #F59E0B !important;
+  }
+  .chip.blue.active {
+    background: rgba(59,130,246,0.2) !important;
+    border-color: rgba(59,130,246,0.5) !important; color: #60A5FA !important;
   }
 }
 
@@ -513,36 +400,99 @@
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .pagination-bar {
-    padding: 6px var(--mob-pad) !important;
-    min-height: unset !important; flex-wrap: nowrap !important; gap: 6px !important;
-    background: transparent !important;
-    border-color: rgba(148,163,184,0.06) !important;
+    padding: 8px 10px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    background: #1E293B !important;
+    border: none !important;
+    border-top: 1px solid rgba(148,163,184,0.12) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
-  .pagination-bar > div:has(#recordsPerPage),
-  .pagination-bar label, #recordsPerPage, #loadingMoreInfo { display: none !important; }
   .pagination-bar .btn.btn-info {
-    padding: 4px 10px !important; font-size: 0.7rem !important;
-    height: 28px !important; min-height: 28px !important; border-radius: 8px !important;
+    padding: 5px 10px !important;
+    font-size: 0.76rem !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    border-radius: 8px !important;
   }
   .page-info {
-    font-size: 0.68rem !important; padding: 3px 8px !important;
-    background: rgba(148,163,184,0.06) !important; border-radius: 6px !important;
-    border: 1px solid rgba(148,163,184,0.08) !important; white-space: nowrap !important;
-    color: #94A3B8 !important; font-weight: 700 !important;
+    font-size: 0.74rem !important;
+    padding: 4px 10px !important;
+    background: rgba(148,163,184,0.08) !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(148,163,184,0.12) !important;
+    white-space: nowrap !important;
+    color: #F1F5F9 !important;
+    font-weight: 700 !important;
   }
 }
 
 /* ══════════════════════════════════════════════════════════
-   TABLE
+   TABLE — No Horizontal Scroll (Strict 100% Fit)
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .table-container, .table-wrap, [id$="TableContainer"] {
-    overflow-x: auto !important; -webkit-overflow-scrolling: touch !important;
-    border-radius: 10px !important; margin: 0 var(--mob-pad) !important;
+  .table-wrap {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    background: #151D2A !important;
+    border: 1px solid rgba(148,163,184,0.15) !important;
   }
-  table th, table td { font-size: 0.68rem !important; padding: 6px 5px !important; white-space: nowrap !important; }
-  table th:nth-child(7), table td:nth-child(7) { display: none !important; }
-  table .btn { padding: 3px 6px !important; font-size: 0.62rem !important; border-radius: 5px !important; min-height: 26px !important; }
+  .table-container, [id$="TableContainer"] {
+    overflow-x: hidden !important; /* STRICTLY NO HORIZONTAL SCROLL */
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  table, table.gov-responsive-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+  table th {
+    font-size: 0.72rem !important;
+    padding: 10px 4px !important;
+    white-space: nowrap !important;
+    background: #0F172A !important;
+    color: #94A3B8 !important;
+    text-align: right;
+  }
+  table td {
+    font-size: 0.75rem !important;
+    padding: 10px 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+  }
+  table td.td-actions {
+    text-align: center !important;
+    padding: 6px 2px !important;
+    overflow: visible !important;
+  }
+  .btn-dossier {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1.1rem !important;
+  }
+  table .btn {
+    padding: 4px 8px !important;
+    font-size: 0.68rem !important;
+    border-radius: 6px !important;
+    min-height: 28px !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -563,20 +513,24 @@
    MODALS — Bottom Sheet style
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #loginModal > div {
-    margin: auto !important; width: 92% !important;
-    border-radius: 18px !important; padding: 24px 18px !important;
-    position: fixed !important; top: 50% !important; left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    max-height: 88vh !important; overflow-y: auto !important;
-    background: #1E293B !important; border-color: rgba(148,163,184,0.1) !important;
+  .gov-login-card {
+    width: 92% !important;
+    max-width: 400px !important;
+    border-radius: 18px !important;
+    padding: 24px 18px !important;
   }
-  #editModal > div, #bulkImportModal > div, #codeModal > div {
-    position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
-    margin: 0 !important; width: 100% !important; max-width: 100% !important;
-    max-height: 88vh !important; overflow-y: auto !important;
-    border-radius: 20px 20px 0 0 !important; padding: 20px 16px !important;
-    background: #1E293B !important; border-color: rgba(148,163,184,0.1) !important;
+
+  .gov-modal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  .gov-modal-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    border-radius: 20px 20px 0 0 !important;
+    margin: 0 !important;
   }
 }
 
@@ -603,8 +557,9 @@
    ADMIN LAYOUT
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .admin-layout { margin-top: 0 !important; }
-  .admin-main { margin-right: 0 !important; padding: 10px !important; }
+  .admin-layout { margin-top: 0 !important; width: 100% !important; }
+  .admin-main { margin-right: 0 !important; padding: 6px 4px !important; width: 100% !important; box-sizing: border-box !important; }
+  .admin-page-bar { padding: 8px 10px !important; margin: 0 0 6px 0 !important; border-radius: 10px !important; width: 100% !important; box-sizing: border-box !important; }
   .admin-top-bar { padding: 0 10px !important; height: 46px !important; gap: 5px !important; }
   .admin-top-bar .btn { font-size: 0.68rem !important; padding: 4px 8px !important; height: 30px !important; min-height: 30px !important; }
 }
@@ -613,6 +568,6 @@
    TOUCH + GENERAL
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  html { -webkit-overflow-scrolling: touch; }
+  html { scroll-behavior: auto !important; -webkit-overflow-scrolling: touch; }
   button, a, [onclick] { touch-action: manipulation; }
 }

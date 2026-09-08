@@ -12,6 +12,7 @@ js/env.js
 node_modules/
 
 # AI and IDE metadata
+.agent/
 .gemini/
 brain/
 scratch/

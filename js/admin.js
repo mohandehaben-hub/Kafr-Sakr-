@@ -39,7 +39,14 @@ return false;
 
 const whatsappUrl = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
 
-if (confirm(confirmMessage)) {
+const confirmed = await window.showConfirmModal({
+  title: 'إرسال إشعار واتساب',
+  message: confirmMessage,
+  confirmText: 'إرسال',
+  cancelText: 'إلغاء',
+  type: 'info'
+});
+if (confirmed) {
 window.open(whatsappUrl, '_blank');
 return true;
 }
@@ -65,7 +72,7 @@ const { data: batch, error } = await window.supabaseClient
 .range(from, from + batchSize - 1);
 
 if (error) {
-console.error('❌ خطأ في جلب الأكواد من Supabase:', error);
+console.error('خطأ في جلب الأكواد من Supabase:', error);
 throw error;
 }
 
@@ -114,7 +121,7 @@ maxCode = 100;
 
 return { last: maxCode, next: maxCode + 1 };
 } catch (error) {
-console.error('❌ Error getting next code:', error);
+console.error('Error getting next code:', error);
 return { last: 100, next: 101 };
 }
 }
@@ -224,7 +231,7 @@ function checkActiveLockout() {
       if (remaining <= 0) {
         clearInterval(countdownInterval);
         if (timerDiv) timerDiv.style.display = 'none';
-        if (btn) { btn.disabled = false; btn.innerText = 'دخول 🚀'; }
+        if (btn) { btn.disabled = false; btn.innerText = 'دخول '; }
         if (emailInput) emailInput.disabled = false;
         if (passInput) passInput.disabled = false;
         localStorage.removeItem('loginLockoutTime');
@@ -264,7 +271,7 @@ window.resetLoginLockout = function() {
   const timerDiv = document.getElementById('loginLockoutTimer');
   if (timerDiv) timerDiv.style.display = 'none';
   const btn = document.getElementById('confirmLoginBtn');
-  if (btn) { btn.disabled = false; btn.innerText = 'دخول 🚀'; }
+  if (btn) { btn.disabled = false; btn.innerText = 'دخول '; }
   const emailInput = document.getElementById('loginUsername');
   if (emailInput) emailInput.disabled = false;
   const passInput = document.getElementById('loginPassword');
@@ -310,7 +317,7 @@ let userInput = document.getElementById('loginUsername').value.trim();
 const password = document.getElementById('loginPassword').value.trim();
 
 if (!userInput || !password) {
-alert("❌ يرجى إدخال اسم المستخدم وكلمة المرور");
+alert("يرجى إدخال اسم المستخدم وكلمة المرور");
 return;
 }
 
@@ -323,7 +330,7 @@ if (!email.includes('@')) {
 // Check Lockout
 const lockoutTime = parseInt(localStorage.getItem('loginLockoutTime') || '0');
 if (Date.now() < lockoutTime) {
-  alert(`⚠️ تم حظر محاولات الدخول مؤقتاً بسبب محاولات خاطئة متكررة.`);
+  alert(`تم حظر محاولات الدخول مؤقتاً بسبب محاولات خاطئة متكررة.`);
   return;
 }
 
@@ -332,7 +339,7 @@ const attemptsCount = parseInt(localStorage.getItem('loginAttempts') || '0');
 if (attemptsCount >= 3) {
   const answerInput = document.getElementById('captchaAnswer').value.trim();
   if (!answerInput || parseInt(answerInput) !== window.currentCaptchaAnswer) {
-    alert("❌ رمز التحقق البشري غير صحيح. يرجى المحاولة مرة أخرى.");
+    alert("رمز التحقق البشري غير صحيح. يرجى المحاولة مرة أخرى.");
     
     let attempts = attemptsCount + 1;
     localStorage.setItem('loginAttempts', attempts);
@@ -352,7 +359,7 @@ if (attemptsCount >= 3) {
 // Show loading
 const btn = document.getElementById('confirmLoginBtn');
 const originalText = btn.innerText;
-btn.innerText = '⏳ جاري التحقق...';
+btn.innerText = 'جاري التحقق...';
 btn.disabled = true;
 
 try {
@@ -363,7 +370,7 @@ password: password
 });
 
 if (error) {
-console.error('❌ خطأ في تسجيل الدخول:', error);
+console.error('خطأ في تسجيل الدخول:', error);
 
 let attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
 attempts += 1;
@@ -374,15 +381,15 @@ if (attempts >= 5) {
   localStorage.setItem('loginLockoutTime', lockoutUntil.toString());
   localStorage.setItem('loginAttempts', '0');
   checkActiveLockout();
-  alert("⚠️ تم حظر محاولات الدخول لمدة 15 دقيقة بسبب محاولات خاطئة متكررة.");
+  alert("تم حظر محاولات الدخول لمدة 15 دقيقة بسبب محاولات خاطئة متكررة.");
 } else {
   // رسالة توضيحية حسب نوع الخطأ
   if (error.message.includes('Invalid login credentials')) {
-      alert(`❌ اسم المستخدم أو كلمة المرور غير صحيحة\n\nمحاولات متبقية قبل الحظر: ${5 - attempts}`);
+      alert(`اسم المستخدم أو كلمة المرور غير صحيحة\n\nمحاولات متبقية قبل الحظر: ${5 - attempts}`);
   } else if (error.message.includes('Email not confirmed')) {
-      alert("❌ البريد الإلكتروني غير مفعل\n\nيرجى تفعيل البريد الإلكتروني أولاً");
+      alert("البريد الإلكتروني غير مفعل\n\nيرجى تفعيل البريد الإلكتروني أولاً");
   } else {
-      alert("❌ خطأ في تسجيل الدخول:\n\n" + error.message);
+      alert("خطأ في تسجيل الدخول:\n\n"+ error.message);
   }
   
   if (attempts >= 3) {
@@ -446,12 +453,12 @@ document.getElementById('loginModal').style.display = 'none';
 // Log admin login
 await logAdminAction(currentUsername, 'تسجيل دخول', `دخول آمن إلى النظام`);
 
-document.getElementById('portalSection').style.display = 'none';
-document.getElementById('citizenPage').style.display = 'none';
-document.getElementById('inquiryPage').style.display = 'none';
-document.getElementById('complaintsPage').style.display = 'none';
-document.getElementById('complaintInquiryPage').style.display = 'none';
-document.getElementById('adminPage').style.display = 'block';
+if (typeof window.switchPage === 'function') {
+  window.switchPage('adminPage');
+} else {
+  document.getElementById('portalSection').style.display = 'none';
+  document.getElementById('adminPage').style.display = 'block';
+}
 
 // Hide leadership section in admin panel
 const leadershipSection = document.getElementById('leadershipSection');
@@ -464,7 +471,7 @@ window._navSource = 'admin';
 // Update FAB button
 const fabBtn = document.getElementById('fabLoginBtn');
 if (fabBtn) {
-fabBtn.innerHTML = '🚪';
+fabBtn.innerHTML = '';
 fabBtn.onclick = () => logoutAdmin();
 }
 
@@ -480,7 +487,7 @@ if (_loginBtn)    _loginBtn.style.display    = 'none';
 
 // زر الـ hamburger — موبايل فقط
 const sidebarToggle = document.getElementById('sidebarToggleBtn');
-if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex' : 'none';
+if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex': 'none';
 
 // إخفاء زر لوحة التحكم من الهيدر (نحن في لوحة التحكم)
 const _headerAdminBtn = document.getElementById('headerAdminBtn');
@@ -496,7 +503,7 @@ if (!window.adminDataLoaded) {
 // Hide buttons based on role
 {
   const _bulkImportBtn = document.getElementById('bulkImportBtn');
-  if (userRole === 'VIEWER' && _bulkImportBtn) {
+  if (userRole === 'VIEWER'&& _bulkImportBtn) {
     _bulkImportBtn.style.display = 'none';
   }
 
@@ -518,8 +525,8 @@ if (!window.adminDataLoaded) {
   }
 }
 } catch (error) {
-console.error('❌ خطأ في تسجيل الدخول:', error);
-alert("❌ حدث خطأ في تسجيل الدخول");
+console.error('خطأ في تسجيل الدخول:', error);
+alert("حدث خطأ في تسجيل الدخول");
 btn.innerText = originalText;
 btn.disabled = false;
 }
@@ -590,24 +597,24 @@ const allImages = [];
 
 if (images.selfie) {
 const url = await getSignedUrl(images.selfie);
-allImages.push({ url, label: '📸 صورة سيلفي' });
+allImages.push({ url, label: 'صورة سيلفي'});
 }
 if (images.idCard) {
 const url = await getSignedUrl(images.idCard);
-allImages.push({ url, label: '🪪 صورة البطاقة' });
+allImages.push({ url, label: 'صورة البطاقة'});
 }
 if (images.vehicleImage) {
 const url = await getSignedUrl(images.vehicleImage);
-allImages.push({ url, label: '🚜 صورة المركبة/الكود' });
+allImages.push({ url, label: 'صورة المركبة/الكود'});
 }
 if (images.problemImages && images.problemImages.length > 0) {
 images.problemImages.forEach((url, index) => {
-allImages.push({ url: url, label: `📷 صورة المشكلة ${index + 1}` });
+allImages.push({ url: url, label: `صورة المشكلة ${index + 1}`});
 });
 }
 
 if (allImages.length === 0) {
-alert("⚠️ لا توجد صور متاحة للعرض");
+alert("لا توجد صور متاحة للعرض");
 return;
 }
 
@@ -646,367 +653,341 @@ modal.style.display = "block";
 
 // Logout function
 // Function to create table row based on vehicle type
+// Function to create table row based on vehicle type (4 أعمدة فقط بدون سكرول أفقي)
 function createTableRow(item, vehicleType) {
-const tr = document.createElement('tr');
-const userRole = sessionStorage.getItem('userRole') || 'VIEWER';
-const currentUsername = sessionStorage.getItem('username') || 'مجهول';
-const id = item.id;
+  const tr = document.createElement('tr');
+  const id = item.id;
+  const s = window.sanitizeText || (x => x || '');
 
-// Row type class
-tr.classList.add(vehicleType === 'microbus' ? 'row-microbus' : 'row-tuktuk');
-if (item.status === 'sticker_applied') tr.classList.add('sticker-applied');
+  // Row type class
+  tr.classList.add(vehicleType === 'microbus'? 'row-microbus': 'row-tuktuk');
+  if (item.status === 'sticker_applied') tr.classList.add('sticker-applied');
 
-// Type badge
-const typeBadge = vehicleType === 'microbus'
-  ? `<span class="badge-microbus"><i class="ri-bus-line"></i> ميكروباص</span>`
-  : `<span class="badge-tuktuk"><i class="ri-motorbike-line"></i> توكتوك</span>`;
+  // Single Dossier & Actions button with official SVG icon
+  const actionsBtn = `<button class="btn-dossier"title="ملف المركبة والإجراءات"><i class="ri-more-2-fill"></i></button>`;
 
-// Actions button — opens modal
-const actionsBtn = `<button class="btn-actions btn-open-actions"><i class="ri-more-2-fill"></i></button>`;
+  if (vehicleType === 'microbus') {
+    tr.innerHTML = `<td class="td-plate"><span class="badge-gov-plate">${s(item.licensePlate) || '—'}</span></td>
+      <td class="td-bold td-truncate"title="${s(item.owner)}">${s(item.owner) || '—'}</td>
+      <td class="td-addr td-truncate"title="${s(item.line || item.address || '')}">${s(item.line || item.address) || '—'}</td>
+      <td class="td-actions">${actionsBtn}</td>`;
+  } else {
+    const hasCode = item.vCode && item.vCode !== '';
+    tr.innerHTML = `<td class="td-code"><span class="${hasCode ? 'badge-gov-code': 'badge-gov-nocode'}">${s(item.vCode) || 'غير مكود'}</span></td>
+      <td class="td-bold td-truncate"title="${s(item.owner)}">${s(item.owner) || '—'}</td>
+      <td class="td-addr td-truncate"title="${s(item.address || '')}">${s(item.address) || '—'}</td>
+      <td class="td-actions">${actionsBtn}</td>`;
+  }
 
-const s = window.sanitizeText || (x => x || '');
+  // الربط بفتح كرت البيانات الكاملة والإجراءات
+  const btn = tr.querySelector('.btn-dossier');
+  if (btn) {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      openVehicleDossier(item, vehicleType);
+    };
+  }
 
-if (vehicleType === 'microbus') {
-  tr.innerHTML = `
-    <td class="td-bold">${s(item.owner) || '—'}</td>
-    <td>${s(item.licensePlate) || '—'}</td>
-    <td>${s(item.nationalId) || '—'}</td>
-    <td class="td-addr" title="${s(item.line || item.address || '')}">${s(item.line || item.address) || '—'}</td>
-    <td>${s(item.phone) || '—'}</td>
-    <td>${typeBadge}</td>
-    <td>
-      <button class="btn-details btn-show-card">🪪 بطاقة</button>
-      <button class="btn-details btn-show-details" style="margin-right:4px">التفاصيل</button>
-    </td>
-    <td>${actionsBtn}</td>`;
-} else {
-  const hasCode = item.vCode && item.vCode !== '';
-  tr.innerHTML = `
-    <td class="td-bold">${s(item.owner) || '—'}</td>
-    <td class="${hasCode ? 'td-code-yes' : 'td-code-no'}">${s(item.vCode) || '—'}</td>
-    <td class="td-mono">${s(item.nationalId) || '—'}</td>
-    <td class="td-addr" title="${s(item.address || '')}">${s(item.address) || '—'}</td>
-    <td>${s(item.phone) || '—'}</td>
-    <td>${typeBadge}</td>
-    <td>
-      <button class="btn-details btn-show-card">🪪 بطاقة</button>
-      <button class="btn-details btn-show-details" style="margin-right:4px">التفاصيل</button>
-    </td>
-    <td>${actionsBtn}</td>`;
+  return tr;
 }
 
-// ── Dropdown toggle ──
-// ── Actions modal button ──
-const actionsOpenBtn = tr.querySelector('.btn-open-actions');
-if (actionsOpenBtn) {
-  actionsOpenBtn.onclick = () => {
-    const modal = document.getElementById('actionsModal');
-    const title = document.getElementById('actionsModalTitle');
-    const btns  = document.getElementById('actionsModalBtns');
-    title.textContent = 'إجراءات — ' + (item.owner || '');
-    const rows = [];
-    if (vehicleType === 'tuktuk' && userRole !== 'VIEWER') {
-      rows.push({ icon:'ri-exchange-line', label:'تغيير الحالة',   cls:'btn-status' });
-      rows.push({ icon:'ri-hashtag',       label:'تكويد المركبة',  cls:'btn-code' });
-      rows.push({ icon:'ri-pencil-line',   label:'تعديل البيانات', cls:'btn-edit' });
+// ── كرت ملف المركبة الشامل والإجراءات الحكومية ────────────────────────
+function openVehicleDossier(item, vehicleType) {
+  const modal = document.getElementById('vehicleDossierModal');
+  if (!modal) return;
+  const userRole = sessionStorage.getItem('userRole') || 'VIEWER';
+  const id = item.id;
+  const s = window.sanitizeText || (x => x || '');
+
+  // 1. الترويسة
+  const titleEl = document.getElementById('dossierTitle');
+  if (titleEl) titleEl.textContent = 'ملف المركبة — '+ (item.owner || '—');
+
+  // 2. الكود أو اللوحة
+  const idLabel = document.getElementById('dossierIdentifierLabel');
+  const idVal   = document.getElementById('dossierIdentifierVal');
+  if (idLabel && idVal) {
+    if (vehicleType === 'microbus') {
+      idLabel.textContent = 'رقم اللوحة';
+      idVal.textContent = item.licensePlate || '—';
+    } else {
+      idLabel.textContent = 'كود المركبة';
+      idVal.textContent = item.vCode || 'غير مكود';
     }
-    if (vehicleType === 'microbus' && userRole !== 'VIEWER') {
-      rows.push({ icon:'ri-pencil-line', label:'تعديل البيانات', cls:'btn-edit' });
+  }
+
+  // 3. شارة نوع المركبة
+  const typeBadge = document.getElementById('dossierTypeBadge');
+  if (typeBadge) {
+    if (vehicleType === 'microbus') {
+      typeBadge.textContent = 'ميكروباص';
+      typeBadge.style.background = 'rgba(52,152,219,0.15)';
+      typeBadge.style.color = '#60A5FA';
+      typeBadge.style.borderColor = 'rgba(96,165,250,0.3)';
+    } else {
+      typeBadge.textContent = 'توكتوك';
+      typeBadge.style.background = 'rgba(245,158,11,0.15)';
+      typeBadge.style.color = '#FBBF24';
+      typeBadge.style.borderColor = 'rgba(245,158,11,0.3)';
     }
-    rows.push({ icon:'ri-image-line', label:`عرض الصور (${item.images ? item.images.length : 0})`, cls:'view-btn-modal' });
-    btns.innerHTML = rows.map(r =>
-      `<button class="action-modal-btn ${r.cls}"><i class="${r.icon}"></i>${r.label}</button>`
-    ).join('');
+  }
+
+  // صورة المركبة الدائرية
+  const avatarEl = document.getElementById('dossierVehicleAvatar');
+  if (avatarEl) {
+    avatarEl.src = (vehicleType === 'microbus')
+      ? 'https://i.postimg.cc/44zFDbrR/images.jpg'
+      : 'https://i.postimg.cc/QtgDfPKv/images-(1).jpg';
+    avatarEl.alt = (vehicleType === 'microbus') ? 'ميكروباص' : 'توكتوك';
+  }
+
+  // 4. شارة الحالة
+  const statusBadge = document.getElementById('dossierStatusBadge');
+  if (statusBadge) {
+    const st = window.getStatusDisplay ? window.getStatusDisplay(item.status) : { text: item.status || 'قيد المراجعة', color: '#f59e0b', icon: 'ri-time-line'};
+    statusBadge.innerHTML = `<i class="${st.icon || 'ri-time-line'}"></i> ${st.text}`;
+    statusBadge.style.background = (st.color || '#10b981') + '22';
+    statusBadge.style.color = st.color || '#10b981';
+    statusBadge.style.borderColor = (st.color || '#10b981') + '44';
+  }
+
+  // 5. شبكة البيانات
+  const setEl = (elemId, val) => {
+    const el = document.getElementById(elemId);
+    if (el) el.textContent = val || '—';
+  };
+  setEl('dossierOwner', item.owner);
+  setEl('dossierNationalId', item.nationalId);
+
+  const phoneEl = document.getElementById('dossierPhone');
+  if (phoneEl) {
+    if (item.phone) {
+      phoneEl.innerHTML = `<a href="tel:${s(item.phone)}"style="color:#38BDF8;text-decoration:none;display:inline-flex;align-items:center;gap:4px"><i class="ri-phone-line"></i> ${s(item.phone)}</a>`;
+    } else {
+      phoneEl.textContent = '—';
+    }
+  }
+
+  const addrLabel = document.getElementById('dossierAddressLabel');
+  if (addrLabel) addrLabel.textContent = vehicleType === 'microbus'? 'خط السير / العنوان': 'العنوان';
+  setEl('dossierAddress', item.line || item.address);
+
+  setEl('dossierChassis', item.chassisNumber);
+  setEl('dossierMotor', item.motorNumber);
+  setEl('dossierYear', item.vYear);
+  setEl('dossierRef', item.refNumber);
+
+  const dateVal = window.formatDateTime ? window.formatDateTime(item.timestamp) : (item.timestamp || '—');
+  setEl('dossierDate', dateVal);
+
+  const capField = document.getElementById('dossierCapacityField');
+  if (capField) {
+    if (vehicleType === 'microbus'&& item.passengerCapacity) {
+      capField.style.display = 'flex';
+      setEl('dossierCapacity', item.passengerCapacity + 'ركاب');
+    } else {
+      capField.style.display = 'none';
+    }
+  }
+
+  // 6. قسم الصور والوثائق
+  const imgSec = document.getElementById('dossierImagesSection');
+  const imgGal = document.getElementById('dossierImagesGallery');
+  const imgCnt = document.getElementById('dossierImagesCount');
+  if (imgSec && imgGal) {
+    if (item.images && item.images.length > 0) {
+      imgSec.style.display = 'block';
+      if (imgCnt) imgCnt.textContent = `${item.images.length} ملف / صورة`;
+      imgGal.innerHTML = item.images.map((src, idx) => `<div style="position:relative;flex-shrink:0;width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid rgba(148,163,184,0.2);cursor:pointer;"onclick='window.viewImages && window.viewImages(${JSON.stringify(item.images)})'>
+          <img src="${src}"style="width:100%;height:100%;object-fit:cover;"alt="صورة ${idx+1}">
+        </div>
+      `).join('');
+    } else {
+      imgSec.style.display = 'none';
+      imgGal.innerHTML = '';
+      if (imgCnt) imgCnt.textContent = '';
+    }
+  }
+
+  // 7. قسم الإجراءات الحكومية الرسمية (أزرار SVG موحدة)
+  const actGrid = document.getElementById('dossierActionsGrid');
+  if (actGrid) {
+    const btns = [];
+
+    // بطاقة المركبة
+    btns.push(`<button class="btn-gov-action btn-gov-primary"id="dossierBtnCard">
+        <i class="ri-id-card-line"></i> <span>بطاقة المركبة</span>
+      </button>
+    `);
+
+    // تعديل البيانات
+    if (userRole !== 'VIEWER') {
+      btns.push(`<button class="btn-gov-action"id="dossierBtnEdit">
+          <i class="ri-edit-line"></i> <span>تعديل البيانات</span>
+        </button>
+      `);
+    }
+
+    // تغيير الحالة
+    if (userRole !== 'VIEWER') {
+      btns.push(`<button class="btn-gov-action"id="dossierBtnStatus">
+          <i class="ri-refresh-line"></i> <span>تغيير الحالة</span>
+        </button>
+      `);
+    }
+
+    // تكويد المركبة (للتوكتوك فقط)
+    if (vehicleType === 'tuktuk'&& userRole !== 'VIEWER') {
+      btns.push(`<button class="btn-gov-action btn-gov-gold"id="dossierBtnCode">
+          <i class="ri-hashtag"></i> <span>تكويد المركبة</span>
+        </button>
+      `);
+    }
+
+    // عرض المستندات
+    if (item.images && item.images.length > 0) {
+      btns.push(`<button class="btn-gov-action"id="dossierBtnPhotos">
+          <i class="ri-image-line"></i> <span>الوثائق (${item.images.length})</span>
+        </button>
+      `);
+    }
+
+    // حذف السجل (للمشرف العام)
     if (userRole === 'SUPER') {
-      btns.innerHTML += `<div class="action-modal-divider"></div>
-        <button class="action-modal-btn danger btn-del-modal"><i class="ri-delete-bin-line"></i>حذف السجل</button>`;
+      btns.push(`<button class="btn-gov-action btn-gov-danger"id="dossierBtnDelete">
+          <i class="ri-delete-bin-line"></i> <span>حذف السجل نهائياً</span>
+        </button>
+      `);
     }
-    const closeModal = () => { modal.style.display = 'none'; };
-    btns.querySelector('.btn-edit')?.addEventListener('click', () => { closeModal(); document.getElementById('editOwnerName').value = item.owner; document.getElementById('editPhone').value = item.phone||''; document.getElementById('editVType').value = item.vType; document.getElementById('editVYear').value = item.vYear||''; document.getElementById('editAddress').value = item.address||''; document.getElementById('editModal').style.display = 'block'; });
-    btns.querySelector('.view-btn-modal')?.addEventListener('click', () => { closeModal(); if(item.images&&item.images.length>0) window.viewImages(item.images); else alert('⚠️ لا توجد صور'); });
-    btns.querySelector('.btn-status')?.addEventListener('click', () => { closeModal(); document.getElementById('statusChangeModal').style.display='block'; document.getElementById('statusNote').value=''; window.currentStatusChangeItem={item,id}; });
-    btns.querySelector('.btn-code')?.addEventListener('click', async () => { closeModal(); if(item.vCode){alert('⚠️ المركبة مكودة بالفعل: '+item.vCode);return;} const info=await window.getSmartNextCode(); document.getElementById('codeHint').innerText=`آخر كود: (${info.last}) | المقترح: (${info.next})`; document.getElementById('manualCodeInput').value=info.next; document.getElementById('codeModal').style.display='block'; });
-    btns.querySelector('.btn-del-modal')?.addEventListener('click', async () => { closeModal(); if(!confirm('هل أنت متأكد من حذف هذا الطلب؟'))return; const{error}=await window.supabaseClient.from('orders').delete().eq('id',id); if(error){alert('❌ فشل الحذف');return;} alert('✅ تم الحذف'); window.initializePagination([]); });
-    modal.style.display = 'flex';
-  };
-}
 
-const detailsBtn = tr.querySelector('.btn-show-details');
-if (detailsBtn) {
-  detailsBtn.onclick = () => {
-    const modal = document.getElementById('detailsModal');
-    const content = document.getElementById('detailsContent');
-    const title = document.getElementById('detailsTitle');
-    title.textContent = item.owner + ' — تفاصيل المركبة';
-    const fields = vehicleType === 'microbus' ? [
-      ['رقم اللوحة', item.licensePlate],
-      ['الخط', item.line],
-      ['عدد الركاب', item.passengerCapacity],
-      ['تاريخ التجديد', item.renewalDate],
-      ['رقم الشاسيه', item.chassisNumber],
-      ['رقم الموتور', item.motorNumber],
-      ['تاريخ التسجيل', window.formatDateTime(item.timestamp)],
-    ] : [
-      ['نوع المركبة', item.vType],
-      ['الموديل', item.vYear],
-      ['رقم الشاسيه', item.chassisNumber],
-      ['رقم الموتور', item.motorNumber],
-      ['الرقم المرجعي', item.refNumber],
-      ['الحالة', item.status],
-      ['تاريخ التسجيل', window.formatDateTime(item.timestamp)],
-    ];
-    content.innerHTML = fields.map(([label, val]) => `
-      <div class="details-item">
-        <span class="details-label">${label}</span>
-        <span class="details-value">${val || '—'}</span>
-      </div>`).join('');
-    modal.style.display = 'flex';
-  };
-}
+    actGrid.innerHTML = btns.join('');
 
-// ── بطاقة المالك ──
-const cardBtn = tr.querySelector('.btn-show-card');
-if (cardBtn) {
-  cardBtn.onclick = () => {
-    const modal = document.getElementById('citizenCardModal');
+    const closeDossier = () => { modal.style.display = 'none'; };
 
-    // تصفير البيانات القديمة قبل الفتح
-    modal.querySelector('#cardOwner').textContent      = 'جاري التحميل...';
-    modal.querySelector('#cardCode').textContent       = '—';
-    modal.querySelector('#cardCodeLabel').textContent  = 'الكود';
-    modal.querySelector('#cardNationalId').textContent = '—';
-    modal.querySelector('#cardAddress').textContent    = '—';
-    modal.querySelector('#cardPhone').textContent      = '—';
+    // ربط بطاقة المواطن
+    actGrid.querySelector('#dossierBtnCard')?.addEventListener('click', () => {
+      closeDossier();
+      window.openCitizenCardModal(item, vehicleType);
+    });
 
-    // تحديث badge نوع المركبة
-    const typeBadgeEl = modal.querySelector('#cardVehicleTypeBadge');
-    if (typeBadgeEl) {
-      if (vehicleType === 'microbus') {
-        typeBadgeEl.textContent = '🚐 ميكروباص';
-        typeBadgeEl.style.background = 'rgba(52,152,219,0.12)';
-        typeBadgeEl.style.color      = 'var(--blue)';
-        typeBadgeEl.style.borderColor = 'rgba(52,152,219,0.3)';
-      } else {
-        typeBadgeEl.textContent = '🛺 توكتوك';
-        typeBadgeEl.style.background  = 'var(--gold-bg)';
-        typeBadgeEl.style.color       = 'var(--gold)';
-        typeBadgeEl.style.borderColor = 'var(--gold-border)';
+    // ربط تعديل البيانات
+    actGrid.querySelector('#dossierBtnEdit')?.addEventListener('click', () => {
+      closeDossier();
+      document.getElementById('editOwnerName').value = item.owner || '';
+      document.getElementById('editPhone').value     = item.phone || '';
+      document.getElementById('editVType').value     = item.vType || (vehicleType === 'microbus'? 'ميكروباص': 'توكتوك');
+      document.getElementById('editVYear').value     = item.vYear || '';
+      document.getElementById('editAddress').value   = item.address || item.line || '';
+      document.getElementById('editModal').style.display = 'block';
+    });
+
+    // ربط تغيير الحالة
+    actGrid.querySelector('#dossierBtnStatus')?.addEventListener('click', () => {
+      closeDossier();
+      document.getElementById('statusChangeModal').style.display = 'block';
+      document.getElementById('statusNote').value = '';
+      window.currentStatusChangeItem = { item, id };
+    });
+
+    // ربط تكويد المركبة
+    actGrid.querySelector('#dossierBtnCode')?.addEventListener('click', async () => {
+      closeDossier();
+      if (item.vCode) {
+        alert('المركبة مكودة بالفعل برقم: '+ item.vCode);
+        return;
       }
+      const info = await window.getSmartNextCode();
+      document.getElementById('codeHint').innerText = `آخر كود: (${info.last}) | المقترح: (${info.next})`;
+      document.getElementById('manualCodeInput').value = info.next;
+      document.getElementById('codeModal').style.display = 'block';
+    });
+
+    // ربط استعراض الصور
+    actGrid.querySelector('#dossierBtnPhotos')?.addEventListener('click', () => {
+      closeDossier();
+      if (item.images && item.images.length > 0) window.viewImages(item.images);
+    });
+
+    // ربط حذف السجل
+    actGrid.querySelector('#dossierBtnDelete')?.addEventListener('click', async () => {
+      closeDossier();
+      const confirmed = await window.showConfirmModal({
+        title: 'حذف سجل المركبة',
+        message: `هل تريد حذف سجل المركبة للمواطن (${item.owner}) بشكل نهائي؟ لا يمكن التراجع عن هذا الإجراء.`,
+        confirmText: 'حذف نهائي',
+        cancelText: 'إلغاء',
+        type: 'danger'
+      });
+      if (!confirmed) return;
+      const { error } = await window.supabaseClient.from('orders').delete().eq('id', id);
+      if (error) {
+        window.showToast('فشل الحذف من قاعدة البيانات', 'error');
+        return;
+      }
+      window.showToast('تم حذف السجل بنجاح', 'success');
+      window.initializePagination([]);
+    });
+  }
+
+  modal.style.display = 'flex';
+}
+
+// ── بطاقة المواطن الحكومية ──────────────────────────────────────────
+window.openCitizenCardModal = function(item, vehicleType) {
+  const modal = document.getElementById('citizenCardModal');
+  if (!modal) return;
+
+  modal.querySelector('#cardOwner').textContent      = 'جاري التحميل...';
+  modal.querySelector('#cardCode').textContent       = '—';
+  modal.querySelector('#cardCodeLabel').textContent  = 'الكود';
+  modal.querySelector('#cardNationalId').textContent = '—';
+  modal.querySelector('#cardAddress').textContent    = '—';
+  modal.querySelector('#cardPhone').textContent      = '—';
+
+  const typeBadgeEl = modal.querySelector('#cardVehicleTypeBadge');
+  if (typeBadgeEl) {
+    if (vehicleType === 'microbus') {
+      typeBadgeEl.textContent = 'ميكروباص';
+      typeBadgeEl.style.background = 'rgba(52,152,219,0.12)';
+      typeBadgeEl.style.color      = 'var(--blue)';
+      typeBadgeEl.style.borderColor = 'rgba(52,152,219,0.3)';
+    } else {
+      typeBadgeEl.textContent = 'توكتوك';
+      typeBadgeEl.style.background  = 'var(--gold-bg)';
+      typeBadgeEl.style.color       = 'var(--gold)';
+      typeBadgeEl.style.borderColor = 'var(--gold-border)';
     }
+  }
 
-    // الميكروباص: يعرض رقم اللوحة — التوكتوك: يعرض الكود
-    const code      = vehicleType === 'microbus' ? (item.licensePlate || '—') : (item.vCode || '—');
-    const codeLabel = vehicleType === 'microbus' ? '🚗 رقم اللوحة' : '🔢 الكود';
+  const cardAvatarEl = modal.querySelector('#citizenCardVehicleAvatar');
+  if (cardAvatarEl) {
+    cardAvatarEl.src = (vehicleType === 'microbus')
+      ? 'https://i.postimg.cc/44zFDbrR/images.jpg'
+      : 'https://i.postimg.cc/QtgDfPKv/images-(1).jpg';
+    cardAvatarEl.alt = (vehicleType === 'microbus') ? 'ميكروباص' : 'توكتوك';
+  }
 
-    modal.querySelector('#cardOwner').textContent      = item.owner       || '—';
-    modal.querySelector('#cardCode').textContent       = code;
-    modal.querySelector('#cardCodeLabel').textContent  = codeLabel;
-    modal.querySelector('#cardNationalId').textContent = item.nationalId  || '—';
-    modal.querySelector('#cardAddress').textContent    = item.address || item.line || '—';
-    modal.querySelector('#cardPhone').textContent      = item.phone        || '—';
-    modal.style.display = 'flex';
-  };
-}
+  const code      = vehicleType === 'microbus'? (item.licensePlate || '—') : (item.vCode || '—');
+  const codeLabel = vehicleType === 'microbus'? 'رقم اللوحة': 'الكود';
 
-// ── View images ──
-const viewBtn = tr.querySelector('.view-btn');
-if (viewBtn) {
-viewBtn.onclick = () => {
-if (item.images && item.images.length > 0) {
-window.viewImages(item.images);
-} else {
-alert("⚠️ لا توجد صور متاحة للعرض");
-}
+  modal.querySelector('#cardOwner').textContent      = item.owner       || '—';
+  modal.querySelector('#cardCode').textContent       = code;
+  modal.querySelector('#cardCodeLabel').textContent  = codeLabel;
+  modal.querySelector('#cardNationalId').textContent = item.nationalId  || '—';
+  modal.querySelector('#cardAddress').textContent    = item.address || item.line || '—';
+  modal.querySelector('#cardPhone').textContent      = item.phone        || '—';
+  modal.style.display = 'flex';
 };
-}
 
-const editBtn = tr.querySelector('.btn-edit');
-if (editBtn) {
-editBtn.onclick = async () => {
-document.getElementById('editOwnerName').value = item.owner;
-document.getElementById('editPhone').value = item.phone || '';
-document.getElementById('editVType').value = item.vType;
-document.getElementById('editVYear').value = item.vYear || '';
-document.getElementById('editAddress').value = item.address || '';
-document.getElementById('editModal').style.display = 'block';
-document.getElementById('confirmEditBtn').onclick = async () => {
-const newOwner = document.getElementById('editOwnerName').value.trim();
-const newPhone = document.getElementById('editPhone').value.trim();
-const newVType = document.getElementById('editVType').value;
-const newVYear = document.getElementById('editVYear').value;
-const newAddress = document.getElementById('editAddress').value.trim();
-if (!newOwner || !newPhone || newPhone.length !== 11) {
-alert("❌ يرجى إكمال البيانات الأساسية بشكل صحيح");
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-const { error: editError2 } = await window.supabaseClient
-.from('orders')
-.update({
-owner_name: newOwner,
-phone: newPhone,
-vehicle_type: newVType,
-vehicle_year: newVYear,
-address: newAddress,
-status_history: [...(item.statusHistory || []), {
-status: item.status || 'pending',
-timestamp: Date.now(),
-note: "تم تعديل البيانات",
-by: userRole
-}]
-})
-.eq('id', id);
-if (editError2) throw editError2;
-await window.logAdminAction(currentUsername, 'تعديل بيانات', `تم تعديل بيانات مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('editModal').style.display = 'none';
-alert("✅ تم التعديل بنجاح!");
-await window.loadAdminData();
-};
-};
-}
-
-const delBtn = tr.querySelector('.btn-del');
-if (delBtn) {
-delBtn.onclick = async () => {
-if (confirm("⚠️ هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-try {
-const { error } = await window.supabaseClient
-.from("orders")
-.delete()
-.eq("id", id);
-if (error) {
-console.error('❌ خطأ في الحذف:', error);
-alert("❌ فشل الحذف: " + error.message);
-return;
-}
-await window.logAdminAction(currentUsername, 'حذف طلب', `تم حذف طلب مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
-alert("✅ تم الحذف بنجاح");
-await window.loadAdminData();
-} catch (err) {
-console.error('❌ خطأ في عملية الحذف:', err);
-alert("❌ حدث خطأ أثناء الحذف");
-}
-}
-};
-}
-
-// Tuktuk-specific buttons
-if (vehicleType === 'tuktuk') {
-const statusBtn = tr.querySelector('.btn-status');
-if (statusBtn) {
-statusBtn.onclick = async () => {
-document.getElementById('statusChangeModal').style.display = 'block';
-document.getElementById('statusNote').value = '';
-document.getElementById('sendWhatsAppStatus').checked = true;
-window.currentStatusChangeItem = { item, id };
-};
-}
-
-const codeBtn = tr.querySelector('.btn-code');
-if (codeBtn) {
-codeBtn.onclick = async () => {
-if (item.vCode) {
-alert("⚠️ المركبة مكودة بالفعل برقم: " + item.vCode);
-return;
-}
-const info = await window.getSmartNextCode();
-document.getElementById('codeHint').innerText = `آخر كود في النظام: (${info.last}) | الكود المقترح: (${info.next})`;
-document.getElementById('manualCodeInput').value = info.next;
-document.getElementById('codeModal').style.display = 'block';
-
-// Random Code Button Handler
-const randomCodeBtn = document.getElementById('randomCodeBtn');
-if (randomCodeBtn) {
-randomCodeBtn.onclick = async () => {
-const randomCode = await window.getRandomAvailableCode();
-document.getElementById('manualCodeInput').value = randomCode;
-};
-}
-
-document.getElementById('confirmCodeBtn').onclick = async () => {
-const newCode = document.getElementById('manualCodeInput').value;
-if (!newCode) {
-alert("❌ يرجى إدخال كود صحيح");
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-try {
-const { data: existingCode, error: checkError } = await window.supabaseClient
-.from('orders')
-.select('id, owner_name, code')
-.eq('code', newCode.toString())
-.single();
-if (existingCode) {
-document.getElementById('loadingSpinner').style.display = 'none';
-alert(`❌ الكود ${newCode} مستخدم بالفعل!\n\n👤 المالك: ${existingCode.owner_name}\n\n⚠️ يرجى استخدام كود آخر`);
-return;
-}
-const { error } = await window.supabaseClient
-.from('orders')
-.update({
-code: newCode.toString(),
-coded_at: Date.now(),
-status: "coded",
-status_history: [...(item.statusHistory || []), {
-status: "coded",
-timestamp: Date.now(),
-note: `تم التكويد برقم: ${newCode}`,
-by: userRole
-}]
-})
-.eq('id', id);
-if (error) {
-console.error('❌ خطأ في تكويد المركبة:', error);
-throw error;
-}
-await window.logAdminAction(currentUsername, 'تكويد مركبة', `تم تكويد مركبة ${item.vType} للمالك: ${item.owner} بالكود: ${newCode}`);
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('codeModal').style.display = 'none';
-const sendWhatsApp = document.getElementById('sendWhatsAppCode').checked;
-if (sendWhatsApp) {
-const message = `🎉 *تم تكويد مركبتك بنجاح!*\n\n` +
-`👤 السيد/ة: ${item.owner}\n` +
-`🔢 كود المركبة: *${newCode}*\n` +
-`🚜 نوع المركبة: ${item.vType}\n` +
-`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-`✅ يمكنك الآن استلام المركبة من المقر\n\n` +
-`_رئاسة مركز ومدينة كفر صقر_`;
-if (item.phone && item.phone.length === 11) {
-const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
-window.open(whatsappUrl, '_blank');
-}
-}
-alert("✅ تم التكويد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
-await window.loadAdminData();
-} catch (error) {
-document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ في عملية التكويد:', error);
-alert(`❌ حدث خطأ أثناء التكويد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
-}
-};
-};
-}
-}
-
-// Add green background for sticker_applied status
-if (item.status === 'sticker_applied') {
-tr.style.background = 'linear-gradient(135deg, rgba(22, 160, 133, 0.25) 0%, rgba(46, 204, 113, 0.25) 100%)';
-tr.style.borderLeft = '4px solid #16a085';
-}
-
-return tr;
-}
-
+window.openVehicleDossier = openVehicleDossier;
 window.createTableRow = createTableRow;
 
 async function loadAdminData() {
-  // الـ pagination.js هو المسؤول عن تحميل البيانات من Supabase
-  // loadAdminData بتستدعي loadPage(1) بس
-  if (typeof loadPage === 'function') {
+  // تفعيل قسم التوكتوك افتراضياً وضبط خيارات البحث واللوحة تلقائياً
+  if (typeof window.switchToVehicleSection === 'function') {
+    window.switchToVehicleSection(window.currentFilter || 'tuktuk');
+  } else if (typeof loadPage === 'function') {
     await loadPage(1);
-  } else if (typeof initializePagination === 'function') {
-    initializePagination([]);
   }
   // تحديث الأرقام في الشريط الجانبي بعد تحميل البيانات
   await updateSidebarBadges();
@@ -1023,10 +1004,15 @@ async function updateSidebarBadges() {
     const badge = document.getElementById('newRequestsBadge');
     if (badge) {
       badge.textContent = newReqs || 0;
-      badge.style.display = (newReqs > 0) ? 'inline-flex' : 'none';
+      badge.style.display = (newReqs > 0) ? 'inline-flex': 'none';
+    }
+    const bnavBadge = document.getElementById('adminBnavReqBadge');
+    if (bnavBadge) {
+      bnavBadge.textContent = newReqs || 0;
+      bnavBadge.style.display = (newReqs > 0) ? 'inline-block': 'none';
     }
   } catch (err) {
-    console.warn('⚠️ تعذّر تحديث الشارات:', err);
+    console.warn('تعذّر تحديث الشارات:', err);
   }
 }
 window.updateSidebarBadges = updateSidebarBadges;
@@ -1036,13 +1022,13 @@ window.uploadExcelData = async function(file, vehicleType = 'ميكروباص', 
 // ── التحقق من نوع المركبة — عزل تام بين النظامين ──
 const VALID_TYPES = ['توكتوك', 'ميكروباص'];
 if (!VALID_TYPES.includes(vehicleType)) {
-  alert(`❌ نوع المركبة غير صحيح: "${vehicleType}"\nالقيم المقبولة: توكتوك أو ميكروباص`);
+  alert(`نوع المركبة غير صحيح: "${vehicleType}"\nالقيم المقبولة: توكتوك أو ميكروباص`);
   return;
 }
 try {
 // التحقق من وجود مكتبة XLSX
 if (typeof XLSX === 'undefined') {
-alert('❌ مكتبة XLSX غير محملة. يرجى إضافة المكتبة أولاً.');
+alert('مكتبة XLSX غير محملة. يرجى إضافة المكتبة أولاً.');
 console.error('XLSX library not loaded');
 return;
 }
@@ -1051,7 +1037,7 @@ const reader = new FileReader();
 reader.onload = async function(e) {
 try {
 const data = new Uint8Array(e.target.result);
-const workbook = XLSX.read(data, { type: 'array' });
+const workbook = XLSX.read(data, { type: 'array'});
 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
@@ -1135,12 +1121,12 @@ const ownerName = (row['إسم المالك'] || row['اسم المالك'] || r
 let isDuplicate = false;
 let duplicateReason = '';
 
-if (vehicleType === 'ميكروباص' && licensePlate) {
+if (vehicleType === 'ميكروباص'&& licensePlate) {
 if (existingLicensePlates.has(licensePlate.toLowerCase())) {
 isDuplicate = true;
 duplicateReason = `رقم السيارة ${licensePlate} موجود بالفعل`;
 }
-} else if (vehicleType === 'توكتوك' && nationalId) {
+} else if (vehicleType === 'توكتوك'&& nationalId) {
 if (existingNationalIds.has(nationalId)) {
 isDuplicate = true;
 duplicateReason = `الرقم القومي ${nationalId} موجود بالفعل`;
@@ -1148,13 +1134,13 @@ duplicateReason = `الرقم القومي ${nationalId} موجود بالفعل
 }
 
 if (isDuplicate) {
-console.warn(`⚠️ تكرار: ${duplicateReason} - ${ownerName}`);
+console.warn(`تكرار: ${duplicateReason} - ${ownerName}`);
 duplicateCount++;
 continue; // Skip duplicate
 }
 
 // Generate ref_number
-const refNumber = 'REF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+const refNumber = 'REF-'+ Date.now() + '-'+ Math.random().toString(36).substr(2, 9).toUpperCase();
 
 // تحويل البيانات من Excel - دعم أعمدة متعددة
 const orderData = {
@@ -1177,7 +1163,7 @@ images: imageDataArray
 
 // التحقق من البيانات الأساسية
 if (!orderData.owner_name) {
-console.warn('⚠️ سجل غير مكتمل (اسم المالك مفقود):', row);
+console.warn('سجل غير مكتمل (اسم المالك مفقود):', row);
 errorCount++;
 continue;
 }
@@ -1188,8 +1174,8 @@ const { error } = await window.supabaseClient
 .insert([orderData]);
 
 if (error) {
-console.error('❌ خطأ في حفظ السجل:', error);
-console.error('📋 بيانات السجل الذي فشل:', orderData);
+console.error('خطأ في حفظ السجل:', error);
+console.error('بيانات السجل الذي فشل:', orderData);
 errorCount++;
 } else {
 successCount++;
@@ -1198,29 +1184,29 @@ if (licensePlate) existingLicensePlates.add(licensePlate.toLowerCase());
 if (nationalId) existingNationalIds.add(nationalId);
 }
 } catch (rowError) {
-console.error('❌ خطأ في معالجة السجل:', rowError);
-console.error('📋 الصف الذي فشل:', row);
+console.error('خطأ في معالجة السجل:', rowError);
+console.error('الصف الذي فشل:', row);
 errorCount++;
 }
 }
 
 document.getElementById('loadingSpinner').style.display = 'none';
 
-alert(`✅ تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? ' مع ' + imageDataArray.length + ' صورة' : ''}\n${duplicateCount > 0 ? `⚠️ تم تجاهل ${duplicateCount} سجل مكرر\n` : ''}${errorCount > 0 ? `❌ فشل ${errorCount} سجل` : ''}`);
+alert(`تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? 'مع '+ imageDataArray.length + 'صورة': ''}\n${duplicateCount > 0 ? `تم تجاهل ${duplicateCount} سجل مكرر\n`: ''}${errorCount > 0 ? `فشل ${errorCount} سجل`: ''}`);
 
 // إعادة تحميل البيانات
 await loadAdminData();
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ في قراءة ملف Excel:', error);
-alert('❌ حدث خطأ في قراءة ملف Excel');
+console.error('خطأ في قراءة ملف Excel:', error);
+alert('حدث خطأ في قراءة ملف Excel');
 }
 };
 
 reader.readAsArrayBuffer(file);
 } catch (error) {
-console.error('❌ خطأ في رفع الملف:', error);
-alert('❌ حدث خطأ في رفع الملف');
+console.error('خطأ في رفع الملف:', error);
+alert('حدث خطأ في رفع الملف');
 }
 };
 
@@ -1240,53 +1226,58 @@ tableBody.innerHTML = '';
 
 // Update complaints badge
 const compBadge = document.getElementById('compBadge');
-if (compBadge) {
+const bnavCompBadge = document.getElementById('adminBnavCompBadge');
+if (compBadge || bnavCompBadge) {
   const pending = complaints ? complaints.filter(c => c.status !== 'replied').length : 0;
-  compBadge.textContent = pending;
-  compBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
+  if (compBadge) {
+    compBadge.textContent = pending;
+    compBadge.style.display = pending > 0 ? 'inline-flex': 'none';
+  }
+  if (bnavCompBadge) {
+    bnavCompBadge.textContent = pending;
+    bnavCompBadge.style.display = pending > 0 ? 'inline-block': 'none';
+  }
 }
 
 if (!complaints || complaints.length === 0) {
-tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">لا توجد شكاوى</td></tr>';
+tableBody.innerHTML = '<tr><td colspan="8"style="text-align: center; padding: 40px; color: #999;">لا توجد شكاوى</td></tr>';
 return;
 }
 
 const role = getRole();
 
 complaints.forEach((complaint) => {
-const statusColor = complaint.status === 'replied' ? 'var(--secondary)' : 'var(--warning)';
-const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
+const statusColor = complaint.status === 'replied'? 'var(--emerald)': 'rgba(245, 158, 11, 0.2)';
+const statusText = complaint.status === 'replied'? 'تم الرد': 'قيد المراجعة';
 
 const tr = document.createElement('tr');
-tr.style.background = 'rgba(255, 255, 255, 0.85)';
 
 const s = window.sanitizeText;
-tr.innerHTML = `
-<td style="padding: 18px; font-weight: 600;">${s(complaint.owner_name) || 'غير محدد'}</td>
-<td style="padding: 18px; font-family: monospace;">${s(complaint.phone) || '-'}</td>
-<td style="padding: 18px;"><span style="background: rgba(211, 84, 0, 0.1); color: var(--accent); padding: 6px 12px; border-radius: 8px; font-weight: 600;">${s(complaint.complaint_type) || 'غير محدد'}</span></td>
-<td style="padding: 18px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${s(complaint.details) || '-'}">${s(complaint.details) || '-'}</td>
-<td style="padding: 18px; text-align: center;">
-<button class="btn btn-view-complaint-images" style="background: rgba(26, 82, 118, 0.12); color: var(--primary); padding: 8px 16px; font-weight: 600;">🖼️ عرض الصور</button>
+tr.innerHTML = `<td style="padding: 14px 18px; font-weight: 600;">${s(complaint.owner_name) || 'غير محدد'}</td>
+<td style="padding: 14px 18px; font-family: monospace;">${s(complaint.phone) || '-'}</td>
+<td style="padding: 14px 18px;"><span style="background: rgba(148, 163, 184, 0.1); color: var(--text2); padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;">${s(complaint.complaint_type) || 'غير محدد'}</span></td>
+<td style="padding: 14px 18px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${s(complaint.details) || '-'}">${s(complaint.details) || '-'}</td>
+<td style="padding: 14px 18px; text-align: center;">
+<button class="btn btn-ghost btn-view-complaint-images" style="padding: 6px 12px; font-size: 0.8rem;"><i class="ri-image-line"></i> عرض الصور</button>
 </td>
-<td style="padding: 18px;"><span style="background: ${statusColor}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold;">${statusText}</span></td>
-<td style="padding: 18px; display: flex; gap: 8px; flex-wrap: wrap;">
-<button class="btn btn-reply-complaint" style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); color: white; padding: 8px 16px; font-weight: 600; display: ${role === 'VIEWER' ? 'none' : 'inline-flex'};">رد</button>
-<button class="btn btn-delete-complaint" style="background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); color: white; padding: 8px 16px; font-weight: 600; display: ${role === 'SUPER' ? 'inline-flex' : 'none'};">حذف</button>
+<td style="padding: 14px 18px;"><span style="background: ${statusColor}; color: white; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.78rem;">${statusText}</span></td>
+<td style="padding: 14px 18px; display: flex; gap: 8px; flex-wrap: wrap;">
+<button class="btn btn-primary btn-reply-complaint" style="padding: 6px 12px; font-size: 0.8rem; display: ${role === 'VIEWER'? 'none': 'inline-flex'};"><i class="ri-reply-line"></i> رد</button>
+<button class="btn btn-danger btn-delete-complaint" style="padding: 6px 12px; font-size: 0.8rem; display: ${role === 'SUPER'? 'inline-flex': 'none'};"><i class="ri-delete-bin-line"></i> حذف</button>
 </td>
-${complaint.status === 'replied' && complaint.reply ? `<td style="padding:18px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green);font-size:0.78rem;" title="${window.sanitizeText ? window.sanitizeText(complaint.reply) : complaint.reply}">${window.sanitizeText ? window.sanitizeText(complaint.reply).substring(0,60) : complaint.reply.substring(0,60)}...</td>` : `<td style="padding:18px;color:var(--text3);font-size:0.78rem;">لم يُرد بعد</td>`}
+${complaint.status === 'replied' && complaint.reply ? `<td style="padding:14px 18px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green);font-size:0.78rem;" title="${window.sanitizeText ? window.sanitizeText(complaint.reply) : complaint.reply}">${window.sanitizeText ? window.sanitizeText(complaint.reply).substring(0,60) : complaint.reply.substring(0,60)}...</td>` : `<td style="padding:14px 18px;color:var(--text3);font-size:0.78rem;">لم يُرد بعد</td>`}
 `;
 
 // View images button
 tr.querySelector('.btn-view-complaint-images').onclick = () => {
 if (complaint.images) {
-if (typeof complaint.images === 'object' && !Array.isArray(complaint.images)) {
+if (typeof complaint.images === 'object'&& !Array.isArray(complaint.images)) {
 showCategorizedImages(complaint.images);
 } else if (Array.isArray(complaint.images)) {
 viewImages(complaint.images);
 }
 } else {
-alert("⚠️ لا توجد صور متاحة للعرض");
+alert("لا توجد صور متاحة للعرض");
 }
 };
 
@@ -1309,7 +1300,14 @@ id: complaint.id
 const deleteBtn = tr.querySelector('.btn-delete-complaint');
 if (deleteBtn) {
 deleteBtn.onclick = async () => {
-if (!confirm(`⚠️ هل أنت متأكد من حذف هذه الشكوى؟\n\nالمقدم من: ${complaint.owner_name}\nالنوع: ${complaint.complaint_type}\n\n⚠️ هذا الإجراء لا يمكن التراجع عنه!`)) {
+const delComplaintConfirmed = await window.showConfirmModal({
+  title: 'حذف الشكوى',
+  message: `المقدم من: ${complaint.owner_name} — النوع: ${complaint.complaint_type}. هذا الإجراء لا يمكن التراجع عنه.`,
+  confirmText: 'حذف نهائي',
+  cancelText: 'إلغاء',
+  type: 'danger'
+});
+if (!delComplaintConfirmed) {
 return;
 }
 
@@ -1322,7 +1320,7 @@ const { error } = await window.supabaseClient
 .eq('id', complaint.id);
 
 if (error) {
-console.error('❌ خطأ في حذف الشكوى:', error);
+console.error('خطأ في حذف الشكوى:', error);
 throw error;
 }
 
@@ -1330,15 +1328,15 @@ throw error;
 await logAdminAction(currentUsername, 'حذف شكوى', `تم حذف شكوى من نوع: ${complaint.complaint_type} للمواطن: ${complaint.owner_name}`);
 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert("✅ تم حذف الشكوى بنجاح!");
+alert("تم حذف الشكوى بنجاح!");
 
 // Reload complaints
 await loadComplaints();
 
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ في حذف الشكوى:', error);
-alert(`❌ حدث خطأ أثناء حذف الشكوى:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+console.error('خطأ في حذف الشكوى:', error);
+alert(`حدث خطأ أثناء حذف الشكوى:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
 }
 };
 }
@@ -1347,8 +1345,8 @@ tableBody.appendChild(tr);
 });
 
 } catch (error) {
-console.error('❌ خطأ في تحميل الشكاوى:', error);
-document.getElementById('compTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">حدث خطأ في تحميل الشكاوى</td></tr>';
+console.error('خطأ في تحميل الشكاوى:', error);
+document.getElementById('compTableBody').innerHTML = '<tr><td colspan="8"style="text-align: center; padding: 40px; color: var(--danger);">حدث خطأ في تحميل الشكاوى</td></tr>';
 }
 }
 
@@ -1379,9 +1377,9 @@ function isolateSection(show) {
     const toolbar = tableWrap.querySelector('.table-toolbar');
     const chips   = tableWrap.querySelector('.filter-chips')?.parentElement;
     const topPag  = tableWrap.querySelector('.pagination-bar');
-    if (toolbar) toolbar.style.display = isTableSection ? 'flex' : 'none';
-    if (chips)   chips.style.display   = isTableSection ? 'block' : 'none';
-    if (topPag)  topPag.style.display  = isTableSection ? 'flex' : 'none';
+    if (toolbar) toolbar.style.display = isTableSection ? 'flex': 'none';
+    if (chips)   chips.style.display   = isTableSection ? 'block': 'none';
+    if (topPag)  topPag.style.display  = isTableSection ? 'flex': 'none';
   }
 }
 window.isolateSection = isolateSection;
@@ -1420,7 +1418,7 @@ const currentUsername = window.currentUsername || sessionStorage.getItem('userna
 const newStatus = 'sticker_applied';
 
 if (!id) {
-alert("❌ خطأ: معرف الطلب غير موجود");
+alert("خطأ: معرف الطلب غير موجود");
 return;
 }
 
@@ -1436,23 +1434,23 @@ status: newStatus
 .eq('id', id);
 
 if (statusError) {
-console.error('❌ خطأ في تغيير الحالة:', statusError);
-console.error('❌ تفاصيل الخطأ:', JSON.stringify(statusError, null, 2));
-console.error('❌ ID:', id);
-console.error('❌ newStatus:', newStatus);
-alert(`❌ خطأ في تغيير الحالة:\n${statusError.message || statusError.hint || JSON.stringify(statusError)}`);
+console.error('خطأ في تغيير الحالة:', statusError);
+console.error('تفاصيل الخطأ:', JSON.stringify(statusError, null, 2));
+console.error('ID:', id);
+console.error('newStatus:', newStatus);
+alert(`خطأ في تغيير الحالة:\n${statusError.message || statusError.hint || JSON.stringify(statusError)}`);
 throw statusError;
 }
 
 await logAdminAction(currentUsername, 'لصق ملصق', `تم لصق الملصق على مركبة ${item.vType} للمالك: ${item.owner} (الرقم المرجعي: ${item.refNumber})`);
 
 if (sendWhatsApp && item.phone && item.phone.length === 11) {
-const message = `🏷️ *تم لصق الملصق!*\n\n` +
-`👤 السيد/ة: ${item.owner}\n` +
-`🚜 نوع المركبة: ${item.vType}\n` +
-`🔢 كود المركبة: ${item.vCode || 'غير مكود'}\n` +
-`📋 الرقم المرجعي: ${item.refNumber}\n\n` +
-`✅ تم لصق الملصق الجديد على مركبتك\n\n` +
+const message = `*تم لصق الملصق!*\n\n`+
+`السيد/ة: ${item.owner}\n`+
+`نوع المركبة: ${item.vType}\n`+
+`كود المركبة: ${item.vCode || 'غير مكود'}\n`+
+`الرقم المرجعي: ${item.refNumber}\n\n`+
+`تم لصق الملصق الجديد على مركبتك\n\n`+
 `_رئاسة مركز ومدينة كفر صقر_`;
 const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
 window.open(whatsappUrl, '_blank');
@@ -1460,12 +1458,12 @@ window.open(whatsappUrl, '_blank');
 
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('statusChangeModal').style.display = 'none';
-alert("✅ تم لصق الملصق بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الإشعار" : ""));
+alert("تم لصق الملصق بنجاح!"+ (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n تم فتح واتساب لإرسال الإشعار": ""));
 await loadAdminData();
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ:', error);
-alert(`❌ حدث خطأ: ${error.message}`);
+console.error('خطأ:', error);
+alert(`حدث خطأ: ${error.message}`);
 }
 };
 }
@@ -1481,15 +1479,22 @@ const note = document.getElementById('statusNote').value.trim();
 const userRole = window.userRole || sessionStorage.getItem('userRole') || 'ADMIN';
 const currentUsername = window.currentUsername || sessionStorage.getItem('username') || 'مجهول';
 
-// إرجاع الحالة إلى "تم التكويد" أو "pending" حسب وجود كود
-const newStatus = item.vCode ? 'coded' : 'pending';
+// إرجاع الحالة إلى "تم التكويد"أو "pending"حسب وجود كود
+const newStatus = item.vCode ? 'coded': 'pending';
 
 if (!id) {
-alert("❌ خطأ: معرف الطلب غير موجود");
+alert("خطأ: معرف الطلب غير موجود");
 return;
 }
 
-if (!confirm("⚠️ هل أنت متأكد من إلغاء/إزالة الملصق؟\nسيتم إرجاع الحالة إلى الوضع الطبيعي")) {
+const stickerConfirmed = await window.showConfirmModal({
+  title: 'إلغاء الملصق',
+  message: 'هل أنت متأكد من إلغاء/إزالة الملصق؟ سيتم إرجاع الحالة إلى الوضع الطبيعي.',
+  confirmText: 'إلغاء الملصق',
+  cancelText: 'تراجع',
+  type: 'warning'
+});
+if (!stickerConfirmed) {
 return;
 }
 
@@ -1505,7 +1510,7 @@ status: newStatus
 .eq('id', id);
 
 if (statusError) {
-console.error('❌ خطأ في تغيير الحالة:', statusError);
+console.error('خطأ في تغيير الحالة:', statusError);
 throw statusError;
 }
 
@@ -1513,12 +1518,12 @@ await logAdminAction(currentUsername, 'إلغاء ملصق', `تم إلغاء ا
 
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('statusChangeModal').style.display = 'none';
-alert("✅ تم إلغاء الملصق وإرجاع الحالة إلى الوضع الطبيعي");
+alert("تم إلغاء الملصق وإرجاع الحالة إلى الوضع الطبيعي");
 await loadAdminData();
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ:', error);
-alert(`❌ حدث خطأ: ${error.message}`);
+console.error('خطأ:', error);
+alert(`حدث خطأ: ${error.message}`);
 }
 };
 }
@@ -1555,12 +1560,12 @@ const reply = document.getElementById('complaintReplyText').value.trim();
 const sendWhatsApp = document.getElementById('sendWhatsAppReply').checked;
 
 if (!reply) {
-alert("❌ يرجى كتابة نص الرد");
+alert("يرجى كتابة نص الرد");
 return;
 }
 
 if (!id) {
-alert("❌ خطأ: معرف الشكوى غير موجود");
+alert("خطأ: معرف الشكوى غير موجود");
 console.error('Missing complaint ID:', window.currentComplaintReply);
 return;
 }
@@ -1572,12 +1577,11 @@ const { error } = await window.supabaseClient
 .from('complaints')
 .update({
 reply: reply,
-status: 'replied'
-})
+status: 'replied'})
 .eq('id', id);
 
 if (error) {
-console.error('❌ خطأ في تحديث الشكوى:', error);
+console.error('خطأ في تحديث الشكوى:', error);
 throw error;
 }
 
@@ -1586,11 +1590,11 @@ await logAdminAction(currentUsername, 'الرد على شكوى', `تم الرد
 
 // Send WhatsApp notification if checkbox is checked
 if (sendWhatsApp && item.phone && item.phone.length === 11) {
-const message = `✅ *تم الرد على شكواك!*\n\n` +
-`👤 السيد/ة: ${item.ownerName}\n` +
-`📋 نوع الشكوى: ${item.type}\n\n` +
-`💬 *الرد من الإدارة:*\n${reply}\n\n` +
-`📞 للاستفسار: 01021102607\n\n` +
+const message = `*تم الرد على شكواك!*\n\n`+
+`السيد/ة: ${item.ownerName}\n`+
+`نوع الشكوى: ${item.type}\n\n`+
+`*الرد من الإدارة:*\n${reply}\n\n`+
+`للاستفسار: 01021102607\n\n`+
 `_رئاسة مركز ومدينة كفر صقر_`;
 
 const whatsappUrl = `https://wa.me/2${item.phone}?text=${encodeURIComponent(message)}`;
@@ -1599,15 +1603,15 @@ window.open(whatsappUrl, '_blank');
 
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('complaintReplyModal').style.display = 'none';
-alert("✅ تم حفظ الرد بنجاح!" + (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n📱 تم فتح واتساب لإرسال الرد" : ""));
+alert("تم حفظ الرد بنجاح!"+ (sendWhatsApp && item.phone && item.phone.length === 11 ? "\n تم فتح واتساب لإرسال الرد": ""));
 
 // Reload complaints to show updated data
 await loadComplaints();
 
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
-console.error('❌ خطأ في الرد على الشكوى:', error);
-alert(`❌ حدث خطأ أثناء حفظ الرد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
+console.error('خطأ في الرد على الشكوى:', error);
+alert(`حدث خطأ أثناء حفظ الرد:\n\n${error.message || error.toString()}\n\nيرجى المحاولة مرة أخرى`);
 }
 };
 } // end if confirmComplaintReplyBtn
@@ -1670,8 +1674,7 @@ try {
     usedCodesDetails[item.code.trim()] = {
       owner: item.owner_name || 'غير محدد',
       phone: item.phone || 'غير محدد',
-      nationalId: item.national_id || 'غير محدد'
-    };
+      nationalId: item.national_id || 'غير محدد'};
     if (codeNum > maxUsedCode) maxUsedCode = codeNum;
   });
 
@@ -1693,14 +1696,14 @@ try {
   codesList.innerHTML = '';
 
   if (availableCodes.length === 0) {
-    codesList.innerHTML = `<p style="text-align:center;color:#e74c3c;font-size:1.2rem;padding:40px;grid-column:1/-1;">✅ جميع الأكواد من 1 إلى ${maxUsedCode} مستخدمة!</p>`;
+    codesList.innerHTML = `<p style="text-align:center;color:var(--text3);font-size:1rem;padding:40px;grid-column:1/-1;">جميع الأكواد من 1 إلى ${maxUsedCode} مستخدمة</p>`;
   } else {
     availableCodes.forEach(code => {
       const codeBox = document.createElement('div');
-      codeBox.style.cssText = 'background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;padding:12px;border-radius:10px;text-align:center;font-weight:700;font-size:1.1rem;box-shadow:0 4px 10px rgba(39,174,96,0.3);cursor:pointer;transition:all 0.3s;';
+      codeBox.style.cssText = 'background:#1E293B; border:1px solid rgba(16,185,129,0.25); color:#34D399; padding:10px 8px; border-radius:8px; text-align:center; font-weight:700; font-size:1.05rem; cursor:pointer; transition:all 0.2s; font-family:monospace;';
       codeBox.textContent = code;
-      codeBox.onmouseover = function() { this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(39,174,96,0.5)'; };
-      codeBox.onmouseout  = function() { this.style.transform='translateY(0)';    this.style.boxShadow='0 4px 10px rgba(39,174,96,0.3)'; };
+      codeBox.onmouseover = function() { this.style.borderColor='#10B981'; this.style.background='rgba(16,185,129,0.15)'; };
+      codeBox.onmouseout  = function() { this.style.borderColor='rgba(16,185,129,0.25)'; this.style.background='#1E293B'; };
       codeBox.onclick = function() {
         document.getElementById('searchCodeInput').value = code;
         searchForCode();
@@ -1709,8 +1712,8 @@ try {
     });
   }
 } catch (e) {
-  console.error('❌ خطأ في جلب الأكواد:', e);
-  alert('❌ خطأ في تحميل الأكواد: ' + e.message);
+  console.error('خطأ في جلب الأكواد:', e);
+  alert('خطأ في تحميل الأكواد: '+ e.message);
 } finally {
   document.getElementById('loadingSpinner').style.display = 'none';
 }
@@ -1724,21 +1727,21 @@ const codeToSearch = searchInput.value.trim();
 
 if (!codeToSearch || codeToSearch === '') {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'rgba(243, 156, 18, 0.15)';
-resultDiv.style.border = '2px solid #f39c12';
-resultDiv.style.color = '#f39c12';
-resultDiv.innerHTML = '⚠️ يرجى إدخال رقم الكود';
+resultDiv.style.background = 'rgba(245, 158, 11, 0.1)';
+resultDiv.style.border = '1px solid rgba(245, 158, 11, 0.25)';
+resultDiv.style.color = '#FBBF24';
+resultDiv.innerHTML = 'يرجى إدخال رقم الكود';
 return;
 }
 
 const codeNum = parseInt(codeToSearch);
-const maxCode = window.codeRangeEnd || 2500; // استخدام الرقم من الإعدادات
+const maxCode = window.codeRangeEnd || 2500;
 if (codeNum < 1 || codeNum > maxCode) {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'rgba(231, 76, 60, 0.15)';
-resultDiv.style.border = '2px solid #e74c3c';
-resultDiv.style.color = '#e74c3c';
-resultDiv.innerHTML = `❌ رقم الكود يجب أن يكون بين 1 و ${maxCode}<br><small style="font-size: 0.9rem;">(آخر كود مستخدم في النظام: ${window.maxUsedCode || maxCode})</small>`;
+resultDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.25)';
+resultDiv.style.color = '#F87171';
+resultDiv.innerHTML = `رقم الكود يجب أن يكون بين 1 و ${maxCode}<br><small style="font-size: 0.85rem; color: var(--text3);">(آخر كود مستخدم في النظام: ${window.maxUsedCode || maxCode})</small>`;
 return;
 }
 
@@ -1746,13 +1749,12 @@ return;
 if (window.usedCodesDetails && window.usedCodesDetails[codeToSearch]) {
 const details = window.usedCodesDetails[codeToSearch];
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'rgba(231, 76, 60, 0.15)';
-resultDiv.style.border = '2px solid #e74c3c';
-resultDiv.style.color = '#e74c3c';
-resultDiv.innerHTML = `
-<div style="text-align: right; padding: 10px;">
-<p style="margin: 5px 0; font-size: 1.2rem;">🔴 الكود <strong>${window.sanitizeText(codeToSearch)}</strong> محجوز</p>
-<hr style="margin: 15px 0; border: none; border-top: 2px solid rgba(231, 76, 60, 0.3);">
+resultDiv.style.background = 'rgba(239, 68, 68, 0.08)';
+resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.25)';
+resultDiv.style.color = 'var(--text)';
+resultDiv.innerHTML = `<div style="text-align: right; padding: 10px;">
+<p style="margin: 5px 0; font-size: 1.15rem; color: #F87171; font-weight: 700;"><i class="ri-close-circle-line"></i> الكود <strong>${window.sanitizeText(codeToSearch)}</strong> محجوز</p>
+<hr style="margin: 12px 0; border: none; border-top: 1px solid rgba(239, 68, 68, 0.2);">
 <p style="margin: 5px 0;"><strong>المالك:</strong> ${window.sanitizeText(details.owner)}</p>
 <p style="margin: 5px 0;"><strong>الهاتف:</strong> ${window.sanitizeText(details.phone)}</p>
 <p style="margin: 5px 0;"><strong>الرقم القومي:</strong> ${window.sanitizeText(details.nationalId)}</p>
@@ -1763,25 +1765,30 @@ resultDiv.innerHTML = `
 const codeNum = parseInt(codeToSearch);
 if (codeNum > (window.maxUsedCode || 0)) {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'rgba(243, 156, 18, 0.15)';
-resultDiv.style.border = '2px solid #f39c12';
-resultDiv.style.color = '#f39c12';
-resultDiv.innerHTML = `⚠️ الكود <strong>${codeToSearch}</strong> خارج النطاق الحالي<br><small style="font-size: 0.9rem;">(آخر كود مستخدم: ${window.maxUsedCode || 0})</small>`;
+resultDiv.style.background = 'rgba(245, 158, 11, 0.1)';
+resultDiv.style.border = '1px solid rgba(245, 158, 11, 0.25)';
+resultDiv.style.color = '#FBBF24';
+resultDiv.innerHTML = `الكود <strong>${codeToSearch}</strong> خارج النطاق الحالي<br><small style="font-size: 0.85rem; color: var(--text3);">(آخر كود مستخدم: ${window.maxUsedCode || 0})</small>`;
 } else {
 resultDiv.style.display = 'block';
-resultDiv.style.background = 'rgba(39, 174, 96, 0.15)';
-resultDiv.style.border = '2px solid #27ae60';
-resultDiv.style.color = '#27ae60';
-resultDiv.innerHTML = `✅ الكود <strong>${codeToSearch}</strong> متاح ويمكن استخدامه`;
+resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+resultDiv.style.border = '1px solid rgba(16, 185, 129, 0.25)';
+resultDiv.style.color = '#34D399';
+resultDiv.innerHTML = `<i class="ri-checkbox-circle-line"></i> الكود <strong>${codeToSearch}</strong> متاح ويمكن استخدامه`;
 }
 }
 }
 
-// Filter functions for stat cards
+// Filter functions
 function showAllOrders() {
     window._newRequestsMode = false;
-    window.currentFilter = 'all';
-    if (typeof loadPage === 'function') loadPage(1);
+    window._stickerMode = false;
+    if (typeof window.switchToVehicleSection === 'function') {
+      window.switchToVehicleSection('tuktuk');
+    } else {
+      window.currentFilter = 'tuktuk';
+      if (typeof loadPage === 'function') loadPage(1);
+    }
 }
 
 function showAllOrdersInTable() { showAllOrders(); }
@@ -1838,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', function() {
     applyBtn.onclick = function() {
       const from = document.getElementById('filterFromDate').value;
       const to   = document.getElementById('filterToDate').value;
-      if (!from && !to) { alert('⚠️ يرجى تحديد تاريخ واحد على الأقل'); return; }
+      if (!from && !to) { alert('يرجى تحديد تاريخ واحد على الأقل'); return; }
       window._dateFrom = from || null;
       window._dateTo   = to   || null;
       document.getElementById('dateFilterModal').style.display = 'none';
@@ -1853,9 +1860,8 @@ const modal = document.getElementById('activityLogModal');
 const content = document.getElementById('activityLogContent');
 const history = item.statusHistory || [];
 
-let html = `
-<div style="background: linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #34495e;">
-<h4 style="color: #34495e; margin: 0 0 10px 0;">معلومات الطلب:</h4>
+let html = `<div style="background: var(--bg3); padding: 18px; border-radius: var(--r-md); margin-bottom: 20px; border: 1px solid var(--border);">
+<h4 style="color: var(--text); margin: 0 0 10px 0; font-size: 1rem;"><i class="ri-file-info-line"></i> معلومات الطلب:</h4>
 <p style="margin: 5px 0;"><strong>المالك:</strong> ${window.sanitizeText(item.owner)}</p>
 <p style="margin: 5px 0;"><strong>الرقم المرجعي:</strong> ${window.sanitizeText(item.refNumber) || 'N/A'}</p>
 <p style="margin: 5px 0;"><strong>نوع المركبة:</strong> ${window.sanitizeText(item.vType)}</p>
@@ -1863,23 +1869,22 @@ let html = `
 `;
 
 if (history.length === 0) {
-html += '<p style="text-align: center; color: #999; padding: 40px;">لا يوجد سجل عمليات</p>';
+html += '<p style="text-align: center; color: var(--text3); padding: 40px;">لا يوجد سجل عمليات</p>';
 } else {
 html += '<div style="position: relative; padding-right: 30px;">';
 history.forEach((log, index) => {
 const statusInfo = window.getStatusDisplay(log.status);
 const isLast = index === history.length - 1;
-html += `
-<div style="position: relative; margin-bottom: 25px;">
-<div style="position: absolute; right: -30px; top: 0; width: 20px; height: 20px; background: ${statusInfo.color}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-${!isLast ? '<div style="position: absolute; right: -21px; top: 20px; width: 2px; height: calc(100% + 25px); background: #ddd;"></div>' : ''}
-<div style="background: white; padding: 20px; border-radius: 15px; border: 2px solid ${statusInfo.color}; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-<span style="background: ${statusInfo.color}; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">${statusInfo.icon} ${statusInfo.text}</span>
-<span style="color: #999; font-size: 0.85rem;">${window.formatDateTime(log.timestamp)}</span>
+html += `<div style="position: relative; margin-bottom: 20px;">
+<div style="position: absolute; right: -30px; top: 0; width: 18px; height: 18px; background: ${statusInfo.color}; border-radius: 50%; border: 2px solid var(--bg); box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>
+${!isLast ? '<div style="position: absolute; right: -22px; top: 18px; width: 2px; height: calc(100% + 20px); background: var(--border);"></div>': ''}
+<div style="background: var(--bg3); padding: 16px; border-radius: var(--r-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+<span style="background: rgba(16, 185, 129, 0.12); color: #34D399; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;">${statusInfo.text}</span>
+<span style="color: var(--text3); font-size: 0.8rem;">${window.formatDateTime(log.timestamp)}</span>
 </div>
-${log.note ? `<p style="margin: 10px 0 0 0; color: #555; line-height: 1.6;">${window.sanitizeText(log.note)}</p>` : ''}
-${log.by ? `<p style="margin: 10px 0 0 0; color: #999; font-size: 0.85rem;">بواسطة: ${log.by === 'SUPER' ? 'مدير عام' : log.by === 'ADMIN' ? 'مشرف' : window.sanitizeText(log.by)}</p>` : ''}
+${log.note ? `<p style="margin: 8px 0 0 0; color: var(--text2); line-height: 1.5; font-size: 0.85rem;">${window.sanitizeText(log.note)}</p>`: ''}
+${log.by ? `<p style="margin: 8px 0 0 0; color: var(--text3); font-size: 0.8rem;">بواسطة: ${log.by === 'SUPER'? 'مدير عام': log.by === 'ADMIN'? 'مشرف': window.sanitizeText(log.by)}</p>`: ''}
 </div>
 </div>
 `;
@@ -1908,33 +1913,32 @@ const tableBody = document.getElementById('adminLogsTableBody');
 tableBody.innerHTML = '';
 
 if (!logs || logs.length === 0) {
-tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">لا يوجد سجل عمليات</td></tr>';
+tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text3);">لا يوجد سجل عمليات</td></tr>';
 return;
 }
 
 logs.forEach(item => {
-const roleIcon = item.role === 'SUPER' ? '👑' : item.role === 'ADMIN' ? '🔧' : '👁️';
-const roleText = item.role === 'SUPER' ? 'مدير عام' : item.role === 'ADMIN' ? 'مشرف' : 'عرض فقط';
+const roleText = item.role === 'SUPER'? 'مدير عام': item.role === 'ADMIN'? 'مشرف': 'عرض فقط';
+const roleStyle = item.role === 'SUPER'? 'background: rgba(239, 68, 68, 0.15); color: #F87171;' : item.role === 'ADMIN'? 'background: rgba(16, 185, 129, 0.15); color: #34D399;' : 'background: rgba(148, 163, 184, 0.15); color: #94A3B8;';
 
 const tr = document.createElement('tr');
-tr.innerHTML = `
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:bold;">
-<span style="background: ${item.role === 'SUPER' ? '#e74c3c' : item.role === 'ADMIN' ? '#3498db' : '#95a5a6'}; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem;">
-${roleIcon} ${window.sanitizeText(item.username)}
+tr.innerHTML = `<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight:bold;">
+<span style="${roleStyle} padding: 4px 10px; border-radius: 6px; font-size: 0.85rem;">
+${window.sanitizeText(item.username)}
 </span>
-<br><small style="color: #999; font-size: 0.85rem;">${roleText}</small>
+<br><small style="color: var(--text3); font-size: 0.78rem;">${roleText}</small>
 </td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-weight:600; color: var(--primary);">${window.sanitizeText(item.action)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); color: #555;">${window.sanitizeText(item.details)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-size:0.9rem; color:#666;">${window.formatDateTime(item.logged_at)}</td>
-<td style="padding: 18px; background: rgba(255, 255, 255, 0.85); font-family: monospace; color: #999;">${item.ip_address || 'N/A'}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight:600; color: var(--text);">${window.sanitizeText(item.action)}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--text2);">${window.sanitizeText(item.details)}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-size:0.85rem; color: var(--text3);">${window.formatDateTime(item.logged_at)}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-family: monospace; color: var(--text3);">${item.ip_address || 'N/A'}</td>
 `;
 tableBody.appendChild(tr);
 });
 
 } catch (error) {
-console.error('❌ خطأ في تحميل سجل المشرفين:', error);
-document.getElementById('adminLogsTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">❌ حدث خطأ في تحميل السجل</td></tr>';
+console.error('خطأ في تحميل سجل المشرفين:', error);
+document.getElementById('adminLogsTableBody').innerHTML = '<tr><td colspan="5"style="text-align: center; padding: 40px; color: var(--danger);"> حدث خطأ في تحميل السجل</td></tr>';
 }
 }
 
@@ -1943,13 +1947,20 @@ document.getElementById('adminLogsTableBody').innerHTML = '<tr><td colspan="5" s
   const exportExcelBtn = document.getElementById('exportExcelBtn');
   if (exportExcelBtn) {
   exportExcelBtn.onclick = async () => {
-if (!confirm('📊 هل تريد تصدير كل البيانات إلى Excel؟\n\n✅ سيتم تصدير:\n• الإحصائيات الكاملة\n• جميع بيانات المركبات (بدون صور)\n• جميع الشكاوى (بدون صور)\n\nقد يستغرق الأمر بضع ثوانٍ...')) {
+const exportConfirmed = await window.showConfirmModal({
+  title: 'تصدير البيانات إلى Excel',
+  message: 'سيتم تصدير جميع بيانات المركبات والشكاوى. قد يستغرق الأمر بضع ثوانٍ.',
+  confirmText: 'تصدير',
+  cancelText: 'إلغاء',
+  type: 'info'
+});
+if (!exportConfirmed) {
 return;
 }
 
 const loadingDiv = document.createElement('div');
 loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
-loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">📊</div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تصدير البيانات...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
+loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تصدير البيانات...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
 document.body.appendChild(loadingDiv);
 
 try {
@@ -2003,10 +2014,10 @@ const vehiclesData = [
 allVehicles.forEach(vehicle => {
 // Format date
 const date = new Date(vehicle.submitted_at);
-const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
+const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م': 'ص'}`;
 
 // Status text
-const statusText = vehicle.status === 'coded' ? '✅ تم التكويد' : '⏳ قيد الانتظار';
+const statusText = vehicle.status === 'coded'? 'تم التكويد': 'قيد الانتظار';
 
 vehiclesData.push([
 vehicle.owner_name || '-',
@@ -2060,10 +2071,10 @@ const complaintsData = [
 allComplaints.forEach(complaint => {
 // Format date
 const date = new Date(complaint.submitted_at);
-const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م' : 'ص'}`;
+const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م': 'ص'}`;
 
 // Status text
-const statusText = complaint.status === 'replied' ? '✅ تم الرد' : '⏳ قيد المراجعة';
+const statusText = complaint.status === 'replied'? 'تم الرد': 'قيد المراجعة';
 
 complaintsData.push([
 complaint.owner_name || '-',
@@ -2106,12 +2117,12 @@ const fileName = `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar
 XLSX.writeFile(wb, fileName);
 
 document.body.removeChild(loadingDiv);
-alert(`✅ تم تصدير البيانات بنجاح!\n\n📊 الإحصائيات:\n• ${totalVehicles} مركبة\n• ${totalComplaints} شكوى\n\n📁 الملف: ${fileName}`);
+alert(`تم تصدير البيانات بنجاح!\n\n الإحصائيات:\n• ${totalVehicles} مركبة\n• ${totalComplaints} شكوى\n\n الملف: ${fileName}`);
 
 } catch (error) {
 document.body.removeChild(loadingDiv);
-console.error('❌ خطأ في التصدير:', error);
-alert('❌ حدث خطأ أثناء تصدير البيانات: ' + error.message);
+console.error('خطأ في التصدير:', error);
+alert('حدث خطأ أثناء تصدير البيانات: '+ error.message);
 }
 };
   } // end if exportExcelBtn
@@ -2121,13 +2132,20 @@ alert('❌ حدث خطأ أثناء تصدير البيانات: ' + error.messa
 const cleanDuplicatesMainBtn = document.getElementById('cleanDuplicatesMainBtn');
 if (cleanDuplicatesMainBtn) {
 cleanDuplicatesMainBtn.onclick = async () => {
-if (!confirm('🧹 هل تريد حذف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من قاعدة البيانات\n✅ حذف التكرار من لوحة التحكم\n✅ الاحتفاظ بأحدث سجل فقط')) {
+const cleanMainConfirmed = await window.showConfirmModal({
+  title: 'حذف السجلات المكررة',
+  message: 'سيتم حذف التكرار من قاعدة البيانات مع الاحتفاظ بأحدث سجل فقط. هذا الإجراء لا يمكن التراجع عنه.',
+  confirmText: 'حذف المكررات',
+  cancelText: 'إلغاء',
+  type: 'danger'
+});
+if (!cleanMainConfirmed) {
 return;
 }
 
 const loadingDiv = document.createElement('div');
 loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
-loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">🧹</div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري حذف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
+loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري حذف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
 document.body.appendChild(loadingDiv);
 
 try {
@@ -2182,7 +2200,7 @@ seenNIDs.set(order.national_id, order);
 
 if (duplicateIds.length === 0) {
 loadingDiv.remove();
-alert('✅ لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
+alert('لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
 return;
 }
 
@@ -2225,13 +2243,13 @@ images: order.images || []
 // Data stored securely in Database
 
 loadingDiv.remove();
-alert(`✅ تم حذف السجلات المكررة بنجاح!\n\n🗑️ تم حذف: ${deletedCount} سجل مكرر\n✅ تم الاحتفاظ بـ: ${uniqueOrders.length} سجل فريد\n\n☁️ تم التنظيف من قاعدة البيانات`);
+alert(`تم حذف السجلات المكررة بنجاح!\n\n تم حذف: ${deletedCount} سجل مكرر\n تم الاحتفاظ بـ: ${uniqueOrders.length} سجل فريد\n\n تم التنظيف من قاعدة البيانات`);
 
 // Reload data
 await loadAdminData();
 } catch (error) {
 loadingDiv.remove();
-alert('❌ حدث خطأ أثناء حذف المكرر: ' + error.message);
+alert('حدث خطأ أثناء حذف المكرر: '+ error.message);
 console.error('Clean duplicates error:', error);
 }
 };
@@ -2248,7 +2266,14 @@ window.viewImages = viewImages;
 // Cleanup Duplicates Button Handler
 if (document.getElementById('cleanupDuplicatesBtn')) {
 document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
-if (!confirm('⚠️ هل أنت متأكد من تنظيف البيانات المتكررة؟\n\nسيتم:\n✅ حذف السجلات المتكررة من قاعدة البيانات\n✅ حذف السجلات المتكررة من LocalStorage\n✅ الاحتفاظ بأول سجل فقط لكل رقم قومي\n\n⚠️ هذه العملية لا يمكن التراجع عنها!')) {
+const cleanupConfirmed = await window.showConfirmModal({
+  title: 'تنظيف البيانات المتكررة',
+  message: 'سيتم حذف السجلات المتكررة من قاعدة البيانات مع الاحتفاظ بأول سجل لكل رقم قومي. هذه العملية لا يمكن التراجع عنها.',
+  confirmText: 'تنظيف الآن',
+  cancelText: 'إلغاء',
+  type: 'danger'
+});
+if (!cleanupConfirmed) {
 return;
 }
 document.getElementById('loadingSpinner').style.display = 'block';
@@ -2275,7 +2300,7 @@ let isDuplicate = false;
 if (order.nationalId) {
 if (seenNIDs.has(order.nationalId)) {
 isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم قومي مكرر: ${order.nationalId}` });
+duplicatesToDelete.push({ id: order.id, reason: `رقم قومي مكرر: ${order.nationalId}`});
 } else {
 seenNIDs.set(order.nationalId, order);
 }
@@ -2285,7 +2310,7 @@ seenNIDs.set(order.nationalId, order);
 if (!isDuplicate && order.refNumber) {
 if (seenRefs.has(order.refNumber)) {
 isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم مرجعي مكرر: ${order.refNumber}` });
+duplicatesToDelete.push({ id: order.id, reason: `رقم مرجعي مكرر: ${order.refNumber}`});
 } else {
 seenRefs.set(order.refNumber, order);
 }
@@ -2294,7 +2319,7 @@ seenRefs.set(order.refNumber, order);
 
 
 if (duplicatesToDelete.length === 0) {
-alert('✅ لا توجد بيانات متكررة!\n\nقاعدة البيانات نظيفة بالفعل.'); 
+alert('لا توجد بيانات متكررة!\n\nقاعدة البيانات نظيفة بالفعل.'); 
 document.getElementById('loadingSpinner').style.display = 'none';
 return;
 }
@@ -2310,20 +2335,20 @@ const { error } = await window.supabaseClient
 if (error) throw error;
 deletedCount++;
 } catch (e) {
-console.error(`❌ فشل حذف ${dup.id}:`, e);
+console.error(`فشل حذف ${dup.id}:`, e);
 }
 }
 
 // Step 4: Log the action
 await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات`); 
 document.getElementById('loadingSpinner').style.display = 'none';
-alert(`✅ تم تنظيف البيانات بنجاح!\n\n📊 الإحصائيات:\n🗑️ تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات\n💾 تم تنظيف LocalStorage\n\n🔄 سيتم تحديث الصفحة الآن...`);
+alert(`تم تنظيف البيانات بنجاح!\n\n الإحصائيات:\n تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات\n تم تنظيف LocalStorage\n\n سيتم تحديث الصفحة الآن...`);
 location.reload();
 
 } catch (error) {
-console.error('❌ خطأ في تنظيف البيانات:', error);
+console.error('خطأ في تنظيف البيانات:', error);
 document.getElementById('loadingSpinner').style.display = 'none';
-alert('❌ حدث خطأ أثناء تنظيف البيانات:\n' + error.message);
+alert('حدث خطأ أثناء تنظيف البيانات:\n'+ error.message);
 }
 };
 }
@@ -2349,13 +2374,20 @@ XLSX.writeFile(wb, 'نموذج_استيراد_المركبات.xlsx');
 const cleanDuplicatesBtn = document.getElementById('cleanDuplicatesBtn');
 if (cleanDuplicatesBtn) {
 cleanDuplicatesBtn.onclick = async () => {
-if (!confirm('🧹 هل تريد تنظيف السجلات المكررة؟\n\nسيتم:\n✅ حذف التكرار من قاعدة البيانات\n✅ حذف التكرار من LocalStorage\n✅ الاحتفاظ بأحدث سجل فقط')) {
+const dupCleanConfirmed = await window.showConfirmModal({
+  title: 'تنظيف السجلات المكررة',
+  message: 'سيتم حذف التكرار من قاعدة البيانات والاحتفاظ بأحدث سجل فقط.',
+  confirmText: 'تنظيف',
+  cancelText: 'إلغاء',
+  type: 'danger'
+});
+if (!dupCleanConfirmed) {
 return;
 }
 
 const loadingDiv = document.createElement('div');
 loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
-loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;">🧹</div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تنظيف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
+loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تنظيف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
 document.body.appendChild(loadingDiv);
 
 try {
@@ -2414,7 +2446,7 @@ seenNIDs.set(order.national_id, order);
 
 if (duplicateIds.length === 0) {
 loadingDiv.remove();
-alert('✅ لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
+alert('لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
 return;
 }
 
@@ -2458,13 +2490,13 @@ images: order.images || []
 
 // 5. Reload data
 loadingDiv.remove();
-alert(`✅ تم تنظيف السجلات المكررة بنجاح!\n\n📊 الإحصائيات:\n• تم حذف: ${deletedCount} سجل مكرر\n• المتبقي: ${uniqueOrders.length} سجل فريد\n\nسيتم تحديث الجدول الآن...`);
+alert(`تم تنظيف السجلات المكررة بنجاح!\n\n الإحصائيات:\n• تم حذف: ${deletedCount} سجل مكرر\n• المتبقي: ${uniqueOrders.length} سجل فريد\n\nسيتم تحديث الجدول الآن...`);
 await loadAdminData();
 
 } catch (error) {
 loadingDiv.remove();
-console.error('❌ خطأ في تنظيف السجلات:', error);
-alert(`❌ حدث خطأ أثناء تنظيف السجلات:\n\n${error.message}`);
+console.error('خطأ في تنظيف السجلات:', error);
+alert(`حدث خطأ أثناء تنظيف السجلات:\n\n${error.message}`);
 }
 };
 }
@@ -2482,12 +2514,12 @@ const reader = new FileReader();
 reader.onload = (event) => {
 try {
 const data = new Uint8Array(event.target.result);
-const workbook = XLSX.read(data, { type: 'array' });
+const workbook = XLSX.read(data, { type: 'array'});
 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
 
 if (jsonData.length < 2) {
-alert('❌ الملف فارغ أو لا يحتوي على بيانات');
+alert('الملف فارغ أو لا يحتوي على بيانات');
 return;
 }
 
@@ -2580,7 +2612,7 @@ break;
 
 // Check required columns
 if (columnMap.owner === undefined || columnMap.nationalId === undefined) {
-alert('❌ لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\n\nتأكد من:\n• استخدام الترتيب الصحيح للأعمدة (B-H)\n• أو وضع أسماء الأعمدة في الصف الأول');
+alert('لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\n\nتأكد من:\n• استخدام الترتيب الصحيح للأعمدة (B-H)\n• أو وضع أسماء الأعمدة في الصف الأول');
 return;
 }
 
@@ -2591,7 +2623,7 @@ const preview = document.getElementById('importPreview');
 const startRow = useFixedColumns ? dataStartRow : 1;
 
 let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
-<p style="color: #666; margin-bottom: 15px;">✅ ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)' : 'تم اكتشاف الأعمدة تلقائياً'}</p>
+<p style="color: #666; margin-bottom: 15px;"> ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)': 'تم اكتشاف الأعمدة تلقائياً'}</p>
 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
 <thead>
 <tr style="background: #8e44ad; color: white;">
@@ -2628,23 +2660,22 @@ vColor: row[columnMap.vColor] || '',
 address: row[columnMap.address] || '',
 vCode: row[columnMap.vCode] ? String(row[columnMap.vCode]).trim() : '',
 chassisNumber: row[columnMap.chassisNumber] ? String(row[columnMap.chassisNumber]).trim() : '',
-motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''
-};
+motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''};
 
 // Validation (more lenient like import_excel.html)
 const isValid = record.owner.length >= 3 && record.nationalId.length >= 10 && (!record.phone || record.phone.length === 11);
 importedData.push(record);
 
 const rowNumber = i - startRow + 1; // Calculate correct row number
-previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'};">
+previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)': 'rgba(231, 76, 60, 0.1)'};">
 <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${rowNumber}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db' : '#999'};">${record.vCode || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db': '#999'};">${record.vCode || '-'}</td>
 <td style="padding: 6px; border: 1px solid #ddd;">${record.owner}</td>
 <td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">${record.nationalId}</td>
 <td style="padding: 6px; border: 1px solid #ddd; font-family: monospace;">${record.phone || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.chassisNumber ? '#27ae60' : '#999'};">${record.chassisNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.motorNumber ? '#27ae60' : '#999'};">${record.motorNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)' : 'var(--danger)'};">${isValid ? '✅' : '❌'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.chassisNumber ? '#27ae60': '#999'};">${record.chassisNumber || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.motorNumber ? '#27ae60': '#999'};">${record.motorNumber || '-'}</td>
+<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)': 'var(--danger)'};">${isValid ? '': ''}</td>
 </tr>`;
 }
 
@@ -2652,9 +2683,9 @@ previewHTML += '</tbody></table>';
 preview.innerHTML = previewHTML;
 preview.style.display = 'block';
 
-alert(`✅ تم قراءة ${importedData.length} سجل من الملف\n${useFixedColumns ? '📍 تم استخدام الأعمدة الثابتة (B-H)' : '🧠 تم اكتشاف الأعمدة تلقائياً'}`);
+alert(`تم قراءة ${importedData.length} سجل من الملف\n${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)': 'تم اكتشاف الأعمدة تلقائياً'}`);
 } catch (error) {
-alert('❌ خطأ في قراءة الملف: ' + error.message);
+alert('خطأ في قراءة الملف: '+ error.message);
 console.error(error);
 }
 };
@@ -2667,11 +2698,18 @@ const confirmImportBtn = document.getElementById('confirmImportBtn');
 if (confirmImportBtn) {
 confirmImportBtn.onclick = async () => {
 if (importedData.length === 0) {
-alert('❌ لا توجد بيانات للاستيراد');
+alert('لا توجد بيانات للاستيراد');
 return;
 }
 
-if (!confirm(`هل أنت متأكد من استيراد ${importedData.length} سجل إلى قاعدة البيانات؟\n\n⚠️ سيتم إضافة السجلات الجديدة فقط (لن يتم تعديل السجلات الموجودة)`)) {
+const importConfirmed = await window.showConfirmModal({
+  title: 'تأكيد الاستيراد',
+  message: `سيتم استيراد ${importedData.length} سجل إلى قاعدة البيانات. سيتم إضافة السجلات الجديدة فقط دون تعديل الموجودة.`,
+  confirmText: 'استيراد',
+  cancelText: 'إلغاء',
+  type: 'warning'
+});
+if (!importConfirmed) {
 return;
 }
 document.getElementById('loadingSpinner').style.display = 'block';
@@ -2693,7 +2731,7 @@ document.getElementById('progressStatus').textContent = status;
 
 try {
 // Load existing data from Supabase (with pagination for accurate duplicate check)
-updateProgress(0, 100, '⏳ جاري تحميل البيانات من قاعدة البيانات...');
+updateProgress(0, 100, 'جاري تحميل البيانات من قاعدة البيانات...');
 
 let existingOrders = [];
 let from = 0;
@@ -2722,7 +2760,7 @@ hasMore = false;
 // Create a Set of existing national IDs for fast lookup
 const existingNIDs = new Set(existingOrders.map(o => o.national_id));
 
-updateProgress(10, 100, '⏳ جاري معالجة البيانات...');
+updateProgress(10, 100, 'جاري معالجة البيانات...');
 const codeInfo = await getSmartNextCode();
 let nextCode = codeInfo.next;
 
@@ -2736,7 +2774,7 @@ const record = importedData[i];
 // Update progress every 10 records
 if (i % 10 === 0) {
 const progress = 10 + Math.round((i / totalRecords) * 40); // 10-50%
-updateProgress(progress, 100, `⏳ معالجة السجل ${i + 1} من ${totalRecords}...`);
+updateProgress(progress, 100, `معالجة السجل ${i + 1} من ${totalRecords}...`);
 }
 
 // More lenient validation (like import_excel.html)
@@ -2761,7 +2799,7 @@ continue;
 // Only use code if it exists in Excel, don't auto-generate
 const finalCode = record.vCode || null;
 
-const refNumber = 'KS-IMP-' + Date.now().toString().slice(-8) + '-' + i;
+const refNumber = 'KS-IMP-'+ Date.now().toString().slice(-8) + '-'+ i;
 
 const newRecord = {
 owner: record.owner,
@@ -2770,7 +2808,7 @@ phone: record.phone || '',
 vType: record.vType,
 vYear: record.vYear,
 vColor: record.vColor || '',
-vDesc: `موديل ${record.vYear}${record.vColor ? ' - لون ' + record.vColor : ''}`,
+vDesc: `موديل ${record.vYear}${record.vColor ? '- لون '+ record.vColor : ''}`,
 address: record.address || '',
 chassisNumber: record.chassisNumber || '',
 motorNumber: record.motorNumber || '',
@@ -2781,11 +2819,11 @@ vCode: finalCode,
 refNumber: refNumber,
 importedBy: 'admin',
 importedAt: Date.now(),
-status: record.vCode ? "coded" : "pending",
+status: record.vCode ? "coded": "pending",
 statusHistory: [{
-status: record.vCode ? "coded" : "pending",
+status: record.vCode ? "coded": "pending",
 timestamp: Date.now(),
-note: record.vCode ? `استيراد مع كود: ${finalCode}` : "استيراد من Excel - بانتظار التكويد",
+note: record.vCode ? `استيراد مع كود: ${finalCode}`: "استيراد من Excel - بانتظار التكويد",
 by: userRole
 }]
 };
@@ -2796,14 +2834,14 @@ successCount++;
 }
 
 // Save to Supabase first (primary storage)
-updateProgress(50, 100, '☁️ جاري الحفظ في قاعدة البيانات...');
+updateProgress(50, 100, 'جاري الحفظ في قاعدة البيانات...');
 const batchSize = 50; // Supabase batchis 500, we use 50 for safety
 for (let i = 0; i < recordsToAdd.length; i += batchSize) {
 const batch = recordsToAdd.slice(i, i + batchSize);
 
 // Update progress
 const progress = 60 + Math.round((i / recordsToAdd.length) * 35); // 60-95%
-updateProgress(progress, 100, `☁️ حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في قاعدة البيانات...`);
+updateProgress(progress, 100, `حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في قاعدة البيانات...`);
 
 // Save batch to Supabase in parallel (much faster!)
 const savePromises = batch.map(async (record) => {
@@ -2820,7 +2858,7 @@ address: record.address,
 chassis_number: record.chassisNumber,
 motor_number: record.motorNumber,
 images: record.images || [],
-submitted_at: record.timestamp, // ✅ REQUIRED FIELD
+submitted_at: record.timestamp, //  REQUIRED FIELD
 ref_number: record.refNumber,
 status: record.status,
 code: record.vCode || null
@@ -2828,7 +2866,7 @@ code: record.vCode || null
 if (error) throw error;
 return true;
 } catch (e) {
-console.error('❌ خطأ في حفظ السجل:', {
+console.error('خطأ في حفظ السجل:', {
 message: e.message,
 details: e.details,
 hint: e.hint,
@@ -2852,17 +2890,17 @@ await Promise.all(savePromises);
 }
 
 // Update LocalStorage cache after successful Supabase save
-updateProgress(95, 100, '💾 جاري تحديث الذاكرة المحلية...');
+updateProgress(95, 100, 'جاري تحديث الذاكرة المحلية...');
 await loadAdminData(); // Reload from Supabase to update LocalStorage
 
-updateProgress(100, 100, '✅ اكتمل الاستيراد!');
+updateProgress(100, 100, 'اكتمل الاستيراد!');
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('importProgress').style.display = 'none';
-document.getElementById('bulkImportModal').style.display = 'none';
+const _bim = document.getElementById('bulkImportModal'); if (_bim) _bim.style.display = 'none';
 
-let resultMsg = `✅ اكتمل الاستيراد!\n\n📊 الإحصائيات:\n✅ نجح: ${successCount} سجل\n⚠️ مكرر (تم تخطيه): ${duplicateCount} سجل\n❌ فشل: ${errorCount} سجل\n\n📁 إجمالي السجلات المعالجة: ${importedData.length}\n\n☁️ تم الحفظ في قاعدة البيانات: ${successCount} سجل\n💾 تم الحفظ في لوحة التحكم: ${successCount} سجل`;
+let resultMsg = `اكتمل الاستيراد!\n\n الإحصائيات:\n نجح: ${successCount} سجل\n مكرر (تم تخطيه): ${duplicateCount} سجل\n فشل: ${errorCount} سجل\n\n إجمالي السجلات المعالجة: ${importedData.length}\n\n تم الحفظ في قاعدة البيانات: ${successCount} سجل\n تم الحفظ في لوحة التحكم: ${successCount} سجل`;
 if (errors.length > 0 && errors.length <= 5) {
-resultMsg += '\n\n❌ الأخطاء:\n' + errors.slice(0, 5).join('\n');
+resultMsg += '\n\n الأخطاء:\n'+ errors.slice(0, 5).join('\n');
 if (errors.length > 5) {
 resultMsg += `\n... و ${errors.length - 5} أخطاء أخرى`;
 }
@@ -2873,7 +2911,7 @@ alert(resultMsg);
 document.getElementById('loadingSpinner').style.display = 'none';
 document.getElementById('importProgress').style.display = 'none';
 document.getElementById('confirmImportBtn').disabled = false;
-alert('❌ حدث خطأ أثناء الاستيراد: ' + error.message);
+alert('حدث خطأ أثناء الاستيراد: '+ error.message);
 console.error('Import error:', error);
 }
 };
@@ -2887,14 +2925,18 @@ const savedAuth = sessionStorage.getItem('adminAuth');
 const savedRole = sessionStorage.getItem('adminRole');
 const savedUsername = sessionStorage.getItem('adminUsername');
 
-if (savedAuth === 'true' && savedRole && savedUsername) {
+if (savedAuth === 'true'&& savedRole && savedUsername) {
 // Auto-restore admin session
 window.userRole = savedRole;
 window.currentUsername = savedUsername;
 userRole = savedRole;
 currentUsername = savedUsername; 
-document.getElementById('portalSection').style.display = 'none'; 
-document.getElementById('adminPage').style.display = 'block'; 
+if (typeof window.switchPage === 'function') {
+  window.switchPage('adminPage');
+} else {
+  document.getElementById('portalSection').style.display = 'none'; 
+  document.getElementById('adminPage').style.display = 'block'; 
+}
 document.getElementById('goPortalBtn').style.display = 'inline-flex'; 
 document.getElementById('logoutBtn').style.display = 'inline-flex'; 
 document.getElementById('loginBtn').style.display = 'none';
@@ -2933,8 +2975,15 @@ document.getElementById('loginBtn').style.display = 'none';
 // ── 1. تنظيف السجلات المكررة ────────────────────────────────
 window.cleanupDuplicates = async function() {
   const role = sessionStorage.getItem('userRole');
-  if (role !== 'SUPER') { alert('❌ هذه الأداة متاحة للمدير العام فقط'); return; }
-  if (!confirm('⚠️ سيتم حذف السجلات المكررة بالرقم القومي مع الإبقاء على الأحدث. هل أنت متأكد؟')) return;
+  if (role !== 'SUPER') { alert('هذه الأداة متاحة للمدير العام فقط'); return; }
+  const dedupConfirmed = await window.showConfirmModal({
+    title: 'حذف السجلات المكررة',
+    message: 'سيتم حذف السجلات المكررة بالرقم القومي مع الإبقاء على الأحدث. هذا الإجراء لا يمكن التراجع عنه.',
+    confirmText: 'حذف',
+    cancelText: 'إلغاء',
+    type: 'danger'
+  });
+  if (!dedupConfirmed) return;
 
   document.getElementById('loadingSpinner').style.display = 'block';
   try {
@@ -2961,7 +3010,7 @@ window.cleanupDuplicates = async function() {
 
     if (toDelete.length === 0) {
       document.getElementById('loadingSpinner').style.display = 'none';
-      alert('✅ لا توجد سجلات مكررة');
+      alert('لا توجد سجلات مكررة');
       return;
     }
 
@@ -2974,11 +3023,11 @@ window.cleanupDuplicates = async function() {
 
     await window.logSupervisorAction('تنظيف مكرر', `تم حذف ${toDelete.length} سجل مكرر`);
     document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`✅ تم حذف ${toDelete.length} سجل مكرر بنجاح`);
+    alert(`تم حذف ${toDelete.length} سجل مكرر بنجاح`);
     await loadAdminData();
   } catch (e) {
     document.getElementById('loadingSpinner').style.display = 'none';
-    alert('❌ خطأ: ' + e.message);
+    alert('خطأ: '+ e.message);
   }
 };
 
@@ -3069,7 +3118,7 @@ window.runHealthCheck = window.openStatsModal;
 // ── 3. تصدير نسخة احتياطية JSON ─────────────────────────────
 window.exportBackup = async function() {
   const role = sessionStorage.getItem('userRole');
-  if (role !== 'SUPER') { alert('❌ هذه الأداة متاحة للمدير العام فقط'); return; }
+  if (role !== 'SUPER') { alert('هذه الأداة متاحة للمدير العام فقط'); return; }
 
   document.getElementById('loadingSpinner').style.display = 'block';
   try {
@@ -3088,7 +3137,7 @@ window.exportBackup = async function() {
       complaints: complaintsRes.data
     };
 
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -3098,10 +3147,10 @@ window.exportBackup = async function() {
 
     await window.logSupervisorAction('تصدير نسخة احتياطية', `تم تصدير ${ordersRes.data.length} طلب و ${complaintsRes.data.length} شكوى`);
     document.getElementById('loadingSpinner').style.display = 'none';
-    alert('✅ تم تصدير النسخة الاحتياطية بنجاح');
+    alert('تم تصدير النسخة الاحتياطية بنجاح');
   } catch (e) {
     document.getElementById('loadingSpinner').style.display = 'none';
-    alert('❌ خطأ: ' + e.message);
+    alert('خطأ: '+ e.message);
   }
 };
 
@@ -3115,7 +3164,7 @@ function _escapeHtml(str) {
 window.openStaffManagementModal = async function() {
   const role = sessionStorage.getItem('userRole');
   if (role !== 'SUPER') {
-    alert('❌ هذه الميزة مخصصة للمدير العام فقط.');
+    alert('هذه الميزة مخصصة للمدير العام فقط.');
     return;
   }
   const modal = document.getElementById('staffManagementModal');
@@ -3127,7 +3176,7 @@ window.openStaffManagementModal = async function() {
 window.loadStaffAccountsList = async function() {
   const listContainer = document.getElementById('staffAccountsList');
   if (!listContainer) return;
-  listContainer.innerHTML = '<p style="text-align:center;color:var(--text3);font-size:0.85rem;">⏳ جاري التحميل...</p>';
+  listContainer.innerHTML = '<p style="text-align:center;color:var(--text3);font-size:0.85rem;">جاري التحميل...</p>';
 
   try {
     const { data: staffList, error } = await window.supabaseClient.rpc('get_staff_list');
@@ -3139,16 +3188,13 @@ window.loadStaffAccountsList = async function() {
     }
 
     listContainer.innerHTML = staffList.map(s => {
-      const isSelf = (s.username || '').toLowerCase() === 'eltohamy' || s.role === 'SUPER';
-      const roleBadge = s.role === 'SUPER'
-        ? '<span style="background:rgba(201,168,76,0.15);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">مدير عام (SUPER)</span>'
-        : '<span style="background:rgba(52,152,219,0.15);color:var(--blue);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">بحث فقط (VIEWER)</span>';
+      const isSelf = (s.username || '').toLowerCase() === 'eltohamy'|| s.role === 'SUPER';
+      const roleBadge = s.role === 'SUPER'? '<span style="background:rgba(201,168,76,0.15);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">مدير عام (SUPER)</span>': '<span style="background:rgba(52,152,219,0.15);color:var(--blue);padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">بحث فقط (VIEWER)</span>';
 
-      return `
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
           <div>
             <div style="font-weight:700;font-size:0.92rem;color:var(--text);display:flex;align-items:center;gap:8px;">
-              <span>👤 ${_escapeHtml(s.username)}</span>
+              <span> ${_escapeHtml(s.username)}</span>
               ${roleBadge}
             </div>
             <div style="font-size:0.78rem;color:var(--text3);margin-top:3px;">
@@ -3156,18 +3202,17 @@ window.loadStaffAccountsList = async function() {
             </div>
           </div>
           <div>
-            ${!isSelf ? `
-              <button onclick="window.handleDeleteStaff('${s.user_id}', '${_escapeHtml(s.username)}')" class="btn" style="background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.3);padding:6px 12px;font-size:0.8rem;border-radius:8px;cursor:pointer;">
+            ${!isSelf ? `<button onclick="window.handleDeleteStaff('${s.user_id}', '${_escapeHtml(s.username)}')"class="btn"style="background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.3);padding:6px 12px;font-size:0.8rem;border-radius:8px;cursor:pointer;">
                 <i class="ri-delete-bin-line"></i> حذف
               </button>
-            ` : '<span style="font-size:0.75rem;color:var(--gold);font-weight:700;">حسابك الرئيسي</span>'}
+            `: '<span style="font-size:0.75rem;color:var(--gold);font-weight:700;">حسابك الرئيسي</span>'}
           </div>
         </div>
       `;
     }).join('');
   } catch (err) {
     console.error('Failed to load staff list:', err);
-    listContainer.innerHTML = '<p style="text-align:center;color:var(--red);font-size:0.85rem;">فشل تحميل قائمة الحسابات: ' + (err.message || '') + '</p>';
+    listContainer.innerHTML = '<p style="text-align:center;color:var(--red);font-size:0.85rem;">فشل تحميل قائمة الحسابات: '+ (err.message || '') + '</p>';
   }
 };
 
@@ -3182,52 +3227,58 @@ window.handleCreateSupervisor = async function() {
   const password = passwordInput ? passwordInput.value.trim() : '';
 
   if (!username || username.length < 3) {
-    alert('❌ يرجى إدخال اسم مستخدم صحيح (3 أحرف إنجليزية على الأقل وبدون مسافات).');
+    alert('يرجى إدخال اسم مستخدم صحيح (3 أحرف إنجليزية على الأقل وبدون مسافات).');
     return;
   }
   if (!password || password.length < 6) {
-    alert('❌ كلمة المرور يجب أن تكون 6 خانات على الأقل.');
+    alert('كلمة المرور يجب أن تكون 6 خانات على الأقل.');
     return;
   }
 
   btn.disabled = true;
-  btn.innerText = '⏳ جاري الإنشاء...';
+  btn.innerText = 'جاري الإنشاء...';
 
   try {
     const { data, error } = await window.supabaseClient.rpc('create_supervisor_account', {
       p_username: username,
       p_password: password,
       p_full_name: fullName,
-      p_role: 'VIEWER'
-    });
+      p_role: 'VIEWER'});
 
     if (error) throw error;
 
-    alert(`✅ تم إنشاء حساب المشرف بنجاح!\n\nاسم الدخول: ${username}\nالصلاحية: استعلام وبحث فقط\n\nيدخل المشرف بكتابة اسمه وكلمة المرور في شاشة الدخول.`);
+    alert(`تم إنشاء حساب المشرف بنجاح!\n\nاسم الدخول: ${username}\nالصلاحية: استعلام وبحث فقط\n\nيدخل المشرف بكتابة اسمه وكلمة المرور في شاشة الدخول.`);
     if (usernameInput) usernameInput.value = '';
     if (fullNameInput) fullNameInput.value = '';
     if (passwordInput) passwordInput.value = '';
     await window.loadStaffAccountsList();
   } catch (err) {
     console.error('Failed to create supervisor:', err);
-    alert('❌ فشل إنشاء الحساب: ' + (err.message || 'خطأ غير متوقع'));
+    alert('فشل إنشاء الحساب: '+ (err.message || 'خطأ غير متوقع'));
   } finally {
     btn.disabled = false;
-    btn.innerText = '➕ إنشاء الحساب فوراً';
+    btn.innerText = 'إنشاء الحساب فوراً';
   }
 };
 
 window.handleDeleteStaff = async function(userId, username) {
-  if (!confirm(`هل أنت متأكد من حذف حساب المشرف (${username}) نهائياً؟`)) return;
+  const staffDelConfirmed = await window.showConfirmModal({
+    title: 'حذف حساب المشرف',
+    message: `هل أنت متأكد من حذف حساب المشرف (${username}) نهائياً؟ لا يمكن التراجع عن هذا الإجراء.`,
+    confirmText: 'حذف الحساب',
+    cancelText: 'إلغاء',
+    type: 'danger'
+  });
+  if (!staffDelConfirmed) return;
 
   try {
     const { error } = await window.supabaseClient.rpc('delete_staff_account', { p_user_id: userId });
     if (error) throw error;
-    alert(`✅ تم حذف حساب المشرف (${username}) بنجاح.`);
+    alert(`تم حذف حساب المشرف (${username}) بنجاح.`);
     await window.loadStaffAccountsList();
   } catch (err) {
     console.error('Failed to delete staff account:', err);
-    alert('❌ فشل حذف الحساب: ' + (err.message || ''));
+    alert('فشل حذف الحساب: '+ (err.message || ''));
   }
 };
 

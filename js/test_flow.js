@@ -5,7 +5,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Error: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not defined in .env');
+  console.error(' Error: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not defined in .env');
   process.exit(1);
 }
 
@@ -14,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 async function runTests() {
-  console.log('🚀 Starting Automated Logic & Database Constraints Test Flow...\n');
+  console.log(' Starting Automated Logic & Database Constraints Test Flow...\n');
 
   const testId = Date.now().toString().slice(-4);
   const validNationalId = `2950101130${testId}`; // Valid Egypt National ID (14 digits)
@@ -32,7 +32,7 @@ async function runTests() {
 
   // --- TEST 1: Valid Order Creation ---
   try {
-    console.log('👉 [Test 1] Creating valid TukTuk order...');
+    console.log(' [Test 1] Creating valid TukTuk order...');
     const { data, error } = await supabase
       .from('orders')
       .insert([{
@@ -51,21 +51,21 @@ async function runTests() {
       .select();
 
     if (error) {
-      console.error('❌ Test 1 Failed: Cannot create valid order:', error.message);
+      console.error(' Test 1 Failed: Cannot create valid order:', error.message);
     } else if (data && data.length > 0) {
       createdOrderId = data[0].id;
-      console.log('✅ Test 1 Passed: Valid order created successfully. ID:', createdOrderId);
+      console.log(' Test 1 Passed: Valid order created successfully. ID:', createdOrderId);
       passedTestsCount++;
     } else {
-      console.error('❌ Test 1 Failed: No data returned.');
+      console.error(' Test 1 Failed: No data returned.');
     }
   } catch (err) {
-    console.error('❌ Test 1 Exception:', err.message);
+    console.error(' Test 1 Exception:', err.message);
   }
 
   // --- TEST 2: Invalid Order Prevention (National ID Format Check) ---
   try {
-    console.log('\n👉 [Test 2] Testing database constraint for invalid National ID...');
+    console.log('\n [Test 2] Testing database constraint for invalid National ID...');
     const { data, error } = await supabase
       .from('orders')
       .insert([{
@@ -83,24 +83,24 @@ async function runTests() {
       }]);
 
     if (error && error.code === '23514') {
-      console.log('✅ Test 2 Passed: Invalid national_id insertion was BLOCKED by DB constraint.');
+      console.log(' Test 2 Passed: Invalid national_id insertion was BLOCKED by DB constraint.');
       passedTestsCount++;
     } else if (error) {
-      console.error('❌ Test 2 Failed: Blocked but unexpected error code:', error.code, error.message);
+      console.error(' Test 2 Failed: Blocked but unexpected error code:', error.code, error.message);
     } else {
-      console.error('❌ Test 2 Failed: Database allowed inserting an invalid National ID!');
+      console.error(' Test 2 Failed: Database allowed inserting an invalid National ID!');
       // Clean it up if it was inserted
       if (data && data.length > 0) {
         await supabase.from('orders').delete().eq('id', data[0].id);
       }
     }
   } catch (err) {
-    console.error('❌ Test 2 Exception:', err.message);
+    console.error(' Test 2 Exception:', err.message);
   }
 
   // --- TEST 3: Duplicates Prevention ---
   try {
-    console.log('\n👉 [Test 3] Testing duplicate National ID prevention...');
+    console.log('\n [Test 3] Testing duplicate National ID prevention...');
     const { data, error } = await supabase
       .from('orders')
       .insert([{
@@ -118,23 +118,23 @@ async function runTests() {
       }]);
 
     if (error && (error.code === '23505' || error.code === 'P0001')) {
-      console.log(`✅ Test 3 Passed: Duplicate national_id insertion was BLOCKED by unique/custom constraint (Code: ${error.code}).`);
+      console.log(` Test 3 Passed: Duplicate national_id insertion was BLOCKED by unique/custom constraint (Code: ${error.code}).`);
       passedTestsCount++;
     } else if (error) {
-      console.error('❌ Test 3 Failed: Blocked but unexpected error code:', error.code, error.message);
+      console.error(' Test 3 Failed: Blocked but unexpected error code:', error.code, error.message);
     } else {
-      console.error('❌ Test 3 Failed: Database allowed inserting a duplicate National ID!');
+      console.error(' Test 3 Failed: Database allowed inserting a duplicate National ID!');
       if (data && data.length > 0) {
         await supabase.from('orders').delete().eq('id', data[0].id);
       }
     }
   } catch (err) {
-    console.error('❌ Test 3 Exception:', err.message);
+    console.error(' Test 3 Exception:', err.message);
   }
 
   // --- TEST 4: Inquiry RPC check ---
   try {
-    console.log('\n👉 [Test 4] Querying created order using "get_my_order" RPC...');
+    console.log('\n [Test 4] Querying created order using "get_my_order" RPC...');
     const { data, error } = await supabase.rpc('get_my_order', {
       p_national_id: validNationalId,
       p_owner_name: testName,
@@ -142,20 +142,20 @@ async function runTests() {
     });
 
     if (error) {
-      console.error('❌ Test 4 Failed: RPC error:', error.message);
+      console.error(' Test 4 Failed: RPC error:', error.message);
     } else if (data && data.length > 0 && data[0].id === createdOrderId) {
-      console.log('✅ Test 4 Passed: RPC retrieved the correct test order.');
+      console.log(' Test 4 Passed: RPC retrieved the correct test order.');
       passedTestsCount++;
     } else {
-      console.error('❌ Test 4 Failed: RPC did not return the expected test order. Data:', data);
+      console.error(' Test 4 Failed: RPC did not return the expected test order. Data:', data);
     }
   } catch (err) {
-    console.error('❌ Test 4 Exception:', err.message);
+    console.error(' Test 4 Exception:', err.message);
   }
 
   // --- TEST 5: Complaints and Complaint Inquiry RPC ---
   try {
-    console.log('\n👉 [Test 5] Submitting and querying complaint...');
+    console.log('\n [Test 5] Submitting and querying complaint...');
     const { data: compData, error: compError } = await supabase
       .from('complaints')
       .insert([{
@@ -171,7 +171,7 @@ async function runTests() {
       .select();
 
     if (compError) {
-      console.error('❌ Test 5 Failed: Cannot insert complaint:', compError.message);
+      console.error(' Test 5 Failed: Cannot insert complaint:', compError.message);
     } else if (compData && compData.length > 0) {
       createdComplaintId = compData[0].id;
       
@@ -183,20 +183,20 @@ async function runTests() {
       });
 
       if (queryError) {
-        console.error('❌ Test 5 Failed: Cannot query complaints RPC:', queryError.message);
+        console.error(' Test 5 Failed: Cannot query complaints RPC:', queryError.message);
       } else if (queryData && queryData.length > 0 && queryData[0].id === createdComplaintId) {
-        console.log('✅ Test 5 Passed: Complaint submitted and queried via RPC successfully.');
+        console.log(' Test 5 Passed: Complaint submitted and queried via RPC successfully.');
         passedTestsCount++;
       } else {
-        console.error('❌ Test 5 Failed: Complaints RPC did not return the test complaint. Data:', queryData);
+        console.error(' Test 5 Failed: Complaints RPC did not return the test complaint. Data:', queryData);
       }
     }
   } catch (err) {
-    console.error('❌ Test 5 Exception:', err.message);
+    console.error(' Test 5 Exception:', err.message);
   }
 
   // --- CLEANUP ---
-  console.log('\n🧹 Cleaning up test database records...');
+  console.log('\n Cleaning up test database records...');
   if (createdOrderId) {
     const { error } = await supabase.from('orders').delete().eq('id', createdOrderId);
     if (error) console.error('Failed to clean up test order:', error.message);
@@ -205,17 +205,17 @@ async function runTests() {
     const { error } = await supabase.from('complaints').delete().eq('id', createdComplaintId);
     if (error) console.error('Failed to clean up test complaint:', error.message);
   }
-  console.log('✅ Cleanup completed.');
+  console.log(' Cleanup completed.');
 
   // --- REPORT ---
   console.log('\n======================================');
-  console.log(`📊 Test Results: ${passedTestsCount}/${totalTestsCount} Tests Passed.`);
+  console.log(` Test Results: ${passedTestsCount}/${totalTestsCount} Tests Passed.`);
   console.log('======================================');
   
   if (passedTestsCount === totalTestsCount) {
-    console.log('🎉 System is fully functional, secure, and ready!');
+    console.log(' System is fully functional, secure, and ready!');
   } else {
-    console.error('❌ Some tests failed. Please review the errors above.');
+    console.error(' Some tests failed. Please review the errors above.');
     process.exit(1);
   }
 }
