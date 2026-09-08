@@ -1,14 +1,6 @@
 // config.js - إعدادات قاعدة البيانات الموحدة للأمان
-const SUPABASE_URL = (window.SUPABASE_URL && !window.SUPABASE_URL.includes('your-project-id')) 
-    ? window.SUPABASE_URL 
-    : '';
-const SUPABASE_KEY = (window.SUPABASE_KEY && !window.SUPABASE_KEY.includes('your-anon-public-key')) 
-    ? window.SUPABASE_KEY 
-    : '';
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.warn('⚠️ [الأمان] يرجى التأكد من تهيئة js/env.js بمفاتيح المشروع المخصصة (راجع js/env.example.js).');
-}
+const SUPABASE_URL = "https://xlieswavjjgqsnczesct.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl";
 
 // Initialize Supabase Client
 (function() {
