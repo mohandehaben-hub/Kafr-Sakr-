@@ -2,6 +2,17 @@
 const SUPABASE_URL = "https://xlieswavjjgqsnczesct.supabase.co";
 const SUPABASE_KEY = "sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl";
 
+// دالة التعقيم والتطهير القياسية لمنع ثغرات XSS وضمان استقرار الواجهة
+window.sanitizeText = function(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+};
+
 // Initialize Supabase Client
 (function() {
     function initSupabase() {
@@ -30,7 +41,8 @@ const SUPABASE_KEY = "sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl";
         if (savedSession && savedRole && savedUsername) {
             try {
                 const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-                if (session && !error) {                    window.currentUsername = savedUsername;
+                if (session && !error) {
+                    window.currentUsername = savedUsername;
                     window.currentRole = savedRole;
                     window.userRole = savedRole;
 
