@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -23,17 +23,17 @@
 <meta name="keywords" content="كفر صقر, تقنين, توكتوك, ميكروباص, منظومة, شكاوى, استعلام">
 <meta name="author" content="رئاسة مركز ومدينة كفر صقر">
 <meta property="og:type"        content="website">
-<meta property="og:url"         content="http://ks-smart-tok.com/">
+<meta property="og:url"         content="https://ks-smart-tok.com/">
 <meta property="og:title"       content="منظومة تقنين المركبات - كفر صقر">
 <meta property="og:description" content="بوابة الخدمات الرقمية لتقنين المركبات - رئاسة مركز ومدينة كفر صقر">
-<meta property="og:image"       content="http://ks-smart-tok.com/sharkiya_flag.png">
+<meta property="og:image"       content="https://ks-smart-tok.com/sharkiya_flag.png">
 <meta property="og:image:width" content="300">
 <meta property="og:image:height" content="300">
 <meta property="og:locale"      content="ar_EG">
 <meta name="twitter:card"       content="summary">
 <meta name="twitter:title"      content="منظومة تقنين المركبات - كفر صقر">
 <meta name="twitter:description" content="بوابة الخدمات الرقمية لتقنين المركبات">
-<meta name="twitter:image"      content="http://ks-smart-tok.com/sharkiya_flag.png">
+<meta name="twitter:image"      content="https://ks-smart-tok.com/sharkiya_flag.png">
 
 <!-- Favicon -->
 <link rel="icon" type="image/png" sizes="32x32" href="sharkiya_flag.png">
@@ -855,10 +855,10 @@
       </div>
 
       <div id="loginLockoutTimer" class="gov-lockout-banner" style="display: none;">
-        <div>تم حظر المحاولات مؤقتاً. متبقي: <span id="countdownSeconds">00:00</span></div>
-        <button type="button" class="gov-lockout-btn" onclick="localStorage.removeItem('loginLockoutTime');localStorage.removeItem('loginAttempts');location.reload();">
-          إلغاء الحظر
-        </button>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;padding:6px 0;">
+          <i class="ri-time-line" style="font-size:1.15rem;color:#EF4444;"></i>
+          <span>تم حظر المحاولات مؤقتاً لحماية النظام. متبقي: <span id="countdownSeconds">00:00</span></span>
+        </div>
       </div>
 
       <div id="captchaGroup" class="gov-captcha-group" style="display: none;">
@@ -1171,7 +1171,6 @@
 
 <!-- JavaScript Files -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/env.js?v=10.0" onerror="this.remove();"></script>
 <script src="js/config.js?v=10.0"></script>
 <script src="js/toast.js?v=10.0"></script>
 <script src="js/app-utils.js?v=10.0"></script>
