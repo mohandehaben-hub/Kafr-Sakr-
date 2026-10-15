@@ -28,8 +28,8 @@ window.addEventListener('scroll', function() {
 
 // Page navigation
 window.switchPage = function(targetPageId) {
-  if(targetPageId !== 'portalSection' && !window.requireStaffAccess(
-    ['citizenPage','complaintsPage'].includes(targetPageId))) return;
+  if(targetPageId === 'adminPage' && !window.requireStaffAccess()) return;
+  if(['citizenPage','complaintsPage'].includes(targetPageId) && !window.requireCitizenWrite()) return;
   const allPages = [
     'portalSection',
     'citizenPage',

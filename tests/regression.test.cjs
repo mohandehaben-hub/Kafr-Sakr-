@@ -118,12 +118,12 @@ test('spreadsheet preview renders names as text',async()=>{
 test('exported Excel retains microbus plate and phone as text',async()=>{
   const p=await fixture();try{await login(p);await p.evaluate(()=>{mock.rows=[{id:'1',owner_name:'Owner',national_id:'29501011234567',phone:'01012345678',vehicle_type:'ميكروباص',license_plate:'ر ع و 1234',submitted_at:Date.now()}];});const promise=p.waitForEvent('download');await p.evaluate(async()=>document.getElementById('exportExcelBtn').onclick());const download=await promise;const XLSX=require('xlsx'), workbook=XLSX.read(fs.readFileSync(await download.path()));const row=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])[0];assert.equal(row['رقم اللوحة'],'ر ع و 1234');assert.equal(row['رقم الهاتف'],'01012345678');}finally{await p.close();}
 });
-test('registration requires login and opens for an approved writer',async()=>{
-  const p=await fixture();try{await p.locator('#bnav-register').evaluate(el=>el.click());assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),false);assert.equal(await p.locator('#loginModal').evaluate(el=>el.style.display),'flex');await login(p);await p.evaluate(()=>switchPage('citizenPage'));assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),true);}finally{await p.close();}
+test('citizen registration stays public while administration requires login',async()=>{
+  const p=await fixture();try{await p.locator('#bnav-register').evaluate(el=>el.click());assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),true);await p.evaluate(()=>switchPage('adminPage'));assert.equal(await p.locator('#adminPage').evaluate(el=>el.classList.contains('active-page')),false);assert.equal(await p.locator('#loginModal').evaluate(el=>el.style.display),'flex');}finally{await p.close();}
 });
 
-test('direct anonymous service handlers send no database requests',async()=>{
-  const p=await fixture();try{const calls=await p.evaluate(async()=>{mock.calls=[];for(const id of ['submitBtn','inquiryBtn','submitCompBtn','complaintInquiryBtn'])await document.getElementById(id).onclick();return mock.calls;});assert.equal(calls.length,0);}finally{await p.close();}
+test('anonymous inquiry uses only the limited citizen RPC',async()=>{
+  const p=await fixture();try{const calls=await p.evaluate(async()=>{document.getElementById('inqNationalId').value='29501011234567';document.getElementById('inqOwnerName').value='Citizen';document.getElementById('inqPhone').value='01012345678';mock.calls=[];await document.getElementById('inquiryBtn').onclick();return mock.calls;});assert.equal(calls.length,1);assert.equal(calls[0].rpc,'get_my_order');}finally{await p.close();}
 });
 
 test('VIEWER cannot open registration or send a new complaint',async()=>{

@@ -15,6 +15,10 @@ window.requireStaffAccess = function(write = false) {
   }
   return false;
 };
+// Visitors can submit limited citizen requests; signed-in VIEWER stays read-only.
+window.requireCitizenWrite = function() {
+  return !window.currentStaffRole || window.requireStaffAccess(true);
+};
 window.sanitizeText = str => String(str ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
 }[c]));

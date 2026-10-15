@@ -16,35 +16,56 @@ begin
         (b,'Auth security smoke','30001019999002','01000000000','توكتوك',0,'AUTH-SMOKE-'||b);
 
   if exists(select 1 from pg_proc p join pg_namespace s on s.oid=p.pronamespace
-    where s.nspname='public' and has_function_privilege('anon',p.oid,'execute')) then
-    raise exception 'Anonymous public function access remains';
+    where s.nspname='public' and has_function_privilege('anon',p.oid,'execute')
+    and p.proname not in ('get_my_order','get_my_complaints','check_nid_available','can_submit_complaint')) then
+    raise exception 'Anonymous administrative RPC access remains';
   end if;
-  insert into staff_access_results values('No anonymous public RPC privilege',true);
+  insert into staff_access_results values('Anonymous RPCs limited to four citizen helpers',true);
   if exists(select 1 from pg_class c join pg_namespace s on s.oid=c.relnamespace
     where s.nspname='public' and c.relkind in ('r','v','m','p')
-    and has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE')) then
-    raise exception 'Anonymous table access remains';
+    and has_table_privilege('anon',c.oid,'SELECT,UPDATE,DELETE,TRUNCATE')) then
+    raise exception 'Anonymous private table privilege remains';
   end if;
-  insert into staff_access_results values('No anonymous public table privilege',true);
-
+  insert into staff_access_results values('Anonymous cannot read or modify existing table data',true);
   perform set_config('request.jwt.claims','{"role":"anon"}',true);
+  perform set_config('request.path','/orders',true);
+  perform set_config('request.method','GET',true);
   execute 'set local role anon';
   denied:=false;
   begin perform app_private.require_staff_session(); exception when insufficient_privilege then denied:=true; end;
-  if not denied then raise exception 'Anonymous request guard bypass'; end if;
-  insert into staff_access_results values('Anonymous REST guard denied',true);
+  if not denied then raise exception 'Anonymous admin read guard bypass'; end if;
+  insert into staff_access_results values('Anonymous table read blocked before dispatch',true);
+  perform set_config('request.path','/rpc/get_my_order',true);
+  perform set_config('request.method','POST',true);
+  perform app_private.require_staff_session();
+  select count(*) into n from public.get_my_order('30001019999001','Auth security smoke','01000000000');
+  if n<>1 then raise exception 'Citizen lookup broken'; end if;
+  select count(*) into n from public.get_my_order('30001019999001','Wrong Citizen Name','01000000000');
+  if n<>0 then raise exception 'Lookup identity bypass'; end if;
+  insert into staff_access_results values('Citizen lookup matches all three identifiers',true);
+  insert into public.orders(owner_name,national_id,phone,vehicle_type,submitted_at,ref_number,code,status)
+    values('Citizen smoke','30001019999004','01000000000','توكتوك',0,'AUTH-SMOKE-PUBLIC-'||a,'999999992','coded');
+  execute 'reset role';
+  if not exists(select 1 from public.orders where ref_number='AUTH-SMOKE-PUBLIC-'||a and code is null and status='pending') then
+    raise exception 'Citizen controls privileged order fields';
+  end if;
+  insert into staff_access_results values('Citizen may submit only a pending uncoded order',true);
+  execute 'set local role anon';
+  insert into public.complaints(owner_name,national_id,phone,complaint_type,details,status,reply,submitted_at)
+    values('Citizen smoke','30001019999004','01000000000','أخرى','Smoke only','approved','forged reply',0);
+  execute 'reset role';
+  if not exists(select 1 from public.complaints where national_id='30001019999004' and status='pending' and reply is null) then
+    raise exception 'Citizen controls complaint response';
+  end if;
+  insert into staff_access_results values('Citizen complaint cannot set administrative reply',true);
+  execute 'set local role anon';
+  insert into storage.objects(bucket_id,name) values('vehicle-images','images/security-smoke-'||a||'.jpg');
+  select count(*) into n from storage.objects where name='images/security-smoke-'||a||'.jpg';
+  if n<>0 then raise exception 'Anonymous image read accepted'; end if;
   denied:=false;
-  begin insert into public.orders(owner_name) values('Anonymous smoke'); exception when insufficient_privilege then denied:=true; end;
-  if not denied then raise exception 'Anonymous insert accepted'; end if;
-  insert into staff_access_results values('Anonymous order insert denied',true);
-  denied:=false;
-  begin insert into public.complaints(owner_name) values('Anonymous smoke'); exception when insufficient_privilege then denied:=true; end;
-  if not denied then raise exception 'Anonymous complaint accepted'; end if;
-  insert into staff_access_results values('Anonymous complaint insert denied',true);
-  denied:=false;
-  begin insert into storage.objects(bucket_id,name) values('vehicle-images','images/auth-smoke.jpg'); exception when insufficient_privilege then denied:=true; end;
-  if not denied then raise exception 'Anonymous image upload accepted'; end if;
-  insert into staff_access_results values('Anonymous Storage upload denied',true);
+  begin insert into storage.objects(bucket_id,name) values('vehicle-images','scripts/bad.html'); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Anonymous unsafe upload path accepted'; end if;
+  insert into staff_access_results values('Citizen upload allowed; image reading and unsafe paths denied',true);
   execute 'reset role';
 
   perform set_config('request.jwt.claims',jsonb_build_object('sub',su,'role','authenticated','session_id',sid)::text,true);
