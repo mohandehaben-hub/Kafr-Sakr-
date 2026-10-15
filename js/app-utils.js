@@ -30,6 +30,10 @@ window.showConfirmModal = function(options = {}) {
     // إنشاء overlay
     const overlay = document.createElement('div');
     overlay.id = 'appConfirmOverlay';
+    overlay.setAttribute('role', 'alertdialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', title);
+    const previousFocus = document.activeElement;
     overlay.style.cssText = `
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.6);
@@ -86,7 +90,7 @@ window.showConfirmModal = function(options = {}) {
         }
         #appConfirmOverlay .btn-cancel:hover { color: #e2e8f0; border-color: rgba(255,255,255,0.3); }
       </style>
-      <i class="ri-${c.icon} confirm-icon"></i>
+      <i class="${c.icon} confirm-icon"></i>
       <div class="confirm-title">${window.sanitizeHTML(title)}</div>
       <div class="confirm-msg">${window.sanitizeHTML(message)}</div>
       <div class="confirm-actions">
@@ -98,18 +102,30 @@ window.showConfirmModal = function(options = {}) {
     overlay.appendChild(card);
     document.body.appendChild(overlay);
 
+    let settled = false;
     function cleanup(result) {
+      if(settled) return;
+      settled = true;
+      document.removeEventListener('keydown', onKey);
       overlay.style.animation = 'fadeInOverlay 0.15s ease reverse';
       setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 150);
       resolve(result);
+      previousFocus?.focus();
     }
 
     card.querySelector('#appConfirmYes').addEventListener('click', () => cleanup(true));
     card.querySelector('#appConfirmNo').addEventListener('click',  () => cleanup(false));
     overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
-    document.addEventListener('keydown', function esc(e) {
-      if (e.key === 'Escape') { cleanup(false); document.removeEventListener('keydown', esc); }
-    });
+    function onKey(e) {
+      if(e.key === 'Escape') {e.preventDefault();cleanup(false);}
+      if(e.key === 'Tab') {
+        const first = card.querySelector('#appConfirmYes'), last = card.querySelector('#appConfirmNo');
+        if(e.shiftKey && document.activeElement === first) {e.preventDefault();last.focus();}
+        else if(!e.shiftKey && document.activeElement === last) {e.preventDefault();first.focus();}
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    card.querySelector('#appConfirmNo').focus();
   });
 };
 

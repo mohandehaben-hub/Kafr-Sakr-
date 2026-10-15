@@ -3,66 +3,37 @@
 // ═══════════════════════════════════════════════════════════════
 
 // Upload to Cloud Storage (Private)
-window.uploadToSupabaseStorage = async (file) => {
-  //  تحقق صارم من نوع الملف وحجمه
-  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    throw new Error(`نوع الملف "${file.name}"غير مسموح. يُسمح فقط بـ JPG, PNG, WebP`);
+window.uploadToSupabaseStorage = async file => {
+  if(!file || !['image/jpeg','image/jpg','image/png','image/webp'].includes(file.type) || !/\.(jpe?g|png|webp)$/i.test(file.name)) {
+    throw new Error('يُسمح فقط بصور JPG وPNG وWebP');
   }
-  if (file.size > MAX_SIZE) {
-    throw new Error(`حجم الملف "${file.name}"يتجاوز 5MB`);
-  }
-  // منع SVG حتى لو جاء بـ MIME مختلف
-  const ext = file.name.split('.').pop().toLowerCase();
-  const BLOCKED_EXTENSIONS = ['svg', 'html', 'htm', 'exe', 'php', 'js', 'sh', 'bat'];
-  if (BLOCKED_EXTENSIONS.includes(ext)) {
-    throw new Error(`امتداد الملف ".${ext}"غير مسموح`);
-  }
-
-return new Promise((resolve, reject) => {
-const reader = new FileReader();
-reader.readAsDataURL(file);
-reader.onload = async (e) => {
-const img = new Image();
-img.src = e.target.result;
-img.onload = async () => {
-const canvas = document.createElement('canvas');
-const maxWidth = 1200; // زيادة الجودة
-const scale = img.width > maxWidth ? maxWidth / img.width : 1;
-canvas.width = img.width * scale;
-canvas.height = img.height * scale;
-const ctx = canvas.getContext('2d');
-ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-canvas.toBlob(async (blob) => {
-try {
-const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-const filePath = `images/${fileName}`;
-
-const { data, error } = await window.supabaseClient.storage
-.from('vehicle-images')
-.upload(filePath, blob, {
-contentType: 'image/jpeg',
-cacheControl: '3600',
-upsert: false
-});
-
-if (error) {
-reject(new Error(`فشل رفع الصورة: ${error.message}`));
-return;
-}
-
-// Return file path only (not public URL)
-resolve(filePath);
-} catch (error) {
-reject(new Error(`خطأ في الرفع: ${error.message}`));
-}
-}, 'image/jpeg', 0.80); // زيادة الجودة من 0.70 إلى 0.80
+  if(file.size>5*1024*1024 || file.size===0) throw new Error('حجم الصورة غير مسموح');
+  let image;
+  try { image=await createImageBitmap(file); }
+  catch(_) { throw new Error('تعذر قراءة الصورة. اختر صورة سليمة.'); }
+  try {
+    if(image.width*image.height>20000000) throw new Error('أبعاد الصورة كبيرة جدًا');
+    const scale=Math.min(1,1200/Math.max(image.width,image.height));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(image.width*scale));
+    canvas.height=Math.max(1,Math.round(image.height*scale));
+    const ctx=canvas.getContext('2d');
+    if(!ctx) throw new Error('تعذر معالجة الصورة');
+    ctx.drawImage(image,0,0,canvas.width,canvas.height);
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('تعذر تجهيز الصورة')),'image/jpeg',0.8));
+    const filePath=`images/${crypto.randomUUID()}.jpg`;
+    const {error}=await window.supabaseClient.storage.from('vehicle-images').upload(filePath,blob,{contentType:'image/jpeg',cacheControl:'3600',upsert:false});
+    if(error) throw error;
+    return filePath;
+  } finally {image.close();}
 };
-};
-});
+
+window.cleanupFailedUploads = async paths => {
+  if(!paths.length) return;
+  try {
+    const {error}=await window.supabaseClient.storage.from('vehicle-images').remove(paths);
+    if(error) throw error;
+  } catch(_) {console.warn('Temporary upload cleanup requires server follow-up');}
 };
 
 // Format DateTime
@@ -83,20 +54,18 @@ window.formatDateTime = formatDateTime;
 async function addOrderToSupabase(orderData) {
 const { data, error } = await window.supabaseClient
 .from('orders')
-.insert([orderData])
-.select();
+.insert([orderData]);
 if (error) throw error;
-return data[0];
+return data;
 }
 
 // Add Complaint to Database
 async function addComplaintToSupabase(complaintData) {
 const { data, error } = await window.supabaseClient
 .from('complaints')
-.insert([complaintData])
-.select();
+.insert([complaintData]);
 if (error) throw error;
-return data[0];
+return data;
 }
 
 
@@ -139,7 +108,7 @@ _alert("تاريخ الميلاد غير مطابق للرقم القومي");
 return;
 }
 
-if (!owner || nid.length !== 14 || phone.length !== 11 || !year || !vType || files.length === 0 || !birthDate) {
+if (!owner || nid.length !== 14 || !/^\d{11}$/.test(phone) || !year || !vType || files.length === 0 || !birthDate) {
 _alert("يرجى إكمال جميع البيانات المطلوبة");
 return;
 }
@@ -149,6 +118,9 @@ document.getElementById('loadingSpinner').style.display = 'block';
 btn.disabled = true;
 btn._submitting = true;
 
+const uploadedPaths=[];
+let saveAttempted=false;
+let saved=false;
 try {
 //  التحقق المسبق من عدم تسجيل الرقم القومي قبل رفع أي صور لحماية المساحة
 btn.innerText = "جاري التحقق من البيانات...";
@@ -156,7 +128,8 @@ const { data: isAvailable, error: nidCheckErr } = await window.supabaseClient.rp
   p_national_id: nid
 });
 
-if (!nidCheckErr && isAvailable === false) {
+if (nidCheckErr) throw nidCheckErr;
+if (isAvailable === false) {
   document.getElementById('loadingSpinner').style.display = 'none';
   btn.disabled = false;
   btn._submitting = false;
@@ -170,6 +143,7 @@ btn.innerText = "جاري رفع الصور...";
 for (let i = 0; i < files.length; i++) {
 const url = await window.uploadToSupabaseStorage(files[i]);
 imgUrls.push(url);
+uploadedPaths.push(url);
 btn.innerText = `جاري رفع الصورة ${i + 1} من ${files.length}...`;
 }
 
@@ -190,7 +164,9 @@ status: "pending",
 code: ""};
 
 // Save to Database
-await addOrderToSupabase(dataToSave); 
+saveAttempted=true;
+await addOrderToSupabase(dataToSave);
+saved=true;
 document.getElementById('loadingSpinner').style.display = 'none';
 btn.disabled = false;
 btn.innerText = 'تسجيل المركبة';
@@ -213,6 +189,7 @@ window.open(whatsappUrl, '_blank');
 alert(`تم تسجيل بياناتك بنجاح!\n\nرقمك المرجعي: ${refNumber}\n\nسيتم فتح واتساب لإرسال تأكيد الاستلام`);
 setTimeout(() => location.reload(), 3000);
 } catch (e) {
+if(!saved && (!saveAttempted || e.code)) await window.cleanupFailedUploads(uploadedPaths);
 document.getElementById('loadingSpinner').style.display = 'none';
 alert("حدث خطأ: "+ e.message);
 btn.disabled = false;
@@ -360,18 +337,18 @@ resultDiv.innerHTML = `<div style="text-align: center;">
 
 <div style="background: linear-gradient(135deg, var(--secondary) 0%, #229954 100%); padding: 35px; border-radius: 25px; margin: 25px 0; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3); text-align: center;">
 <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 12px; font-weight: 600;">كود المركبة الخاص بك</p>
-<h2 style="color: white; font-size: 4.5rem; font-weight: 900; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.2); letter-spacing: 3px;">${data.vCode}</h2>
-<button onclick="navigator.clipboard.writeText('${data.vCode}').then(()=>window.showToast('تم نسخ الكود','success'))"style="margin-top:16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:8px 20px;border-radius:20px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.85rem;">نسخ الكود</button>
+<h2 style="color: white; font-size: 4.5rem; font-weight: 900; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.2); letter-spacing: 3px;">${sanitizeText(data.vCode)}</h2>
+<button id="copyInquiryCodeBtn"style="margin-top:16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:8px 20px;border-radius:20px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.85rem;">نسخ الكود</button>
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
 <div class="inquiry-card"style="text-align: center;">
 <p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vType}</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${sanitizeText(data.vType)}</p>
 </div>
 <div class="inquiry-card"style="text-align: center;">
 <p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vYear || 'غير محدد'}</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${sanitizeText(data.vYear) || 'غير محدد'}</p>
 </div>
 
 </div>
@@ -380,7 +357,7 @@ resultDiv.innerHTML = `<div style="text-align: center;">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
 <p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> الرقم المرجعي</p>
-<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${sanitizeText(data.refNumber) || 'N/A'}</p>
 </div>
 <div>
 <p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> تاريخ التكويد</p>
@@ -415,11 +392,11 @@ resultDiv.innerHTML = `<div style="text-align: center;">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
 <div class="inquiry-card"style="text-align: center;">
 <p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">نوع المركبة</p>
-<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vType}</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${sanitizeText(data.vType)}</p>
 </div>
 <div class="inquiry-card"style="text-align: center;">
 <p class="inquiry-text-muted"style="font-size: 0.9rem; margin: 0 0 8px 0;">الموديل</p>
-<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${data.vYear || 'غير محدد'}</p>
+<p class="inquiry-text-primary"style="font-size: 1.3rem; font-weight: bold; margin: 0;"> ${sanitizeText(data.vYear) || 'غير محدد'}</p>
 </div>
 
 </div>
@@ -428,7 +405,7 @@ resultDiv.innerHTML = `<div style="text-align: center;">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
 <div>
 <p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> الرقم المرجعي</p>
-<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${data.refNumber || 'N/A'}</p>
+<p class="inquiry-text-primary"style="font-size: 1.1rem; font-weight: bold; margin: 0; font-family: monospace;">${sanitizeText(data.refNumber) || 'N/A'}</p>
 </div>
 <div>
 <p class="inquiry-text-muted"style="font-size: 0.85rem; margin: 0 0 5px 0;"> تاريخ التسجيل</p>
@@ -448,6 +425,12 @@ ${historyHTML}
 `;
 }
 }
+const copyButton=document.getElementById('copyInquiryCodeBtn');
+if(copyButton && data) copyButton.onclick=async()=>{
+  try {await navigator.clipboard.writeText(String(data.vCode));window.showToast('تم نسخ الكود','success');}
+  catch(_) {window.showToast('تعذر نسخ الكود','error');}
+};
+
 document.getElementById('loadingSpinner').style.display = 'none';
 } catch (error) {
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -548,13 +531,17 @@ btn.disabled = true;
 btn._submitting = true;
 btn.innerText = "جاري التحقق من البيانات...";
 
+const uploadedPaths=[];
+let saveAttempted=false;
+let saved=false;
 try {
 //  التحقق المسبق من عدد الشكاوى المسموح بها في السيرفر قبل استهلاك مساحة التخزين
 const { data: canSubmit, error: compCheckErr } = await window.supabaseClient.rpc('can_submit_complaint', {
   p_national_id: nid
 });
 
-if (!compCheckErr && canSubmit === false) {
+if (compCheckErr) throw compCheckErr;
+if (canSubmit === false) {
   document.getElementById('loadingSpinner').style.display = 'none';
   btn.disabled = false;
   btn._submitting = false;
@@ -571,14 +558,17 @@ vehicleImage: ''};
 // Upload selfie
 btn.innerText = "جاري رفع صورة السيلفي...";
 imgUrls.selfie = await window.uploadToSupabaseStorage(selfie);
+uploadedPaths.push(imgUrls.selfie);
 
 // Upload ID card
 btn.innerText = "جاري رفع صورة البطاقة...";
 imgUrls.idCard = await window.uploadToSupabaseStorage(idCard);
+uploadedPaths.push(imgUrls.idCard);
 
 // Upload vehicle image
 btn.innerText = "جاري رفع صورة المركبة...";
 imgUrls.vehicleImage = await window.uploadToSupabaseStorage(vehicleImage);
+uploadedPaths.push(imgUrls.vehicleImage);
 
 // Upload problem images
 if (problemImages.length > 0) {
@@ -586,9 +576,11 @@ for (let i = 0; i < problemImages.length; i++) {
 btn.innerText = `جاري رفع صورة المشكلة ${i + 1} من ${problemImages.length}...`;
 const url = await window.uploadToSupabaseStorage(problemImages[i]);
 imgUrls.problemImages.push(url);
+uploadedPaths.push(url);
 }
 }
 
+saveAttempted=true;
 await addComplaintToSupabase({
 owner_name: ownerName,
 national_id: nid,
@@ -602,6 +594,7 @@ status: 'pending',
 reply: '',
 submitted_at: Date.now()
 }); 
+saved=true;
 //  تسجيل وقت الإرسال لمنع الإزعاج
 localStorage.setItem('lastComplaintTime', Date.now().toString());
 document.getElementById('loadingSpinner').style.display = 'none';
@@ -624,6 +617,7 @@ window.open(whatsappUrl, '_blank');
 window.showToast("تم إرسال شكواك بنجاح! سيتم مراجعتها والرد في أقرب وقت.", "success", 4000);
 setTimeout(() => location.reload(), 2500);
 } catch (error) {
+if(!saved && (!saveAttempted || error.code)) await window.cleanupFailedUploads(uploadedPaths);
 document.getElementById('loadingSpinner').style.display = 'none';
 if (window.handleError) {
   window.handleError(error, 'إرسال الشكوى');

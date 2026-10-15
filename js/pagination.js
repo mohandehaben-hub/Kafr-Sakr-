@@ -86,28 +86,20 @@ async function fetchPage(page, search, searchType, filter) {
 
   // ── فلتر التاريخ (اختياري) ──
   if (window._dateFrom) {
-    query = query.gte('submitted_at', window._dateFrom + 'T00:00:00');
+    query = query.gte('submitted_at', new Date(window._dateFrom + 'T00:00:00').getTime());
   }
   if (window._dateTo) {
-    query = query.lte('submitted_at', window._dateTo + 'T23:59:59');
+    const end = new Date(window._dateTo + 'T00:00:00');
+    end.setDate(end.getDate() + 1);
+    query = query.lt('submitted_at', end.getTime());
   }
 
-  query = query.range(from, to);
+  query = query.order('submitted_at', {ascending:false}).order('id', {ascending:true}).range(from, to);
 
   const { data, error, count } = await query;
   if (error) throw error;
 
-  // Sort: التوكتوك بالكود رقمياً، الميكروباص بـ license_plate أبجدياً
-  const sorted = (data || []).sort((a, b) => {
-    if (filter === 'microbus') {
-      return (a.license_plate || '').localeCompare(b.license_plate || '', 'ar');
-    }
-    const ca = a.code ? parseInt(a.code) : 999999;
-    const cb = b.code ? parseInt(b.code) : 999999;
-    return ca - cb;
-  });
-
-  return { data: sorted, count: count || 0 };
+  return { data: data || [], count: count || 0 };
 }
 
 // ── RENDER TABLE ─────────────────────────────────────────────
@@ -214,34 +206,29 @@ function updatePaginationUI(count) {
 }
 
 // ── MAIN LOAD ────────────────────────────────────────────────
+let latestPageRequest = 0;
 async function loadPage(page) {
-  if (window.isLoading) return;
+  const request = ++latestPageRequest;
+  const context = {filter:window.currentFilter, search:window.currentSearch, type:window.currentSearchType};
   window.isLoading = true;
-
   const loading = document.getElementById('loadingMoreInfo');
-  if (loading) loading.style.display = 'inline-block';
-
+  if(loading) loading.style.display = 'inline-block';
   try {
-    const { data, count } = await fetchPage(
-      page,
-      window.currentSearch,
-      window.currentSearchType,
-      window.currentFilter
-    );
-
+    const {data,count} = await fetchPage(page,context.search,context.type,context.filter);
+    if(request !== latestPageRequest) return;
     window.currentPage = page;
     renderTable(data);
     updatePaginationUI(count);
-
-    // Update stats on first load
-    if (page === 1 && !window.currentSearch) {
-      updateStats();
-    }
-  } catch (err) {
-    const tukBody = document.getElementById('dataTable');
-    if (tukBody) tukBody.innerHTML = '<tr><td colspan="8"style="text-align:center;padding:24px;color:#f87171"> خطأ في تحميل البيانات</td></tr>';
+    if(page===1 && !context.search) updateStats();
+  } catch(error) {
+    if(request !== latestPageRequest) return;
+    const body=document.getElementById(context.filter==='microbus'?'microbusDataTable':'dataTable');
+    if(body) body.innerHTML='<tr><td colspan="4">تعذر تحميل البيانات. أعد المحاولة.</td></tr>';
   } finally {
-    window.isLoading = false;
+    if(request===latestPageRequest) {
+      window.isLoading=false;
+      if(loading) loading.style.display='none';
+    }
   }
 }
 
@@ -297,30 +284,14 @@ function formatLicensePlateString(val) {
   if (!val) return '';
   val = toAsciiDigits(val);
 
-  const hasTrailingSpace = val.endsWith('');
-  const letters = val.match(/[\u0621-\u064A]/g) || [];
-  const digits  = val.match(/[0-9]/g) || [];
+  const hasTrailingSpace = /\s$/.test(val);
+  const letters = (val.match(/[\u0621-\u064A]/g) || []).join(' ');
+  const digits = (val.match(/[0-9]/g) || []).join('');
+  let formatted;
+  if(letters && digits) formatted = val.search(/[0-9]/)<val.search(/[\u0621-\u064A]/) ? digits+' '+letters : letters+' '+digits;
+  else formatted = letters || digits || val;
+  if(hasTrailingSpace && letters && !digits) formatted+=' ';
 
-  let formatted = '';
-  if (letters.length > 0 && digits.length > 0) {
-    const firstLetter = val.search(/[\u0621-\u064A]/);
-    const firstDigit  = val.search(/[0-9]/);
-    if (firstDigit < firstLetter) {
-      formatted = digits.join('') + ''+ letters.join('');
-    } else {
-      formatted = letters.join('') + ''+ digits.join('');
-    }
-  } else if (letters.length > 0) {
-    formatted = letters.join('');
-  } else if (digits.length > 0) {
-    formatted = digits.join('');
-  } else {
-    return val;
-  }
-
-  if (hasTrailingSpace && !formatted.endsWith('')) {
-    formatted += '';
-  }
   return formatted;
 }
 window.formatLicensePlateString = formatLicensePlateString;
@@ -491,13 +462,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // ── SUPERVISOR LOG ───────────────────────────────────────────
 async function logSupervisorAction(action, details, recordId = null) {
   try {
-    await window.supabaseClient.from('supervisor_logs').insert([{
-      username:  sessionStorage.getItem('username') || 'غير معروف',
-      user_role: sessionStorage.getItem('userRole') || 'VIEWER',
+    const {error} = await window.supabaseClient.from('supervisor_logs').insert([{
+      username: window.currentStaffName || 'غير معروف',
+      user_role: window.currentStaffRole || 'VIEWER',
       action, details, record_id: recordId,
       timestamp: new Date().toISOString()
     }]);
-  } catch(e) { /* silent */ }
+    if(error) throw error;
+  } catch(e) { window.showToast?.('تعذر حفظ سجل العملية. راجع مسؤول النظام.', 'warning'); }
 }
 window.logSupervisorAction = logSupervisorAction;
 
@@ -510,14 +482,13 @@ window.logSupervisorAction = logSupervisorAction;
 
   function resetTimer() {
     // فقط لو المستخدم مسجل دخول في لوحة التحكم
-    if (!sessionStorage.getItem('adminRole')) return;
+    if (!window.currentStaffRole) return;
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-      if (sessionStorage.getItem('adminRole')) {
+      if (window.currentStaffRole) {
         window.showToast('انتهت جلستك بسبب عدم النشاط. سيتم تسجيل الخروج...', 'warning', 4000);
         setTimeout(() => {
-          sessionStorage.clear();
-          location.reload();
+          window.confirmLogoutAdmin();
         }, 4000);
       }
     }, TIMEOUT_MS);

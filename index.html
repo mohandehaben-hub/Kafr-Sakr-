@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -12,8 +12,6 @@
 <meta name="theme-color" content="#141e35">
 
 <!-- Security Headers -->
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
 <title>منظومة تقنين المركبات - كفر صقر</title>
@@ -44,7 +42,7 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
 <!-- External Libraries (Deferred to not block initial render) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" defer></script>
+<script src="vendor/xlsx.full.min.js" defer></script>
 <link rel="stylesheet" href="css/fa.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
 <link rel="stylesheet" href="css/tokens.css?v=9.0">
@@ -68,7 +66,7 @@
 <div style="display:flex;align-items:center;gap:10px;flex:1;">
 
 <div class="header-logos" title="محافظة الشرقية - رئاسة مركز كفر صقر">
-<img src="sharkiya_flag.png" onerror="this.onerror=null;this.src='sharkiya_flag.png'" alt="شعار محافظة الشرقية" class="gov-emblem-header">
+<img src="sharkiya_flag.png" data-app-error="0" alt="شعار محافظة الشرقية" class="gov-emblem-header">
 </div>
 <div class="header-title">
 <h1 id="headerMainTitle"><i class="ri-government-line"></i> رئاسة مركز ومدينة كفر صقر</h1>
@@ -78,7 +76,7 @@
 <div style="display:flex;gap:6px;flex-shrink:0;" class="header-actions">
 <button id="loginBtn" class="btn btn-header"><i class="ri-lock-line"></i> دخول</button>
 <!-- زر لوحة التحكم — يظهر فقط في البوابة لما المستخدم مسجل دخول -->
-<button id="headerAdminBtn" class="btn btn-header" style="display:none;" onclick="goToAdmin()">
+<button id="headerAdminBtn" class="btn btn-header" style="display:none;" data-app-click="1">
   <i class="ri-dashboard-line"></i> لوحة التحكم
 </button>
 </div>
@@ -86,14 +84,14 @@
 </header>
 
 <!-- Floating Action Button (Mobile Only) -->
-<button id="fabLoginBtn" class="fab-button" onclick="document.getElementById('loginBtn').click()" style="display:none;">
+<button id="fabLoginBtn" class="fab-button" data-app-click="2" style="display:none;">
 <i class="ri-lock-line"></i>
 </button>
 
 
 
 <!-- Floating Back to Admin Button (Mobile, when in service page from admin) -->
-<button id="fabBackAdminBtn" class="fab-back-admin-btn" onclick="window.smartBack()" style="display:none;">
+<button id="fabBackAdminBtn" class="fab-back-admin-btn" data-app-click="3" style="display:none;">
   <i class="ri-arrow-right-line"></i>
 </button>
 
@@ -101,23 +99,23 @@
      BOTTOM NAVIGATION BAR — شريط التنقل السفلي للمواطنين
      ═══════════════════════════════════════════════════ -->
 <nav id="appBottomNav" aria-label="التنقل الرئيسي">
-  <button class="bnav-item active" id="bnav-home" onclick="bnavGo('portalSection','bnav-home')" aria-label="البوابة الرئيسية">
+  <button class="bnav-item active" id="bnav-home" data-app-click="4" aria-label="البوابة الرئيسية">
     <i class="ri-home-5-line"></i>
     <span>البوابة</span>
   </button>
-  <button class="bnav-item" id="bnav-register" onclick="bnavGo('citizenPage','bnav-register')" aria-label="تسجيل توكتوك">
+  <button class="bnav-item" id="bnav-register" data-app-click="5" aria-label="تسجيل توكتوك">
     <i class="ri-motorbike-line"></i>
     <span>تسجيل</span>
   </button>
-  <button class="bnav-item" id="bnav-inquiry" onclick="bnavGo('inquiryPage','bnav-inquiry')" aria-label="استعلام">
+  <button class="bnav-item" id="bnav-inquiry" data-app-click="6" aria-label="استعلام">
     <i class="ri-search-eye-line"></i>
     <span>استعلام</span>
   </button>
-  <button class="bnav-item" id="bnav-complaint" onclick="bnavGo('complaintsPage','bnav-complaint')" aria-label="تقديم شكوى">
+  <button class="bnav-item" id="bnav-complaint" data-app-click="7" aria-label="تقديم شكوى">
     <i class="ri-chat-3-line"></i>
     <span>شكوى</span>
   </button>
-  <button class="bnav-item bnav-login" id="bnav-login" onclick="bnavLogin()" aria-label="تسجيل الدخول">
+  <button class="bnav-item bnav-login" id="bnav-login" data-app-click="8" aria-label="تسجيل الدخول">
     <i class="ri-shield-keyhole-line"></i>
     <span>دخول</span>
   </button>
@@ -127,25 +125,25 @@
      ADMIN MOBILE BOTTOM BAR — شريط تنقل الإدارة للموبايل
      ═══════════════════════════════════════════════════ -->
 <nav id="adminBottomNav" class="admin-bottom-nav" aria-label="تنقل لوحة الإدارة">
-  <button class="admin-bnav-item active" id="adminBnavTuktuk" onclick="window.switchToVehicleSection('tuktuk')" aria-label="قسم التوكتوك">
+  <button class="admin-bnav-item active" id="adminBnavTuktuk" data-app-click="9" aria-label="قسم التوكتوك">
     <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="admin-bnav-avatar" alt="توكتوك" loading="lazy" decoding="async">
     <span>التوكتوك</span>
   </button>
-  <button class="admin-bnav-item" id="adminBnavMicrobus" onclick="window.switchToVehicleSection('microbus')" aria-label="قسم الميكروباص">
+  <button class="admin-bnav-item" id="adminBnavMicrobus" data-app-click="10" aria-label="قسم الميكروباص">
     <img src="https://i.postimg.cc/44zFDbrR/images.jpg" class="admin-bnav-avatar" alt="ميكروباص" loading="lazy" decoding="async">
     <span>الميكروباص</span>
   </button>
-  <button class="admin-bnav-item" id="adminBnavRequests" onclick="sidebarNav('newRequests')" aria-label="الطلبات الجديدة">
+  <button class="admin-bnav-item" id="adminBnavRequests" data-app-click="11" aria-label="الطلبات الجديدة">
     <i class="ri-clipboard-line"></i>
     <span>الطلبات</span>
     <span class="admin-bnav-badge" id="adminBnavReqBadge" style="display:none;">0</span>
   </button>
-  <button class="admin-bnav-item" id="adminBnavComplaints" onclick="sidebarNav('complaints')" aria-label="الشكاوى">
+  <button class="admin-bnav-item" id="adminBnavComplaints" data-app-click="12" aria-label="الشكاوى">
     <i class="ri-scales-line"></i>
     <span>الشكاوى</span>
     <span class="admin-bnav-badge" id="adminBnavCompBadge" style="display:none;">0</span>
   </button>
-  <button class="admin-bnav-item" id="adminBnavMenu" onclick="window.openAdminQuickMenu()" aria-label="القائمة">
+  <button class="admin-bnav-item" id="adminBnavMenu" data-app-click="13" aria-label="القائمة">
     <i class="ri-menu-line"></i>
     <span>القائمة</span>
   </button>
@@ -188,21 +186,21 @@
     <h2 class="portal-hero-title">منظومة تقنين المركبات الذكية</h2>
     <p class="portal-hero-desc">المنصة الرسمية الموحدة لتسجيل وتوفيق أوضاع مركبات التوكتوك بإشراف رئاسة المركز</p>
     <div class="portal-vehicles-showcase">
-      <div class="portal-vehicle-pill" onclick="bnavGo('citizenPage', 'bnav-register')">
+      <div class="portal-vehicle-pill" data-app-click="14">
         <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="vehicle-circle-img" alt="توكتوك" loading="lazy" decoding="async">
         <span>منظومة التوكتوك</span>
       </div>
-      <div class="portal-vehicle-pill" onclick="bnavGo('complaintsSelectionPage', '')">
+      <div class="portal-vehicle-pill" data-app-click="15">
         <img src="https://i.postimg.cc/44zFDbrR/images.jpg" class="vehicle-circle-img" alt="ميكروباص" loading="lazy" decoding="async">
         <span>منظومة الميكروباص</span>
       </div>
     </div>
     <div class="portal-hero-actions">
-      <button class="portal-hero-cta" onclick="bnavGo('citizenPage', 'bnav-register')">
+      <button class="portal-hero-cta" data-app-click="16">
         <i class="ri-add-circle-line"></i>
         <span>ابدأ تسجيل مركبتك الآن</span>
       </button>
-      <button class="portal-hero-sec" onclick="bnavGo('inquiryPage', 'bnav-inquiry')">
+      <button class="portal-hero-sec" data-app-click="17">
         <i class="ri-search-eye-line"></i>
         <span>استعلام عن طلب سابق</span>
       </button>
@@ -217,7 +215,7 @@
     </div>
     <div class="portal-quick-form">
       <input type="text" id="homeQuickSearch" placeholder="أدخل الرقم القومي للمالك" maxlength="14" inputmode="numeric">
-      <button class="portal-quick-btn" onclick="quickInquirySearch()">
+      <button class="portal-quick-btn" data-app-click="18">
         <i class="ri-search-2-line"></i>
         <span>استعلام</span>
       </button>
@@ -272,7 +270,7 @@
   <!-- Contact Section — mobile: single button + bottom sheet | desktop: 3 buttons -->
   <div class="wa-contact-section">
     <!-- Mobile: single button -->
-    <button class="wa-single-btn mob-only" onclick="openWASheet()">
+    <button class="wa-single-btn mob-only" data-app-click="19">
       <i class="ri-whatsapp-line"></i>
       تواصل مع الدعم
       <i class="ri-arrow-up-s-line" style="margin-right:auto"></i>
@@ -299,7 +297,7 @@
 
 <!-- WhatsApp Bottom Sheet (Mobile Only) -->
 <div id="waBottomSheet" style="display:none;">
-  <div class="wa-sheet-overlay" onclick="closeWASheet()"></div>
+  <div class="wa-sheet-overlay" data-app-click="20"></div>
   <div class="wa-sheet-inner">
     <div class="wa-sheet-handle"></div>
     <div class="wa-sheet-header">
@@ -341,7 +339,7 @@
 <div class="card">
 <div class="page-header">
 <h2 style="color:var(--text);"><i class="ri-file-add-line"></i> تسجيل توكتوك جديد</h2>
-<button id="citizenBackBtn" onclick="window.smartBack()" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
+<button id="citizenBackBtn" data-app-click="21" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
 </div>
 
 <!-- Registration Form -->
@@ -357,21 +355,21 @@
 </div>
 <div class="input-group">
 <label>الرقم القومي (14 رقم)</label>
-<input type="text" id="nationalId" maxlength="14" placeholder="مثال: 29501011234567" oninput="validateNationalId(this)">
+<input type="text" id="nationalId" maxlength="14" placeholder="مثال: 29501011234567" data-app-input="22">
 <div id="nidValidation" style="display:none;"></div>
 </div>
 <div class="input-group">
 <label>تاريخ الميلاد</label>
 <div class="birth-date-grid">
-<select id="birthDay" onchange="verifyBirthDate()"><option value="">اليوم</option></select>
-<select id="birthMonth" onchange="verifyBirthDate()">
+<select id="birthDay" data-app-change="23"><option value="">اليوم</option></select>
+<select id="birthMonth" data-app-change="24">
 <option value="">الشهر</option>
 <option value="01">يناير</option><option value="02">فبراير</option><option value="03">مارس</option>
 <option value="04">أبريل</option><option value="05">مايو</option><option value="06">يونيو</option>
 <option value="07">يوليو</option><option value="08">أغسطس</option><option value="09">سبتمبر</option>
 <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12">ديسمبر</option>
 </select>
-<select id="birthYear" onchange="verifyBirthDate()"><option value="">السنة</option></select>
+<select id="birthYear" data-app-change="25"><option value="">السنة</option></select>
 </div>
 <input type="hidden" id="birthDate">
 <div id="birthValidation" style="display:none;"></div>
@@ -408,7 +406,7 @@
 <div class="card">
 <div class="page-header">
 <h2 style="color:var(--text);"><i class="ri-search-line"></i> استعلام عن حالة الطلب</h2>
-<button id="inquiryBackBtn" onclick="window.smartBack()" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
+<button id="inquiryBackBtn" data-app-click="26" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
 </div>
 <p style="text-align:center;color:var(--text3);margin-bottom:25px;">أدخل بياناتك للتحقق من حالة طلبك</p>
 <div class="form-grid">
@@ -419,7 +417,7 @@
 <button id="inquiryBtn" class="btn btn-primary btn-full">استعلام الآن</button>
 <div id="inquiryResult" style="display:none;margin-top:30px;border-radius:16px;text-align:center;"></div>
 <div id="inquiryPrintBtn" style="display:none;text-align:center;margin-top:12px;">
-  <button onclick="window.print()" class="btn btn-ghost" style="gap:8px;"><i class="ri-printer-line"></i> طباعة الإيصال</button>
+  <button data-app-click="27" class="btn btn-ghost" style="gap:8px;"><i class="ri-printer-line"></i> طباعة الإيصال</button>
 </div>
 </div>
 </div>
@@ -429,11 +427,11 @@
 <div class="card">
 <div class="page-header">
 <h2 style="color:var(--text);"><i class="ri-steering-2-line"></i> اختيار نوع المركبة</h2>
-<button id="compSelBackBtn" onclick="window.smartBack()" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
+<button id="compSelBackBtn" data-app-click="28" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
 </div>
 <p style="text-align:center;color:var(--text3);margin-bottom:20px;">اختر نوع المركبة التي تريد تقديم شكوى بشأنها</p>
 <div class="vehicle-grid">
-<div class="vehicle-card-pro tuktuk" onclick="openComplaintForm('توكتوك')">
+<div class="vehicle-card-pro tuktuk" data-app-click="29">
   <div class="vehicle-avatar-wrapper">
     <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="vehicle-circle-img" alt="توكتوك">
   </div>
@@ -445,7 +443,7 @@
     <i class="ri-arrow-left-s-line"></i>
   </div>
 </div>
-<div class="vehicle-card-pro microbus" onclick="openComplaintForm('ميكروباص')">
+<div class="vehicle-card-pro microbus" data-app-click="30">
   <div class="vehicle-avatar-wrapper">
     <img src="https://i.postimg.cc/44zFDbrR/images.jpg" class="vehicle-circle-img" alt="ميكروباص">
   </div>
@@ -466,7 +464,7 @@
 <div class="card">
 <div class="page-header">
 <h2 style="color:var(--text);"><i class="ri-feedback-line"></i> تقديم شكوى</h2>
-<button id="compBackBtn" onclick="window.smartBack()" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
+<button id="compBackBtn" data-app-click="31" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
 </div>
 <p style="text-align:center;color:var(--text3);margin-bottom:20px;">املأ البيانات التالية لتقديم شكوى</p>
 <div id="selectedVehicleType" style="display:none;background:var(--bg3);padding:10px 16px;border-radius:12px;margin-bottom:20px;border:1px solid var(--border);">
@@ -501,7 +499,7 @@
 <div class="card">
 <div class="page-header">
 <h2 style="color:var(--text);"><i class="ri-search-line"></i> استعلام عن حالة الشكوى</h2>
-<button id="compInqBackBtn" onclick="window.smartBack()" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
+<button id="compInqBackBtn" data-app-click="32" class="btn btn-back"><i class="ri-arrow-right-line"></i> رجوع</button>
 </div>
 <p style="text-align:center;color:var(--text3);margin-bottom:25px;">أدخل بياناتك للتحقق من حالة شكواك</p>
 <div class="form-grid">
@@ -546,7 +544,7 @@
       <!-- Toolbar -->
       <div class="table-toolbar">
         <div class="search-bar">
-          <select id="searchType" class="search-select" onchange="window.onSearchTypeChange()">
+          <select id="searchType" class="search-select" data-app-change="33">
             <option value="code" selected>الكود</option>
             <option value="name">اسم المالك</option>
             <option value="nationalId">الرقم القومي</option>
@@ -555,7 +553,7 @@
             <option value="motor">رقم الموتور</option>
             <option value="all">بحث شامل</option>
           </select>
-          <input type="text" id="searchInput" class="search-input" oninput="window.handleSearchInput(event)" placeholder="ابحث برقم الكود...">
+          <input type="text" id="searchInput" class="search-input" data-app-input="34" placeholder="ابحث برقم الكود...">
         </div>
       </div>
 
@@ -596,13 +594,13 @@
       <!-- Single Unified Bottom Pagination Bar -->
       <div class="pagination-bar" id="bottomPaginationBar">
         <div style="display:flex;gap:8px;align-items:center">
-          <button id="prevPageBtn" onclick="window.changePage(-1)" class="btn btn-info" style="padding:7px 14px"><i class="ri-arrow-right-s-line"></i> السابق</button>
+          <button id="prevPageBtn" data-app-click="35" class="btn btn-info" style="padding:7px 14px"><i class="ri-arrow-right-s-line"></i> السابق</button>
           <span class="page-info" id="pageInfo">صفحة 1 من 1</span>
-          <button id="nextPageBtn" onclick="window.changePage(1)" class="btn btn-info" style="padding:7px 14px">التالي <i class="ri-arrow-left-s-line"></i></button>
+          <button id="nextPageBtn" data-app-click="36" class="btn btn-info" style="padding:7px 14px">التالي <i class="ri-arrow-left-s-line"></i></button>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <label style="font-size:0.8rem;color:var(--text2)">السجلات في الصفحة:</label>
-          <select id="recordsPerPage" onchange="window.changeRecordsPerPage()" class="search-select">
+          <select id="recordsPerPage" data-app-change="37" class="search-select">
             <option value="50">50</option>
             <option value="100" selected>100</option>
             <option value="200">200</option>
@@ -689,7 +687,7 @@
 <h4 style="color:var(--text); margin-bottom: 16px; text-align: center; font-size: 1.15rem;"><i class="ri-search-eye-line"></i> البحث عن كود معين</h4>
 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
 <input type="number" id="searchCodeInput" placeholder="أدخل رقم الكود (مثال: 150)" min="1" class="search-input" style="flex: 1; min-width: 200px; height: 46px;">
-<button onclick="searchForCode()" class="btn btn-primary" style="height: 46px; padding: 0 28px;"><i class="ri-search-line"></i> بحث</button>
+<button data-app-click="38" class="btn btn-primary" style="height: 46px; padding: 0 28px;"><i class="ri-search-line"></i> بحث</button>
 </div>
 <div id="searchCodeResult" style="margin-top: 16px; padding: 16px; border-radius: var(--r-md); display: none; font-size: 1rem; font-weight: 600; text-align: center;"></div>
 </div>
@@ -723,7 +721,7 @@
 
 <!-- Modal for Images -->
 <div id="imgModal" class="gov-modal" style="display: none;">
-  <span onclick="document.getElementById('imgModal').style.display='none'" style="position: absolute; top: 20px; left: 25px; color: white; font-size: 45px; cursor: pointer; z-index: 10001;">&times;</span>
+  <span data-app-click="39" style="position: absolute; top: 20px; left: 25px; color: white; font-size: 45px; cursor: pointer; z-index: 10001;">&times;</span>
   <div style="text-align: center; max-width: 95%; margin: auto;">
     <img id="mainViewImg" style="max-width:90%; max-height:80vh; display:block; margin:40px auto 20px; border:4px solid rgba(255,255,255,0.2); border-radius:16px;">
     <div id="modalThumbnails" style="display: flex; justify-content: center; gap: 15px; padding: 15px; flex-wrap: wrap;"></div>
@@ -733,7 +731,7 @@
 <!-- Modal for Coding -->
 <div id="codeModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog" style="max-width: 500px; padding: 28px; text-align: center; border:1px solid var(--border);">
-    <span onclick="document.getElementById('codeModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="40" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color: var(--gold); font-size: 1.3rem; margin-bottom: 20px;"><i class="ri-hashtag"></i> تكويد المركبة</h3>
     <p id="codeHint" style="font-size:1rem; color:var(--text2); background: rgba(0,0,0,0.2); padding:14px; border-radius:12px; margin: 20px 0; font-weight: 600;"></p>
     <div class="input-group">
@@ -757,20 +755,32 @@
 
     <div style="display:flex; gap:12px; margin-top:28px;">
       <button id="confirmCodeBtn" class="btn btn-primary" style="flex:1; padding:14px; font-size: 1rem;">تأكيد التكويد</button>
-      <button onclick="document.getElementById('codeModal').style.display='none'" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
+      <button data-app-click="41" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
     </div>
   </div>
 </div>
 
 <!-- Modal for Excel Import -->
-
-
-
-
+<div id="bulkImportModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="importTitle" style="display:none">
+  <div class="gov-modal-dialog gov-modal-dialog--lg" style="max-width:800px;padding:24px">
+    <button type="button" class="btn btn-ghost" style="float:left" aria-label="إغلاق الاستيراد" data-app-click="42">×</button>
+    <h3 id="importTitle">استيراد سجلات المركبات</h3>
+    <p>اختر ملف Excel. الأعمدة المطلوبة: الاسم والرقم القومي. يمكن إضافة الهاتف والعنوان ونوع المركبة ورقم اللوحة والكود.</p>
+    <button id="downloadTemplateBtn" type="button" class="btn btn-ghost">تحميل نموذج</button>
+    <label for="bulkImportFile">ملف البيانات</label>
+    <input id="bulkImportFile" type="file" accept=".xlsx,.xls" style="display:block;margin:16px 0">
+    <div id="importPreview" style="display:none;max-height:320px;overflow:auto"></div>
+    <div id="importProgress" role="status" aria-live="polite" style="display:none;margin:16px 0">
+      <div style="height:8px;background:var(--bg3)"><div id="progressBar" style="height:100%;width:0;background:var(--color-primary)"></div></div>
+      <span id="progressText">0%</span><p id="progressStatus"></p>
+    </div>
+    <button id="confirmImportBtn" type="button" class="btn btn-primary" style="margin-top:16px">استيراد البيانات المعروضة</button>
+  </div>
+</div>
 <!-- Modal for Edit -->
 <div id="editModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog gov-modal-dialog--lg" style="max-width: 680px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('editModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="43" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color:var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-edit-line"></i> تعديل بيانات المركبة</h3>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
@@ -794,6 +804,7 @@
         <select id="editVYear"></select>
       </div>
 
+      <div class="input-group"><label for="editLicensePlate">لوحة الميكروباص (عند اختيار ميكروباص)</label><input id="editLicensePlate" type="text" placeholder="ر ع و 1234"></div>
       <div class="input-group" style="grid-column: 1 / -1;">
         <label>العنوان</label>
         <textarea id="editAddress" rows="3" placeholder="أدخل العنوان بالتفصيل"></textarea>
@@ -802,7 +813,7 @@
 
     <div style="display:flex; gap:12px; margin-top:28px;">
       <button id="confirmEditBtn" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">حفظ التعديلات</button>
-      <button onclick="document.getElementById('editModal').style.display='none'" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
+      <button data-app-click="44" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
     </div>
   </div>
 </div>
@@ -810,7 +821,7 @@
 <!-- Modal for Activity Log -->
 <div id="activityLogModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog gov-modal-dialog--lg" style="max-width: 780px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('activityLogModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="45" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color: var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-history-line"></i> سجل العمليات</h3>
     <div id="activityLogContent" style="max-height: 480px; overflow-y: auto;"></div>
   </div>
@@ -818,16 +829,16 @@
 
 <!-- Login Modal -->
 <div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="govLoginTitle">
-  <div class="gov-login-overlay" onclick="closeLoginModal()"></div>
+  <div class="gov-login-overlay" data-app-click="46"></div>
   <div class="gov-login-card">
-    <button type="button" class="gov-login-close-btn" onclick="closeLoginModal()" aria-label="إغلاق">
+    <button type="button" class="gov-login-close-btn" data-app-click="47" aria-label="إغلاق">
       <i class="ri-close-line"></i>
     </button>
 
     <div class="gov-login-header">
       <div class="gov-login-emblems">
         <div class="gov-emblem-wrap" title="شعار محافظة الشرقية">
-          <img src="sharkiya_flag.png" onerror="this.onerror=null;this.src='sharkiya_flag.png'" alt="شعار محافظة الشرقية">
+          <img src="sharkiya_flag.png" data-app-error="48" alt="شعار محافظة الشرقية">
         </div>
       </div>
       <h3 id="govLoginTitle" class="gov-login-title">تسجيل الدخول</h3>
@@ -847,8 +858,8 @@
         <label class="gov-form-label" for="loginPassword">كلمة المرور</label>
         <div class="gov-input-wrap">
           <i class="ri-lock-line gov-input-icon"></i>
-          <input type="password" id="loginPassword" class="gov-input" placeholder="كلمة المرور" autocomplete="current-password" dir="rtl" onkeypress="if(event.key==='Enter')document.getElementById('confirmLoginBtn').click()">
-          <button type="button" class="gov-pwd-toggle" onclick="toggleLoginPassword()" aria-label="إظهار كلمة المرور">
+          <input type="password" id="loginPassword" class="gov-input" placeholder="كلمة المرور" autocomplete="current-password" dir="rtl" data-app-keypress="49">
+          <button type="button" class="gov-pwd-toggle" data-app-click="50" aria-label="إظهار كلمة المرور">
             <i id="loginPwdIcon" class="ri-eye-line"></i>
           </button>
         </div>
@@ -879,7 +890,7 @@
 <!-- Modal for Date Filter -->
 <div id="dateFilterModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog" style="max-width: 480px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('dateFilterModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="51" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color:var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-calendar-line"></i> فلترة حسب التاريخ</h3>
 
     <div class="input-group">
@@ -894,7 +905,7 @@
 
     <div style="display:flex; gap:12px; margin-top:28px;">
       <button id="applyDateFilterBtn" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">تطبيق الفلتر</button>
-      <button onclick="clearDateFilter()" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إعادة تعيين</button>
+      <button data-app-click="52" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إعادة تعيين</button>
     </div>
   </div>
 </div>
@@ -902,7 +913,7 @@
 <!-- Modal for Status Change -->
 <div id="statusChangeModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog" style="max-width: 520px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('statusChangeModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="53" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color:var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-shield-check-line"></i> لصق الملصق</h3>
 
     <div style="text-align: center; margin: 20px 0;">
@@ -928,14 +939,14 @@
       <button id="confirmStickerNoBtn" class="btn" style="flex:1; padding:16px; font-size: 1.1rem; background:var(--color-primary); color: white; font-weight: bold;">إلغاء / لم يتم اللصق</button>
     </div>
 
-    <button onclick="document.getElementById('statusChangeModal').style.display='none'" class="btn" style="width: 100%; margin-top: 14px; padding:10px; font-size: 0.95rem; background: rgba(255,255,255,0.08); color: var(--text2);">إغلاق</button>
+    <button data-app-click="54" class="btn" style="width: 100%; margin-top: 14px; padding:10px; font-size: 0.95rem; background: rgba(255,255,255,0.08); color: var(--text2);">إغلاق</button>
   </div>
 </div>
 
 <!-- Modal for Complaint Reply -->
 <div id="complaintReplyModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog" style="max-width: 580px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('complaintReplyModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="55" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color:var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-chat-1-line"></i> الرد على الشكوى</h3>
 
     <div class="input-group">
@@ -954,7 +965,7 @@
 
     <div style="display:flex; gap:12px; margin-top:28px;">
       <button id="confirmComplaintReplyBtn" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إرسال الرد</button>
-      <button onclick="document.getElementById('complaintReplyModal').style.display='none'" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
+      <button data-app-click="56" class="btn" style="flex:1; padding:14px; font-size: 1rem; background:var(--color-primary); color: white;">إلغاء</button>
     </div>
   </div>
 </div>
@@ -962,7 +973,7 @@
 <!-- Modal for Supervisor Log -->
 <div id="supervisorLogModal" class="gov-modal" style="display: none;">
   <div class="gov-modal-dialog gov-modal-dialog--lg" style="max-width: 900px; padding: 28px; border:1px solid var(--border);">
-    <span onclick="document.getElementById('supervisorLogModal').style.display='none'" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
+    <span data-app-click="57" style="position: absolute; top: 14px; left: 18px; color: var(--red); font-size: 28px; cursor: pointer; line-height:1;">&times;</span>
     <h3 style="color:var(--text); font-size: 1.3rem; margin-bottom: 20px; text-align: center;"><i class="ri-history-line"></i> سجل عمليات المشرفين</h3>
     <div id="supervisorLogContent" style="max-height: 550px; overflow-y: auto; background: var(--bg3); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
       <p style="text-align: center; color: var(--text3);">جاري التحميل...</p>
@@ -971,7 +982,7 @@
 </div>
 
 <!-- Vehicle Dossier & Actions Modal (كرت البيانات الكاملة والإجراءات الحكومي) -->
-<div id="vehicleDossierModal" class="gov-modal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+<div id="vehicleDossierModal" class="gov-modal" style="display:none;" data-app-click="58">
   <div class="gov-modal-dialog dossier-modal-dialog" style="max-width:520px; padding:0; overflow:hidden; border-radius:18px; border:1px solid rgba(148,163,184,0.18); background:#151D2A; box-shadow:0 25px 50px -12px rgba(0,0,0,0.6);">
     <!-- Modal Header -->
     <div class="dossier-header" style="background:#0F172A; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(148,163,184,0.12);">
@@ -984,7 +995,7 @@
           <span style="font-size:0.7rem; color:#94A3B8;">رئاسة مركز ومدينة كفر صقر</span>
         </div>
       </div>
-      <button onclick="document.getElementById('vehicleDossierModal').style.display='none'" class="dossier-close-btn" style="background:none; border:none; color:#94A3B8; font-size:1.4rem; cursor:pointer; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px;">
+      <button data-app-click="59" class="dossier-close-btn" style="background:none; border:none; color:#94A3B8; font-size:1.4rem; cursor:pointer; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px;">
         <i class="ri-close-line"></i>
       </button>
     </div>
@@ -1088,7 +1099,7 @@
   <div class="gov-modal-dialog" style="max-width:360px; padding:20px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <h3 id="actionsModalTitle" style="margin:0;font-size:1rem;color:var(--text);">إجراءات</h3>
-      <button onclick="document.getElementById('actionsModal').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer;">&times;</button>
+      <button data-app-click="60" style="background:none;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer;">&times;</button>
     </div>
     <div id="actionsModalBtns" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
@@ -1099,7 +1110,7 @@
   <div class="gov-modal-dialog" style="max-width:480px; max-height:80vh; overflow-y:auto; padding:20px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <h3 id="detailsTitle" style="margin:0;font-size:1rem;color:var(--text);">تفاصيل المركبة</h3>
-      <button onclick="document.getElementById('detailsModal').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer;">&times;</button>
+      <button data-app-click="61" style="background:none;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer;">&times;</button>
     </div>
     <div id="detailsContent" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
@@ -1113,7 +1124,7 @@
 
 <!-- زر المطور بأسفل المنظومة (خارجي ومتاح للجميع بدون أي إعاقة) -->
 <footer class="gov-developer-footer">
-  <button type="button" class="btn-dev-badge" onclick="document.getElementById('devTeamModal').style.display='flex'" title="عرض معلومات المطور">
+  <button type="button" class="btn-dev-badge" data-app-click="62" title="عرض معلومات المطور">
     <i class="ri-code-s-slash-line"></i>
     <span>المطور</span>
   </button>
@@ -1125,7 +1136,7 @@
 <!-- Secure Configuration - EMBEDDED (لا يحتاج ملفات خارجية) -->
 
 <!-- Citizen Card Modal -->
-<div id="citizenCardModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="citizenCardTitle" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+<div id="citizenCardModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="citizenCardTitle" style="display:none;" data-app-click="63">
   <div class="gov-modal-dialog" style="max-width:400px; padding:24px 20px; border:1px solid var(--border);">
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);">
@@ -1136,7 +1147,7 @@
           <span id="cardVehicleTypeBadge" style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.2);display:inline-block;margin-top:2px;">توكتوك</span>
         </div>
       </div>
-      <button onclick="document.getElementById('citizenCardModal').style.display='none'" aria-label="إغلاق النافذة" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;padding:4px;"><i class="ri-close-line"></i></button>
+      <button data-app-click="64" aria-label="إغلاق النافذة" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;padding:4px;"><i class="ri-close-line"></i></button>
     </div>
     <!-- Fields -->
     <div style="display:flex;flex-direction:column;gap:12px;">
@@ -1163,31 +1174,33 @@
     </div>
     <!-- Footer -->
     <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
-      <button onclick="window.print()" class="btn btn-ghost" style="padding:7px 16px;font-size:0.82rem;"><i class="ri-printer-line"></i> طباعة</button>
-      <button onclick="document.getElementById('citizenCardModal').style.display='none'" class="btn btn-primary" style="padding:7px 20px;font-size:0.82rem;">إغلاق</button>
+      <button data-app-click="65" class="btn btn-ghost" style="padding:7px 16px;font-size:0.82rem;"><i class="ri-printer-line"></i> طباعة</button>
+      <button data-app-click="66" class="btn btn-primary" style="padding:7px 20px;font-size:0.82rem;">إغلاق</button>
     </div>
   </div>
 </div>
 
 <!-- JavaScript Files -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=10.0"></script>
-<script src="js/toast.js?v=10.0"></script>
-<script src="js/app-utils.js?v=10.0"></script>
-<script src="js/ui.js?v=10.0"></script>
-<script src="js/storage.js?v=10.0"></script>
-<script src="js/auth.js?v=10.0"></script>
-<script src="js/admin.js?v=10.0"></script>
-<script src="js/pagination.js?v=10.0"></script>
+<script src="vendor/supabase.js"></script>
+<script src="js/config.js?v=11.0"></script>
+<script src="js/toast.js?v=11.0"></script>
+<script src="js/app-utils.js?v=11.0"></script>
+<script src="js/data-utils.js?v=11.0"></script>
+<script src="js/ui.js?v=11.0"></script>
+<script src="js/storage.js?v=11.0"></script>
+<script src="js/auth.js?v=11.0"></script>
+<script src="js/admin.js?v=11.0"></script>
+<script src="js/pagination.js?v=11.0"></script>
+<script src="js/admin-actions.js?v=11.0"></script>
 
 <!-- ══ Admin Quick Menu Modal ══ -->
-<div id="adminQuickMenuModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="adminQuickMenuTitle" style="display:none;" onclick="if(event.target===this)window.closeAdminQuickMenu()">
+<div id="adminQuickMenuModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="adminQuickMenuTitle" style="display:none;" data-app-click="67">
   <div class="gov-modal-dialog" style="max-width:420px; padding:22px 18px; border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)">
       <h3 id="adminQuickMenuTitle" style="margin:0;font-size:1rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;">
         <i class="ri-menu-line" style="color:var(--emerald)"></i> قائمة الإدارة
       </h3>
-      <button onclick="window.closeAdminQuickMenu()" aria-label="إغلاق النافذة"
+      <button data-app-click="68" aria-label="إغلاق النافذة"
         style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;padding:4px">
         <i class="ri-close-line"></i>
       </button>
@@ -1195,21 +1208,21 @@
     
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
       <!-- زر مركز الإحصائيات -->
-      <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" onclick="window.closeAdminQuickMenu();window.openStatsModal()">
+      <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" data-app-click="69">
         <i class="ri-bar-chart-2-line" style="color:var(--emerald);font-size:1.1rem;"></i>
         <span style="flex:1;">مركز الإحصائيات الشامل</span>
         <i class="ri-arrow-left-s-line" style="color:var(--text3)"></i>
       </button>
 
       <!-- زر بوابة المواطنين -->
-      <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" onclick="window.closeAdminQuickMenu();window.goToPortalFromAdmin()">
+      <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" data-app-click="70">
         <i class="ri-home-line" style="color:var(--emerald);font-size:1.1rem;"></i>
         <span style="flex:1;">بوابة خدمات المواطنين</span>
         <i class="ri-arrow-left-s-line" style="color:var(--text3)"></i>
       </button>
 
       <!-- إدارة المشرفين -->
-      <button id="adminMenuStaffBtn" class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" onclick="window.closeAdminQuickMenu();window.openStaffManagementModal()">
+      <button id="adminMenuStaffBtn" class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:12px 14px;font-size:0.88rem;gap:10px;text-align:right;" data-app-click="71">
         <i class="ri-user-settings-line" style="color:var(--emerald);font-size:1.1rem;"></i>
         <span style="flex:1;">إدارة حسابات المشرفين</span>
         <i class="ri-arrow-left-s-line" style="color:var(--text3)"></i>
@@ -1217,48 +1230,48 @@
     </div>
 
     <!-- زر تسجيل الخروج الصريح -->
-    <button class="btn" style="width:100%;padding:13px;font-size:0.92rem;font-weight:700;background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.35);border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" onclick="window.closeAdminQuickMenu();window.logoutAdmin()">
+    <button class="btn" style="width:100%;padding:13px;font-size:0.92rem;font-weight:700;background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.35);border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" data-app-click="72">
       <i class="ri-logout-box-r-line"></i> تسجيل الخروج من النظام
     </button>
   </div>
 </div>
 
 <!-- ══ Stats Dashboard Modal ══ -->
-<div id="statsDashboardModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="statsDashTitle" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+<div id="statsDashboardModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="statsDashTitle" style="display:none;" data-app-click="73">
   <div class="gov-modal-dialog" style="max-width:560px; padding:24px 20px; border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">
       <h3 id="statsDashTitle" style="margin:0;font-size:1.05rem;font-weight:800;color:var(--text);">
         <i class="ri-bar-chart-2-line" style="color:#10B981;"></i> مركز الإحصائيات الشامل
       </h3>
-      <button onclick="document.getElementById('statsDashboardModal').style.display='none'" aria-label="إغلاق النافذة"
+      <button data-app-click="74" aria-label="إغلاق النافذة"
         style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;padding:4px">
         <i class="ri-close-line"></i>
       </button>
     </div>
     <!-- Grid الإحصائيات -->
     <div class="stats-dashboard-grid">
-      <div class="stats-dash-card" onclick="window.switchToVehicleSection('tuktuk');document.getElementById('statsDashboardModal').style.display='none'">
+      <div class="stats-dash-card" data-app-click="75">
         <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="stats-dash-v-avatar" alt="توكتوك" loading="lazy" decoding="async">
         <div class="stats-dash-body">
           <div class="stats-dash-label">مركبات التوكتوك</div>
           <div class="stats-dash-val" id="dashTuktuk">—</div>
         </div>
       </div>
-      <div class="stats-dash-card" onclick="window.switchToVehicleSection('microbus');document.getElementById('statsDashboardModal').style.display='none'">
+      <div class="stats-dash-card" data-app-click="76">
         <img src="https://i.postimg.cc/44zFDbrR/images.jpg" class="stats-dash-v-avatar" alt="ميكروباص" loading="lazy" decoding="async">
         <div class="stats-dash-body">
           <div class="stats-dash-label">مركبات الميكروباص</div>
           <div class="stats-dash-val" id="dashMicrobus">—</div>
         </div>
       </div>
-      <div class="stats-dash-card" onclick="showStickerAppliedOrders();document.getElementById('statsDashboardModal').style.display='none'">
+      <div class="stats-dash-card" data-app-click="77">
         <div class="stats-dash-icon" style="background:rgba(148,163,184,0.08);color:var(--text2)"><i class="ri-price-tag-3-line"></i></div>
         <div class="stats-dash-body">
           <div class="stats-dash-label">ملصق التوكتوك</div>
           <div class="stats-dash-val" id="dashSticker">—</div>
         </div>
       </div>
-      <div class="stats-dash-card" onclick="document.getElementById('statsDashboardModal').style.display='none';sidebarNav('complaints')">
+      <div class="stats-dash-card" data-app-click="78">
         <div class="stats-dash-icon" style="background:rgba(148,163,184,0.08);color:var(--text2)"><i class="ri-scales-line"></i></div>
         <div class="stats-dash-body">
           <div class="stats-dash-label">إجمالي الشكاوى</div>
@@ -1288,7 +1301,7 @@
       </div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <button onclick="window.openStatsModal()" class="btn btn-ghost" style="font-size:0.78rem;padding:6px 16px">
+      <button data-app-click="79" class="btn btn-ghost" style="font-size:0.78rem;padding:6px 16px">
         <i class="ri-refresh-line"></i> تحديث
       </button>
     </div>
@@ -1296,13 +1309,13 @@
 </div>
 
 <!-- ══ Staff Management Modal ══ -->
-<div id="staffManagementModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="staffModalTitle" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+<div id="staffManagementModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="staffModalTitle" style="display:none;" data-app-click="80">
   <div class="gov-modal-dialog gov-modal-dialog--lg" style="max-width:540px; padding:24px; border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)">
       <h3 id="staffModalTitle" style="margin:0;font-size:1.15rem;font-weight:800;color:var(--gold)">
         <i class="ri-user-settings-line"></i> إدارة حسابات المشرفين
       </h3>
-      <button onclick="document.getElementById('staffManagementModal').style.display='none'" aria-label="إغلاق النافذة"
+      <button data-app-click="81" aria-label="إغلاق النافذة"
         style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.3rem;padding:4px">
         <i class="ri-close-line"></i>
       </button>
@@ -1329,7 +1342,7 @@
         <div style="background:rgba(52,152,219,0.08);border:1px dashed rgba(52,152,219,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--blue);">
           <i class="ri-information-line"></i> الصلاحية: <strong>مشرف استعلام وبحث فقط (VIEWER)</strong> — يتمكن من البحث وعرض الطلبات دون تعديل أو حذف.
         </div>
-        <button id="btnCreateSupervisor" onclick="window.handleCreateSupervisor()" class="btn" style="background:var(--color-primary);color:white;padding:12px;font-weight:700;margin-top:4px;">
+        <button id="btnCreateSupervisor" data-app-click="82" class="btn" style="background:var(--color-primary);color:white;padding:12px;font-weight:700;margin-top:4px;">
           إنشاء الحساب فوراً
         </button>
       </div>
@@ -1348,13 +1361,13 @@
 </div>
 
 <!-- ══ Dev Team Modal ══ -->
-<div id="devTeamModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="devTeamModalTitle" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+<div id="devTeamModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="devTeamModalTitle" style="display:none;" data-app-click="83">
   <div class="gov-modal-dialog" style="max-width:480px; padding:24px 20px; border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">
       <h3 id="devTeamModalTitle" style="margin:0;font-size:1rem;font-weight:800;color:#10B981">
         <i class="ri-code-s-slash-line"></i> فريق التطوير
       </h3>
-      <button onclick="document.getElementById('devTeamModal').style.display='none'" aria-label="إغلاق النافذة"
+      <button data-app-click="84" aria-label="إغلاق النافذة"
         style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;padding:4px">
         <i class="ri-close-line"></i>
       </button>
@@ -1380,7 +1393,7 @@
 </div>
 
 <!-- ══ Logout Confirmation Modal (كرت صغير في النص) ══ -->
-<div id="logoutConfirmModal" class="logout-center-modal" role="alertdialog" aria-modal="true" aria-labelledby="logoutConfirmTitle" style="display:none;" onclick="if(event.target===this)window.closeLogoutModal()">
+<div id="logoutConfirmModal" class="logout-center-modal" role="alertdialog" aria-modal="true" aria-labelledby="logoutConfirmTitle" style="display:none;" data-app-click="85">
   <div class="logout-center-card">
     <div class="logout-center-icon">
       <i class="ri-logout-box-r-line"></i>
@@ -1388,15 +1401,17 @@
     <h3 id="logoutConfirmTitle">تأكيد تسجيل الخروج</h3>
     <p>هل أنت متأكد من رغبتك في تسجيل الخروج؟</p>
     <div class="logout-center-actions">
-      <button type="button" class="btn-logout-confirm" onclick="window.confirmLogoutAdmin()">
+      <button type="button" class="btn-logout-confirm" data-app-click="86">
         <i class="ri-check-line"></i> تأكيد
       </button>
-      <button type="button" class="btn-logout-cancel" onclick="window.closeLogoutModal()">
+      <button type="button" class="btn-logout-cancel" data-app-click="87">
         إلغاء
       </button>
     </div>
   </div>
 </div>
 
+<script src="js/events.js?v=11.0" defer></script>
+<script src="js/dialogs.js?v=11.0" defer></script>
 </body>
 </html>

@@ -29,3 +29,15 @@ yarn-error.log*
 *.xls
 *.xlsx
 *.csv
+
+# Generated output and deployment state
+dist/
+.wrangler/
+test-results/
+
+# Local audit evidence and credentials must never be committed
+audit/
+*.zip
+.env*
+!.env.example
+supabase/.temp/

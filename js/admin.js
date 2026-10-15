@@ -5,23 +5,13 @@
 // Admin Panel - Supabase Only
 let currentEditId = "";
 
-// دايماً اقرأ الدور من sessionStorage - لا تعتمد على المتغير المحلي
-function getRole() { return sessionStorage.getItem('userRole') || 'VIEWER'; }
-function getUsername() { return sessionStorage.getItem('username') || 'مجهول'; }
-
-// للتوافق مع الكود القديم
-Object.defineProperty(window, 'userRole', {
-  get: () => sessionStorage.getItem('userRole') || '',
-  set: (v) => sessionStorage.setItem('userRole', v)
-});
-Object.defineProperty(window, 'currentUsername', {
-  get: () => sessionStorage.getItem('username') || '',
-  set: (v) => sessionStorage.setItem('username', v)
-});
-
-// aliases محلية تقرأ من sessionStorage دايماً
-let userRole     = { toString() { return getRole(); } };
-let currentUsername = { toString() { return getUsername(); } };
+function getRole() { return window.currentStaffRole || 'VIEWER'; }
+function getUsername() { return window.currentStaffName || 'مجهول'; }
+Object.defineProperty(window, 'userRole', {get:getRole});
+Object.defineProperty(window, 'currentUsername', {get:getUsername});
+let userRole = 'VIEWER';
+let currentUsername = '';
+let currentCodeItem = null;
 
 // Log Admin Action to Supabase
 async function logAdminAction(username, action, details) {
@@ -55,157 +45,31 @@ return false;
 
 window.sendWhatsAppNotification = sendWhatsAppNotification;
 
-// Get Smart Next Code from Database
+// Code suggestions are advisory; only assign_vehicle_code reserves a code.
+async function readUsedCodes() {
+  const rows = await window.fetchAllRows('orders', 'id, code');
+  return [...new Set(rows.map(row=>Number(row.code)).filter(n=>Number.isSafeInteger(n) && n>0 && n<=999999999))].sort((a,b)=>a-b);
+}
 async function getSmartNextCode() {
-try {
-// Get ALL codes from Supabase database (with pagination)
-let allCodes = [];
-let from = 0;
-const batchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('code')
-.not('code', 'is', null)
-.range(from, from + batchSize - 1);
-
-if (error) {
-console.error('خطأ في جلب الأكواد من Supabase:', error);
-throw error;
+  const used=await readUsedCodes();
+  const last=used.at(-1) || 100;
+  if(last>=999999999) throw new Error('لا يوجد كود تالٍ ضمن النطاق المسموح');
+  return {last,next:last+1};
 }
-
-if (batch && batch.length > 0) {
-allCodes = allCodes.concat(batch);
-from += batchSize;
-hasMore = batch.length === batchSize;
-} else {
-hasMore = false;
-}
-}
-
-
-let maxCode = 0;
-
-// Check Supabase codes
-if (allCodes.length > 0) {
-allCodes.forEach(item => {
-if (item.code) {
-const code = parseInt(item.code);
-if (!isNaN(code) && code > maxCode) {
-maxCode = code;
-}
-}
-});
-}
-
-
-// Also check localStorage (in case there are codes not synced)
-const localOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-
-localOrders.forEach(item => {
-if (item.vCode) {
-const code = parseInt(item.vCode);
-if (!isNaN(code) && code > maxCode) {
-maxCode = code;
-}
-}
-});
-
-
-// If no codes found, start from 100
-if (maxCode === 0) {
-maxCode = 100;
-}
-
-return { last: maxCode, next: maxCode + 1 };
-} catch (error) {
-console.error('Error getting next code:', error);
-return { last: 100, next: 101 };
-}
-}
-
-// Make getSmartNextCode global
-window.getSmartNextCode = getSmartNextCode;
-
-// Get random available code
+window.getSmartNextCode=getSmartNextCode;
 async function getRandomAvailableCode() {
-try {
-// Get ALL codes from Supabase (with pagination)
-let allCodes = [];
-let from = 0;
-const batchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('code')
-.not('code', 'is', null)
-.range(from, from + batchSize - 1);
-
-if (error) throw error;
-
-if (batch && batch.length > 0) {
-allCodes = allCodes.concat(batch);
-from += batchSize;
-hasMore = batch.length === batchSize;
-} else {
-hasMore = false;
+  const used=await readUsedCodes(), end=Math.max(100,used.at(-1)||0);
+  const available=end-used.length;
+  if(available===0) return (await getSmartNextCode()).next;
+  let rank=Math.floor(Math.random()*available), previous=0;
+  for(const code of [...used,end+1]) {
+    const gap=code-previous-1;
+    if(rank<gap) return previous+rank+1;
+    rank-=gap;previous=code;
+  }
+  throw new Error('تعذر اقتراح كود شاغر');
 }
-}
-
-// Get all used codes
-const usedCodes = new Set();
-if (allCodes.length > 0) {
-allCodes.forEach(item => {
-const code = parseInt(item.code);
-if (!isNaN(code)) usedCodes.add(code);
-});
-}
-
-// Also check localStorage
-const localOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-localOrders.forEach(item => {
-if (item.vCode) {
-const code = parseInt(item.vCode);
-if (!isNaN(code)) usedCodes.add(code);
-}
-});
-
-// Find max code
-let maxCode = 100;
-usedCodes.forEach(code => {
-if (code > maxCode) maxCode = code;
-});
-
-
-// Get all available codes (from 1 to maxCode)
-const availableCodes = [];
-for (let i = 1; i <= maxCode; i++) {
-if (!usedCodes.has(i)) {
-availableCodes.push(i);
-}
-}
-
-
-if (availableCodes.length === 0) {
-// No available codes, return next code
-return maxCode + 1;
-}
-
-// Return random available code
-const randomIndex = Math.floor(Math.random() * availableCodes.length);
-const randomCode = availableCodes[randomIndex];
-return randomCode;
-} catch (error) {
-console.error('Error getting random code:', error);
-return 101;
-}
-}
-
-window.getRandomAvailableCode = getRandomAvailableCode;
+window.getRandomAvailableCode=getRandomAvailableCode;
 
 // Login (SECURE VERSION)
 let countdownInterval = null;
@@ -299,7 +163,7 @@ checkActiveLockout();
 }; 
 document.getElementById('confirmLoginBtn').onclick = async () => {
 let userInput = document.getElementById('loginUsername').value.trim();
-const password = document.getElementById('loginPassword').value.trim();
+const password = document.getElementById('loginPassword').value;
 
 if (!userInput || !password) {
 alert("يرجى إدخال اسم المستخدم وكلمة المرور");
@@ -395,42 +259,11 @@ hideCaptcha();
 // Successful login
 const user = data.user;
 
-// استعلام الصلاحية الحقيقية من جدول staff أو التعرف على Eltohamy
-let detectedRole = 'SUPER';
-let displayName = 'Eltohamy';
-
-try {
-  const { data: staffMember } = await window.supabaseClient
-    .from('staff')
-    .select('role, full_name, username')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  if (staffMember && staffMember.role) {
-    detectedRole = staffMember.role;
-    if (staffMember.username) displayName = staffMember.username;
-  }
-} catch (err) {
-  console.warn('Could not fetch staff role from table:', err);
-}
-
-// Fallback role check
-if (email.toLowerCase().includes('eltohamy') || email.toLowerCase().includes('super') || email.toLowerCase() === 'admin@kafrsaqr.com') {
-  detectedRole = 'SUPER';
-}
-
-window.userRole = detectedRole;
-userRole = detectedRole;
-sessionStorage.setItem('userRole', detectedRole);
-
-window.currentUsername = displayName;
-currentUsername = displayName;
-
-// Save session
-sessionStorage.setItem('supabaseSession', JSON.stringify(data.session));
-sessionStorage.setItem('adminRole', detectedRole);
-sessionStorage.setItem('adminUsername', displayName);
-sessionStorage.setItem('username', displayName);
+const identity = await window.resolveStaffIdentity(user);
+userRole = identity.role;
+currentUsername = identity.name;
+window.applyAdminPermissions();
+window._resetSessionTimer?.();
 
 // Hide login modal
 document.getElementById('loginModal').style.display = 'none';
@@ -511,7 +344,7 @@ if (!window.adminDataLoaded) {
 }
 } catch (error) {
 console.error('خطأ في تسجيل الدخول:', error);
-alert("حدث خطأ في تسجيل الدخول");
+alert(error.message || "حدث خطأ في تسجيل الدخول");
 btn.innerText = originalText;
 btn.disabled = false;
 }
@@ -522,7 +355,15 @@ async function getSignedUrl(filePath) {
 if (!filePath) return '';
 
 // If it's already a full URL, return it
-if (filePath.startsWith('http')) return filePath;
+if (typeof filePath !== 'string') return '';
+if (/^https:\/\//i.test(filePath)) {
+  try {
+    const url = new URL(filePath);
+    return url.origin === SUPABASE_URL && url.pathname.startsWith('/storage/v1/object/') ? url.href : '';
+  } catch (_) { return ''; }
+}
+if (/^data:image\/(jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(filePath) && filePath.length<8000000) return filePath;
+if (!/^images\/[a-zA-Z0-9_-]+\.(jpe?g|png|webp)$/i.test(filePath)) return '';
 
 try {
 const { data, error } = await window.supabaseClient.storage
@@ -531,18 +372,19 @@ const { data, error } = await window.supabaseClient.storage
 
 if (error) {
 console.error('Error getting signed URL:', error);
-return filePath;
+return '';
 }
 
 return data.signedUrl;
 } catch (err) {
 console.error('Error:', err);
-return filePath;
+return '';
 }
 }
 
 // View Images
 async function viewImages(images) {
+if(!Array.isArray(images) || !images.length) return;
 const modal = document.getElementById("imgModal");
 const mainImg = document.getElementById("mainViewImg");
 const thumbContainer = document.getElementById("modalThumbnails");
@@ -593,9 +435,10 @@ const url = await getSignedUrl(images.vehicleImage);
 allImages.push({ url, label: 'صورة المركبة/الكود'});
 }
 if (images.problemImages && images.problemImages.length > 0) {
-images.problemImages.forEach((url, index) => {
-allImages.push({ url: url, label: `صورة المشكلة ${index + 1}`});
-});
+for (const [index, path] of images.problemImages.entries()) {
+  const url = await getSignedUrl(path);
+  allImages.push({url, label: `صورة المشكلة ${index + 1}`});
+}
 }
 
 if (allImages.length === 0) {
@@ -680,7 +523,8 @@ function createTableRow(item, vehicleType) {
 function openVehicleDossier(item, vehicleType) {
   const modal = document.getElementById('vehicleDossierModal');
   if (!modal) return;
-  const userRole = sessionStorage.getItem('userRole') || 'VIEWER';
+  if(!Array.isArray(item.images)) item={...item,images:[]};
+  const userRole = getRole();
   const id = item.id;
   const s = window.sanitizeText || (x => x || '');
 
@@ -783,10 +627,20 @@ function openVehicleDossier(item, vehicleType) {
     if (item.images && item.images.length > 0) {
       imgSec.style.display = 'block';
       if (imgCnt) imgCnt.textContent = `${item.images.length} ملف / صورة`;
-      imgGal.innerHTML = item.images.map((src, idx) => `<div style="position:relative;flex-shrink:0;width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid rgba(148,163,184,0.2);cursor:pointer;"onclick='window.viewImages && window.viewImages(${JSON.stringify(item.images)})'>
-          <img src="${src}"style="width:100%;height:100%;object-fit:cover;"alt="صورة ${idx+1}">
-        </div>
-      `).join('');
+      imgGal.replaceChildren();
+      item.images.forEach((path, idx) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', `عرض صورة ${idx + 1}`);
+        button.style.cssText = 'width:56px;height:56px;border:0;border-radius:8px;overflow:hidden;padding:0;cursor:pointer';
+        const image = document.createElement('img');
+        image.alt = `صورة ${idx + 1}`;
+        image.style.cssText = 'width:100%;height:100%;object-fit:cover';
+        button.append(image);
+        button.addEventListener('click', () => window.viewImages(item.images));
+        imgGal.append(button);
+        getSignedUrl(path).then(url => {if(url && image.isConnected) image.src = url;});
+      });
     } else {
       imgSec.style.display = 'none';
       imgGal.innerHTML = '';
@@ -857,7 +711,9 @@ function openVehicleDossier(item, vehicleType) {
 
     // ربط تعديل البيانات
     actGrid.querySelector('#dossierBtnEdit')?.addEventListener('click', () => {
+      currentEditId = id;
       closeDossier();
+      document.getElementById('editLicensePlate').value = item.licensePlate || '';
       document.getElementById('editOwnerName').value = item.owner || '';
       document.getElementById('editPhone').value     = item.phone || '';
       document.getElementById('editVType').value     = item.vType || (vehicleType === 'microbus'? 'ميكروباص': 'توكتوك');
@@ -881,7 +737,9 @@ function openVehicleDossier(item, vehicleType) {
         alert('المركبة مكودة بالفعل برقم: '+ item.vCode);
         return;
       }
-      const info = await window.getSmartNextCode();
+      currentCodeItem = {item, id};
+      let info;
+      try { info = await window.getSmartNextCode(); } catch(error) { alert(error.message); return; }
       document.getElementById('codeHint').innerText = `آخر كود: (${info.last}) | المقترح: (${info.next})`;
       document.getElementById('manualCodeInput').value = info.next;
       document.getElementById('codeModal').style.display = 'block';
@@ -895,6 +753,7 @@ function openVehicleDossier(item, vehicleType) {
 
     // ربط حذف السجل
     actGrid.querySelector('#dossierBtnDelete')?.addEventListener('click', async () => {
+      if(getRole()!=='SUPER') return;
       closeDossier();
       const confirmed = await window.showConfirmModal({
         title: 'حذف سجل المركبة',
@@ -904,7 +763,8 @@ function openVehicleDossier(item, vehicleType) {
         type: 'danger'
       });
       if (!confirmed) return;
-      const { error } = await window.supabaseClient.from('orders').delete().eq('id', id);
+      const { data: changedRows, error } = await window.supabaseClient.from('orders').delete().eq('id', id).select('id');
+if(!error && !changedRows?.length) throw new Error('لم يتغير أي سجل. راجع الصلاحيات وأعد المحاولة.');
       if (error) {
         window.showToast('فشل الحذف من قاعدة البيانات', 'error');
         return;
@@ -1002,209 +862,12 @@ async function updateSidebarBadges() {
 }
 window.updateSidebarBadges = updateSidebarBadges;
 
-// Upload Excel Data
-window.uploadExcelData = async function(file, vehicleType = 'ميكروباص', images = []) {
-// ── التحقق من نوع المركبة — عزل تام بين النظامين ──
-const VALID_TYPES = ['توكتوك', 'ميكروباص'];
-if (!VALID_TYPES.includes(vehicleType)) {
-  alert(`نوع المركبة غير صحيح: "${vehicleType}"\nالقيم المقبولة: توكتوك أو ميكروباص`);
-  return;
-}
-try {
-// التحقق من وجود مكتبة XLSX
-if (typeof XLSX === 'undefined') {
-alert('مكتبة XLSX غير محملة. يرجى إضافة المكتبة أولاً.');
-console.error('XLSX library not loaded');
-return;
-}
-
-const reader = new FileReader();
-reader.onload = async function(e) {
-try {
-const data = new Uint8Array(e.target.result);
-const workbook = XLSX.read(data, { type: 'array'});
-const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-
-// عرض أسماء الأعمدة المتاحة في الملف
-if (jsonData.length > 0) {
-}
-
-// Show progress
-document.getElementById('loadingSpinner').style.display = 'block';
-
-let successCount = 0;
-let errorCount = 0;
-let duplicateCount = 0;
-
-// Load existing data to check for duplicates
-let existingRecords = [];
-let from = 0;
-const checkBatchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('*')
-.range(from, from + checkBatchSize - 1);
-
-if (error) {
-console.error('Error loading existing records:', error);
-break;
-}
-
-if (batch && batch.length > 0) {
-existingRecords = existingRecords.concat(batch);
-from += checkBatchSize;
-hasMore = batch.length === checkBatchSize;
-} else {
-hasMore = false;
-}
-}
-
-// Create Sets for fast lookup
-const existingLicensePlates = new Set(
-existingRecords
-.filter(r => r.license_plate)
-.map(r => r.license_plate.trim().toLowerCase())
-);
-const existingNationalIds = new Set(
-existingRecords
-.filter(r => r.national_id)
-.map(r => r.national_id.trim())
-);
-
-
-// Convert images to base64 if provided
-let imageDataArray = [];
-if (images.length > 0) {
-for (const imgFile of images) {
-try {
-const base64 = await new Promise((resolve, reject) => {
-const imgReader = new FileReader();
-imgReader.onload = () => resolve(imgReader.result);
-imgReader.onerror = reject;
-imgReader.readAsDataURL(imgFile);
-});
-imageDataArray.push(base64);
-} catch (err) {
-console.error('Error converting image:', err);
-}
-}
-}
-
-for (const row of jsonData) {
-try {
-// Extract data first - دعم أسماء أعمدة متعددة
-const licensePlate = (row['رقم السيارة'] || row['رقم اللوحة'] || row['اللوحة'] || row['licensePlate'] || row['plate'] || '').toString().trim();
-const nationalId = (row['الرقم القومي'] || row['رقم قومي'] || row['القومي'] || row['nationalId'] || row['national_id'] || '').toString().trim();
-const ownerName = (row['إسم المالك'] || row['اسم المالك'] || row['الاسم'] || row['name'] || row['owner'] || '').toString().trim();
-
-// Check for duplicates
-let isDuplicate = false;
-let duplicateReason = '';
-
-if (vehicleType === 'ميكروباص'&& licensePlate) {
-if (existingLicensePlates.has(licensePlate.toLowerCase())) {
-isDuplicate = true;
-duplicateReason = `رقم السيارة ${licensePlate} موجود بالفعل`;
-}
-} else if (vehicleType === 'توكتوك'&& nationalId) {
-if (existingNationalIds.has(nationalId)) {
-isDuplicate = true;
-duplicateReason = `الرقم القومي ${nationalId} موجود بالفعل`;
-}
-}
-
-if (isDuplicate) {
-console.warn(`تكرار: ${duplicateReason} - ${ownerName}`);
-duplicateCount++;
-continue; // Skip duplicate
-}
-
-// Generate ref_number
-const refNumber = 'REF-'+ Date.now() + '-'+ Math.random().toString(36).substr(2, 9).toUpperCase();
-
-// تحويل البيانات من Excel - دعم أعمدة متعددة
-const orderData = {
-owner_name: ownerName,
-phone: String(row['الهاتف'] || row['رقم الهاتف'] || row['التليفون'] || row['phone'] || row['mobile'] || ''),
-vehicle_type: vehicleType, // استخدام نوع المركبة المختار
-license_plate: licensePlate,
-address: row['الخط'] || row['العنوان'] || row['address'] || row['line'] || '',
-vehicle_year: String(row['موديل السنة'] || row['الموديل'] || row['السنة'] || row['year'] || row['model'] || ''),
-chassis_number: String(row['رقم الشاسية'] || row['الشاسيه'] || row['شاسيه'] || row['chassis'] || row['chassis_number'] || ''),
-motor_number: String(row['رقم الموتور'] || row['الموتور'] || row['موتور'] || row['motor'] || row['motor_number'] || ''),
-passenger_capacity: String(row['عدد الركاب'] || row['السعة'] || row['capacity'] || row['passenger_capacity'] || ''),
-renewal_date: String(row['تاريخ التجديد'] || row['التاريخ'] || row['التجديد'] || row['renewal_date'] || row['date'] || ''),
-line: row['الخط'] || row['إسم الخط'] || row['خط السير'] || row['line'] || '',
-ref_number: refNumber,
-status: 'completed',
-submitted_at: Date.now(),
-images: imageDataArray
-};
-
-// التحقق من البيانات الأساسية
-if (!orderData.owner_name) {
-console.warn('سجل غير مكتمل (اسم المالك مفقود):', row);
-errorCount++;
-continue;
-}
-
-// حفظ في قاعدة البيانات
-const { error } = await window.supabaseClient
-.from('orders')
-.insert([orderData]);
-
-if (error) {
-console.error('خطأ في حفظ السجل:', error);
-console.error('بيانات السجل الذي فشل:', orderData);
-errorCount++;
-} else {
-successCount++;
-// Add to existing sets to prevent duplicates within same file
-if (licensePlate) existingLicensePlates.add(licensePlate.toLowerCase());
-if (nationalId) existingNationalIds.add(nationalId);
-}
-} catch (rowError) {
-console.error('خطأ في معالجة السجل:', rowError);
-console.error('الصف الذي فشل:', row);
-errorCount++;
-}
-}
-
-document.getElementById('loadingSpinner').style.display = 'none';
-
-alert(`تم رفع ${successCount} سجل ${vehicleType} بنجاح${imageDataArray.length > 0 ? 'مع '+ imageDataArray.length + 'صورة': ''}\n${duplicateCount > 0 ? `تم تجاهل ${duplicateCount} سجل مكرر\n`: ''}${errorCount > 0 ? `فشل ${errorCount} سجل`: ''}`);
-
-// إعادة تحميل البيانات
-await loadAdminData();
-} catch (error) {
-document.getElementById('loadingSpinner').style.display = 'none';
-console.error('خطأ في قراءة ملف Excel:', error);
-alert('حدث خطأ في قراءة ملف Excel');
-}
-};
-
-reader.readAsArrayBuffer(file);
-} catch (error) {
-console.error('خطأ في رفع الملف:', error);
-alert('حدث خطأ في رفع الملف');
-}
-};
-
 // Load Complaints
 async function loadComplaints() {
 
 try {
-const { data: complaints, error } = await window.supabaseClient
-.from('complaints')
-.select('*')
-.order('submitted_at', { ascending: false });
-
-if (error) throw error;
+const complaints = await window.fetchAllRows('complaints');
+complaints.sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at));
 
 const tableBody = document.getElementById('compTableBody');
 tableBody.innerHTML = '';
@@ -1285,6 +948,7 @@ id: complaint.id
 const deleteBtn = tr.querySelector('.btn-delete-complaint');
 if (deleteBtn) {
 deleteBtn.onclick = async () => {
+if(getRole()!=='SUPER') return;
 const delComplaintConfirmed = await window.showConfirmModal({
   title: 'حذف الشكوى',
   message: `المقدم من: ${complaint.owner_name} — النوع: ${complaint.complaint_type}. هذا الإجراء لا يمكن التراجع عنه.`,
@@ -1299,10 +963,11 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-const { error } = await window.supabaseClient
+const { data: deletedRows, error } = await window.supabaseClient
 .from('complaints')
 .delete()
-.eq('id', complaint.id);
+.eq('id', complaint.id).select('id');
+if(!error && !deletedRows?.length) throw new Error('لم يُحذف السجل. راجع الصلاحيات وأعد المحاولة.');
 
 if (error) {
 console.error('خطأ في حذف الشكوى:', error);
@@ -1392,13 +1057,14 @@ showOrdersBtn.onclick = () => {
 const confirmStickerYesBtn = document.getElementById('confirmStickerYesBtn');
 if (confirmStickerYesBtn) {
 confirmStickerYesBtn.onclick = async () => {
+if(!['SUPER','ADMIN'].includes(getRole())) return;
 if (!window.currentStatusChangeItem) return;
 
 const { item, id } = window.currentStatusChangeItem;
 const note = document.getElementById('statusNote').value.trim();
 const sendWhatsApp = document.getElementById('sendWhatsAppStatus').checked;
-const userRole = window.userRole || sessionStorage.getItem('userRole') || 'ADMIN';
-const currentUsername = window.currentUsername || sessionStorage.getItem('username') || 'مجهول';
+const userRole = getRole();
+const currentUsername = getUsername();
 
 const newStatus = 'sticker_applied';
 
@@ -1411,12 +1077,13 @@ document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
 // Update only status (status_history column doesn't exist in database)
-const { error: statusError } = await window.supabaseClient
+const { data: changedRows, error: statusError } = await window.supabaseClient
 .from('orders')
 .update({
 status: newStatus
 })
-.eq('id', id);
+.eq('id', id).select('id');
+if(!statusError && !changedRows?.length) throw new Error('لم يتغير أي سجل. راجع الصلاحيات وأعد المحاولة.');
 
 if (statusError) {
 console.error('خطأ في تغيير الحالة:', statusError);
@@ -1457,12 +1124,13 @@ alert(`حدث خطأ: ${error.message}`);
 const confirmStickerNoBtn = document.getElementById('confirmStickerNoBtn');
 if (confirmStickerNoBtn) {
 confirmStickerNoBtn.onclick = async () => {
+if(!['SUPER','ADMIN'].includes(getRole())) return;
 if (!window.currentStatusChangeItem) return;
 
 const { item, id } = window.currentStatusChangeItem;
 const note = document.getElementById('statusNote').value.trim();
-const userRole = window.userRole || sessionStorage.getItem('userRole') || 'ADMIN';
-const currentUsername = window.currentUsername || sessionStorage.getItem('username') || 'مجهول';
+const userRole = getRole();
+const currentUsername = getUsername();
 
 // إرجاع الحالة إلى "تم التكويد"أو "pending"حسب وجود كود
 const newStatus = item.vCode ? 'coded': 'pending';
@@ -1487,12 +1155,13 @@ document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
 // Update only status (status_history column doesn't exist in database)
-const { error: statusError } = await window.supabaseClient
+const { data: changedRows, error: statusError } = await window.supabaseClient
 .from('orders')
 .update({
 status: newStatus
 })
-.eq('id', id);
+.eq('id', id).select('id');
+if(!statusError && !changedRows?.length) throw new Error('لم يتغير أي سجل. راجع الصلاحيات وأعد المحاولة.');
 
 if (statusError) {
 console.error('خطأ في تغيير الحالة:', statusError);
@@ -1538,6 +1207,7 @@ showComplaintsBtn.onclick = () => {
 const confirmComplaintReplyBtn = document.getElementById('confirmComplaintReplyBtn');
 if (confirmComplaintReplyBtn) {
 confirmComplaintReplyBtn.onclick = async () => {
+if(!['SUPER','ADMIN'].includes(getRole())) return;
 if (!window.currentComplaintReply) return;
 
 const { item, id } = window.currentComplaintReply;
@@ -1558,12 +1228,13 @@ return;
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-const { error } = await window.supabaseClient
+const { data: changedRows, error } = await window.supabaseClient
 .from('complaints')
 .update({
 reply: reply,
 status: 'replied'})
-.eq('id', id);
+.eq('id', id).select('id');
+if(!error && !changedRows?.length) throw new Error('لم يتغير أي سجل. راجع الصلاحيات وأعد المحاولة.');
 
 if (error) {
 console.error('خطأ في تحديث الشكوى:', error);
@@ -1623,29 +1294,7 @@ async function showAvailableCodes() {
 document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
-  // جلب كل الأكواد من Supabase مباشرة
-  let allCodes = [];
-  let from = 0;
-  const batchSize = 1000;
-  let hasMore = true;
-
-  while (hasMore) {
-    const { data: batch, error } = await window.supabaseClient
-      .from('orders')
-      .select('code, owner_name, phone, national_id')
-      .not('code', 'is', null)
-      .neq('code', '')
-      .range(from, from + batchSize - 1);
-
-    if (error) throw error;
-    if (batch && batch.length > 0) {
-      allCodes = allCodes.concat(batch);
-      from += batchSize;
-      hasMore = batch.length === batchSize;
-    } else {
-      hasMore = false;
-    }
-  }
+  const allCodes=await window.fetchAllRows('orders','id, code, owner_name, phone, national_id');
 
   const usedCodes = new Set();
   const usedCodesDetails = {};
@@ -1654,9 +1303,9 @@ try {
   allCodes.forEach(item => {
     if (!item.code) return;
     const codeNum = parseInt(item.code);
-    if (isNaN(codeNum)) return;
-    usedCodes.add(item.code.trim());
-    usedCodesDetails[item.code.trim()] = {
+    if (!Number.isSafeInteger(codeNum) || codeNum<1 || codeNum>999999999) return;
+    usedCodes.add(String(codeNum));
+    usedCodesDetails[String(codeNum)] = {
       owner: item.owner_name || 'غير محدد',
       phone: item.phone || 'غير محدد',
       nationalId: item.national_id || 'غير محدد'};
@@ -1665,7 +1314,7 @@ try {
 
   const codeEnd = maxUsedCode > 0 ? maxUsedCode : 100;
   const availableCodes = [];
-  for (let i = 1; i <= codeEnd; i++) {
+  for (let i = 1; i <= codeEnd && availableCodes.length < 200; i++) {
     if (!usedCodes.has(i.toString())) availableCodes.push(i.toString());
   }
 
@@ -1674,7 +1323,7 @@ try {
   window.usedCodesDetails = usedCodesDetails;
 
   document.getElementById('totalCodesCount').textContent = `${codeEnd} (آخر كود: ${maxUsedCode})`;
-  document.getElementById('availableCodesCount').textContent = availableCodes.length;
+  document.getElementById('availableCodesCount').textContent = `${codeEnd-usedCodes.size} (أول 200 كود بالأسفل)`;
   document.getElementById('usedCodesCount').textContent = usedCodes.size;
 
   const codesList = document.getElementById('availableCodesList');
@@ -1887,12 +1536,8 @@ window.showActivityLog = showActivityLog;
 async function loadAdminLogs() {
 
 try {
-const { data: logs, error } = await window.supabaseClient
-.from('admin_logs')
-.select('*')
-.order('logged_at', { ascending: false });
-
-if (error) throw error;
+const logs = await window.fetchAllRows('supervisor_logs');
+logs.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
 
 const tableBody = document.getElementById('adminLogsTableBody');
 tableBody.innerHTML = '';
@@ -1903,8 +1548,8 @@ return;
 }
 
 logs.forEach(item => {
-const roleText = item.role === 'SUPER'? 'مدير عام': item.role === 'ADMIN'? 'مشرف': 'عرض فقط';
-const roleStyle = item.role === 'SUPER'? 'background: rgba(239, 68, 68, 0.15); color: #F87171;' : item.role === 'ADMIN'? 'background: rgba(16, 185, 129, 0.15); color: #34D399;' : 'background: rgba(148, 163, 184, 0.15); color: #94A3B8;';
+const roleText = item.user_role === 'SUPER'? 'مدير عام': item.user_role === 'ADMIN'? 'مشرف': 'عرض فقط';
+const roleStyle = item.user_role === 'SUPER'? 'background: rgba(239, 68, 68, 0.15); color: #F87171;' : item.user_role === 'ADMIN'? 'background: rgba(16, 185, 129, 0.15); color: #34D399;' : 'background: rgba(148, 163, 184, 0.15); color: #94A3B8;';
 
 const tr = document.createElement('tr');
 tr.innerHTML = `<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight:bold;">
@@ -1915,8 +1560,8 @@ ${window.sanitizeText(item.username)}
 </td>
 <td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight:600; color: var(--text);">${window.sanitizeText(item.action)}</td>
 <td style="padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--text2);">${window.sanitizeText(item.details)}</td>
-<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-size:0.85rem; color: var(--text3);">${window.formatDateTime(item.logged_at)}</td>
-<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-family: monospace; color: var(--text3);">${item.ip_address || 'N/A'}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-size:0.85rem; color: var(--text3);">${window.formatDateTime(item.timestamp)}</td>
+<td style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-family: monospace; color: var(--text3);">${window.sanitizeText(item.ip_address || 'N/A')}</td>
 `;
 tableBody.appendChild(tr);
 });
@@ -1932,6 +1577,7 @@ document.getElementById('adminLogsTableBody').innerHTML = '<tr><td colspan="5"st
   const exportExcelBtn = document.getElementById('exportExcelBtn');
   if (exportExcelBtn) {
   exportExcelBtn.onclick = async () => {
+if(getRole()!=='SUPER') return;
 const exportConfirmed = await window.showConfirmModal({
   title: 'تصدير البيانات إلى Excel',
   message: 'سيتم تصدير جميع بيانات المركبات والشكاوى. قد يستغرق الأمر بضع ثوانٍ.',
@@ -1949,37 +1595,8 @@ loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><d
 document.body.appendChild(loadingDiv);
 
 try {
-// Load all vehicles data from Supabase
-let allVehicles = [];
-let from = 0;
-const batchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('*')
-.order('submitted_at', { ascending: false })
-.range(from, from + batchSize - 1);
-
-if (error) throw error;
-
-if (batch && batch.length > 0) {
-allVehicles = allVehicles.concat(batch);
-from += batchSize;
-hasMore = batch.length === batchSize;
-} else {
-hasMore = false;
-}
-}
-
-// Load all complaints data
-const { data: allComplaints, error: compError } = await window.supabaseClient
-.from('complaints')
-.select('*')
-.order('submitted_at', { ascending: false });
-
-if (compError) throw compError;
+const allVehicles = await window.fetchAllRows('orders');
+const allComplaints = await window.fetchAllRows('complaints');
 
 // Create workbook
 const wb = XLSX.utils.book_new();
@@ -2002,14 +1619,14 @@ const date = new Date(vehicle.submitted_at);
 const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} - ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getHours() >= 12 ? 'م': 'ص'}`;
 
 // Status text
-const statusText = vehicle.status === 'coded'? 'تم التكويد': 'قيد الانتظار';
+const statusText = window.getStatusDisplay(vehicle.status).text;
 
 vehiclesData.push([
 vehicle.owner_name || '-',
 vehicle.national_id || '-',
 vehicle.phone || '-',
 vehicle.vehicle_type || '-',
-vehicle.plate_number || '-',
+vehicle.license_plate || '-',
 vehicle.code || '-',
 statusText,
 formattedDate
@@ -2101,144 +1718,17 @@ XLSX.utils.book_append_sheet(wb, complaintsSheet, 'الشكاوى');
 const fileName = `منظومة_كفر_صقر_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`;
 XLSX.writeFile(wb, fileName);
 
-document.body.removeChild(loadingDiv);
-alert(`تم تصدير البيانات بنجاح!\n\n الإحصائيات:\n• ${totalVehicles} مركبة\n• ${totalComplaints} شكوى\n\n الملف: ${fileName}`);
+loadingDiv.remove();
+alert(`تم تصدير البيانات بنجاح!\n\n الإحصائيات:\n• ${allVehicles.length} مركبة\n• ${allComplaints.length} شكوى\n\n الملف: ${fileName}`);
 
 } catch (error) {
-document.body.removeChild(loadingDiv);
+loadingDiv.remove();
 console.error('خطأ في التصدير:', error);
 alert('حدث خطأ أثناء تصدير البيانات: '+ error.message);
 }
 };
   } // end if exportExcelBtn
 } // end block
-
-// Clean Duplicates Main Button (same as cleanDuplicatesBtn)
-const cleanDuplicatesMainBtn = document.getElementById('cleanDuplicatesMainBtn');
-if (cleanDuplicatesMainBtn) {
-cleanDuplicatesMainBtn.onclick = async () => {
-const cleanMainConfirmed = await window.showConfirmModal({
-  title: 'حذف السجلات المكررة',
-  message: 'سيتم حذف التكرار من قاعدة البيانات مع الاحتفاظ بأحدث سجل فقط. هذا الإجراء لا يمكن التراجع عنه.',
-  confirmText: 'حذف المكررات',
-  cancelText: 'إلغاء',
-  type: 'danger'
-});
-if (!cleanMainConfirmed) {
-return;
-}
-
-const loadingDiv = document.createElement('div');
-loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
-loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري حذف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
-document.body.appendChild(loadingDiv);
-
-try {
-// Load all data from Supabase (with pagination)
-let allOrders = [];
-let from = 0;
-const batchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('*')
-.order('submitted_at', { ascending: false })
-.range(from, from + batchSize - 1);
-
-if (error) throw error;
-
-if (batch && batch.length > 0) {
-allOrders = allOrders.concat(batch);
-from += batchSize;
-hasMore = batch.length === batchSize;
-} else {
-hasMore = false;
-}
-}
-
-
-// Find duplicates by national_id
-const seenNIDs = new Map();
-const duplicateIds = [];
-
-allOrders.forEach(order => {
-if (!order.national_id) return;
-
-if (seenNIDs.has(order.national_id)) {
-const existing = seenNIDs.get(order.national_id);
-const existingDate = new Date(existing.submitted_at || 0);
-const currentDate = new Date(order.submitted_at || 0);
-
-if (currentDate > existingDate) {
-duplicateIds.push(existing.id);
-seenNIDs.set(order.national_id, order);
-} else {
-duplicateIds.push(order.id);
-}
-} else {
-seenNIDs.set(order.national_id, order);
-}
-});
-
-
-if (duplicateIds.length === 0) {
-loadingDiv.remove();
-alert('لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
-return;
-}
-
-// Delete duplicates from Supabase
-const deleteBatchSize = 50;
-let deletedCount = 0;
-
-for (let i = 0; i < duplicateIds.length; i += deleteBatchSize) {
-const batch = duplicateIds.slice(i, i + deleteBatchSize);
-const { error: deleteError } = await window.supabaseClient
-.from('orders')
-.delete()
-.in('id', batch);
-
-if (deleteError) {
-console.error('خطأ في حذف دفعة:', deleteError);
-} else {
-deletedCount += batch.length;
-}
-}
-
-// Clean LocalStorage
-const uniqueOrders = Array.from(seenNIDs.values()).map(order => ({
-id: order.id,
-owner: order.owner_name,
-nationalId: order.national_id,
-phone: order.phone,
-address: order.address,
-vType: order.vehicle_type,
-vCode: order.code || '',
-vYear: order.vehicle_year,
-chassisNumber: order.chassis_number,
-motorNumber: order.motor_number,
-refNumber: order.ref_number,
-timestamp: order.submitted_at,
-status: order.status,
-images: order.images || []
-}));
-
-// Data stored securely in Database
-
-loadingDiv.remove();
-alert(`تم حذف السجلات المكررة بنجاح!\n\n تم حذف: ${deletedCount} سجل مكرر\n تم الاحتفاظ بـ: ${uniqueOrders.length} سجل فريد\n\n تم التنظيف من قاعدة البيانات`);
-
-// Reload data
-await loadAdminData();
-} catch (error) {
-loadingDiv.remove();
-alert('حدث خطأ أثناء حذف المكرر: '+ error.message);
-console.error('Clean duplicates error:', error);
-}
-};
-}
 
 // Search - استخدام نظام Pagination الجديد
 // تم نقل دالة البحث إلى نظام Pagination
@@ -2248,709 +1738,6 @@ window.viewImages = viewImages;
 
 // uploadLocalToSupabaseBtn — removed (LocalStorage deprecated, data is in Supabase only)
 
-// Cleanup Duplicates Button Handler
-if (document.getElementById('cleanupDuplicatesBtn')) {
-document.getElementById('cleanupDuplicatesBtn').onclick = async () => {
-const cleanupConfirmed = await window.showConfirmModal({
-  title: 'تنظيف البيانات المتكررة',
-  message: 'سيتم حذف السجلات المتكررة من قاعدة البيانات مع الاحتفاظ بأول سجل لكل رقم قومي. هذه العملية لا يمكن التراجع عنها.',
-  confirmText: 'تنظيف الآن',
-  cancelText: 'إلغاء',
-  type: 'danger'
-});
-if (!cleanupConfirmed) {
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-
-try {
-
-// Step 1: Load all data from Supabase
-const { data: allSupabaseOrders, error: loadError } = await window.supabaseClient
-.from('orders')
-.select('*');
-
-if (loadError) throw loadError;
-
-
-// Step 2: Find duplicates by nationalId and refNumber
-const seenNIDs = new Map(); // nationalId -> first record
-const seenRefs = new Map(); // refNumber -> first record
-const duplicatesToDelete = [];
-
-allSupabaseOrders.forEach(order => {
-let isDuplicate = false;
-
-// Check nationalId duplicate
-if (order.nationalId) {
-if (seenNIDs.has(order.nationalId)) {
-isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم قومي مكرر: ${order.nationalId}`});
-} else {
-seenNIDs.set(order.nationalId, order);
-}
-}
-
-// Check refNumber duplicate (only if not already marked as duplicate)
-if (!isDuplicate && order.refNumber) {
-if (seenRefs.has(order.refNumber)) {
-isDuplicate = true;
-duplicatesToDelete.push({ id: order.id, reason: `رقم مرجعي مكرر: ${order.refNumber}`});
-} else {
-seenRefs.set(order.refNumber, order);
-}
-}
-});
-
-
-if (duplicatesToDelete.length === 0) {
-alert('لا توجد بيانات متكررة!\n\nقاعدة البيانات نظيفة بالفعل.'); 
-document.getElementById('loadingSpinner').style.display = 'none';
-return;
-}
-
-// Step 3: Delete duplicates from Database
-let deletedCount = 0;
-for (const dup of duplicatesToDelete) {
-try {
-const { error } = await window.supabaseClient
-.from('orders')
-.delete()
-.eq('id', dup.id);
-if (error) throw error;
-deletedCount++;
-} catch (e) {
-console.error(`فشل حذف ${dup.id}:`, e);
-}
-}
-
-// Step 4: Log the action
-await logAdminAction(currentUsername, 'تنظيف البيانات المتكررة', `تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات`); 
-document.getElementById('loadingSpinner').style.display = 'none';
-alert(`تم تنظيف البيانات بنجاح!\n\n الإحصائيات:\n تم حذف ${deletedCount} سجل مكرر من قاعدة البيانات\n تم تنظيف LocalStorage\n\n سيتم تحديث الصفحة الآن...`);
-location.reload();
-
-} catch (error) {
-console.error('خطأ في تنظيف البيانات:', error);
-document.getElementById('loadingSpinner').style.display = 'none';
-alert('حدث خطأ أثناء تنظيف البيانات:\n'+ error.message);
-}
-};
-}
-
-// Download Template
-const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
-if (downloadTemplateBtn) {
-downloadTemplateBtn.onclick = () => {
-const templateData = [
-['الاسم الرباعي', 'الرقم القومي', 'رقم الهاتف', 'نوع المركبة', 'موديل السنة', 'اللون', 'العنوان', 'كود المركبة'],
-['محمد أحمد علي حسن', '29501011234567', '01012345678', 'توكتوك', '2020', 'أحمر', 'كفر صقر - حي النصر', ''],
-['فاطمة محمود سعيد إبراهيم', '29601021234568', '01098765432', 'موتوسيكل', '2021', 'أسود', 'البوها - شارع الجلاء', '']
-];
-
-const ws = XLSX.utils.aoa_to_sheet(templateData);
-const wb = XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb, ws, 'نموذج البيانات');
-XLSX.writeFile(wb, 'نموذج_استيراد_المركبات.xlsx');
-};
-}
-
-// Clean Duplicates Button
-const cleanDuplicatesBtn = document.getElementById('cleanDuplicatesBtn');
-if (cleanDuplicatesBtn) {
-cleanDuplicatesBtn.onclick = async () => {
-const dupCleanConfirmed = await window.showConfirmModal({
-  title: 'تنظيف السجلات المكررة',
-  message: 'سيتم حذف التكرار من قاعدة البيانات والاحتفاظ بأحدث سجل فقط.',
-  confirmText: 'تنظيف',
-  cancelText: 'إلغاء',
-  type: 'danger'
-});
-if (!dupCleanConfirmed) {
-return;
-}
-
-const loadingDiv = document.createElement('div');
-loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;text-align:center;';
-loadingDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:15px;"></div><div style="font-size:1.2rem;color:#333;font-weight:600;">جاري تنظيف السجلات المكررة...</div><div style="margin-top:10px;color:#666;">يرجى الانتظار</div>';
-document.body.appendChild(loadingDiv);
-
-try {
-// 1. Load all data from Supabase (with pagination for large datasets)
-let allOrders = [];
-let from = 0;
-const batchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('*')
-.order('submitted_at', { ascending: false })
-.range(from, from + batchSize - 1);
-
-if (error) throw error;
-
-if (batch && batch.length > 0) {
-allOrders = allOrders.concat(batch);
-from += batchSize;
-hasMore = batch.length === batchSize;
-} else {
-hasMore = false;
-}
-}
-
-
-// 2. Find duplicates by national_id
-const seenNIDs = new Map(); // national_id -> latest record
-const duplicateIds = []; // IDs to delete
-
-allOrders.forEach(order => {
-if (!order.national_id) return; // Skip records without national_id
-
-if (seenNIDs.has(order.national_id)) {
-// Found duplicate - keep the newer one
-const existing = seenNIDs.get(order.national_id);
-const existingDate = new Date(existing.submitted_at || 0);
-const currentDate = new Date(order.submitted_at || 0);
-
-if (currentDate > existingDate) {
-// Current is newer - delete existing, keep current
-duplicateIds.push(existing.id);
-seenNIDs.set(order.national_id, order);
-} else {
-// Existing is newer - delete current
-duplicateIds.push(order.id);
-}
-} else {
-// First occurrence - keep it
-seenNIDs.set(order.national_id, order);
-}
-});
-
-
-if (duplicateIds.length === 0) {
-loadingDiv.remove();
-alert('لا توجد سجلات مكررة!\n\nجميع السجلات فريدة.');
-return;
-}
-
-// 3. Delete duplicates from Supabase in batches
-const deleteBatchSize = 50;
-let deletedCount = 0;
-
-for (let i = 0; i < duplicateIds.length; i += deleteBatchSize) {
-const batch = duplicateIds.slice(i, i + deleteBatchSize);
-const { error: deleteError } = await window.supabaseClient
-.from('orders')
-.delete()
-.in('id', batch);
-
-if (deleteError) {
-console.error('خطأ في حذف دفعة:', deleteError);
-} else {
-deletedCount += batch.length;
-}
-}
-
-// 4. Clean LocalStorage
-const uniqueOrders = Array.from(seenNIDs.values()).map(order => ({
-id: order.id,
-owner: order.owner_name,
-nationalId: order.national_id,
-phone: order.phone,
-address: order.address,
-vType: order.vehicle_type,
-vCode: order.code || '',
-vYear: order.vehicle_year,
-chassisNumber: order.chassis_number,
-motorNumber: order.motor_number,
-refNumber: order.ref_number,
-timestamp: order.submitted_at,
-status: order.status,
-images: order.images || []
-}));
-
-// Data stored securely in Database
-
-// 5. Reload data
-loadingDiv.remove();
-alert(`تم تنظيف السجلات المكررة بنجاح!\n\n الإحصائيات:\n• تم حذف: ${deletedCount} سجل مكرر\n• المتبقي: ${uniqueOrders.length} سجل فريد\n\nسيتم تحديث الجدول الآن...`);
-await loadAdminData();
-
-} catch (error) {
-loadingDiv.remove();
-console.error('خطأ في تنظيف السجلات:', error);
-alert(`حدث خطأ أثناء تنظيف السجلات:\n\n${error.message}`);
-}
-};
-}
-
-let importedData = [];
-
-// Read Excel File (OLD CODE - Element doesn't exist, using new import modal instead)
-const bulkImportFileElement = document.getElementById('bulkImportFile');
-if (bulkImportFileElement) {
-bulkImportFileElement.onchange = async (e) => {
-const file = e.target.files[0];
-if (!file) return;
-
-const reader = new FileReader();
-reader.onload = (event) => {
-try {
-const data = new Uint8Array(event.target.result);
-const workbook = XLSX.read(data, { type: 'array'});
-const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
-if (jsonData.length < 2) {
-alert('الملف فارغ أو لا يحتوي على بيانات');
-return;
-}
-
-
-// Try Fixed Columns First (B-H format)
-let useFixedColumns = false;
-const columnMap = {};
-let dataStartRow = 1; // Default: data starts from row 1
-
-// الترتيب الثابت للأعمدة (نفس import_excel.html):
-// A=0 (رقم تسلسلي أو فاضي)
-// B=1 (الكود), C=2 (الاسم), D=3 (الرقم القومي), E=4 (العنوان), 
-// F=5 (الشاسيه), G=6 (الموتور), H=7 (رقم التليفون)
-
-// Check if data follows fixed column format
-// Look for actual data (skip header rows)
-let foundFixedFormat = false;
-for (let i = 1; i < Math.min(jsonData.length, 5); i++) {
-if (jsonData[i] && jsonData[i].length >= 4) {
-const colC = jsonData[i][2]; // Column C - الاسم
-const colD = jsonData[i][3]; // Column D - الرقم القومي
-
-// Skip if row looks like header
-const colCStr = String(colC || '').trim();
-const colDStr = String(colD || '').trim();
-if (colCStr.includes('اسم') || colCStr.includes('الاسم') || 
-    colDStr.includes('قومي') || colDStr.includes('الرقم') ||
-    colCStr.includes('name') || colDStr.includes('national')) {
-continue; // Skip header row
-}
-
-// Check if C has name and D has national ID
-if (colC && colD) {
-const nameStr = String(colC).trim();
-const nidStr = String(colD).replace(/[^0-9]/g, '');
-
-// If C looks like a name (length > 2) and D has digits
-if (nameStr.length > 2 && nidStr.length >= 10) {
-foundFixedFormat = true;
-dataStartRow = i;
-break;
-}
-}
-}
-}
-
-if (foundFixedFormat) {
-useFixedColumns = true;
-}
-
-if (useFixedColumns) {
-// Fixed columns: B=1, C=2, D=3, E=4, F=5, G=6, H=7
-// نفس الترتيب في import_excel.html
-columnMap.vCode = 1;        // B - الكود
-columnMap.owner = 2;        // C - الاسم
-columnMap.nationalId = 3;   // D - الرقم القومي
-columnMap.address = 4;      // E - العنوان
-columnMap.chassisNumber = 5; // F - الشاسيه
-columnMap.motorNumber = 6;   // G - الموتور
-columnMap.phone = 7;         // H - رقم التليفون
-} else {
-// Smart Column Detection
-const headers = jsonData[0].map(h => String(h).toLowerCase().trim());
-
-const patterns = {
-owner: ['اسم', 'الاسم', 'المالك', 'name', 'owner'],
-nationalId: ['رقم قومي', 'القومي', 'بطاقة', 'national', 'id'],
-phone: ['هاتف', 'تليفون', 'موبايل', 'phone', 'mobile'],
-vType: ['نوع', 'المركبة', 'type', 'vehicle'],
-vYear: ['موديل', 'سنة', 'year', 'model'],
-vColor: ['لون', 'color'],
-address: ['عنوان', 'address', 'العنوان'],
-vCode: ['كود', 'code', 'الكود'],
-chassisNumber: ['شاسيه', 'chassis', 'الشاسيه'],
-motorNumber: ['موتور', 'motor', 'الموتور']
-};
-
-// Match columns automatically
-for (let i = 0; i < headers.length; i++) {
-const header = headers[i];
-for (const [key, keywords] of Object.entries(patterns)) {
-if (keywords.some(kw => header.includes(kw))) {
-columnMap[key] = i;
-break;
-}
-}
-}
-
-}
-
-// Check required columns
-if (columnMap.owner === undefined || columnMap.nationalId === undefined) {
-alert('لم يتم العثور على الأعمدة الأساسية (الاسم والرقم القومي)\n\nتأكد من:\n• استخدام الترتيب الصحيح للأعمدة (B-H)\n• أو وضع أسماء الأعمدة في الصف الأول');
-return;
-}
-
-importedData = [];
-const preview = document.getElementById('importPreview');
-
-// Determine starting row for data processing
-const startRow = useFixedColumns ? dataStartRow : 1;
-
-let previewHTML = `<h4 style="color: #8e44ad; margin-top: 0;">معاينة البيانات المستوردة (${jsonData.length - startRow} سجل):</h4>
-<p style="color: #666; margin-bottom: 15px;"> ${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)': 'تم اكتشاف الأعمدة تلقائياً'}</p>
-<table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-<thead>
-<tr style="background: #8e44ad; color: white;">
-<th style="padding: 8px; border: 1px solid #ddd;">#</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الكود</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الاسم</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الرقم القومي</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الهاتف</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الشاسيه</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الموتور</th>
-<th style="padding: 8px; border: 1px solid #ddd;">الحالة</th>
-</tr>
-</thead>
-<tbody>`;
-
-for (let i = startRow; i < jsonData.length; i++) {
-const row = jsonData[i];
-if (!row || row.length === 0) continue;
-
-// Skip empty rows (check if any cell has data)
-const hasData = row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== '');
-if (!hasData) continue;
-
-// Skip if no owner or national ID
-if (!row[columnMap.owner] || !row[columnMap.nationalId]) continue;
-
-const record = {
-owner: String(row[columnMap.owner] || '').trim(),
-nationalId: String(row[columnMap.nationalId] || '').replace(/[^0-9]/g, ''),
-phone: String(row[columnMap.phone] || '').replace(/[^0-9]/g, ''),
-vType: row[columnMap.vType] || 'توكتوك',
-vYear: row[columnMap.vYear] || new Date().getFullYear(),
-vColor: row[columnMap.vColor] || '',
-address: row[columnMap.address] || '',
-vCode: row[columnMap.vCode] ? String(row[columnMap.vCode]).trim() : '',
-chassisNumber: row[columnMap.chassisNumber] ? String(row[columnMap.chassisNumber]).trim() : '',
-motorNumber: row[columnMap.motorNumber] ? String(row[columnMap.motorNumber]).trim() : ''};
-
-// Validation (more lenient like import_excel.html)
-const isValid = record.owner.length >= 3 && record.nationalId.length >= 10 && (!record.phone || record.phone.length === 11);
-importedData.push(record);
-
-const rowNumber = i - startRow + 1; // Calculate correct row number
-previewHTML += `<tr style="background: ${isValid ? 'rgba(39, 174, 96, 0.1)': 'rgba(231, 76, 60, 0.1)'};">
-<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${rowNumber}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${record.vCode ? '#3498db': '#999'};">${record.vCode || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd;">${record.owner}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">${record.nationalId}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace;">${record.phone || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.chassisNumber ? '#27ae60': '#999'};">${record.chassisNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: ${record.motorNumber ? '#27ae60': '#999'};">${record.motorNumber || '-'}</td>
-<td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: ${isValid ? 'var(--secondary)': 'var(--danger)'};">${isValid ? '': ''}</td>
-</tr>`;
-}
-
-previewHTML += '</tbody></table>';
-preview.innerHTML = previewHTML;
-preview.style.display = 'block';
-
-alert(`تم قراءة ${importedData.length} سجل من الملف\n${useFixedColumns ? 'تم استخدام الأعمدة الثابتة (B-H)': 'تم اكتشاف الأعمدة تلقائياً'}`);
-} catch (error) {
-alert('خطأ في قراءة الملف: '+ error.message);
-console.error(error);
-}
-};
-reader.readAsArrayBuffer(file);
-};
-} // End of bulkImportFileElement check
-
-// Confirm Import
-const confirmImportBtn = document.getElementById('confirmImportBtn');
-if (confirmImportBtn) {
-confirmImportBtn.onclick = async () => {
-if (importedData.length === 0) {
-alert('لا توجد بيانات للاستيراد');
-return;
-}
-
-const importConfirmed = await window.showConfirmModal({
-  title: 'تأكيد الاستيراد',
-  message: `سيتم استيراد ${importedData.length} سجل إلى قاعدة البيانات. سيتم إضافة السجلات الجديدة فقط دون تعديل الموجودة.`,
-  confirmText: 'استيراد',
-  cancelText: 'إلغاء',
-  type: 'warning'
-});
-if (!importConfirmed) {
-return;
-}
-document.getElementById('loadingSpinner').style.display = 'block';
-document.getElementById('importProgress').style.display = 'block';
-document.getElementById('confirmImportBtn').disabled = true;
-
-let successCount = 0;
-let errorCount = 0;
-let duplicateCount = 0;
-const errors = [];
-
-// Helper function to update progress
-const updateProgress = (current, total, status) => {
-const percent = Math.round((current / total) * 100); 
-document.getElementById('progressBar').style.width = percent + '%'; 
-document.getElementById('progressText').textContent = percent + '%'; 
-document.getElementById('progressStatus').textContent = status;
-};
-
-try {
-// Load existing data from Supabase (with pagination for accurate duplicate check)
-updateProgress(0, 100, 'جاري تحميل البيانات من قاعدة البيانات...');
-
-let existingOrders = [];
-let from = 0;
-const loadBatchSize = 1000;
-let hasMore = true;
-
-while (hasMore) {
-const { data: batch, error } = await window.supabaseClient
-.from('orders')
-.select('national_id')
-.not('national_id', 'is', null)
-.range(from, from + loadBatchSize - 1);
-
-if (error) throw error;
-
-if (batch && batch.length > 0) {
-existingOrders = existingOrders.concat(batch);
-from += loadBatchSize;
-hasMore = batch.length === loadBatchSize;
-} else {
-hasMore = false;
-}
-}
-
-
-// Create a Set of existing national IDs for fast lookup
-const existingNIDs = new Set(existingOrders.map(o => o.national_id));
-
-updateProgress(10, 100, 'جاري معالجة البيانات...');
-const codeInfo = await getSmartNextCode();
-let nextCode = codeInfo.next;
-
-// Process all records
-const recordsToAdd = [];
-const totalRecords = importedData.length;
-
-for (let i = 0; i < totalRecords; i++) {
-const record = importedData[i];
-
-// Update progress every 10 records
-if (i % 10 === 0) {
-const progress = 10 + Math.round((i / totalRecords) * 40); // 10-50%
-updateProgress(progress, 100, `معالجة السجل ${i + 1} من ${totalRecords}...`);
-}
-
-// More lenient validation (like import_excel.html)
-if (!record.owner || record.owner.length < 3) {
-errorCount++;
-errors.push(`السجل ${i + 1}: اسم غير صحيح`);
-continue;
-}
-
-if (!record.nationalId || record.nationalId.length < 10) {
-errorCount++;
-errors.push(`السجل ${i + 1}: رقم قومي غير صحيح`);
-continue;
-}
-
-// Check duplicate in localStorage (much faster)
-if (existingNIDs.has(record.nationalId)) {
-duplicateCount++;
-continue;
-}
-
-// Only use code if it exists in Excel, don't auto-generate
-const finalCode = record.vCode || null;
-
-const refNumber = 'KS-IMP-'+ Date.now().toString().slice(-8) + '-'+ i;
-
-const newRecord = {
-owner: record.owner,
-nationalId: record.nationalId,
-phone: record.phone || '',
-vType: record.vType,
-vYear: record.vYear,
-vColor: record.vColor || '',
-vDesc: `موديل ${record.vYear}${record.vColor ? '- لون '+ record.vColor : ''}`,
-address: record.address || '',
-chassisNumber: record.chassisNumber || '',
-motorNumber: record.motorNumber || '',
-images: [],
-timestamp: Date.now(),
-codedAt: record.vCode ? Date.now() : null,
-vCode: finalCode,
-refNumber: refNumber,
-importedBy: 'admin',
-importedAt: Date.now(),
-status: record.vCode ? "coded": "pending",
-statusHistory: [{
-status: record.vCode ? "coded": "pending",
-timestamp: Date.now(),
-note: record.vCode ? `استيراد مع كود: ${finalCode}`: "استيراد من Excel - بانتظار التكويد",
-by: userRole
-}]
-};
-
-recordsToAdd.push(newRecord);
-existingNIDs.add(record.nationalId); // Add to set to prevent duplicates within import
-successCount++;
-}
-
-// Save to Supabase first (primary storage)
-updateProgress(50, 100, 'جاري الحفظ في قاعدة البيانات...');
-const batchSize = 50; // Supabase batchis 500, we use 50 for safety
-for (let i = 0; i < recordsToAdd.length; i += batchSize) {
-const batch = recordsToAdd.slice(i, i + batchSize);
-
-// Update progress
-const progress = 60 + Math.round((i / recordsToAdd.length) * 35); // 60-95%
-updateProgress(progress, 100, `حفظ ${Math.min(i + batchSize, recordsToAdd.length)} من ${recordsToAdd.length} في قاعدة البيانات...`);
-
-// Save batch to Supabase in parallel (much faster!)
-const savePromises = batch.map(async (record) => {
-try {
-const { error } = await window.supabaseClient
-.from('orders')
-.insert([{
-owner_name: record.owner,
-national_id: record.nationalId,
-phone: record.phone,
-vehicle_type: record.vType,
-vehicle_year: record.vYear,
-address: record.address,
-chassis_number: record.chassisNumber,
-motor_number: record.motorNumber,
-images: record.images || [],
-submitted_at: record.timestamp, //  REQUIRED FIELD
-ref_number: record.refNumber,
-status: record.status,
-code: record.vCode || null
-}]);
-if (error) throw error;
-return true;
-} catch (e) {
-console.error('خطأ في حفظ السجل:', {
-message: e.message,
-details: e.details,
-hint: e.hint,
-code: e.code,
-fullError: e,
-recordData: {
-owner_name: record.owner,
-national_id: record.nationalId,
-phone: record.phone,
-vehicle_type: record.vType,
-vehicle_year: record.vYear
-}
-});
-errorCount++;
-errors.push(`خطأ: ${e.message || e.toString()}`);
-return null;
-}
-});
-await Promise.all(savePromises);
-
-}
-
-// Update LocalStorage cache after successful Supabase save
-updateProgress(95, 100, 'جاري تحديث الذاكرة المحلية...');
-await loadAdminData(); // Reload from Supabase to update LocalStorage
-
-updateProgress(100, 100, 'اكتمل الاستيراد!');
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('importProgress').style.display = 'none';
-const _bim = document.getElementById('bulkImportModal'); if (_bim) _bim.style.display = 'none';
-
-let resultMsg = `اكتمل الاستيراد!\n\n الإحصائيات:\n نجح: ${successCount} سجل\n مكرر (تم تخطيه): ${duplicateCount} سجل\n فشل: ${errorCount} سجل\n\n إجمالي السجلات المعالجة: ${importedData.length}\n\n تم الحفظ في قاعدة البيانات: ${successCount} سجل\n تم الحفظ في لوحة التحكم: ${successCount} سجل`;
-if (errors.length > 0 && errors.length <= 5) {
-resultMsg += '\n\n الأخطاء:\n'+ errors.slice(0, 5).join('\n');
-if (errors.length > 5) {
-resultMsg += `\n... و ${errors.length - 5} أخطاء أخرى`;
-}
-}
-alert(resultMsg);
-
-} catch (error) {
-document.getElementById('loadingSpinner').style.display = 'none';
-document.getElementById('importProgress').style.display = 'none';
-document.getElementById('confirmImportBtn').disabled = false;
-alert('حدث خطأ أثناء الاستيراد: '+ error.message);
-console.error('Import error:', error);
-}
-};
-}
-
-// On page load - check for existing admin session (OLD CODE - DISABLED)
-// This is now handled by the Supabase session restore in the init script above
-/*
-(function() {
-const savedAuth = sessionStorage.getItem('adminAuth');
-const savedRole = sessionStorage.getItem('adminRole');
-const savedUsername = sessionStorage.getItem('adminUsername');
-
-if (savedAuth === 'true'&& savedRole && savedUsername) {
-// Auto-restore admin session
-window.userRole = savedRole;
-window.currentUsername = savedUsername;
-userRole = savedRole;
-currentUsername = savedUsername; 
-if (typeof window.switchPage === 'function') {
-  window.switchPage('adminPage');
-} else {
-  document.getElementById('portalSection').style.display = 'none'; 
-  document.getElementById('adminPage').style.display = 'block'; 
-}
-document.getElementById('goPortalBtn').style.display = 'inline-flex'; 
-document.getElementById('logoutBtn').style.display = 'inline-flex'; 
-document.getElementById('loginBtn').style.display = 'none';
-
-// Show/hide supervisor log button based on role
-{
-  const _logsBtn2   = document.getElementById('showAdminLogsBtn');
-  const _exportBtn2 = document.getElementById('exportExcelBtn');
-  if (userRole === 'SUPER') {
-    if (_logsBtn2)   _logsBtn2.style.display   = 'inline-block';
-    if (_exportBtn2) _exportBtn2.style.display = 'inline-block';
-  } else {
-    if (_logsBtn2)   _logsBtn2.style.display   = 'none';
-    if (_exportBtn2) _exportBtn2.style.display = 'none';
-  }
-
-  // Show/hide cleanup buttons based on role
-  const _cleanupBtn2     = document.getElementById('cleanupDuplicatesBtn');
-  const _cleanupMainBtn2 = document.getElementById('cleanDuplicatesMainBtn');
-  if (userRole !== 'SUPER') {
-    if (_cleanupBtn2)     _cleanupBtn2.style.display     = 'none';
-    if (_cleanupMainBtn2) _cleanupMainBtn2.style.display = 'none';
-  }
-}
-
-}
-})();
-*/
-
 // ============================================
 
 // ═══════════════════════════════════════════════════════════════
@@ -2958,67 +1745,10 @@ document.getElementById('loginBtn').style.display = 'none';
 // ═══════════════════════════════════════════════════════════════
 
 // ── 1. تنظيف السجلات المكررة ────────────────────────────────
-window.cleanupDuplicates = async function() {
-  const role = sessionStorage.getItem('userRole');
-  if (role !== 'SUPER') { alert('هذه الأداة متاحة للمدير العام فقط'); return; }
-  const dedupConfirmed = await window.showConfirmModal({
-    title: 'حذف السجلات المكررة',
-    message: 'سيتم حذف السجلات المكررة بالرقم القومي مع الإبقاء على الأحدث. هذا الإجراء لا يمكن التراجع عنه.',
-    confirmText: 'حذف',
-    cancelText: 'إلغاء',
-    type: 'danger'
-  });
-  if (!dedupConfirmed) return;
-
-  document.getElementById('loadingSpinner').style.display = 'block';
-  try {
-    // جلب كل الطلبات مرتبة من الأحدث للأقدم
-    const { data, error } = await window.supabaseClient
-      .from('orders')
-      .select('id, national_id, submitted_at')
-      .not('national_id', 'is', null)
-      .order('submitted_at', { ascending: false });
-
-    if (error) throw error;
-
-    const seen = new Map();
-    const toDelete = [];
-
-    data.forEach(row => {
-      if (!row.national_id) return;
-      if (seen.has(row.national_id)) {
-        toDelete.push(row.id); // الأقدم يُحذف
-      } else {
-        seen.set(row.national_id, row.id);
-      }
-    });
-
-    if (toDelete.length === 0) {
-      document.getElementById('loadingSpinner').style.display = 'none';
-      alert('لا توجد سجلات مكررة');
-      return;
-    }
-
-    // حذف على دفعات
-    const batchSize = 100;
-    for (let i = 0; i < toDelete.length; i += batchSize) {
-      const batch = toDelete.slice(i, i + batchSize);
-      await window.supabaseClient.from('orders').delete().in('id', batch);
-    }
-
-    await window.logSupervisorAction('تنظيف مكرر', `تم حذف ${toDelete.length} سجل مكرر`);
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert(`تم حذف ${toDelete.length} سجل مكرر بنجاح`);
-    await loadAdminData();
-  } catch (e) {
-    document.getElementById('loadingSpinner').style.display = 'none';
-    alert('خطأ: '+ e.message);
-  }
-};
-
 // ── 2. تقرير السلامة (Health Check) ─────────────────────────
 // ── مركز الإحصائيات الشامل ─────────────────────────────────
 window.openStatsModal = async function() {
+if(!window.currentStaffRole) return;
   const modal = document.getElementById('statsDashboardModal');
   if (!modal) return;
 
@@ -3032,7 +1762,7 @@ window.openStatsModal = async function() {
   try {
     const today = new Date();
     today.setHours(0,0,0,0);
-    const todayISO = today.toISOString();
+    const todayISO = today.getTime();
 
     // ── التوكتوك: license_plate فارغ أو null ──
     const TUKTUK_FILTER  = 'license_plate.is.null,license_plate.eq.';
@@ -3102,24 +1832,20 @@ window.runHealthCheck = window.openStatsModal;
 
 // ── 3. تصدير نسخة احتياطية JSON ─────────────────────────────
 window.exportBackup = async function() {
-  const role = sessionStorage.getItem('userRole');
+  const role = getRole();
   if (role !== 'SUPER') { alert('هذه الأداة متاحة للمدير العام فقط'); return; }
 
   document.getElementById('loadingSpinner').style.display = 'block';
   try {
-    const [ordersRes, complaintsRes] = await Promise.all([
-      window.supabaseClient.from('orders').select('*').order('submitted_at', { ascending: false }),
-      window.supabaseClient.from('complaints').select('*').order('submitted_at', { ascending: false })
+    const [orders, complaints] = await Promise.all([
+      window.fetchAllRows('orders'), window.fetchAllRows('complaints')
     ]);
-
-    if (ordersRes.error) throw ordersRes.error;
-    if (complaintsRes.error) throw complaintsRes.error;
 
     const backup = {
       exportedAt: new Date().toISOString(),
       exportedBy: sessionStorage.getItem('username') || 'SUPER',
-      orders: ordersRes.data,
-      complaints: complaintsRes.data
+      orders,
+      complaints
     };
 
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json'});
@@ -3130,7 +1856,7 @@ window.exportBackup = async function() {
     a.click();
     URL.revokeObjectURL(url);
 
-    await window.logSupervisorAction('تصدير نسخة احتياطية', `تم تصدير ${ordersRes.data.length} طلب و ${complaintsRes.data.length} شكوى`);
+    await window.logSupervisorAction('تصدير نسخة احتياطية', `تم تصدير ${orders.length} طلب و ${complaints.length} شكوى`);
     document.getElementById('loadingSpinner').style.display = 'none';
     alert('تم تصدير النسخة الاحتياطية بنجاح');
   } catch (e) {
@@ -3143,11 +1869,11 @@ window.exportBackup = async function() {
    إدارة حسابات المشرفين (خاص بالمدير العام SUPER فقط)
 ═══════════════════════════════════════════════════════════════ */
 function _escapeHtml(str) {
-  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 window.openStaffManagementModal = async function() {
-  const role = sessionStorage.getItem('userRole');
+  const role = getRole();
   if (role !== 'SUPER') {
     alert('هذه الميزة مخصصة للمدير العام فقط.');
     return;
@@ -3187,7 +1913,7 @@ window.loadStaffAccountsList = async function() {
             </div>
           </div>
           <div>
-            ${!isSelf ? `<button onclick="window.handleDeleteStaff('${s.user_id}', '${_escapeHtml(s.username)}')"class="btn"style="background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.3);padding:6px 12px;font-size:0.8rem;border-radius:8px;cursor:pointer;">
+            ${!isSelf ? `<button data-staff-id="${_escapeHtml(s.user_id)}" data-staff-name="${_escapeHtml(s.username)}"class="btn"style="background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.3);padding:6px 12px;font-size:0.8rem;border-radius:8px;cursor:pointer;">
                 <i class="ri-delete-bin-line"></i> حذف
               </button>
             `: '<span style="font-size:0.75rem;color:var(--gold);font-weight:700;">حسابك الرئيسي</span>'}
@@ -3195,13 +1921,15 @@ window.loadStaffAccountsList = async function() {
         </div>
       `;
     }).join('');
+    listContainer.querySelectorAll('[data-staff-id]').forEach(button => { button.onclick = () => window.handleDeleteStaff(button.dataset.staffId, button.dataset.staffName); });
   } catch (err) {
     console.error('Failed to load staff list:', err);
-    listContainer.innerHTML = '<p style="text-align:center;color:var(--red);font-size:0.85rem;">فشل تحميل قائمة الحسابات: '+ (err.message || '') + '</p>';
+    listContainer.innerHTML = '<p style="text-align:center;color:var(--red);font-size:0.85rem;">فشل تحميل قائمة الحسابات: '+ _escapeHtml(err.message || '') + '</p>';
   }
 };
 
 window.handleCreateSupervisor = async function() {
+if(getRole()!=='SUPER') return;
   const usernameInput = document.getElementById('newStaffUsername');
   const fullNameInput = document.getElementById('newStaffFullName');
   const passwordInput = document.getElementById('newStaffPassword');
@@ -3209,7 +1937,7 @@ window.handleCreateSupervisor = async function() {
 
   const username = usernameInput ? usernameInput.value.trim() : '';
   const fullName = fullNameInput ? fullNameInput.value.trim() : '';
-  const password = passwordInput ? passwordInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
 
   if (!username || username.length < 3) {
     alert('يرجى إدخال اسم مستخدم صحيح (3 أحرف إنجليزية على الأقل وبدون مسافات).');
@@ -3247,6 +1975,7 @@ window.handleCreateSupervisor = async function() {
 };
 
 window.handleDeleteStaff = async function(userId, username) {
+if(getRole()!=='SUPER') return;
   const staffDelConfirmed = await window.showConfirmModal({
     title: 'حذف حساب المشرف',
     message: `هل أنت متأكد من حذف حساب المشرف (${username}) نهائياً؟ لا يمكن التراجع عن هذا الإجراء.`,

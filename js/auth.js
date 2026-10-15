@@ -21,7 +21,7 @@ function hideAllPages() {
 
 // ── تحديث نص زر الرجوع في كل صفحة خدمة ──
 function updateBackButtons() {
-  const isAdmin = !!sessionStorage.getItem('adminRole');
+  const isAdmin = !!window.currentStaffRole;
   const fromAdmin = window._navSource === 'admin';
   const label = fromAdmin
     ? '<i class="ri-arrow-right-line"></i> لوحة التحكم': '<i class="ri-home-line"></i> البوابة';
@@ -59,14 +59,15 @@ window.confirmLogoutAdmin = async function() {
 
   try {
     if (window.supabaseClient && window.supabaseClient.auth) {
-      await window.supabaseClient.auth.signOut();
+      const {error} = await window.supabaseClient.auth.signOut({scope:'local'});
+      if(error) throw error;
     }
   } catch(e) {
-    console.warn('SignOut error:', e);
+    window.showToast?.('تعذر إنهاء الجلسة. حاول مرة أخرى عند عودة الاتصال.', 'error');
+    return;
   }
 
-  ['supabaseSession','adminRole','adminUsername','userRole','username']
-    .forEach(k => sessionStorage.removeItem(k));
+  window.clearAdminIdentity();
   window.adminDataLoaded = false;
 
   hideAllPages();
@@ -105,7 +106,7 @@ window.confirmLogoutAdmin = async function() {
 function updateHeaderAdminBtn() {
   const btn = document.getElementById('headerAdminBtn');
   if (!btn) return;
-  const isAdmin   = !!sessionStorage.getItem('adminRole');
+  const isAdmin   = !!window.currentStaffRole;
   const inPortal  = document.getElementById('portalSection')?.style.display !== 'none';
   const adminMode = document.body.classList.contains('admin-mode');
   // يظهر فقط في البوابة لما المستخدم مسجل دخول وليس في لوحة التحكم
@@ -138,6 +139,7 @@ window.goToPortal = function() {
 
 // ── الانتقال للوحة التحكم ──
 window.goToAdmin = function() {
+  if(!window.currentStaffRole) {window.bnavLogin();return;}
   if (typeof window.switchPage === 'function') {
     window.switchPage('adminPage');
   } else {
@@ -198,8 +200,8 @@ window.backToPortal = function() {
   const goAdminBtn  = document.getElementById('goAdminBtn');
   const logoutBtn   = document.getElementById('logoutBtn');
   if (goPortalBtn) goPortalBtn.style.display = 'none';
-  if (goAdminBtn && sessionStorage.getItem('adminRole')) goAdminBtn.style.display = 'flex';
-  if (logoutBtn  && sessionStorage.getItem('adminRole')) logoutBtn.style.display  = 'flex';
+  if (goAdminBtn && window.currentStaffRole) goAdminBtn.style.display = 'flex';
+  if (logoutBtn  && window.currentStaffRole) logoutBtn.style.display  = 'flex';
 
   window._navSource = 'portal';
   if (typeof updateFABs === 'function') updateFABs();
@@ -209,6 +211,7 @@ window.backToPortal = function() {
 
 // ── الرجوع للوحة التحكم من صفحة خدمة ──
 window.backToAdmin = function() {
+  if(!window.currentStaffRole) {window.bnavLogin();return;}
   if (typeof window.switchPage === 'function') {
     window.switchPage('adminPage');
   } else {
@@ -231,7 +234,7 @@ window.backToAdmin = function() {
 
 // ── تحديث الـ FABs حسب الحالة ──
 function updateFABs() {
-  const isAdmin    = !!sessionStorage.getItem('adminRole');
+  const isAdmin    = !!window.currentStaffRole;
   const fromAdmin  = window._navSource === 'admin';
   const inService  = document.body.classList.contains('in-service-page');
   const adminMode  = document.body.classList.contains('admin-mode');

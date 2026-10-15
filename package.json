@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "check": "node scripts/check.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/build.cjs"
   },
   "repository": {
     "type": "git",
@@ -19,8 +21,10 @@
   },
   "homepage": "https://github.com/mohandehaben-hub/Kafr-Sakr-#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.107.0",
-    "dotenv": "^17.4.2",
-    "xlsx": "^0.18.5"
+    "@supabase/supabase-js": "2.107.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
   }
 }

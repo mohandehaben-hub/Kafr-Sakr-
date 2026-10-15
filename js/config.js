@@ -1,111 +1,85 @@
-// config.js - إعدادات قاعدة البيانات الموحدة للأمان
-const SUPABASE_URL = "https://xlieswavjjgqsnczesct.supabase.co";
-const SUPABASE_KEY = "sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl";
+// Public browser configuration. Database policies must enforce authorization.
+const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl';
+window.currentStaffRole = '';
+window.currentStaffName = '';
+window.sanitizeText = str => String(str ?? '').replace(/[&<>"']/g, c => ({
+  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+}[c]));
 
-// دالة التعقيم والتطهير القياسية لمنع ثغرات XSS وضمان استقرار الواجهة
-window.sanitizeText = function(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+window.clearAdminIdentity = function() {
+  window.currentStaffRole = '';
+  window.currentStaffName = '';
+  window.currentStaffUserId = '';
+  window.adminDataLoaded = false;
+  ['supabaseSession','adminRole','adminUsername','userRole','username'].forEach(k => sessionStorage.removeItem(k));
 };
 
-// Initialize Supabase Client
+window.resolveStaffIdentity = async function(user) {
+  if (!user?.id) throw new Error('يرجى تسجيل الدخول من جديد');
+  const {data:staff, error} = await window.supabaseClient.from('staff')
+    .select('role, full_name, username, is_active').eq('user_id', user.id).maybeSingle();
+  if (error || !staff || !staff.is_active || !['SUPER','ADMIN','VIEWER'].includes(staff.role)) {
+    window.clearAdminIdentity();
+    await window.supabaseClient.auth.signOut({scope:'local'});
+    throw new Error('تعذر التحقق من صلاحية الموظف. راجع مسؤول النظام.');
+  }
+  window.currentStaffRole = staff.role;
+  window.currentStaffName = staff.username || staff.full_name || user.email || 'موظف';
+  window.currentStaffUserId = user.id;
+  sessionStorage.setItem('userRole', staff.role);
+  sessionStorage.setItem('adminRole', staff.role);
+  sessionStorage.setItem('username', window.currentStaffName);
+  sessionStorage.setItem('adminUsername', window.currentStaffName);
+  return {role:staff.role, name:window.currentStaffName};
+};
+
+window.applyAdminPermissions = function() {
+  const role = window.currentStaffRole;
+  const visibility = {
+    maintenanceTools:role==='SUPER', navLogs:role==='SUPER', navExport:role==='SUPER',
+    navImport:!!role && role!=='VIEWER', navClean:role==='SUPER',
+    bulkImportBtn:!!role && role!=='VIEWER', exportExcelBtn:role==='SUPER',
+    showAdminLogsBtn:role==='SUPER', cleanDuplicatesMainBtn:role==='SUPER',
+    cleanupDuplicatesBtn:role==='SUPER', adminMenuStaffBtn:role==='SUPER'
+  };
+  Object.entries(visibility).forEach(([id,visible])=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=visible ? (id==='maintenanceTools'?'block':'flex'):'none';
+  });
+};
+
 (function() {
-    function initSupabase() {
-        if (!SUPABASE_URL || !SUPABASE_KEY) {
-            return;
-        }
-        if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            checkExistingSession();
-        } else {
-            setTimeout(initSupabase, 100);
-        }
+  async function initialize() {
+    if (!window.supabase?.createClient) {
+      window.showToast?.('تعذر تحميل خدمة الاتصال. أعد تحميل الصفحة.', 'error');
+      return;
     }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSupabase);
-    } else {
-        initSupabase();
+    window.supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    window.supabaseClient.auth.onAuthStateChange?.((event)=>{
+      if(event==='SIGNED_OUT') {
+        window.clearAdminIdentity();
+        if(document.body.classList.contains('admin-mode')) window.switchPage?.('portalSection');
+      }
+    });
+    try {
+      const {data:{session},error}=await window.supabaseClient.auth.getSession();
+      if(error) throw error;
+      if(!session) {window.clearAdminIdentity();return;}
+      const {data:{user},error:userError}=await window.supabaseClient.auth.getUser();
+      if(userError) throw userError;
+      const identity=await window.resolveStaffIdentity(user);
+      if(typeof userRole!=='undefined') userRole=identity.role;
+      if(typeof currentUsername!=='undefined') currentUsername=identity.name;
+      window.switchPage?.('adminPage');
+      window.applyAdminPermissions();
+      window._resetSessionTimer?.();
+    } catch(error) {
+      window.clearAdminIdentity();
+      await window.supabaseClient.auth.signOut({scope:'local'});
+      window.showToast?.('تعذر استعادة الجلسة. سجل الدخول من جديد.', 'warning');
     }
-
-    async function checkExistingSession() {
-        const savedSession = sessionStorage.getItem('supabaseSession');
-        const savedRole = sessionStorage.getItem('adminRole');
-        const savedUsername = sessionStorage.getItem('adminUsername');
-
-        if (savedSession && savedRole && savedUsername) {
-            try {
-                const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-                if (session && !error) {
-                    window.currentUsername = savedUsername;
-                    window.currentRole = savedRole;
-                    window.userRole = savedRole;
-
-                    if (typeof window.switchPage === 'function') {
-                        window.switchPage('adminPage');
-                    } else {
-                        const adminPage = document.getElementById('adminPage');
-                        if (adminPage) adminPage.style.display = 'block';
-                    }
-                    const loginBtn = document.getElementById('loginBtn');
-                    if (loginBtn) loginBtn.style.display = 'none';
-                    // أزرار الـ sidebar — تُظهر في الـ footer
-                    const logoutBtn   = document.getElementById('logoutBtn');
-                    const goPortalBtn = document.getElementById('goPortalBtn');
-                    const goAdminBtn  = document.getElementById('goAdminBtn');
-                    if (logoutBtn)   logoutBtn.style.display   = 'flex';
-                    if (goPortalBtn) goPortalBtn.style.display = 'flex';
-                    if (goAdminBtn)  goAdminBtn.style.display  = 'none';
-                    window._navSource = 'admin';
-
-                    if (typeof loadAdminData === 'function') {
-                        await loadAdminData();
-                        window.adminDataLoaded = true;
-                    }
-                    if (typeof loadComplaints === 'function') loadComplaints();
-
-                    // admin-mode UI
-                    document.body.classList.add('admin-mode');
-                    window._navSource = 'admin';
-                    const headerAdminBtn = document.getElementById('headerAdminBtn');
-                    if (headerAdminBtn) headerAdminBtn.style.display = 'none';
-                    const leadershipSection = document.getElementById('leadershipSection');
-                    if (leadershipSection) leadershipSection.style.display = 'none';
-                    const sidebarToggle = document.getElementById('sidebarToggleBtn');
-                    if (sidebarToggle) sidebarToggle.style.display = window.innerWidth <= 768 ? 'inline-flex': 'none';
-                    const fabBtn = document.getElementById('fabLoginBtn');
-                    if (fabBtn) { fabBtn.innerHTML = ''; fabBtn.onclick = () => window.logoutAdmin && window.logoutAdmin(); }
-
-                    // إظهار أدوات الصيانة للـ SUPER
-                    if (savedRole === 'SUPER') {
-                        const maintenanceTools = document.getElementById('maintenanceTools');
-                        if (maintenanceTools) maintenanceTools.style.display = 'block';
-                        const navLogs = document.getElementById('navLogs');
-                        if (navLogs) navLogs.style.display = 'flex';
-                        const navExport = document.getElementById('navExport');
-                        if (navExport) navExport.style.display = 'flex';
-                    }
-
-                    // إخفاء أزرار الاستيراد للـ VIEWER
-                    if (savedRole === 'VIEWER') {
-                        const bulkImportBtn = document.getElementById('bulkImportBtn');
-                        if (bulkImportBtn) bulkImportBtn.style.display = 'none';
-                    }
-
-                } else {
-                    window.adminDataLoaded = false;
-                    sessionStorage.clear();
-                }
-            } catch (err) {
-                console.error('خطأ في استعادة الجلسة:', err);
-                window.adminDataLoaded = false;
-                sessionStorage.clear();
-            }
-        }
-    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initialize);
+  else initialize();
 })();

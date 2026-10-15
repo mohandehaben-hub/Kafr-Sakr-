@@ -28,6 +28,11 @@ window.addEventListener('scroll', function() {
 
 // Page navigation
 window.switchPage = function(targetPageId) {
+  if(targetPageId==='adminPage' && !window.currentStaffRole) {
+    const login=document.getElementById('loginModal');
+    if(login) login.style.display='flex';
+    return;
+  }
   const allPages = [
     'portalSection',
     'citizenPage',
@@ -64,7 +69,7 @@ window.switchPage = function(targetPageId) {
 
   // 4. Update body classes & components for Admin vs Citizen
   const isTargetAdmin = (targetPageId === 'adminPage');
-  const isLoggedIn = !!(sessionStorage.getItem('adminRole') || sessionStorage.getItem('supabaseSession'));
+  const isLoggedIn = !!window.currentStaffRole;
 
   // Header Elements
   const headerMainTitle = document.getElementById('headerMainTitle');
@@ -326,7 +331,8 @@ const year = parseInt((century === '2'? '19': '20') + nid.substring(1, 3));
 const month = parseInt(nid.substring(3, 5));
 const day = parseInt(nid.substring(5, 7));
 
-if (month < 1 || month > 12 || day < 1 || day > 31) {
+const birth = new Date(year, month - 1, day);
+if (birth.getFullYear() !== year || birth.getMonth() !== month - 1 || birth.getDate() !== day || birth > new Date()) {
 msgDiv.style.display = 'block';
 msgDiv.style.background = 'rgba(231, 76, 60, 0.1)';
 msgDiv.style.color = 'var(--danger)';
@@ -535,7 +541,7 @@ window.syncBottomNavForService = function(serviceId) {
 };
 
 window.bnavLogin = function() {
-  const isLoggedIn = !!(sessionStorage.getItem('adminRole') || sessionStorage.getItem('supabaseSession'));
+  const isLoggedIn = !!window.currentStaffRole;
   if (isLoggedIn) {
     if (typeof window.switchPage === 'function') {
       window.switchPage('adminPage');
@@ -798,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const obs = new MutationObserver(function(mutations) {
       mutations.forEach(function(m) {
         if (m.attributeName === 'style'|| m.attributeName === 'class') {
-          const visible = portalEl.style.display !== 'none'&& !portalEl.classList.contains('app-page') || portalEl.classList.contains('active-page');
+          const visible = portalEl.style.display !== 'none' && (!portalEl.classList.contains('app-page') || portalEl.classList.contains('active-page'));
           if (visible) {
             document.querySelectorAll('.bnav-item:not(.bnav-login)').forEach(function(b) {
               b.classList.remove('active');
