@@ -28,7 +28,7 @@
       if (!window.turnstile) {
         loading = false; script.remove(); status('تعذر تشغيل التحقق. أغلق نافذة الدخول وأعد المحاولة.'); return;
       }
-      window.turnstile.ready(render);
+      render();
     };
     script.onerror = () => { loading = false; script.remove(); status('تعذر تحميل التحقق. أغلق نافذة الدخول وافتحها للمحاولة مجددًا.'); };
     document.head.append(script);

@@ -40,6 +40,7 @@ async function fixture({role='SUPER', restored=false, csp=true}={}) {
   },{role,restored});
   await page.route('**/*', async route=>{
     const u=new URL(route.request().url());
+    if(u.hostname==='challenges.cloudflare.com')return route.fulfill({contentType:'text/javascript',body:`window.turnstile={ready(){throw new Error('ready cannot be combined with async loading');},render(selector){document.querySelector(selector).append(document.createElement('div'));return 'widget';},getResponse(){return 'verified-challenge';},reset(){}};`});
     if(u.hostname!=='test.local')return route.fulfill({status:200,body:''});
     const file=path.resolve(root,'.'+(u.pathname==='/'?'/index.html':u.pathname));
     if(!file.startsWith(root+path.sep)||!fs.existsSync(file))return route.fulfill({status:404,body:''});
@@ -136,6 +137,10 @@ test('login rejects an absent challenge before sending credentials',async()=>{
 
 test('login sends the challenge to Supabase for server validation',async()=>{
   const p=await fixture();try{await login(p);assert.equal(await p.evaluate(()=>mock.signInArgs.options.captchaToken),'test-challenge');}finally{await p.close();}
+});
+
+test('asynchronously loaded login challenge renders without a ready API error',async()=>{
+  const p=await fixture();const errors=[];p.on('pageerror',e=>errors.push(e.message));try{await p.evaluate(()=>bnavLogin());await p.waitForFunction(()=>document.getElementById('loginChallenge').childElementCount>0);assert.deepEqual(errors,[]);assert.equal(await p.evaluate(()=>getLoginCaptchaToken()),'verified-challenge');}finally{await p.close();}
 });
 test('failed edit leaves the form open and never reports success',async()=>{
   const p=await fixture();try{await login(p);const r=await p.evaluate(async()=>{openVehicleDossier({id:'row-1',owner:'Owner',phone:'01012345678',vType:'توكتوك',vYear:'2020',images:[]},'tuktuk');document.getElementById('dossierBtnEdit').click();mock.messages=[];mock.mutationError={message:'update denied'};await document.getElementById('confirmEditBtn').onclick();return {messages:mock.messages,visible:document.getElementById('editModal').style.display};});assert.equal(r.visible,'block');assert(r.messages.some(m=>m.includes('update denied')));assert(!r.messages.some(m=>m.includes('تم حفظ')));}finally{await p.close();}
