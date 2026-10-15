@@ -31,7 +31,7 @@ async function fixture({role='SUPER', restored=false, csp=true}={}) {
     window.supabase={createClient:()=>({from:query, rpc:async(name,args)=>{mock.calls.push({rpc:name,args});return {data:[{id:'row-1',code:args?.p_code}],error:mock.mutationError};},auth:{
       getSession:async()=>({data:{session:mock.session},error:null}),
       getUser:async()=>({data:{user:mock.session?.user||null},error:null}),
-      signInWithPassword:async()=>{mock.session={user:{id:'u'}};return {data:{user:{id:'u'},session:mock.session},error:null};},
+      signInWithPassword:async(args)=>{mock.signInArgs=args;mock.session={user:{id:'u'}};return {data:{user:{id:'u'},session:mock.session},error:null};},
       signOut:async()=>{mock.signedOut=true;mock.session=null;return {error:null};},
       onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})
     },storage:{from:()=>({createSignedUrl:async p=>{mock.signed.push(p);return {data:{signedUrl:'https://signed.invalid/'+p},error:null};},remove:async paths=>{mock.removed=paths;return {error:null};}})}})};
@@ -56,7 +56,7 @@ async function fixture({role='SUPER', restored=false, csp=true}={}) {
   return page;
 }
 async function login(page) {
-  await page.evaluate(async()=>{document.getElementById('loginUsername').value='tester';document.getElementById('loginPassword').value='test-password';await document.getElementById('confirmLoginBtn').onclick();});
+  await page.evaluate(async()=>{window.getLoginCaptchaToken=()=> 'test-challenge';document.getElementById('loginUsername').value='tester';document.getElementById('loginPassword').value='test-password';await document.getElementById('confirmLoginBtn').onclick();});
 }
 test('unknown staff cannot become SUPER and session is ended',async()=>{
   const p=await fixture({role:null});try{await login(p);const r=await p.evaluate(()=>({role:sessionStorage.getItem('userRole'),signedOut:mock.signedOut}));assert.notEqual(r.role,'SUPER');assert.equal(r.signedOut,true);}finally{await p.close();}
@@ -68,7 +68,7 @@ test('every private complaint image is signed',async()=>{
   const p=await fixture();try{const r=await p.evaluate(async()=>{await showCategorizedImages({selfie:'images/a.jpg',problemImages:['images/b.jpg']});return mock.signed;});assert.deepEqual(r,['images/a.jpg','images/b.jpg']);}finally{await p.close();}
 });
 test('corrupt JPEG rejects instead of leaving upload pending',async()=>{
-  const p=await fixture();try{const r=await p.evaluate(async()=>Promise.race([uploadToSupabaseStorage(new File(['bad'],'bad.jpg',{type:'image/jpeg'})).then(()=> 'resolved',()=> 'rejected'),new Promise(r=>setTimeout(()=>r('pending'),150))]));assert.equal(r,'rejected');}finally{await p.close();}
+  const p=await fixture();try{await login(p);const r=await p.evaluate(async()=>Promise.race([uploadToSupabaseStorage(new File(['bad'],'bad.jpg',{type:'image/jpeg'})).then(()=> 'resolved',()=> 'rejected'),new Promise(r=>setTimeout(()=>r('pending'),150))]));assert.equal(r,'rejected');}finally{await p.close();}
 });
 test('plate formatting preserves searchable separators',async()=>{
   const p=await fixture();try{assert.equal(await p.evaluate(()=>formatLicensePlateString('ر ع و ١٢٣٤')),'ر ع و 1234');}finally{await p.close();}
@@ -118,8 +118,24 @@ test('spreadsheet preview renders names as text',async()=>{
 test('exported Excel retains microbus plate and phone as text',async()=>{
   const p=await fixture();try{await login(p);await p.evaluate(()=>{mock.rows=[{id:'1',owner_name:'Owner',national_id:'29501011234567',phone:'01012345678',vehicle_type:'ميكروباص',license_plate:'ر ع و 1234',submitted_at:Date.now()}];});const promise=p.waitForEvent('download');await p.evaluate(async()=>document.getElementById('exportExcelBtn').onclick());const download=await promise;const XLSX=require('xlsx'), workbook=XLSX.read(fs.readFileSync(await download.path()));const row=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])[0];assert.equal(row['رقم اللوحة'],'ر ع و 1234');assert.equal(row['رقم الهاتف'],'01012345678');}finally{await p.close();}
 });
-test('citizen navigation still works with strict CSP',async()=>{
-  const p=await fixture();try{await p.locator('#bnav-register').evaluate(el=>el.click());assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),true);}finally{await p.close();}
+test('registration requires login and opens for an approved writer',async()=>{
+  const p=await fixture();try{await p.locator('#bnav-register').evaluate(el=>el.click());assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),false);assert.equal(await p.locator('#loginModal').evaluate(el=>el.style.display),'flex');await login(p);await p.evaluate(()=>switchPage('citizenPage'));assert.equal(await p.locator('#citizenPage').evaluate(el=>el.classList.contains('active-page')),true);}finally{await p.close();}
+});
+
+test('direct anonymous service handlers send no database requests',async()=>{
+  const p=await fixture();try{const calls=await p.evaluate(async()=>{mock.calls=[];for(const id of ['submitBtn','inquiryBtn','submitCompBtn','complaintInquiryBtn'])await document.getElementById(id).onclick();return mock.calls;});assert.equal(calls.length,0);}finally{await p.close();}
+});
+
+test('VIEWER cannot open registration or send a new complaint',async()=>{
+  const p=await fixture({role:'VIEWER'});try{await login(p);const r=await p.evaluate(async()=>{switchPage('citizenPage');mock.calls=[];await document.getElementById('submitCompBtn').onclick();return {visible:document.getElementById('citizenPage').classList.contains('active-page'),calls:mock.calls};});assert.equal(r.visible,false);assert.equal(r.calls.length,0);}finally{await p.close();}
+});
+
+test('login rejects an absent challenge before sending credentials',async()=>{
+  const p=await fixture();try{const sent=await p.evaluate(async()=>{document.getElementById('loginUsername').value='tester';document.getElementById('loginPassword').value='test-password';await document.getElementById('confirmLoginBtn').onclick();return !!mock.signInArgs;});assert.equal(sent,false);}finally{await p.close();}
+});
+
+test('login sends the challenge to Supabase for server validation',async()=>{
+  const p=await fixture();try{await login(p);assert.equal(await p.evaluate(()=>mock.signInArgs.options.captchaToken),'test-challenge');}finally{await p.close();}
 });
 test('failed edit leaves the form open and never reports success',async()=>{
   const p=await fixture();try{await login(p);const r=await p.evaluate(async()=>{openVehicleDossier({id:'row-1',owner:'Owner',phone:'01012345678',vType:'توكتوك',vYear:'2020',images:[]},'tuktuk');document.getElementById('dossierBtnEdit').click();mock.messages=[];mock.mutationError={message:'update denied'};await document.getElementById('confirmEditBtn').onclick();return {messages:mock.messages,visible:document.getElementById('editModal').style.display};});assert.equal(r.visible,'block');assert(r.messages.some(m=>m.includes('update denied')));assert(!r.messages.some(m=>m.includes('تم حفظ')));}finally{await p.close();}

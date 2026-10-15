@@ -1,28 +1,20 @@
-name: Supabase Keep-Alive
+name: Supabase Access Boundary Check
 
 on:
   schedule:
-    # Runs every 2 days at 03:00 UTC (06:00 AM Cairo Time)
     - cron: '0 3 */2 * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  ping-supabase:
-    name: Ping Supabase Database
+  verify-anonymous-denial:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Keep-Alive Request
+      - name: Verify the live API denies visitors
         run: |
-          echo "Sending keep-alive ping to Supabase Kafr Saqr..."
-          HTTP_STATUS=$(curl --silent --show-error --fail --max-time 15 -o /dev/null -w "%{http_code}" "https://xlieswavjjgqsnczesct.supabase.co/rest/v1/rpc/get_my_order" \
-            -H "apikey: sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl" \
-            -H "Content-Type: application/json" \
-            --data '{"p_national_id":"00000000000000","p_owner_name":"_healthcheck_","p_phone":"00000000000"}')
-          
-          echo "Response HTTP Status: $HTTP_STATUS"
-          if [ "$HTTP_STATUS" -eq "200" ]; then
-            echo "Supabase API accepted the request."
-          else
-            echo "Unexpected status code $HTTP_STATUS"
-            exit 1
-          fi
+          HTTP_STATUS=$(curl --silent --show-error --max-time 15 -o /dev/null -w "%{http_code}" "https://xlieswavjjgqsnczesct.supabase.co/rest/v1/orders?select=id&limit=0" \
+            -H "apikey: sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl")
+          echo "Anonymous API HTTP status: $HTTP_STATUS"
+          test "$HTTP_STATUS" -eq 401

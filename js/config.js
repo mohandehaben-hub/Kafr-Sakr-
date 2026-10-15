@@ -3,6 +3,18 @@ const SUPABASE_URL = 'https://xlieswavjjgqsnczesct.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5OgzcAecYuLwipCfNnmBsw_hQ7ZpHIl';
 window.currentStaffRole = '';
 window.currentStaffName = '';
+// UI checks complement database grants, RLS and Auth; they do not replace them.
+window.requireStaffAccess = function(write = false) {
+  const role = window.currentStaffRole;
+  if (['SUPER','ADMIN','VIEWER'].includes(role) && (!write || role !== 'VIEWER')) return true;
+  if (role) window.showToast?.('حسابك للعرض فقط؛ لا يملك صلاحية الإضافة أو التعديل.', 'error');
+  else {
+    window.showToast?.('يرجى تسجيل الدخول بحساب موظف معتمد لاستخدام الخدمة.', 'info');
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.style.display = 'flex';
+  }
+  return false;
+};
 window.sanitizeText = str => String(str ?? '').replace(/[&<>"']/g, c => ({
   '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
 }[c]));
@@ -59,7 +71,7 @@ window.applyAdminPermissions = function() {
     window.supabaseClient.auth.onAuthStateChange?.((event)=>{
       if(event==='SIGNED_OUT') {
         window.clearAdminIdentity();
-        if(document.body.classList.contains('admin-mode')) window.switchPage?.('portalSection');
+        window.switchPage?.('portalSection');
       }
     });
     try {

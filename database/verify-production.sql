@@ -1,5 +1,7 @@
 -- The caller sets app.verify_super and app.verify_viewer inside this transaction.
 -- All synthetic records and reservations are rolled back.
+-- Historical verification for the original migration. After the staff-only
+-- migration, use verify-staff-access.sql (anonymous inserts are now forbidden).
 begin;
 create temporary table smoke_results(test text, passed boolean) on commit drop;
 grant insert,select on smoke_results to anon,authenticated;

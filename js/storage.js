@@ -4,6 +4,7 @@
 
 // Upload to Cloud Storage (Private)
 window.uploadToSupabaseStorage = async file => {
+  if (!window.requireStaffAccess(true)) throw new Error('تسجيل الدخول بصلاحية كتابة مطلوب');
   if(!file || !['image/jpeg','image/jpg','image/png','image/webp'].includes(file.type) || !/\.(jpe?g|png|webp)$/i.test(file.name)) {
     throw new Error('يُسمح فقط بصور JPG وPNG وWebP');
   }
@@ -52,6 +53,7 @@ window.formatDateTime = formatDateTime;
 
 // Add Order to Database
 async function addOrderToSupabase(orderData) {
+if (!window.requireStaffAccess(true)) throw new Error('غير مصرح');
 const { data, error } = await window.supabaseClient
 .from('orders')
 .insert([orderData]);
@@ -61,6 +63,7 @@ return data;
 
 // Add Complaint to Database
 async function addComplaintToSupabase(complaintData) {
+if (!window.requireStaffAccess(true)) throw new Error('غير مصرح');
 const { data, error } = await window.supabaseClient
 .from('complaints')
 .insert([complaintData]);
@@ -72,6 +75,7 @@ return data;
 
 // Submit Vehicle Registration
 document.getElementById('submitBtn').onclick = async () => {
+if (!window.requireStaffAccess(true)) return;
 const btn = document.getElementById('submitBtn');
 if (btn._submitting) return;
 const _alert = (msg, type = 'error') => { if (window.showToast) window.showToast(msg, type, 4500); else alert(msg); };
@@ -226,6 +230,7 @@ function validateInputs(nid, phone) {
 
 // Inquiry Button
 document.getElementById('inquiryBtn').onclick = async () => {
+if (!window.requireStaffAccess()) return;
 const owner = document.getElementById('inqOwnerName').value.trim();
 const nid = document.getElementById('inqNationalId').value.trim();
 const phone = document.getElementById('inqPhone').value.trim();
@@ -449,6 +454,7 @@ alert("حدث خطأ: "+ error.message);
 
 // Submit Complaint
 document.getElementById('submitCompBtn').onclick = async () => {
+if (!window.requireStaffAccess(true)) return;
 const btn = document.getElementById('submitCompBtn');
 if (btn._submitting) return;
 const _alert = (msg, type = 'error') => { if (window.showToast) window.showToast(msg, type, 4500); else alert(msg); };
@@ -632,6 +638,7 @@ btn.innerText = "إرسال الشكوى";
 
 // Complaint Inquiry
 document.getElementById('complaintInquiryBtn').onclick = async () => {
+if (!window.requireStaffAccess()) return;
 const owner = document.getElementById('compInqOwnerName').value.trim();
 const nid = document.getElementById('compInqNationalId').value.trim();
 const phone = document.getElementById('compInqPhone').value.trim();

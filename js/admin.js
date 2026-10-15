@@ -100,7 +100,7 @@ function checkActiveLockout() {
         if (passInput) passInput.disabled = false;
         localStorage.removeItem('loginLockoutTime');
         localStorage.setItem('loginAttempts', '0');
-        hideCaptcha();
+
       } else {
         const mins = Math.floor(remaining / 60000);
         const secs = Math.floor((remaining % 60000) / 1000);
@@ -118,40 +118,7 @@ function checkActiveLockout() {
     if (emailInput) emailInput.disabled = false;
     if (passInput) passInput.disabled = false;
 
-    // Check if CAPTCHA is needed
-    const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
-    if (attempts >= 3) {
-      showCaptcha();
-    } else {
-      hideCaptcha();
-    }
   }
-}
-
-function showCaptcha() {
-  const captchaGroup = document.getElementById('captchaGroup');
-  if (captchaGroup) captchaGroup.style.display = 'block';
-  generateCaptcha();
-}
-
-function hideCaptcha() {
-  const captchaGroup = document.getElementById('captchaGroup');
-  if (captchaGroup) captchaGroup.style.display = 'none';
-  const captchaAns = document.getElementById('captchaAnswer');
-  if (captchaAns) captchaAns.value = '';
-  window.currentCaptchaAnswer = null;
-}
-
-function generateCaptcha() {
-  const num1 = Math.floor(Math.random() * 10) + 1;
-  const num2 = Math.floor(Math.random() * 10) + 1;
-  const questEl = document.getElementById('captchaQuestion');
-  if (questEl) {
-    questEl.textContent = `${num1} + ${num2} = ?`;
-  }
-  window.currentCaptchaAnswer = num1 + num2;
-  const captchaAns = document.getElementById('captchaAnswer');
-  if (captchaAns) captchaAns.value = '';
 }
 
 document.getElementById('loginBtn').onclick = () => {
@@ -183,27 +150,10 @@ if (Date.now() < lockoutTime) {
   return;
 }
 
-// Check CAPTCHA if attempts >= 3
-const attemptsCount = parseInt(localStorage.getItem('loginAttempts') || '0');
-if (attemptsCount >= 3) {
-  const answerInput = document.getElementById('captchaAnswer').value.trim();
-  if (!answerInput || parseInt(answerInput) !== window.currentCaptchaAnswer) {
-    alert("رمز التحقق البشري غير صحيح. يرجى المحاولة مرة أخرى.");
-    
-    let attempts = attemptsCount + 1;
-    localStorage.setItem('loginAttempts', attempts);
-    
-    if (attempts >= 5) {
-      const lockoutUntil = Date.now() + (15 * 60 * 1000); // 15 mins
-      localStorage.setItem('loginLockoutTime', lockoutUntil.toString());
-      localStorage.setItem('loginAttempts', '0');
-      checkActiveLockout();
-    } else {
-      generateCaptcha();
-    }
-    return;
-  }
-}
+// Auth validates this challenge on the server, including direct API calls.
+let captchaToken;
+try { captchaToken = window.getLoginCaptchaToken(); }
+catch(error) { alert(error.message); return; }
 
 // Show loading
 const btn = document.getElementById('confirmLoginBtn');
@@ -215,8 +165,9 @@ try {
 // Sign in with secure authentication
 const { data, error } = await window.supabaseClient.auth.signInWithPassword({
 email: email,
-password: password
-});
+password: password,
+options: {captchaToken}
+}).finally(() => window.resetLoginCaptcha());
 
 if (error) {
 console.error('خطأ في تسجيل الدخول:', error);
@@ -241,9 +192,7 @@ if (attempts >= 5) {
       alert("خطأ في تسجيل الدخول:\n\n"+ error.message);
   }
   
-  if (attempts >= 3) {
-    showCaptcha();
-  }
+
 }
 
 btn.innerText = originalText;
@@ -254,7 +203,7 @@ return;
 // Clear Lockout on success
 localStorage.removeItem('loginAttempts');
 localStorage.removeItem('loginLockoutTime');
-hideCaptcha();
+
 
 // Successful login
 const user = data.user;
@@ -1943,8 +1892,8 @@ if(getRole()!=='SUPER') return;
     alert('يرجى إدخال اسم مستخدم صحيح (3 أحرف إنجليزية على الأقل وبدون مسافات).');
     return;
   }
-  if (!password || password.length < 6) {
-    alert('كلمة المرور يجب أن تكون 6 خانات على الأقل.');
+  if (!password || password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+    alert('كلمة المرور تحتاج 12 خانة على الأقل وحروفًا كبيرة وصغيرة وأرقامًا.');
     return;
   }
 

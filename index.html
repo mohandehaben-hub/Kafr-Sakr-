@@ -185,6 +185,7 @@
   <div class="portal-hero-card">
     <h2 class="portal-hero-title">منظومة تقنين المركبات الذكية</h2>
     <p class="portal-hero-desc">المنصة الرسمية الموحدة لتسجيل وتوفيق أوضاع مركبات التوكتوك بإشراف رئاسة المركز</p>
+    <p class="portal-hero-desc">جميع الخدمات تتطلب تسجيل الدخول بحساب موظف معتمد.</p>
     <div class="portal-vehicles-showcase">
       <div class="portal-vehicle-pill" data-app-click="14">
         <img src="https://i.postimg.cc/QtgDfPKv/images-(1).jpg" class="vehicle-circle-img" alt="توكتوك" loading="lazy" decoding="async">
@@ -872,14 +873,8 @@
         </div>
       </div>
 
-      <div id="captchaGroup" class="gov-captcha-group" style="display: none;">
-        <label class="gov-form-label">رمز التحقق</label>
-        <div class="gov-captcha-box">
-          <div id="captchaQuestion" class="gov-captcha-quest">5 + 7 = ?</div>
-          <input type="number" id="captchaAnswer" class="gov-input gov-captcha-input" placeholder="النتيجة" inputmode="numeric">
-        </div>
-      </div>
-
+      <div id="loginChallenge" style="min-height:65px;max-width:100%;"></div>
+      <p id="loginChallengeStatus" role="status" aria-live="polite">يُرجى إكمال التحقق الأمني للدخول.</p>
       <button type="button" id="confirmLoginBtn" class="gov-login-submit-btn">
         <span>دخول</span>
       </button>
@@ -1182,16 +1177,17 @@
 
 <!-- JavaScript Files -->
 <script src="vendor/supabase.js"></script>
-<script src="js/config.js?v=11.0"></script>
-<script src="js/toast.js?v=11.0"></script>
-<script src="js/app-utils.js?v=11.0"></script>
-<script src="js/data-utils.js?v=11.0"></script>
-<script src="js/ui.js?v=11.0"></script>
-<script src="js/storage.js?v=11.0"></script>
-<script src="js/auth.js?v=11.0"></script>
-<script src="js/admin.js?v=11.0"></script>
-<script src="js/pagination.js?v=11.0"></script>
-<script src="js/admin-actions.js?v=11.0"></script>
+<script src="js/config.js?v=12.0"></script>
+<script src="js/login-security.js?v=12.0"></script>
+<script src="js/toast.js?v=12.0"></script>
+<script src="js/app-utils.js?v=12.0"></script>
+<script src="js/data-utils.js?v=12.0"></script>
+<script src="js/ui.js?v=12.0"></script>
+<script src="js/storage.js?v=12.0"></script>
+<script src="js/auth.js?v=12.0"></script>
+<script src="js/admin.js?v=12.0"></script>
+<script src="js/pagination.js?v=12.0"></script>
+<script src="js/admin-actions.js?v=12.0"></script>
 
 <!-- ══ Admin Quick Menu Modal ══ -->
 <div id="adminQuickMenuModal" class="gov-modal" role="dialog" aria-modal="true" aria-labelledby="adminQuickMenuTitle" style="display:none;" data-app-click="67">
@@ -1337,7 +1333,7 @@
         </div>
         <div>
           <label style="font-size:0.8rem;color:var(--text3);display:block;margin-bottom:4px;">كلمة المرور</label>
-          <input type="password" id="newStaffPassword" placeholder="كلمة المرور (6 خانات أو أكثر)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:0.9rem;">
+          <input type="password" id="newStaffPassword" placeholder="كلمة المرور (12 خانة وحروف كبيرة وصغيرة وأرقام)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:0.9rem;">
         </div>
         <div style="background:rgba(52,152,219,0.08);border:1px dashed rgba(52,152,219,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--blue);">
           <i class="ri-information-line"></i> الصلاحية: <strong>مشرف استعلام وبحث فقط (VIEWER)</strong> — يتمكن من البحث وعرض الطلبات دون تعديل أو حذف.
@@ -1411,7 +1407,7 @@
   </div>
 </div>
 
-<script src="js/events.js?v=11.0" defer></script>
-<script src="js/dialogs.js?v=11.0" defer></script>
+<script src="js/events.js?v=12.0" defer></script>
+<script src="js/dialogs.js?v=12.0" defer></script>
 </body>
 </html>
