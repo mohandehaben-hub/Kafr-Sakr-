@@ -38,7 +38,7 @@
     dialog.setAttribute('aria-labelledby', 'citizenOtpTitle');
     dialog.innerHTML = `<form method="dialog" class="citizen-otp-form">
       <h2 id="citizenOtpTitle">تأكيد البريد الإلكتروني</h2>
-      <p>أدخل بريدك لاستلام رمز التحقق قبل إتمام هذه العملية. لن يمنحك التحقق صلاحيات الإدارة.</p>
+      <p>أدخل بريدك لاستلام رمز التحقق قبل إتمام هذه العملية.</p>
       <label for="citizenOtpEmail">البريد الإلكتروني</label>
       <input id="citizenOtpEmail" type="email" autocomplete="email" maxlength="254" required dir="ltr">
       <div id="citizenOtpChallenge"></div>

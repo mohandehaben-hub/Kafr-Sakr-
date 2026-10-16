@@ -3,6 +3,11 @@ begin;
 revoke insert on public.orders,public.complaints from anon;
 revoke execute on function public.get_my_order(text,text,text),public.get_my_complaints(text,text,text),
  public.check_nid_available(text),public.can_submit_complaint(text) from anon;
+-- Staff helper reads now use their existing table RLS rather than bypassing it.
+alter function public.get_my_order(text,text,text) security invoker;
+alter function public.get_my_complaints(text,text,text) security invoker;
+alter function public.check_nid_available(text) security invoker;
+alter function public.can_submit_complaint(text) security invoker;
 drop policy if exists orders_insert_public on public.orders;
 drop policy if exists complaints_insert_public on public.complaints;
 drop policy if exists anon_upload_only on storage.objects;

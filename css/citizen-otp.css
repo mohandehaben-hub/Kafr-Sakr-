@@ -1,4 +1,4 @@
-.citizen-otp-dialog{max-width:460px;width:calc(100% - 32px);max-height:90vh;overflow:auto;border:1px solid #61778e;border-radius:18px;padding:24px;background:#10263c;color:#fff;font-family:inherit;box-sizing:border-box}
+.citizen-otp-dialog{position:fixed;inset:0;margin:auto;max-width:460px;width:calc(100% - 32px);max-height:90vh;overflow:auto;border:1px solid #61778e;border-radius:18px;padding:24px;background:#10263c;color:#fff;font-family:inherit;box-sizing:border-box}
 .citizen-otp-dialog::backdrop{background:rgba(0,0,0,.75)}
 .citizen-otp-form{display:flex;flex-direction:column;gap:12px}
 .citizen-otp-form h2,.citizen-otp-form p{margin:0;line-height:1.7}
