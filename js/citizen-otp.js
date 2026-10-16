@@ -37,17 +37,16 @@
     const dialog = document.createElement('dialog'); dialog.className = 'citizen-otp-dialog'; dialog.dir = 'rtl';
     dialog.setAttribute('aria-labelledby', 'citizenOtpTitle');
     dialog.innerHTML = `<form method="dialog" class="citizen-otp-form">
-      <h2 id="citizenOtpTitle">تأكيد البريد الإلكتروني</h2>
-      <p>أدخل بريدك لاستلام رمز التحقق قبل إتمام هذه العملية.</p>
+      <h2 id="citizenOtpTitle">تأكيد البريد</h2>
       <label for="citizenOtpEmail">البريد الإلكتروني</label>
       <input id="citizenOtpEmail" type="email" autocomplete="email" maxlength="254" required dir="ltr">
       <div id="citizenOtpChallenge"></div>
-      <button id="citizenOtpSend" type="button">إرسال رمز التحقق</button>
-      <div id="citizenOtpCodeGroup" hidden><label for="citizenOtpCode">الرمز المكون من 6 أرقام</label>
+      <button id="citizenOtpSend" type="button">إرسال الرمز</button>
+      <div id="citizenOtpCodeGroup" hidden><label for="citizenOtpCode">الرمز (6 أرقام)</label>
       <input id="citizenOtpCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" dir="ltr">
-      <button id="citizenOtpVerify" type="button">تأكيد ومتابعة</button></div>
+      <button id="citizenOtpVerify" type="button">تأكيد</button></div>
       <p id="citizenOtpStatus" role="status" aria-live="polite"></p>
-      <p class="citizen-otp-note">للاستعلام، استخدم البريد المرتبط بطلبك. الطلبات القديمة تحتاج ربط البريد من مجلس المدينة بعد التحقق من الهوية.</p>
+      ${purpose.endsWith('_lookup') ? '<p class="citizen-otp-note">استخدم بريد طلبك. للطلبات القديمة، راجع مجلس المدينة لربط البريد.</p>' : ''}
       <button id="citizenOtpCancel" type="button">إلغاء</button></form>`;
     document.body.append(dialog); dialog.showModal();
     let widget, challengeId, challengeToken = '', resolved = false, retryTimer;
@@ -72,20 +71,20 @@
         sendButton.onclick = async () => {
           const emailInput = dialog.querySelector('#citizenOtpEmail');
           if (!emailInput.reportValidity()) return;
-          if (!challengeToken) { status('انتظر اكتمال التحقق الأمني.'); return; }
-          sendButton.disabled = true; status('جارٍ إرسال رمز التحقق…');
+          if (!challengeToken) { status('أكمل التحقق أولًا.'); return; }
+          sendButton.disabled = true; status('جارٍ الإرسال…');
           try {
             const result = await api('start', {email:emailInput.value, purpose, captcha:challengeToken});
             if (!dialog.isConnected) return;
             challengeId = result.id; emailInput.readOnly = true;
             dialog.querySelector('#citizenOtpCodeGroup').hidden = false;
-            status('أرسلنا الرمز إلى بريدك. صلاحيته 5 دقائق؛ راجع البريد غير المرغوب أيضًا.'); codeInput.focus();
+            status('أرسلنا الرمز إلى بريدك. صالح لمدة 5 دقائق.'); codeInput.focus();
             retryTimer = setTimeout(() => { sendButton.disabled = false; sendButton.textContent = 'إرسال رمز جديد'; }, 60000);
           } catch (e) { status(e.message); sendButton.disabled = false; }
           finally { challengeToken = ''; if (dialog.isConnected) window.turnstile.reset(widget); }
         };
         dialog.querySelector('#citizenOtpVerify').onclick = async () => {
-          if (!challengeId || !/^\d{6}$/.test(codeInput.value)) { status('أدخل الرمز المكون من 6 أرقام.'); return; }
+          if (!challengeId || !/^\d{6}$/.test(codeInput.value)) { status('اكتب الرمز: 6 أرقام.'); return; }
           const button = dialog.querySelector('#citizenOtpVerify'); button.disabled = true;
           try { const result = await api('verify', {id:challengeId, code:codeInput.value}); resolved = true; resolve(result); }
           catch (e) { status(e.message); button.disabled = false; }
