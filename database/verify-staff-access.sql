@@ -5,7 +5,7 @@ grant insert,select on staff_access_results to anon,authenticated;
 do $$
 declare
   su uuid; vu uuid; sid uuid:=gen_random_uuid(); vsid uuid:=gen_random_uuid();
-  a uuid:=gen_random_uuid(); b uuid:=gen_random_uuid(); uid uuid;
+  a uuid:=gen_random_uuid(); b uuid:=gen_random_uuid(); uid uuid; asid uuid:=gen_random_uuid();
   denied boolean; n bigint; account jsonb;
 begin
   select user_id into strict su from public.staff where role='SUPER' and is_active limit 1;
@@ -17,10 +17,10 @@ begin
 
   if exists(select 1 from pg_proc p join pg_namespace s on s.oid=p.pronamespace
     where s.nspname='public' and has_function_privilege('anon',p.oid,'execute')
-    and p.proname not in ('get_my_order','get_my_complaints','check_nid_available','can_submit_complaint')) then
+    ) then
     raise exception 'Anonymous administrative RPC access remains';
   end if;
-  insert into staff_access_results values('Anonymous RPCs limited to four citizen helpers',true);
+  insert into staff_access_results values('Anonymous direct RPC access fully closed',true);
   if exists(select 1 from pg_class c join pg_namespace s on s.oid=c.relnamespace
     where s.nspname='public' and c.relkind in ('r','v','m','p')
     and has_table_privilege('anon',c.oid,'SELECT,UPDATE,DELETE,TRUNCATE')) then
@@ -37,35 +37,26 @@ begin
   insert into staff_access_results values('Anonymous table read blocked before dispatch',true);
   perform set_config('request.path','/rpc/get_my_order',true);
   perform set_config('request.method','POST',true);
-  perform app_private.require_staff_session();
-  select count(*) into n from public.get_my_order('30001019999001','Auth security smoke','01000000000');
-  if n<>1 then raise exception 'Citizen lookup broken'; end if;
-  select count(*) into n from public.get_my_order('30001019999001','Wrong Citizen Name','01000000000');
-  if n<>0 then raise exception 'Lookup identity bypass'; end if;
-  insert into staff_access_results values('Citizen lookup matches all three identifiers',true);
-  insert into public.orders(owner_name,national_id,phone,vehicle_type,submitted_at,ref_number,code,status)
-    values('Citizen smoke','30001019999004','01000000000','توكتوك',0,'AUTH-SMOKE-PUBLIC-'||a,'999999992','coded');
-  execute 'reset role';
-  if not exists(select 1 from public.orders where ref_number='AUTH-SMOKE-PUBLIC-'||a and code is null and status='pending') then
-    raise exception 'Citizen controls privileged order fields';
-  end if;
-  insert into staff_access_results values('Citizen may submit only a pending uncoded order',true);
-  execute 'set local role anon';
-  insert into public.complaints(owner_name,national_id,phone,complaint_type,details,status,reply,submitted_at)
-    values('Citizen smoke','30001019999004','01000000000','أخرى','Smoke only','approved','forged reply',0);
-  execute 'reset role';
-  if not exists(select 1 from public.complaints where national_id='30001019999004' and status='pending' and reply is null) then
-    raise exception 'Citizen controls complaint response';
-  end if;
-  insert into staff_access_results values('Citizen complaint cannot set administrative reply',true);
-  execute 'set local role anon';
-  insert into storage.objects(bucket_id,name) values('vehicle-images','images/security-smoke-'||a||'.jpg');
-  select count(*) into n from storage.objects where name='images/security-smoke-'||a||'.jpg';
-  if n<>0 then raise exception 'Anonymous image read accepted'; end if;
   denied:=false;
-  begin insert into storage.objects(bucket_id,name) values('vehicle-images','scripts/bad.html'); exception when insufficient_privilege then denied:=true; end;
-  if not denied then raise exception 'Anonymous unsafe upload path accepted'; end if;
-  insert into staff_access_results values('Citizen upload allowed; image reading and unsafe paths denied',true);
+  begin perform app_private.require_staff_session(); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Legacy citizen route bypass'; end if;
+  insert into staff_access_results values('Legacy citizen paths require server verification',true);
+  denied:=false;
+  begin perform public.get_my_order('30001019999001','Auth security smoke','01000000000'); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Direct citizen lookup accepted'; end if;
+  insert into staff_access_results values('Direct anonymous lookup denied',true);
+  denied:=false;
+  begin insert into public.orders(owner_name,national_id,submitted_at) values('Citizen smoke','30001019999004',0); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Direct citizen insert accepted'; end if;
+  insert into staff_access_results values('Direct anonymous registration denied',true);
+  denied:=false;
+  begin insert into public.complaints(owner_name,national_id,submitted_at) values('Citizen smoke','30001019999004',0); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Direct complaint accepted'; end if;
+  insert into staff_access_results values('Direct anonymous complaint denied',true);
+  denied:=false;
+  begin insert into storage.objects(bucket_id,name) values('vehicle-images','images/security-smoke-'||a||'.jpg'); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'Direct anonymous image upload accepted'; end if;
+  insert into staff_access_results values('Direct image upload requires verified server route',true);
   execute 'reset role';
 
   perform set_config('request.jwt.claims',jsonb_build_object('sub',su,'role','authenticated','session_id',sid)::text,true);
@@ -74,6 +65,8 @@ begin
   if public.current_staff_role()<>'SUPER' then raise exception 'SUPER access broken'; end if;
   perform public.assign_vehicle_code(a::text,'999999990');
   insert into staff_access_results values('Valid SUPER session can code',true);
+  perform public.link_citizen_email('orders',a,'verified-citizen@example.invalid');
+  insert into staff_access_results values('SUPER can associate legacy citizen email',true);
   denied:=false;
   begin perform public.assign_vehicle_code(b::text,'999999990'); exception when unique_violation then denied:=true; end;
   if not denied then raise exception 'Duplicate accepted'; end if;
@@ -86,6 +79,21 @@ begin
   uid:=(account->>'user_id')::uuid;
   if uid is null then raise exception 'Strong account creation broken'; end if;
   insert into staff_access_results values('SUPER can create staff with strong password',true);
+  execute 'reset role';
+  insert into auth.sessions(id,user_id) values(asid,uid);
+  perform set_config('request.jwt.claims',jsonb_build_object('sub',uid,'role','authenticated','session_id',asid)::text,true);
+  execute 'set local role authenticated';
+  denied:=false;
+  begin update public.orders set citizen_email='attacker@example.invalid' where id=a; exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'ADMIN reassigned citizen email'; end if;
+  insert into staff_access_results values('ADMIN cannot change citizen email directly',true);
+  denied:=false;
+  begin perform public.link_citizen_email('orders',a,'attacker@example.invalid'); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'ADMIN reassigned email via RPC'; end if;
+  insert into staff_access_results values('ADMIN cannot associate citizen email via RPC',true);
+  execute 'reset role';
+  perform set_config('request.jwt.claims',jsonb_build_object('sub',su,'role','authenticated','session_id',sid)::text,true);
+  execute 'set local role authenticated';
   perform public.delete_staff_account(uid);
   insert into staff_access_results values('SUPER staff deletion works',true);
   execute 'reset role';
@@ -103,6 +111,10 @@ begin
   get diagnostics n=row_count;
   if n<>0 then raise exception 'VIEWER update accepted'; end if;
   insert into staff_access_results values('VIEWER write and coding denied',true);
+  denied:=false;
+  begin perform public.link_citizen_email('orders',a,'attacker@example.invalid'); exception when insufficient_privilege then denied:=true; end;
+  if not denied then raise exception 'VIEWER reassigned citizen email'; end if;
+  insert into staff_access_results values('VIEWER cannot associate citizen email',true);
   denied:=false;
   begin perform public.create_supervisor_account('security-smoke','Strong-Smoke-123!','Smoke','SUPER'); exception when others then denied:=true; end;
   if not denied then raise exception 'VIEWER created account'; end if;

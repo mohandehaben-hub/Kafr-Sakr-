@@ -642,6 +642,7 @@ function openVehicleDossier(item, vehicleType) {
 
     // حذف السجل (للمشرف العام)
     if (userRole === 'SUPER') {
+      btns.push('<button class="btn-gov-action" id="dossierBtnEmail"><i class="ri-mail-line"></i><span>ربط بريد الاستعلام</span></button>');
       btns.push(`<button class="btn-gov-action btn-gov-danger"id="dossierBtnDelete">
           <i class="ri-delete-bin-line"></i> <span>حذف السجل نهائياً</span>
         </button>
@@ -649,6 +650,15 @@ function openVehicleDossier(item, vehicleType) {
     }
 
     actGrid.innerHTML = btns.join('');
+    actGrid.querySelector('#dossierBtnEmail')?.addEventListener('click', async () => {
+      const entered = window.prompt('بعد التحقق من هوية صاحب الطلب في مجلس المدينة، أدخل بريده الإلكتروني لربط الاستعلام بهذا الطلب:');
+      if (!entered) return;
+      const email = entered.trim().toLowerCase();
+      if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { window.showToast('أدخل بريدًا صحيحًا.', 'error'); return; }
+      if (!await window.showConfirmModal({title:'ربط بريد المواطن',message:'هل تحققت من هوية صاحب الطلب وملكيته لهذا البريد؟'})) return;
+      const {error} = await window.supabaseClient.rpc('link_citizen_email', {p_table:'orders',p_id:id,p_email:email});
+      window.showToast(error ? 'تعذر ربط البريد. راجع صلاحياتك والبيانات.' : 'تم ربط بريد المواطن بهذا الطلب وتسجيل الإجراء.', error ? 'error' : 'success');
+    });
 
     const closeDossier = () => { modal.style.display = 'none'; };
 

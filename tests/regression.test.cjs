@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 let browser;
 before(async () => {browser = await chromium.launch({headless:true, ...(process.platform==='win32'?{channel:'msedge'}:{})});});
 after(async () => {await browser?.close();});
-async function fixture({role='SUPER', restored=false, csp=true}={}) {
+async function fixture({role='SUPER', restored=false, csp=true, otp=false}={}) {
   const page = await browser.newPage();
   await page.addInitScript(({role,restored}) => {
     window.mock={role,restored,calls:[],rows:[],messages:[],signed:[],deleteError:null,mutationError:null,session:restored?{user:{id:'u'}}:null};
@@ -40,7 +40,13 @@ async function fixture({role='SUPER', restored=false, csp=true}={}) {
   },{role,restored});
   await page.route('**/*', async route=>{
     const u=new URL(route.request().url());
-    if(u.hostname==='challenges.cloudflare.com')return route.fulfill({contentType:'text/javascript',body:`window.turnstile={ready(){throw new Error('ready cannot be combined with async loading');},render(selector){document.querySelector(selector).append(document.createElement('div'));return 'widget';},getResponse(){return 'verified-challenge';},reset(){}};`});
+    if(u.pathname==='/api/citizen') {
+      if(route.request().method()==='GET')return route.fulfill({contentType:'application/json',body:JSON.stringify({enabled:otp})});
+      const args=route.request().postDataJSON();await page.evaluate(args=>mock.calls.push({citizen:args}),args);
+      const result=args.action==='start'?{id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'}:args.action==='verify'?{token:'a'.repeat(64),id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',purpose:'order_lookup'}:{data:[]};
+      return route.fulfill({contentType:'application/json',body:JSON.stringify(result)});
+    }
+    if(u.hostname==='challenges.cloudflare.com')return route.fulfill({contentType:'text/javascript',body:`window.turnstile={ready(){throw new Error('ready cannot be combined with async loading');},render(selector,options){document.querySelector(selector).append(document.createElement('div'));options?.callback?.('verified-challenge');return 'widget';},getResponse(){return 'verified-challenge';},reset(){},remove(){}};`});
     if(u.hostname!=='test.local')return route.fulfill({status:200,body:''});
     const file=path.resolve(root,'.'+(u.pathname==='/'?'/index.html':u.pathname));
     if(!file.startsWith(root+path.sep)||!fs.existsSync(file))return route.fulfill({status:404,body:''});
@@ -153,4 +159,22 @@ test('large codes do not allocate a billion-entry list for suggestions',async()=
 });
 test('date filters use the production bigint millisecond format',async()=>{
   const p=await fixture();try{const ops=await p.evaluate(async()=>{window._dateFrom='2026-10-01';window._dateTo='2026-10-15';mock.calls=[];await fetchPage(1,'','all','tuktuk');return mock.calls[0].ops;});assert.equal(typeof ops.find(o=>o[0]==='gte')[2],'number');assert.equal(typeof ops.find(o=>o[0]==='lt')[2],'number');}finally{await p.close();}
+});
+
+test('citizen inquiry waits for email OTP and uses the server proxy',async()=>{
+ const p=await fixture({otp:true});try{
+  await p.setViewportSize({width:390,height:844});
+  await p.evaluate(()=>{document.getElementById('inqOwnerName').value='Test Citizen';document.getElementById('inqNationalId').value='29901018888888';document.getElementById('inqPhone').value='01000000001';window.inquiryPending=document.getElementById('inquiryBtn').onclick();});
+  await p.locator('#citizenOtpEmail').fill('citizen@example.com');await p.locator('#citizenOtpSend').click();await p.locator('#citizenOtpCode').waitFor({state:'visible'});
+  const bounds=await p.locator('dialog.citizen-otp-dialog').boundingBox();assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390);
+  await p.locator('#citizenOtpCode').fill('123456');await p.locator('#citizenOtpVerify').click();await p.evaluate(()=>window.inquiryPending);
+  const calls=await p.evaluate(()=>mock.calls);assert.equal(calls.some(c=>c.rpc==='get_my_order'),false);assert.equal(calls.filter(c=>c.citizen?.action==='order_lookup').length,1);assert.equal(calls.find(c=>c.citizen?.action==='start').citizen.purpose,'order_lookup');
+  assert.equal(await p.locator('dialog.citizen-otp-dialog').count(),0);
+ }finally{await p.close();}
+});
+test('cancelled citizen verification never falls back to the anonymous database',async()=>{
+ const p=await fixture({otp:true});try{await p.evaluate(()=>{window.cancelResult=getCitizenClient('complaint').then(()=>false,()=>true);});await p.locator('#citizenOtpEmail').waitFor();await p.locator('#citizenOtpCancel').click();assert.equal(await p.evaluate(()=>window.cancelResult),true);assert.equal(await p.evaluate(()=>mock.calls.filter(c=>c.citizen||c.rpc).length),0);}finally{await p.close();}
+});
+test('only SUPER sees the legacy citizen email association action',async()=>{
+ for(const role of ['SUPER','ADMIN','VIEWER']){const p=await fixture({role,restored:true});try{await p.evaluate(()=>openVehicleDossier({id:'row-1',owner:'Citizen',images:[]},'tuktuk'));assert.equal(await p.locator('#dossierBtnEmail').count(),role==='SUPER'?1:0);}finally{await p.close();}}
 });

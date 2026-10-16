@@ -9,5 +9,9 @@ for(const dir of ['js','scripts','tests']) {
   }
 }
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+for(const file of fs.readdirSync(path.join(root,'functions','api')).filter(f=>f.endsWith('.js'))) {
+  const r=spawnSync(process.execPath,['--check','--input-type=module'],{input:fs.readFileSync(path.join(root,'functions','api',file)),stdio:['pipe','inherit','inherit']});
+  if(r.status) process.exit(r.status);
+}
 if(/\son[a-z]+\s*=/i.test(html)) throw new Error('Inline event handler found');
 console.log('JavaScript syntax and inline script checks passed');

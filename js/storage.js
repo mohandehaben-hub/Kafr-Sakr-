@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 // Upload to Cloud Storage (Private)
-window.uploadToSupabaseStorage = async file => {
+window.uploadToSupabaseStorage = async (file, client = window.supabaseClient) => {
   if (!window.requireCitizenWrite()) throw new Error('حسابك للعرض فقط');
   if(!file || !['image/jpeg','image/jpg','image/png','image/webp'].includes(file.type) || !/\.(jpe?g|png|webp)$/i.test(file.name)) {
     throw new Error('يُسمح فقط بصور JPG وPNG وWebP');
@@ -22,6 +22,7 @@ window.uploadToSupabaseStorage = async file => {
     if(!ctx) throw new Error('تعذر معالجة الصورة');
     ctx.drawImage(image,0,0,canvas.width,canvas.height);
     const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('تعذر تجهيز الصورة')),'image/jpeg',0.8));
+    if(client.citizenUpload) return await client.citizenUpload(blob);
     const filePath=`images/${crypto.randomUUID()}.jpg`;
     const {error}=await window.supabaseClient.storage.from('vehicle-images').upload(filePath,blob,{contentType:'image/jpeg',cacheControl:'3600',upsert:false});
     if(error) throw error;
@@ -52,9 +53,9 @@ window.formatDateTime = formatDateTime;
 // ═══════════════════════════════════════════════════════════════
 
 // Add Order to Database
-async function addOrderToSupabase(orderData) {
+async function addOrderToSupabase(orderData, client = window.supabaseClient) {
 if (!window.requireCitizenWrite()) throw new Error('غير مصرح');
-const { data, error } = await window.supabaseClient
+const { data, error } = await client
 .from('orders')
 .insert([orderData]);
 if (error) throw error;
@@ -62,9 +63,9 @@ return data;
 }
 
 // Add Complaint to Database
-async function addComplaintToSupabase(complaintData) {
+async function addComplaintToSupabase(complaintData, client = window.supabaseClient) {
 if (!window.requireCitizenWrite()) throw new Error('غير مصرح');
-const { data, error } = await window.supabaseClient
+const { data, error } = await client
 .from('complaints')
 .insert([complaintData]);
 if (error) throw error;
@@ -127,8 +128,9 @@ let saveAttempted=false;
 let saved=false;
 try {
 //  التحقق المسبق من عدم تسجيل الرقم القومي قبل رفع أي صور لحماية المساحة
+const client = await window.getCitizenClient('order');
 btn.innerText = "جاري التحقق من البيانات...";
-const { data: isAvailable, error: nidCheckErr } = await window.supabaseClient.rpc('check_nid_available', {
+const { data: isAvailable, error: nidCheckErr } = await client.rpc('check_nid_available', {
   p_national_id: nid
 });
 
@@ -145,13 +147,13 @@ if (isAvailable === false) {
 const imgUrls = [];
 btn.innerText = "جاري رفع الصور...";
 for (let i = 0; i < files.length; i++) {
-const url = await window.uploadToSupabaseStorage(files[i]);
+const url = await window.uploadToSupabaseStorage(files[i], client);
 imgUrls.push(url);
 uploadedPaths.push(url);
 btn.innerText = `جاري رفع الصورة ${i + 1} من ${files.length}...`;
 }
 
-const refNumber = 'KS-'+ Date.now().toString().slice(-8);
+let refNumber = 'KS-'+ Date.now().toString().slice(-8);
 
 // Prepare data with encryption for sensitive fields
 let dataToSave = {
@@ -169,7 +171,8 @@ code: ""};
 
 // Save to Database
 saveAttempted=true;
-await addOrderToSupabase(dataToSave);
+const receipt = await addOrderToSupabase(dataToSave, client);
+if (client.citizen && receipt?.ref_number) refNumber = receipt.ref_number;
 saved=true;
 document.getElementById('loadingSpinner').style.display = 'none';
 btn.disabled = false;
@@ -242,7 +245,8 @@ inquiryBtn.disabled = true;
 inquiryBtn.innerHTML = '<i class="ri-loader-4-line"></i> جاري الاستعلام...';
 
 try {
-const { data: orders, error } = await window.supabaseClient
+const client = await window.getCitizenClient('order_lookup');
+const { data: orders, error } = await client
   .rpc('get_my_order', {
     p_national_id: nid,
     p_owner_name: owner,
@@ -541,7 +545,8 @@ let saveAttempted=false;
 let saved=false;
 try {
 //  التحقق المسبق من عدد الشكاوى المسموح بها في السيرفر قبل استهلاك مساحة التخزين
-const { data: canSubmit, error: compCheckErr } = await window.supabaseClient.rpc('can_submit_complaint', {
+const client = await window.getCitizenClient('complaint');
+const { data: canSubmit, error: compCheckErr } = await client.rpc('can_submit_complaint', {
   p_national_id: nid
 });
 
@@ -562,24 +567,24 @@ vehicleImage: ''};
 
 // Upload selfie
 btn.innerText = "جاري رفع صورة السيلفي...";
-imgUrls.selfie = await window.uploadToSupabaseStorage(selfie);
+imgUrls.selfie = await window.uploadToSupabaseStorage(selfie, client);
 uploadedPaths.push(imgUrls.selfie);
 
 // Upload ID card
 btn.innerText = "جاري رفع صورة البطاقة...";
-imgUrls.idCard = await window.uploadToSupabaseStorage(idCard);
+imgUrls.idCard = await window.uploadToSupabaseStorage(idCard, client);
 uploadedPaths.push(imgUrls.idCard);
 
 // Upload vehicle image
 btn.innerText = "جاري رفع صورة المركبة...";
-imgUrls.vehicleImage = await window.uploadToSupabaseStorage(vehicleImage);
+imgUrls.vehicleImage = await window.uploadToSupabaseStorage(vehicleImage, client);
 uploadedPaths.push(imgUrls.vehicleImage);
 
 // Upload problem images
 if (problemImages.length > 0) {
 for (let i = 0; i < problemImages.length; i++) {
 btn.innerText = `جاري رفع صورة المشكلة ${i + 1} من ${problemImages.length}...`;
-const url = await window.uploadToSupabaseStorage(problemImages[i]);
+const url = await window.uploadToSupabaseStorage(problemImages[i], client);
 imgUrls.problemImages.push(url);
 uploadedPaths.push(url);
 }
@@ -598,7 +603,7 @@ images: imgUrls,
 status: 'pending',
 reply: '',
 submitted_at: Date.now()
-}); 
+}, client);
 saved=true;
 //  تسجيل وقت الإرسال لمنع الإزعاج
 localStorage.setItem('lastComplaintTime', Date.now().toString());
@@ -647,7 +652,8 @@ document.getElementById('loadingSpinner').style.display = 'block';
 
 try {
 //  استخدام RPC الآمنة بدل الاستعلام المباشر
-const { data: complaints, error } = await window.supabaseClient
+const client = await window.getCitizenClient('complaint_lookup');
+const { data: complaints, error } = await client
 .rpc('get_my_complaints', {
   p_national_id: nid,
   p_owner_name: owner,

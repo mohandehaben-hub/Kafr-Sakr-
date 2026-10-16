@@ -1,0 +1,12 @@
+.citizen-otp-dialog{max-width:460px;width:calc(100% - 32px);max-height:90vh;overflow:auto;border:1px solid #61778e;border-radius:18px;padding:24px;background:#10263c;color:#fff;font-family:inherit;box-sizing:border-box}
+.citizen-otp-dialog::backdrop{background:rgba(0,0,0,.75)}
+.citizen-otp-form{display:flex;flex-direction:column;gap:12px}
+.citizen-otp-form h2,.citizen-otp-form p{margin:0;line-height:1.7}
+.citizen-otp-form input{box-sizing:border-box;width:100%;min-height:44px;border:1px solid #a3b9cf;border-radius:8px;padding:10px;font:inherit;background:#fff;color:#152536}
+.citizen-otp-form button{min-height:44px;border:0;border-radius:8px;padding:10px;font:inherit;font-weight:bold;background:#f3bc54;color:#172333;cursor:pointer}
+.citizen-otp-form button:disabled{opacity:.6;cursor:wait}
+.citizen-otp-form #citizenOtpCancel{background:#dce4ed}
+.citizen-otp-form #citizenOtpCode{font-size:24px;letter-spacing:8px;text-align:center}
+.citizen-otp-form #citizenOtpStatus{color:#ffe2a6}
+.citizen-otp-note{font-size:.85rem;color:#d7e2ed}
+.citizen-otp-form [hidden]{display:none}
