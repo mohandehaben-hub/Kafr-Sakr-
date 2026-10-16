@@ -46,7 +46,6 @@
       <input id="citizenOtpCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" dir="ltr">
       <button id="citizenOtpVerify" type="button">تأكيد</button></div>
       <p id="citizenOtpStatus" role="status" aria-live="polite"></p>
-      ${purpose.endsWith('_lookup') ? '<p class="citizen-otp-note">استخدم بريد طلبك. للطلبات القديمة، راجع مجلس المدينة لربط البريد.</p>' : ''}
       <button id="citizenOtpCancel" type="button">إلغاء</button></form>`;
     document.body.append(dialog); dialog.showModal();
     let widget, challengeId, challengeToken = '', resolved = false, retryTimer;

@@ -8,5 +8,4 @@
 .citizen-otp-form #citizenOtpCancel{background:#dce4ed}
 .citizen-otp-form #citizenOtpCode{font-size:24px;letter-spacing:8px;text-align:center}
 .citizen-otp-form #citizenOtpStatus{color:#ffe2a6}
-.citizen-otp-note{font-size:.85rem;color:#d7e2ed}
 .citizen-otp-form [hidden]{display:none}
